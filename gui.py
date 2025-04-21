@@ -19,7 +19,8 @@ class MainWindow(QMainWindow):
         # Search bar layout
         search_layout = QHBoxLayout()
         self.search_bar = QLineEdit()
-        self.search_bar.setText("r[a-z]verso")
+        # self.search_bar.setText("r[a-z]verso")
+        self.search_bar.setText("guardia di testa")
         self.search_bar.setFont(QFont("Times New Roman", 14))
         self.search_bar.setStyleSheet("background-color: #fff8dc; border: 1px solid #8b4513;")
         search_layout.addWidget(self.search_bar)
@@ -70,14 +71,14 @@ class MainWindow(QMainWindow):
         limit_to_filtered = self.filter_checkbox.isChecked()
 
         # Perform search for each language
-        italian_results = self.db_manager.search_entries(regex, language="Italien")
-        french_results = self.db_manager.search_entries(regex, language="Français")
-        english_results = self.db_manager.search_entries(regex, language="Anglais")
+        # italian_results = self.db_manager.search_entries(regex, language="it")
+        french_results = self.db_manager.search_entries(regex, language="fr")
+        # english_results = self.db_manager.search_entries(regex, language="en")
 
         # Update panels with results
-        self.update_panel(self.italian_panel, italian_results)
+        # self.update_panel(self.italian_panel, italian_results)
         self.update_panel(self.french_panel, french_results)
-        self.update_panel(self.english_panel, english_results)
+        # self.update_panel(self.english_panel, english_results)
 
     def update_panel(self, panel, results):
         layout = panel.layout()
@@ -90,7 +91,7 @@ class MainWindow(QMainWindow):
 
         # Add new results
         for result in results:
-            label = QLabel(result[0])
+            label = QLabel(result[1])
             label.setFont(QFont("Times New Roman", 12))
             layout.addWidget(label)
 
