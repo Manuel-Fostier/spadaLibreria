@@ -200,7 +200,26 @@ def main():
     if not page_range:
         print("Plage invalide !")
     else:
-        extract_text_elements(pdf_path,  page_range)
+        title_list = extract_text_elements(pdf_path, page_range)
+
+        # Initialize DatabaseManager
+        from database import DatabaseManager
+        db_manager = DatabaseManager()
+        db_manager.connect()
+        db_manager.create_tables()
+
+        # Insert each title into the database
+        for title in title_list:
+            title_id = db_manager.insert_entry(language="fr", content=title.text, entry_type="title")
+            for title1 in title.titles_1_list:
+                title1_id = db_manager.insert_entry(language="fr", content=title1.text, parent_id=title_id, entry_type="title1")
+                for chapter in title1.chapter_list:
+                    chapter_id = db_manager.insert_entry(language="fr", content=chapter.text, parent_id=title1_id, entry_type="chapter")
+                    for paragraph in chapter.paragraph_list:
+                        db_manager.insert_entry(language="fr", content=paragraph.text, parent_id=chapter_id, entry_type="paragraph")
+
+
+        db_manager.close()
 
 if __name__ == "__main__":
     main()
