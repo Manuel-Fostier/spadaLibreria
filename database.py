@@ -24,12 +24,12 @@ class DatabaseManager:
         ''')
         self.connection.commit()
 
-    def search_entries(self, regex, language=None):
+    def search_entries(self, regex, language = "fr"):
         if self.connection is None:
             self.connect()
         cursor = self.connection.cursor()
-        query = "SELECT content FROM entries WHERE content REGEXP ?"
-        params = [regex]
+        query = "SELECT id, content, parent_id, entry_type FROM entries WHERE content LIKE ?"
+        params = [f"%{regex}%"]
         if language:
             query += " AND language = ?"
             params.append(language)
