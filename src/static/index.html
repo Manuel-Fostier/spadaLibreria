@@ -1,0 +1,33 @@
+<!-- static/index.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Bibliothèque Inspirée</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Bibliothèque Inspirée</h1>
+        <div class="search-bar">
+            <input id="searchBar" type="text" value="guardia di testa" placeholder="Recherche..." />
+        </div>
+        <div class="filters">
+            <label><input type="checkbox" id="filterCheckbox"> Limiter aux éléments filtrés</label>
+            <button id="filterButton">Filtres</button>
+        </div>
+        <div class="results-layout">
+            <div class="result-panel" id="italianPanel">
+                <div class="panel-title">Italien</div>
+            </div>
+            <div class="result-panel" id="frenchPanel">
+                <div class="panel-title">Français</div>
+            </div>
+            <div class="result-panel" id="englishPanel">
+                <div class="panel-title">Anglais</div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/app.js"></script>
+</body>
+</html>
