@@ -5,6 +5,8 @@ import os
 from pathlib import Path
 #from database import DatabaseManager
 
+#TODO : reader tutorial : https://fastapi.tiangolo.com/tutorial/first-steps/#check-the-openapijson
+
 app = FastAPI(title="SpadaLibreria",
               description="bibliotheque AMHE")
 
@@ -31,3 +33,5 @@ def health():
 #     # On retourne une liste de chaînes (par exemple, le champ texte)
 #     return {"results": [r[1] for r in results]}
 
+async def root():
+    return {"message": "Hello World"}
