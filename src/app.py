@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Query
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 import os
@@ -24,8 +24,8 @@ def root():
     return RedirectResponse(url="/static/index.html")
 
 
-# @app.get("/search")
-# def search_entries(regex: str = Query(...), language: str = Query("fr")):
-#     results = db_manager.search_entries(regex, language=language)
-#     # On retourne une liste de chaînes (par exemple, le champ texte)
-#     return {"results": [r[1] for r in results]}
+@app.get("/search")
+def search_entries(regex: str = Query(...), language: str = Query("fr")):
+    results = db_manager.search_entries(regex, language=language)
+    # On retourne une liste de chaînes (par exemple, le champ texte)
+    return {"results": [r[1] for r in results]}
