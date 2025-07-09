@@ -16,14 +16,20 @@
             <label><input type="checkbox" id="filterCheckbox"> Limiter aux éléments filtrés</label>
             <button id="filterButton">Filtres</button>
         </div>
+        <div class="reopen-buttons">
+        <!-- les boutons seront ajoutés ici -->
+        </div>
         <div class="results-layout">
             <div class="result-panel" id="italianPanel">
+                <button class="close-button" onclick="togglePanel('italianPanel')">×</button>
                 <div class="panel-title">Italien</div>
             </div>
             <div class="result-panel" id="frenchPanel">
+                <button class="close-button" onclick="togglePanel('frenchPanel')">×</button>
                 <div class="panel-title">Français</div>
             </div>
             <div class="result-panel" id="englishPanel">
+                <button class="close-button" onclick="togglePanel('englishPanel')">×</button>
                 <div class="panel-title">Anglais</div>
             </div>
         </div>

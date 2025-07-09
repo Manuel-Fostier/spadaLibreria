@@ -12,10 +12,15 @@ async function performSearch() {
 
 function updatePanel(panelId, results) {
     const panel = document.getElementById(panelId);
-    // On garde le titre (premier enfant)
-    while (panel.children.length > 1) {
-        panel.removeChild(panel.lastChild);
-    }
+
+    // Supprime tous les enfants sauf ceux avec la classe "panel-title"
+    Array.from(panel.children).forEach(child => {
+        if (   (!child.classList.contains('panel-title'))
+            && (!child.classList.contains('close-button'))) {
+            panel.removeChild(child);
+        }
+    });
+
     results.forEach(result => {
         const label = document.createElement('div');
         label.className = 'result-label';
@@ -35,3 +40,27 @@ document.addEventListener('DOMContentLoaded', function() {
     // Recherche initiale
     performSearch();
 });
+
+function togglePanel(panelId) {
+    const panel = document.getElementById(panelId);
+
+    if (panel.style.display === "none") {
+        panel.style.display = "flex";
+        
+        const reopenBtn = document.getElementById(`reopen-${panelId}`);
+        if (reopenBtn) {
+            reopenBtn.remove();
+        }
+    } else {
+        panel.style.display = "none";
+
+        const button = document.createElement("button");
+        button.id = `reopen-${panelId}`;
+        button.className = 'reopen-buttons';
+        button.textContent = `Afficher ${panelId.replace('Panel', '')}`;
+        button.onclick = () => togglePanel(panelId);
+        
+        document.querySelector('.reopen-buttons').appendChild(button);
+    }
+
+}
