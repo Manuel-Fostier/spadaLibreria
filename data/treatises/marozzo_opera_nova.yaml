@@ -1,0 +1,68 @@
+- id: marozzo_l1_c1
+  title: Capitolo 1 - Della guardia di Coda Longa
+  metadata:
+    master: achille_marozzo
+    work: Opera Nova
+    book: 1
+    chapter: 1
+    year: 1536
+    weapons: [spada_brocchiero]
+    guards_mentioned: [coda_longa]
+    techniques: [passare]
+  content:
+    it: |
+      Et nota che in questo mio principio io ti voglio mettere in guardia di {coda_longa} stretta, con il piede dritto inanzi, et la tua spada vada per fianco diritto de fuora, con la punta in terra, et il brochiero sia alto sopra il capo, con il braccio disteso.
+    fr: |
+      Et note qu'en ce début, je veux te placer en garde de {coda_longa} étroite, avec le pied droit en avant, et que ton épée aille par le flanc droit vers l'extérieur, avec la pointe au sol, et que la bocle soit haute au-dessus de la tête, avec le bras tendu.
+    en_versions:
+      - translator: "Jherek Swanger"
+        text: |
+          And note that in this beginning of mine, I want to put you in the guard of narrow {coda_longa}, with the right foot forward, and your sword goes by the right flank to the outside, with the point to the ground, and the buckler is high above the head, with the arm extended.
+      - translator: "Tom Leoni"
+        text: |
+          Note that at the beginning, I wish to place you in the strait {coda_longa} guard, right foot forward, and let your sword go to the outside of your right flank, point to the ground, and the buckler high above your head, arm extended.
+
+- id: marozzo_l1_c2
+  title: Capitolo 2 - Del tirare de mandritti e roversi
+  metadata:
+    master: achille_marozzo
+    work: Opera Nova
+    book: 1
+    chapter: 2
+    year: 1536
+    weapons: [spada_brocchiero]
+    guards_mentioned: [coda_longa, porta_di_ferro]
+    techniques: [mandritto, roverso, fendente, passare]
+  content:
+    it: |
+      Se tu sarai in detta guardia, e il tuo nimico ti tirasse uno {mandritto} o uno {fendente} per testa, tu butterai un {mandritto} sgualimbro per la sua spada, passando con il pie manco inanci verso le sue parte dritte, et nel passare che tu farai, tu urtarai il suo brochiero con il tuo.
+    fr: |
+      Si tu es dans ladite garde, et que ton ennemi te tire un {mandritto} ou un {fendente} à la tête, tu lanceras un {mandritto} sgualimbro sur son épée, en passant avec le pied gauche en avant vers ses parties droites, et en passant tu heurteras sa bocle avec la tienne.
+    en_versions:
+      - translator: "Jherek Swanger"
+        text: |
+          If you are in said guard, and your enemy throws a {mandritto} or a {fendente} at your head, you will throw a sgualimbro {mandritto} at his sword, passing with the left foot forward toward his right side, and in passing you will strike his buckler with yours.
+
+- id: marozzo_l1_c3
+  title: Capitolo 3 - De li stretti e de li larghi
+  metadata:
+    master: achille_marozzo
+    work: Opera Nova
+    book: 1
+    chapter: 3
+    year: 1536
+    weapons: [spada_brocchiero]
+    guards_mentioned: [coda_longa, guardia_alta]
+    techniques: [legare, stoccatta, roverso]
+  content:
+    it: |
+      Et se per caso tu havessi {legare} la sua spada con la tua, tu li tirarai una {stoccatta} per la faccia, et subito tirarai un {roverso} sgualimbro per la sua spada, andando con il pie dritto appresso il manco, ponendoti in {guardia_alta}.
+    fr: |
+      Et si par hasard tu avais {legare} son épée avec la tienne, tu lui tireras une {stoccatta} au visage, et aussitôt tu tireras un {roverso} sgualimbro sur son épée, en allant avec le pied droit près du gauche, te mettant en {guardia_alta}.
+    en_versions:
+      - translator: "Jherek Swanger"
+        text: |
+          And if by chance you had {legare} his sword with yours, you will throw a {stoccatta} at his face, and immediately throw a sgualimbro {roverso} at his sword, going with the right foot near the left, placing yourself in {guardia_alta}.
+      - translator: "William Wilson"
+        text: |
+          Should you happen to {legare} his sword with yours, deliver a {stoccatta} to his face, then immediately strike a sgualimbro {roverso} against his sword, stepping with your right foot close to the left, and assume {guardia_alta}.
