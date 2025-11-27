@@ -24,6 +24,16 @@ export interface EnglishVersion {
   text: string;
 }
 
+export interface Annotation {
+  id: string;
+  language: 'it' | 'fr' | 'en';
+  translator: string | null;
+  note: string;
+  tags: string[];
+  created_at: string;
+  updated_at: string | null;
+}
+
 export interface TreatiseSection {
   id: string;
   title: string;
@@ -42,6 +52,7 @@ export interface TreatiseSection {
     fr: string;
     en_versions: EnglishVersion[];
   };
+  annotations?: Annotation[];
 }
 
 export function loadGlossary(): GlossaryData {

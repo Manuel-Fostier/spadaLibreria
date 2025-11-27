@@ -1,9 +1,12 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { BookOpen, ChevronRight, ChevronDown } from 'lucide-react';
+import { BookOpen, ChevronRight, ChevronDown, Save, MessageSquare } from 'lucide-react';
 import TextParser from './TextParser';
+import AnnotationBadge from './AnnotationBadge';
+import AnnotationPanel from './AnnotationPanel';
 import { GlossaryEntry, TreatiseSection } from '@/lib/dataLoader';
+import { useAnnotations } from '@/contexts/AnnotationContext';
 
 interface BolognesePlatformProps {
   glossaryData: { [key: string]: GlossaryEntry };
@@ -19,6 +22,11 @@ const WEAPONS = [
 export default function BolognesePlatform({ glossaryData, treatiseData }: BolognesePlatformProps) {
   const [selectedWeapon, setSelectedWeapon] = useState('all');
   const [translatorPreferences, setTranslatorPreferences] = useState<{ [key: string]: string }>({});
+  const [annotationSection, setAnnotationSection] = useState<string | null>(null);
+  const { getAnnotationsForSection, saveToServer } = useAnnotations();
+  const [isSaving, setIsSaving] = useState(false);
+  const [showItalian, setShowItalian] = useState(false);
+  const [showEnglish, setShowEnglish] = useState(false);
 
   const handleTranslatorChange = (sectionId: string, translatorName: string) => {
     setTranslatorPreferences(prev => ({
@@ -67,6 +75,28 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
             </div>
           </div>
         </div>
+
+        {/* Bouton de sauvegarde des annotations */}
+        <div className="p-4 border-t border-gray-100">
+          <button
+            onClick={async () => {
+              setIsSaving(true);
+              try {
+                await saveToServer();
+                alert('Annotations sauvegardées !');
+              } catch (error) {
+                alert('Erreur lors de la sauvegarde');
+              } finally {
+                setIsSaving(false);
+              }
+            }}
+            disabled={isSaving}
+            className="w-full px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm flex items-center justify-center gap-2 disabled:opacity-50"
+          >
+            <Save size={16} />
+            {isSaving ? 'Sauvegarde...' : 'Sauvegarder les annotations'}
+          </button>
+        </div>
       </aside>
 
       {/* MAIN CONTENT */}
@@ -78,43 +108,107 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
             <ChevronRight size={14} className="mx-2 text-gray-300"/>
             <span className="text-gray-900">Marozzo - Opera Nova</span>
           </div>
+          
+          {/* Boutons pour afficher/masquer les colonnes */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowItalian(!showItalian)}
+              className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                showItalian 
+                  ? 'bg-gray-900 text-white' 
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              Italien {showItalian ? '✓' : ''}
+            </button>
+            <button
+              onClick={() => setShowEnglish(!showEnglish)}
+              className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                showEnglish 
+                  ? 'bg-gray-900 text-white' 
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              Anglais {showEnglish ? '✓' : ''}
+            </button>
+          </div>
         </header>
 
         <div className="flex-1 overflow-y-auto bg-white">
           <div className="max-w-7xl mx-auto p-8 lg:p-12 space-y-12">
             
             {filteredContent.map((section) => {
-              const englishVersions = section.content.en_versions;
-              const selectedTransName = translatorPreferences[section.id] || englishVersions[0].translator;
-              const activeTranslation = englishVersions.find(v => v.translator === selectedTransName) || englishVersions[0];
+              const englishVersions = section.content.en_versions || [];
+              const selectedTransName = englishVersions.length > 0 
+                ? (translatorPreferences[section.id] || englishVersions[0].translator)
+                : '';
+              const activeTranslation = englishVersions.length > 0
+                ? (englishVersions.find(v => v.translator === selectedTransName) || englishVersions[0])
+                : null;
+
+              const sectionAnnotations = getAnnotationsForSection(section.id);
+              const availableLanguages = [
+                { code: 'it' as const, label: 'Italien' },
+                { code: 'fr' as const, label: 'Français' },
+                ...englishVersions.map(v => ({
+                  code: 'en' as const,
+                  label: `Anglais - ${v.translator}`,
+                  translator: v.translator
+                }))
+              ];
 
               return (
                 <div key={section.id} className="group">
                   
                   {/* Section Header */}
                   <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 pb-4 border-b border-gray-100 gap-4">
-                    <div>
+                    <div className="flex-1">
                       <span className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 block">
                         {section.metadata.master} - {section.metadata.work} ({section.metadata.year})
                       </span>
                       <h2 className="text-2xl font-bold text-gray-900 leading-tight">{section.title}</h2>
                     </div>
+                    
+                    {/* Boutons d'action */}
+                    <div className="flex items-center gap-3">
+                      {sectionAnnotations.length > 0 && (
+                        <AnnotationBadge
+                          count={sectionAnnotations.length}
+                          annotations={sectionAnnotations}
+                          onClick={() => setAnnotationSection(section.id)}
+                        />
+                      )}
+                      <button
+                        onClick={() => setAnnotationSection(section.id)}
+                        className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors text-xs font-medium flex items-center gap-1.5"
+                        title="Gérer les annotations"
+                      >
+                        <MessageSquare size={14} />
+                        {sectionAnnotations.length === 0 ? 'Annoter' : 'Voir'}
+                      </button>
+                    </div>
                   </div>
 
-                  {/* Three Columns */}
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 text-sm leading-relaxed">
+                  {/* Columns dynamiques */}
+                  <div className={`grid gap-8 lg:gap-12 text-sm leading-relaxed ${
+                    showItalian && showEnglish ? 'grid-cols-1 lg:grid-cols-3' :
+                    showItalian || showEnglish ? 'grid-cols-1 lg:grid-cols-2' :
+                    'grid-cols-1'
+                  }`}>
                     
-                    {/* 1. Italian (Original) */}
-                    <div>
-                      <h4 className="text-xs font-bold text-gray-900 mb-4 flex items-center gap-2 pb-2 border-b border-gray-100">
-                        Italien (Original)
-                      </h4>
-                      <div className="text-gray-800 font-medium font-serif text-base">
-                        <TextParser text={section.content.it} glossaryData={glossaryData} />
+                    {/* 1. Italian (Original) - Optionnel */}
+                    {showItalian && section.content.it && (
+                      <div>
+                        <h4 className="text-xs font-bold text-gray-900 mb-4 flex items-center gap-2 pb-2 border-b border-gray-100">
+                          Italien (original)
+                        </h4>
+                        <div className="text-gray-800 font-medium font-serif text-base">
+                          <TextParser text={section.content.it} glossaryData={glossaryData} />
+                        </div>
                       </div>
-                    </div>
+                    )}
 
-                    {/* 2. French */}
+                    {/* 2. French - Toujours affiché */}
                     <div>
                       <h4 className="text-xs font-bold text-gray-400 mb-4 flex items-center gap-2 pb-2 border-b border-gray-100">
                         Français
@@ -124,8 +218,9 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                       </div>
                     </div>
 
-                    {/* 3. English (Multi-source) */}
-                    <div>
+                    {/* 3. English (Multi-source) - Optionnel */}
+                    {showEnglish && (
+                      <div>
                       <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-100">
                         <h4 className="text-xs font-bold text-gray-400 flex items-center gap-2">
                           Anglais
@@ -160,10 +255,15 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                         )}
                       </div>
                       
-                      <div className="text-gray-600">
-                        <TextParser text={activeTranslation.text} glossaryData={glossaryData} />
+                        <div className="text-gray-600">
+                          {activeTranslation ? (
+                            <TextParser text={activeTranslation.text} glossaryData={glossaryData} />
+                          ) : (
+                            <p className="text-gray-400 italic">Traduction non disponible</p>
+                          )}
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                   </div>
                 </div>
@@ -172,6 +272,27 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
           </div>
         </div>
       </main>
+
+      {/* Panneau d'annotations */}
+      {annotationSection && (
+        <AnnotationPanel
+          sectionId={annotationSection}
+          onClose={() => setAnnotationSection(null)}
+          availableLanguages={
+            filteredContent.find(s => s.id === annotationSection)
+              ? [
+                  { code: 'it' as const, label: 'Italien' },
+                  { code: 'fr' as const, label: 'Français' },
+                  ...(filteredContent.find(s => s.id === annotationSection)?.content.en_versions || []).map(v => ({
+                    code: 'en' as const,
+                    label: `Anglais - ${v.translator}`,
+                    translator: v.translator
+                  }))
+                ]
+              : []
+          }
+        />
+      )}
     </div>
   );
 }
