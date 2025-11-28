@@ -3,10 +3,11 @@ import { loadTreatise } from '@/lib/dataLoader';
 
 export async function GET(
   request: Request,
-  { params }: { params: { filename: string } }
+  context: { params: Promise<{ filename: string }> }
 ) {
   try {
-    const treatise = loadTreatise(params.filename);
+    const { filename } = await context.params;
+    const treatise = loadTreatise(filename);
     return NextResponse.json(treatise);
   } catch (error) {
     return NextResponse.json(

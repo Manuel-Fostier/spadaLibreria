@@ -2,12 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
-import { Annotation } from '@/lib/dataLoader';
+import { Annotation } from '@/lib/annotation';
 
 const TREATISES_DIR = path.join(process.cwd(), 'data', 'treatises');
 
 interface AnnotationsMap {
-  [sectionId: string]: Annotation[];
+  [sectionId: string]: Annotation;
 }
 
 // POST - Sauvegarder toutes les annotations
@@ -25,14 +25,10 @@ export async function POST(request: NextRequest) {
 
       let modified = false;
 
-      // Mettre à jour chaque section avec ses annotations
+      // Mettre à jour chaque section avec son annotation unique
       for (const section of sections) {
         if (annotationsMap[section.id]) {
-          section.annotations = annotationsMap[section.id];
-          modified = true;
-        } else if (section.annotations) {
-          // Supprimer les annotations si elles n'existent plus
-          delete section.annotations;
+          section.annotation = annotationsMap[section.id];
           modified = true;
         }
       }
@@ -62,7 +58,7 @@ export async function POST(request: NextRequest) {
 // GET - Charger toutes les annotations (utilisé au démarrage)
 export async function GET() {
   try {
-    const annotationsMap: AnnotationsMap = {};
+    const annotationsMap: AnnotationsMap = {} as AnnotationsMap;
     const treatiseFiles = fs.readdirSync(TREATISES_DIR).filter(f => f.endsWith('.yaml'));
 
     for (const filename of treatiseFiles) {
@@ -71,8 +67,8 @@ export async function GET() {
       const sections = yaml.load(fileContents) as any[];
 
       for (const section of sections) {
-        if (section.annotations && Array.isArray(section.annotations)) {
-          annotationsMap[section.id] = section.annotations;
+        if (section.annotation) {
+          annotationsMap[section.id] = section.annotation as Annotation;
         }
       }
     }

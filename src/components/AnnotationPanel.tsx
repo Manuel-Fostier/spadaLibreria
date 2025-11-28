@@ -1,95 +1,92 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Plus, Edit2, Trash2, Tag, Save, MessageSquare } from 'lucide-react';
-import { Annotation } from '@/lib/dataLoader';
+import { X, Plus, Edit2, Save, MessageSquare } from 'lucide-react';
+import { Annotation, MEASURES, STRATEGIES, WEAPONS, GUARDS } from '@/lib/annotation';
 import { useAnnotations } from '@/contexts/AnnotationContext';
 
 interface AnnotationPanelProps {
   sectionId: string;
   onClose: () => void;
   availableLanguages: Array<{ code: 'it' | 'fr' | 'en', label: string, translator?: string }>;
+  sectionMeta?: { weapons: string[]; guards_mentioned?: string[]; techniques?: string[] };
 }
 
-export default function AnnotationPanel({ sectionId, onClose, availableLanguages }: AnnotationPanelProps) {
-  const { getAnnotationsForSection, addAnnotation, updateAnnotation, deleteAnnotation } = useAnnotations();
-  const annotations = getAnnotationsForSection(sectionId);
+export default function AnnotationPanel({ sectionId, onClose, availableLanguages, sectionMeta }: AnnotationPanelProps) {
+  const { getAnnotation, setAnnotation, updateAnnotation } = useAnnotations();
+  const annotation = getAnnotation(sectionId);
   
-  const [isAdding, setIsAdding] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     language: 'fr' as 'it' | 'fr' | 'en',
     translator: null as string | null,
     note: '',
-    tags: [] as string[],
+    weapons: [] as (typeof WEAPONS[number])[],
+    guards_mentioned: [] as (typeof GUARDS[number])[],
+    techniques: [] as string[],
+    measure: null as (typeof MEASURES[number]) | null,
+    strategy: [] as (typeof STRATEGIES[number])[],
   });
-  const [tagInput, setTagInput] = useState('');
+  const [techniqueInput, setTechniqueInput] = useState('');
 
-  const handleStartAdd = () => {
-    setIsAdding(true);
-    setEditingId(null);
-    setFormData({
-      language: 'fr',
-      translator: null,
-      note: '',
-      tags: [],
-    });
-  };
-
-  const handleEdit = (annotation: Annotation) => {
-    setEditingId(annotation.id);
-    setIsAdding(false);
-    setFormData({
-      language: annotation.language,
-      translator: annotation.translator,
-      note: annotation.note,
-      tags: annotation.tags,
-    });
+  const handleStartEdit = () => {
+    if (annotation) {
+      setIsEditing(true);
+      setFormData({
+        language: annotation.language,
+        translator: annotation.translator,
+        note: annotation.note,
+        weapons: annotation.weapons || [],
+        guards_mentioned: annotation.guards_mentioned || [],
+        techniques: annotation.techniques || [],
+        measure: annotation.measure,
+        strategy: annotation.strategy || [],
+      });
+    } else {
+      setIsEditing(true);
+      setFormData({
+        language: 'fr',
+        translator: null,
+        note: '',
+        weapons: [],
+        guards_mentioned: [],
+        techniques: [],
+        measure: null,
+        strategy: [],
+      });
+    }
   };
 
   const handleSave = async () => {
     if (!formData.note.trim()) return;
 
-    if (editingId) {
-      await updateAnnotation(sectionId, editingId, formData);
-      setEditingId(null);
+    if (annotation) {
+      await updateAnnotation(sectionId, formData);
     } else {
-      await addAnnotation(sectionId, {
-        ...formData,
-        updated_at: null
-      });
-      setIsAdding(false);
+      await setAnnotation(sectionId, formData);
     }
-
-    setFormData({ language: 'fr', translator: null, note: '', tags: [] });
+    
+    setIsEditing(false);
   };
 
   const handleCancel = () => {
-    setIsAdding(false);
-    setEditingId(null);
-    setFormData({ language: 'fr', translator: null, note: '', tags: [] });
+    setIsEditing(false);
   };
 
-  const handleDelete = async (annotationId: string) => {
-    if (confirm('Supprimer cette annotation ?')) {
-      await deleteAnnotation(sectionId, annotationId);
-    }
-  };
-
-  const handleAddTag = () => {
-    if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
+  const handleAddTechnique = () => {
+    if (techniqueInput.trim() && !formData.techniques.includes(techniqueInput.trim())) {
       setFormData(prev => ({
         ...prev,
-        tags: [...prev.tags, tagInput.trim()]
+        techniques: [...prev.techniques, techniqueInput.trim()]
       }));
-      setTagInput('');
+      setTechniqueInput('');
     }
   };
 
-  const handleRemoveTag = (tag: string) => {
+  const handleRemoveTechnique = (tech: string) => {
     setFormData(prev => ({
       ...prev,
-      tags: prev.tags.filter(t => t !== tag)
+      techniques: prev.techniques.filter(t => t !== tech)
     }));
   };
 
@@ -100,7 +97,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
       <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50">
         <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
           <MessageSquare size={20} className="text-indigo-600" />
-          Annotations ({annotations.length})
+          Annotation
         </h3>
         <button
           onClick={onClose}
@@ -114,12 +111,9 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
       {/* Contenu scrollable */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         
-        {/* Liste des annotations */}
-        {annotations.map(annotation => (
-          <div
-            key={annotation.id}
-            className="bg-gray-50 rounded-lg p-4 border border-gray-200 space-y-3"
-          >
+        {/* Display annotation if exists and not editing */}
+        {annotation && !isEditing && (
+          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 space-y-3">
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
@@ -132,51 +126,39 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                 <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">
                   {annotation.note}
                 </p>
+                {/* Metadata chips from annotation */}
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {(annotation.weapons || []).map(w => (
+                    <span key={`w-${w}`} className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full">⚔️ {w}</span>
+                  ))}
+                  {(annotation.guards_mentioned || []).map(g => (
+                    <span key={`g-${g}`} className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full">🛡️ {g}</span>
+                  ))}
+                  {(annotation.techniques || []).map(t => (
+                    <span key={`t-${t}`} className="text-xs px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full">⚡ {t}</span>
+                  ))}
+                  {annotation.measure && (
+                    <span className="text-xs px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full">📏 {annotation.measure}</span>
+                  )}
+                  {(annotation.strategy || []).map(s => (
+                    <span key={`s-${s}`} className="text-xs px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded-full">🎯 {s}</span>
+                  ))}
+                </div>
               </div>
               <div className="flex gap-1">
                 <button
-                  onClick={() => handleEdit(annotation)}
+                  onClick={handleStartEdit}
                   className="p-1.5 hover:bg-gray-200 rounded transition-colors"
                   title="Éditer"
                 >
                   <Edit2 size={14} className="text-gray-600" />
                 </button>
-                <button
-                  onClick={() => handleDelete(annotation.id)}
-                  className="p-1.5 hover:bg-red-100 rounded transition-colors"
-                  title="Supprimer"
-                >
-                  <Trash2 size={14} className="text-red-600" />
-                </button>
               </div>
-            </div>
-
-            {annotation.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1.5">
-                {annotation.tags.map(tag => (
-                  <span
-                    key={tag}
-                    className="text-xs px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded-full"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            <div className="text-xs text-gray-400">
-              {new Date(annotation.created_at).toLocaleDateString('fr-FR', {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              })}
             </div>
           </div>
-        ))}
+        )}
 
-        {annotations.length === 0 && !isAdding && (
+        {!annotation && !isEditing && (
           <div className="text-center text-gray-400 py-12">
             <MessageSquare size={48} className="mx-auto mb-3 opacity-30" />
             <p className="text-sm">Aucune annotation pour cette section</p>
@@ -184,7 +166,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
         )}
 
         {/* Formulaire d'ajout/édition */}
-        {(isAdding || editingId) && (
+        {isEditing && (
           <div className="bg-indigo-50 rounded-lg p-4 border-2 border-indigo-200 space-y-3">
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">
@@ -205,6 +187,140 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
 
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Mesure
+              </label>
+              <select
+                value={formData.measure ?? ''}
+                onChange={(e) => setFormData(prev => ({ ...prev, measure: e.target.value ? (e.target.value as typeof MEASURES[number]) : null }))}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              >
+                <option value="">Sélectionner une mesure (optionnel)</option>
+                {MEASURES.map(m => (
+                  <option key={m} value={m}>{m}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Stratégie
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {STRATEGIES.map(s => {
+                  const active = formData.strategy.includes(s);
+                  return (
+                    <button
+                      type="button"
+                      key={s}
+                      onClick={() => setFormData(prev => ({
+                        ...prev,
+                        strategy: active
+                          ? prev.strategy.filter(x => x !== s)
+                          : [...prev.strategy, s]
+                      }))}
+                      className={`text-xs px-2 py-1 rounded-full border ${active ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'}`}
+                    >
+                      {s}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Armes
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {WEAPONS.map(w => {
+                  const active = formData.weapons.includes(w);
+                  return (
+                    <button
+                      type="button"
+                      key={w}
+                      onClick={() => setFormData(prev => ({
+                        ...prev,
+                        weapons: active
+                          ? prev.weapons.filter(x => x !== w)
+                          : [...prev.weapons, w]
+                      }))}
+                      className={`text-xs px-2 py-1 rounded-full border ${active ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'}`}
+                    >
+                      {w}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Gardes mentionnées
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {GUARDS.map(g => {
+                  const active = formData.guards_mentioned.includes(g);
+                  return (
+                    <button
+                      type="button"
+                      key={g}
+                      onClick={() => setFormData(prev => ({
+                        ...prev,
+                        guards_mentioned: active
+                          ? prev.guards_mentioned.filter(x => x !== g)
+                          : [...prev.guards_mentioned, g]
+                      }))}
+                      className={`text-xs px-2 py-1 rounded-full border ${active ? 'bg-green-600 text-white border-green-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'}`}
+                    >
+                      {g}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Techniques
+              </label>
+              <div className="flex gap-2 mb-2">
+                <input
+                  type="text"
+                  value={techniqueInput}
+                  onChange={(e) => setTechniqueInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTechnique())}
+                  placeholder="Ajouter une technique"
+                  className="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                />
+                <button
+                  onClick={handleAddTechnique}
+                  className="px-3 py-1.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm"
+                >
+                  +
+                </button>
+              </div>
+              {formData.techniques.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  {formData.techniques.map(tech => (
+                    <span
+                      key={tech}
+                      className="text-xs px-2 py-1 bg-purple-600 text-white rounded-full flex items-center gap-1"
+                    >
+                      {tech}
+                      <button
+                        onClick={() => handleRemoveTechnique(tech)}
+                        className="hover:bg-purple-700 rounded-full p-0.5"
+                      >
+                        <X size={12} />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
                 Note
               </label>
               <textarea
@@ -216,46 +332,6 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
               />
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">
-                Tags
-              </label>
-              <div className="flex gap-2 mb-2">
-                <input
-                  type="text"
-                  value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
-                  placeholder="Ajouter un tag"
-                  className="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                />
-                <button
-                  onClick={handleAddTag}
-                  className="px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm"
-                >
-                  <Tag size={16} />
-                </button>
-              </div>
-              {formData.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1.5">
-                  {formData.tags.map(tag => (
-                    <span
-                      key={tag}
-                      className="text-xs px-2 py-1 bg-indigo-600 text-white rounded-full flex items-center gap-1"
-                    >
-                      {tag}
-                      <button
-                        onClick={() => handleRemoveTag(tag)}
-                        className="hover:bg-indigo-700 rounded-full p-0.5"
-                      >
-                        <X size={12} />
-                      </button>
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-
             <div className="flex gap-2">
               <button
                 onClick={handleSave}
@@ -263,7 +339,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                 className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium flex items-center justify-center gap-2"
               >
                 <Save size={16} />
-                {editingId ? 'Mettre à jour' : 'Enregistrer'}
+                {annotation ? 'Mettre à jour' : 'Enregistrer'}
               </button>
               <button
                 onClick={handleCancel}
@@ -276,11 +352,11 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
         )}
       </div>
 
-      {/* Pied - Bouton d'ajout */}
-      {!isAdding && !editingId && (
+      {/* Pied - Bouton d'ajout/édition */}
+      {!annotation && !isEditing && (
         <div className="p-4 border-t border-gray-200 bg-gray-50">
           <button
-            onClick={handleStartAdd}
+            onClick={handleStartEdit}
             className="w-full px-4 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium flex items-center justify-center gap-2"
           >
             <Plus size={20} />

@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
+import { Annotation, MEASURES, STRATEGIES } from '@/lib/annotation';
 
 export interface GlossaryEntry {
   term: string;
@@ -24,15 +25,7 @@ export interface EnglishVersion {
   text: string;
 }
 
-export interface Annotation {
-  id: string;
-  language: 'it' | 'fr' | 'en';
-  translator: string | null;
-  note: string;
-  tags: string[];
-  created_at: string;
-  updated_at: string | null;
-}
+// Annotation type is defined in ./annotation to avoid client bundling fs
 
 export interface TreatiseSection {
   id: string;
@@ -52,7 +45,7 @@ export interface TreatiseSection {
     fr: string;
     en_versions: EnglishVersion[];
   };
-  annotations?: Annotation[];
+  annotation?: Annotation;
 }
 
 export function loadGlossary(): GlossaryData {
@@ -71,3 +64,6 @@ export function getAllTreatises(): string[] {
   const treatisesDir = path.join(process.cwd(), 'data', 'treatises');
   return fs.readdirSync(treatisesDir).filter(file => file.endsWith('.yaml'));
 }
+// Re-export constants and types for server-side consumers
+export { MEASURES, STRATEGIES };
+export type { Annotation };

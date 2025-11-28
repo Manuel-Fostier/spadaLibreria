@@ -23,7 +23,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   const [selectedWeapon, setSelectedWeapon] = useState('all');
   const [translatorPreferences, setTranslatorPreferences] = useState<{ [key: string]: string }>({});
   const [annotationSection, setAnnotationSection] = useState<string | null>(null);
-  const { getAnnotationsForSection, saveToServer } = useAnnotations();
+  const { getAnnotation, saveToServer } = useAnnotations();
   const [isSaving, setIsSaving] = useState(false);
   const [showItalian, setShowItalian] = useState(false);
   const [showEnglish, setShowEnglish] = useState(false);
@@ -37,10 +37,18 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
 
   const filteredContent = useMemo(() => {
     return treatiseData.filter(item => {
-      const matchWeapon = selectedWeapon === 'all' || item.metadata.weapons.includes(selectedWeapon);
-      return matchWeapon;
+      if (selectedWeapon === 'all') return true;
+      
+      // Check annotation weapons if annotation exists
+      const annotation = getAnnotation(item.id);
+      if (annotation && annotation.weapons) {
+        return annotation.weapons.includes(selectedWeapon as any);
+      }
+      
+      // Fallback to metadata weapons if no annotation
+      return item.metadata.weapons.includes(selectedWeapon);
     });
-  }, [selectedWeapon, treatiseData]);
+  }, [selectedWeapon, treatiseData, getAnnotation]);
 
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans flex flex-col md:flex-row antialiased">
@@ -146,7 +154,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                 ? (englishVersions.find(v => v.translator === selectedTransName) || englishVersions[0])
                 : null;
 
-              const sectionAnnotations = getAnnotationsForSection(section.id);
+              const sectionAnnotation = getAnnotation(section.id);
               const availableLanguages = [
                 { code: 'it' as const, label: 'Italien' },
                 { code: 'fr' as const, label: 'Français' },
@@ -169,24 +177,15 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                       <h2 className="text-2xl font-bold text-gray-900 leading-tight">{section.title}</h2>
                     </div>
                     
-                    {/* Boutons d'action */}
-                    <div className="flex items-center gap-3">
-                      {sectionAnnotations.length > 0 && (
-                        <AnnotationBadge
-                          count={sectionAnnotations.length}
-                          annotations={sectionAnnotations}
-                          onClick={() => setAnnotationSection(section.id)}
-                        />
-                      )}
-                      <button
-                        onClick={() => setAnnotationSection(section.id)}
-                        className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors text-xs font-medium flex items-center gap-1.5"
-                        title="Gérer les annotations"
-                      >
-                        <MessageSquare size={14} />
-                        {sectionAnnotations.length === 0 ? 'Annoter' : 'Voir'}
-                      </button>
-                    </div>
+                    {/* Bouton d'annotation */}
+                    <button
+                      onClick={() => setAnnotationSection(annotationSection === section.id ? null : section.id)}
+                      className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors text-xs font-medium flex items-center gap-1.5"
+                      title="Gérer les annotations"
+                    >
+                      <MessageSquare size={14} />
+                      Annotation
+                    </button>
                   </div>
 
                   {/* Columns dynamiques */}

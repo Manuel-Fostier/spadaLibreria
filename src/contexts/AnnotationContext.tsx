@@ -1,21 +1,69 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Annotation } from '@/lib/dataLoader';
+import { Annotation, MEASURES, STRATEGIES, WEAPONS, GUARDS, Measure, Strategy, Weapon, Guard } from '@/lib/annotation';
 
 interface AnnotationContextType {
-  annotations: Map<string, Annotation[]>;
-  addAnnotation: (sectionId: string, annotation: Omit<Annotation, 'id' | 'created_at'>) => Promise<void>;
-  updateAnnotation: (sectionId: string, annotationId: string, updates: Partial<Annotation>) => Promise<void>;
-  deleteAnnotation: (sectionId: string, annotationId: string) => Promise<void>;
-  getAnnotationsForSection: (sectionId: string) => Annotation[];
+  annotations: Map<string, Annotation>;
+  setAnnotation: (sectionId: string, annotation: Omit<Annotation, 'id'>) => Promise<void>;
+  updateAnnotation: (sectionId: string, updates: Partial<Annotation>) => Promise<void>;
+  getAnnotation: (sectionId: string) => Annotation | undefined;
   saveToServer: () => Promise<void>;
 }
 
 const AnnotationContext = createContext<AnnotationContextType | undefined>(undefined);
 
-export function AnnotationProvider({ children, initialAnnotations }: { children: ReactNode, initialAnnotations: Map<string, Annotation[]> }) {
-  const [annotations, setAnnotations] = useState<Map<string, Annotation[]>>(initialAnnotations);
+export function AnnotationProvider({ children, initialAnnotations }: { children: ReactNode, initialAnnotations: Map<string, Annotation> }) {
+  const normalizeAnnotation = (ann: Annotation): Annotation => {
+    const validMeasure = ann.measure === null || MEASURES.includes(ann.measure as Measure)
+      ? ann.measure
+      : null;
+    const validStrategies = Array.isArray(ann.strategy)
+      ? Array.from(new Set(
+          ann.strategy.filter((s): s is Strategy => STRATEGIES.includes(s as Strategy))
+        ))
+      : [];
+    const validWeapons = Array.isArray(ann.weapons)
+      ? Array.from(new Set(
+          ann.weapons.filter((w): w is Weapon => WEAPONS.includes(w as Weapon))
+        ))
+      : [];
+    const validGuards = Array.isArray(ann.guards_mentioned)
+      ? Array.from(new Set(
+          ann.guards_mentioned.filter((g): g is Guard => GUARDS.includes(g as Guard))
+        ))
+      : [];
+    const validTechniques = Array.isArray(ann.techniques)
+      ? Array.from(new Set(ann.techniques.filter((t): t is string => typeof t === 'string')))
+      : [];
+    return { 
+      ...ann, 
+      measure: validMeasure, 
+      strategy: validStrategies,
+      weapons: validWeapons,
+      guards_mentioned: validGuards,
+      techniques: validTechniques
+    };
+  };
+
+  const normalizeMap = (map: Map<string, Annotation>): Map<string, Annotation> => {
+    const newMap = new Map<string, Annotation>();
+    map.forEach((ann, key) => {
+      const normalized = normalizeAnnotation({
+        // provide defaults for legacy annotations
+        ...ann,
+        measure: ann.measure ?? null,
+        strategy: ann.strategy ?? [],
+        weapons: ann.weapons ?? [],
+        guards_mentioned: ann.guards_mentioned ?? [],
+        techniques: ann.techniques ?? [],
+      } as Annotation);
+      newMap.set(key, normalized);
+    });
+    return newMap;
+  };
+
+  const [annotations, setAnnotations] = useState<Map<string, Annotation>>(normalizeMap(initialAnnotations));
 
   // Charger depuis localStorage au montage
   useEffect(() => {
@@ -23,8 +71,8 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        const map = new Map<string, Annotation[]>(Object.entries(parsed));
-        setAnnotations(map);
+        const map = new Map<string, Annotation>(Object.entries(parsed));
+        setAnnotations(normalizeMap(map));
       } catch (e) {
         console.error('Failed to load annotations from localStorage:', e);
       }
@@ -37,52 +85,66 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
     localStorage.setItem('treatise_annotations', JSON.stringify(obj));
   }, [annotations]);
 
-  const addAnnotation = async (sectionId: string, annotation: Omit<Annotation, 'id' | 'created_at'>) => {
+  const setAnnotation = async (sectionId: string, annotation: Omit<Annotation, 'id'>) => {
     const newAnnotation: Annotation = {
       ...annotation,
+      // validate measure against allowed values and provide default
+      measure: annotation.measure && MEASURES.includes(annotation.measure as Measure) ? annotation.measure : null,
+      // normalize strategy to allowed set and unique
+      strategy: Array.isArray(annotation.strategy) ? Array.from(new Set(
+        annotation.strategy.filter((s): s is Strategy => STRATEGIES.includes(s as Strategy))
+      )) : [],
+      // normalize weapons
+      weapons: Array.isArray(annotation.weapons) ? Array.from(new Set(
+        annotation.weapons.filter((w): w is Weapon => WEAPONS.includes(w as Weapon))
+      )) : [],
+      // normalize guards
+      guards_mentioned: Array.isArray(annotation.guards_mentioned) ? Array.from(new Set(
+        annotation.guards_mentioned.filter((g): g is Guard => GUARDS.includes(g as Guard))
+      )) : [],
+      // normalize techniques
+      techniques: Array.isArray(annotation.techniques) ? Array.from(new Set(
+        annotation.techniques.filter((t): t is string => typeof t === 'string')
+      )) : [],
       id: `anno_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      created_at: new Date().toISOString(),
-      updated_at: null,
     };
 
     setAnnotations(prev => {
       const newMap = new Map(prev);
-      const existing = newMap.get(sectionId) || [];
-      newMap.set(sectionId, [...existing, newAnnotation]);
+      newMap.set(sectionId, newAnnotation);
       return newMap;
     });
   };
 
-  const updateAnnotation = async (sectionId: string, annotationId: string, updates: Partial<Annotation>) => {
+  const updateAnnotation = async (sectionId: string, updates: Partial<Annotation>) => {
     setAnnotations(prev => {
       const newMap = new Map(prev);
-      const existing = newMap.get(sectionId) || [];
-      const updated = existing.map(ann => 
-        ann.id === annotationId 
-          ? { ...ann, ...updates, updated_at: new Date().toISOString() }
-          : ann
-      );
-      newMap.set(sectionId, updated);
+      const existing = newMap.get(sectionId);
+      if (!existing) return prev;
+      
+      const merged = { ...existing, ...updates } as Annotation;
+      // normalize new fields
+      const measure = merged.measure && MEASURES.includes(merged.measure as Measure) ? merged.measure : null;
+      const strategy = Array.isArray(merged.strategy) ? Array.from(new Set(
+        merged.strategy.filter((s): s is Strategy => STRATEGIES.includes(s as Strategy))
+      )) : [];
+      const weapons = Array.isArray(merged.weapons) ? Array.from(new Set(
+        merged.weapons.filter((w): w is Weapon => WEAPONS.includes(w as Weapon))
+      )) : [];
+      const guards_mentioned = Array.isArray(merged.guards_mentioned) ? Array.from(new Set(
+        merged.guards_mentioned.filter((g): g is Guard => GUARDS.includes(g as Guard))
+      )) : [];
+      const techniques = Array.isArray(merged.techniques) ? Array.from(new Set(
+        merged.techniques.filter((t): t is string => typeof t === 'string')
+      )) : [];
+      
+      newMap.set(sectionId, { ...merged, measure, strategy, weapons, guards_mentioned, techniques });
       return newMap;
     });
   };
 
-  const deleteAnnotation = async (sectionId: string, annotationId: string) => {
-    setAnnotations(prev => {
-      const newMap = new Map(prev);
-      const existing = newMap.get(sectionId) || [];
-      const filtered = existing.filter(ann => ann.id !== annotationId);
-      if (filtered.length === 0) {
-        newMap.delete(sectionId);
-      } else {
-        newMap.set(sectionId, filtered);
-      }
-      return newMap;
-    });
-  };
-
-  const getAnnotationsForSection = (sectionId: string): Annotation[] => {
-    return annotations.get(sectionId) || [];
+  const getAnnotation = (sectionId: string): Annotation | undefined => {
+    return annotations.get(sectionId);
   };
 
   const saveToServer = async () => {
@@ -105,10 +167,9 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
   return (
     <AnnotationContext.Provider value={{
       annotations,
-      addAnnotation,
+      setAnnotation,
       updateAnnotation,
-      deleteAnnotation,
-      getAnnotationsForSection,
+      getAnnotation,
       saveToServer,
     }}>
       {children}

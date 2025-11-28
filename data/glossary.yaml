@@ -1,3 +1,6 @@
+###########################################################################################
+# Les Coups et Techniques
+###########################################################################################
 mandritto:
   term: Mandritto
   type: Attaque / Frappe de taille
@@ -46,6 +49,34 @@ stoccatta:
     fr: Estocade
     en: Thrust
 
+legare:
+  term: Legare
+  type: Tactique / Technique
+  definition:
+    fr: |
+      Action de contrôler la lame adverse par contact et pression, permettant de dominer le fer.
+    en: |
+      Action of controlling the opponent's blade through contact and pressure, allowing to dominate the steel.
+  translation:
+    fr: Lier
+    en: To bind
+
+passare:
+  term: Passare
+  type: Mouvement / Déplacement
+  definition:
+    fr: |
+      Passer, avancer en faisant un pas. Souvent accompagné d'une attaque ou d'une défense.
+    en: |
+      To pass, advance by taking a step. Often accompanied by an attack or defense.
+  translation:
+    fr: Passer
+    en: To pass
+
+###########################################################################################
+# Les Guardes
+###########################################################################################
+
 coda_longa:
   term: Coda Longa
   type: Garde
@@ -82,26 +113,6 @@ guardia_alta:
     fr: Garde haute
     en: High guard
 
-legare:
-  term: Legare
-  type: Tactique / Technique
-  definition:
-    fr: |
-      Action de contrôler la lame adverse par contact et pression, permettant de dominer le fer.
-    en: |
-      Action of controlling the opponent's blade through contact and pressure, allowing to dominate the steel.
-  translation:
-    fr: Lier
-    en: To bind
 
-passare:
-  term: Passare
-  type: Mouvement / Déplacement
-  definition:
-    fr: |
-      Passer, avancer en faisant un pas. Souvent accompagné d'une attaque ou d'une défense.
-    en: |
-      To pass, advance by taking a step. Often accompanied by an attack or defense.
-  translation:
-    fr: Passer
-    en: To pass
+
+
