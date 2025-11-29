@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Script de démarrage pour Ars Dimicatoria
+# Script de démarrage pour Spada Libreria
 
-echo "🎭 Ars Dimicatoria - Setup"
+echo "🎭 Spada Libreria - Setup"
 echo "=========================="
 
 # Vérifier si Node.js est installé
