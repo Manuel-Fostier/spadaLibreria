@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Ars Dimicatoria - Traités d\'Escrime Bolonaise',
+  title: 'Spada Libreria - Traités d\'Escrime Bolonaise',
   description: 'Plateforme d\'étude des traités d\'escrime bolonaise avec glossaire interactif',
 };
 

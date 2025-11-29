@@ -1,4 +1,4 @@
-# Ars Dimicatoria v2.0
+# Spada Libreria
 
 ## 📖 Vue d'ensemble du Projet
 

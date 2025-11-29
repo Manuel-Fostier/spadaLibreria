@@ -1,6 +1,6 @@
 Spécifications Techniques : Architecture des Données & Externalisation
 
-Ce document définit la nouvelle structure de données pour la plateforme "Ars Dimicatoria". L'objectif est de séparer totalement le contenu du code pour faciliter la maintenance par des non-développeurs.
+Ce document définit la nouvelle structure de données pour la plateforme "Spada Libreria". L'objectif est de séparer totalement le contenu du code pour faciliter la maintenance par des non-développeurs.
 
 1. Choix du Format : YAML
 
