@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { BookOpen, ChevronRight, ChevronDown, Save, MessageSquare } from 'lucide-react';
+import { BookOpen, ChevronRight, ChevronDown, MessageSquare } from 'lucide-react';
 import TextParser from './TextParser';
-import AnnotationBadge from './AnnotationBadge';
 import AnnotationPanel from './AnnotationPanel';
 import { GlossaryEntry, TreatiseSection } from '@/lib/dataLoader';
 import { useAnnotations } from '@/contexts/AnnotationContext';
+import { Weapon } from '@/lib/annotation';
 
 interface BolognesePlatformProps {
   glossaryData: { [key: string]: GlossaryEntry };
@@ -23,8 +23,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   const [selectedWeapon, setSelectedWeapon] = useState('all');
   const [translatorPreferences, setTranslatorPreferences] = useState<{ [key: string]: string }>({});
   const [annotationSection, setAnnotationSection] = useState<string | null>(null);
-  const { getAnnotation, saveToServer } = useAnnotations();
-  const [isSaving, setIsSaving] = useState(false);
+  const { getAnnotation } = useAnnotations();
   const [showItalian, setShowItalian] = useState(false);
   const [showEnglish, setShowEnglish] = useState(false);
 
@@ -42,7 +41,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
       // Check annotation weapons
       const annotation = getAnnotation(item.id);
       if (annotation && annotation.weapons) {
-        return annotation.weapons.includes(selectedWeapon as any);
+        return annotation.weapons.includes(selectedWeapon as Weapon);
       }
       
       // No annotation, hide from filtered results
@@ -82,28 +81,6 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
               ))}
             </div>
           </div>
-        </div>
-
-        {/* Bouton de sauvegarde des annotations */}
-        <div className="p-4 border-t border-gray-100">
-          <button
-            onClick={async () => {
-              setIsSaving(true);
-              try {
-                await saveToServer();
-                alert('Annotations sauvegardées !');
-              } catch (error) {
-                alert('Erreur lors de la sauvegarde');
-              } finally {
-                setIsSaving(false);
-              }
-            }}
-            disabled={isSaving}
-            className="w-full px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm flex items-center justify-center gap-2 disabled:opacity-50"
-          >
-            <Save size={16} />
-            {isSaving ? 'Sauvegarde...' : 'Sauvegarder les annotations'}
-          </button>
         </div>
       </aside>
 
@@ -153,17 +130,6 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
               const activeTranslation = englishVersions.length > 0
                 ? (englishVersions.find(v => v.translator === selectedTransName) || englishVersions[0])
                 : null;
-
-              const sectionAnnotation = getAnnotation(section.id);
-              const availableLanguages = [
-                { code: 'it' as const, label: 'Italien' },
-                { code: 'fr' as const, label: 'Français' },
-                ...englishVersions.map(v => ({
-                  code: 'en' as const,
-                  label: `Anglais - ${v.translator}`,
-                  translator: v.translator
-                }))
-              ];
 
               return (
                 <div key={section.id} className="group">
@@ -277,19 +243,6 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
         <AnnotationPanel
           sectionId={annotationSection}
           onClose={() => setAnnotationSection(null)}
-          availableLanguages={
-            filteredContent.find(s => s.id === annotationSection)
-              ? [
-                  { code: 'it' as const, label: 'Italien' },
-                  { code: 'fr' as const, label: 'Français' },
-                  ...(filteredContent.find(s => s.id === annotationSection)?.content.en_versions || []).map(v => ({
-                    code: 'en' as const,
-                    label: `Anglais - ${v.translator}`,
-                    translator: v.translator
-                  }))
-                ]
-              : []
-          }
         />
       )}
     </div>

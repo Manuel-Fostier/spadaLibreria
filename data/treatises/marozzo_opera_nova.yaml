@@ -8,14 +8,16 @@
     year: 1536
   annotation:
     id: anno_1764360140997_0bxgxrgz2
-    note: ""
+    note: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
     weapons:
       - spada_brocchiero
     guards_mentioned:
       - coda_longa
     techniques: []
-    measure: null
-    strategy: []
+    measure: Presa
+    strategy:
+      - provocation
+      - invitation
   content:
     it: |
       Et nota che in questo mio principio io ti voglio mettere in guardia di {coda_longa} stretta, con il piede dritto inanzi, et la tua spada vada per fianco diritto de fuora, con la punta in terra, et il brochiero sia alto sopra il capo, con il braccio disteso.
