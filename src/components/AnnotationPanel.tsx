@@ -96,7 +96,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
   };
 
   return (
-    <div className="fixed inset-y-0 right-0 w-full md:w-96 bg-white shadow-2xl z-50 flex flex-col border-l border-gray-200">
+    <div className="w-full md:w-96 bg-white shadow-2xl flex flex-col border-l border-gray-200 flex-shrink-0 h-screen sticky top-0 overflow-hidden">
       
       {/* En-tête */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50">

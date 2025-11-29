@@ -108,7 +108,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
       </aside>
 
       {/* MAIN CONTENT */}
-      <main className="flex-1 flex flex-col h-screen overflow-hidden bg-white">
+      <main className="flex-1 min-w-0 flex flex-col h-screen overflow-hidden bg-white">
         <header className="h-20 bg-white flex items-center px-8 justify-between border-b border-gray-100 z-10">
           <div className="flex items-center text-sm text-gray-400 font-medium">
             <BookOpen size={16} className="mr-2" />
