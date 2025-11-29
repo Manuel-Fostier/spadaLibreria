@@ -1,32 +1,54 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { BookOpen, ChevronRight, ChevronDown, Save, MessageSquare } from 'lucide-react';
+import { BookOpen, ChevronRight, ChevronDown, Save, MessageSquare, X, Search } from 'lucide-react';
 import TextParser from './TextParser';
-import AnnotationBadge from './AnnotationBadge';
 import AnnotationPanel from './AnnotationPanel';
 import { GlossaryEntry, TreatiseSection } from '@/lib/dataLoader';
 import { useAnnotations } from '@/contexts/AnnotationContext';
+import { WEAPONS, Weapon } from '@/lib/annotation';
+import { AUTHORS, AUTHOR_LABELS, Author } from '@/lib/metadata';
 
 interface BolognesePlatformProps {
   glossaryData: { [key: string]: GlossaryEntry };
   treatiseData: TreatiseSection[];
 }
 
-const WEAPONS = [
-  { id: 'all', label: 'Toutes les armes' },
-  { id: 'spada_sola', label: 'Épée Seule' },
-  { id: 'spada_brocchiero', label: 'Épée et Bocle' },
-];
+// Labels for weapons display
+const WEAPON_LABELS: Record<Weapon | 'all', string> = {
+  'all': 'Toutes les armes',
+  'spada_sola': 'Épée Seule',
+  'spada_brocchiero': 'Épée et Bocle',
+  'spada_targa': 'Épée et Targe',
+  'spada_rotella': 'Épée et Rotella',
+  'spada_due_mani': 'Épée à deux mains',
+};
 
 export default function BolognesePlatform({ glossaryData, treatiseData }: BolognesePlatformProps) {
-  const [selectedWeapon, setSelectedWeapon] = useState('all');
+  const [selectedWeapon, setSelectedWeapon] = useState<Weapon | 'all'>('all');
+  const [selectedAuthor, setSelectedAuthor] = useState<Author | 'all'>('all');
+  const [searchTags, setSearchTags] = useState<string[]>([]);
+  const [searchInput, setSearchInput] = useState('');
   const [translatorPreferences, setTranslatorPreferences] = useState<{ [key: string]: string }>({});
   const [annotationSection, setAnnotationSection] = useState<string | null>(null);
   const { getAnnotation, saveToServer } = useAnnotations();
   const [isSaving, setIsSaving] = useState(false);
   const [showItalian, setShowItalian] = useState(false);
   const [showEnglish, setShowEnglish] = useState(false);
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchInput.trim()) {
+      const newTag = searchInput.trim().toLowerCase();
+      if (!searchTags.includes(newTag)) {
+        setSearchTags([...searchTags, newTag]);
+      }
+      setSearchInput('');
+    }
+  };
+
+  const removeSearchTag = (tagToRemove: string) => {
+    setSearchTags(searchTags.filter(tag => tag !== tagToRemove));
+  };
 
   const handleTranslatorChange = (sectionId: string, translatorName: string) => {
     setTranslatorPreferences(prev => ({
@@ -37,18 +59,40 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
 
   const filteredContent = useMemo(() => {
     return treatiseData.filter(item => {
-      if (selectedWeapon === 'all') return true;
-      
-      // Check annotation weapons
-      const annotation = getAnnotation(item.id);
-      if (annotation && annotation.weapons) {
-        return annotation.weapons.includes(selectedWeapon as any);
+      // Filter by weapon
+      if (selectedWeapon !== 'all') {
+        const annotation = getAnnotation(item.id);
+        if (!annotation || !annotation.weapons || !annotation.weapons.includes(selectedWeapon)) {
+          return false;
+        }
       }
       
-      // No annotation, hide from filtered results
-      return false;
+      // Filter by author
+      if (selectedAuthor !== 'all') {
+        if (item.metadata.master !== selectedAuthor) {
+          return false;
+        }
+      }
+      
+      // Filter by text search tags (AND logic - all tags must match)
+      if (searchTags.length > 0) {
+        const textContent = [
+          item.content.it || '',
+          item.content.fr || '',
+          ...(item.content.en_versions?.map(v => v.text) || []),
+          item.title || ''
+        ].join(' ').toLowerCase();
+        
+        for (const tag of searchTags) {
+          if (!textContent.includes(tag)) {
+            return false;
+          }
+        }
+      }
+      
+      return true;
     });
-  }, [selectedWeapon, treatiseData, getAnnotation]);
+  }, [selectedWeapon, selectedAuthor, searchTags, treatiseData, getAnnotation]);
 
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans flex flex-col md:flex-row antialiased">
@@ -63,24 +107,75 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
           <p className="text-xs text-gray-400 mt-2 font-medium pl-4">Platform v2.0</p>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-8">
+        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6">
+          {/* Advanced Text Search */}
           <div>
-            <h3 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-4">Filtres</h3>
-            <div className="space-y-1">
-              {WEAPONS.map(weapon => (
-                <button 
-                  key={weapon.id}
-                  onClick={() => setSelectedWeapon(weapon.id)} 
-                  className={`w-full text-left px-4 py-2.5 text-sm rounded transition-all ${
-                    selectedWeapon === weapon.id 
-                      ? 'bg-indigo-50 text-indigo-700 font-bold' 
-                      : 'text-gray-600 hover:bg-gray-50'
-                  }`}
-                >
-                  {weapon.label}
-                </button>
-              ))}
+            <h3 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-3">Recherche avancée</h3>
+            <div className="relative">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={handleSearchKeyDown}
+                placeholder="Rechercher dans le texte..."
+                className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              />
             </div>
+            {/* Search tags */}
+            {searchTags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-3">
+                {searchTags.map(tag => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center gap-1 px-2 py-1 bg-indigo-100 text-indigo-700 text-xs rounded-full"
+                  >
+                    {tag}
+                    <button
+                      onClick={() => removeSearchTag(tag)}
+                      className="hover:bg-indigo-200 rounded-full p-0.5"
+                      title="Supprimer"
+                    >
+                      <X size={12} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Weapon Filter */}
+          <div>
+            <h3 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-3">Armes</h3>
+            <select
+              value={selectedWeapon}
+              onChange={(e) => setSelectedWeapon(e.target.value as Weapon | 'all')}
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            >
+              <option value="all">{WEAPON_LABELS['all']}</option>
+              {WEAPONS.map(weapon => (
+                <option key={weapon} value={weapon}>
+                  {WEAPON_LABELS[weapon]}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Author Filter */}
+          <div>
+            <h3 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-3">Auteurs</h3>
+            <select
+              value={selectedAuthor}
+              onChange={(e) => setSelectedAuthor(e.target.value as Author | 'all')}
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            >
+              <option value="all">Tous les auteurs</option>
+              {AUTHORS.map(author => (
+                <option key={author} value={author}>
+                  {AUTHOR_LABELS[author]}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
