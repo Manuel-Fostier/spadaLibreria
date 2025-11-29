@@ -244,13 +244,13 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
             </div>
           )}
 
-          {/* All metadata sections (always visible) */}
-          {(annotation || isEditing) && (
+          {/* All metadata sections (read mode only) */}
+          {annotation && !isEditing && (
             <div className="space-y-4">
               {/* Armes */}
               <div>
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Armes utilisées</h4>
-                {annotation?.weapons && annotation.weapons.length > 0 && !isEditing ? (
+                {annotation.weapons && annotation.weapons.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {annotation.weapons.map(w => (
                       <span key={w} className="text-xs px-3 py-1.5 rounded-full bg-blue-100 text-blue-700">
@@ -258,27 +258,27 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
                       </span>
                     ))}
                   </div>
-                ) : !isEditing ? (
+                ) : (
                   <p className="text-sm text-gray-400 italic">Arme non définie</p>
-                ) : null}
+                )}
               </div>
 
               {/* Mesure */}
               <div>
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Mesure</h4>
-                {annotation?.measure && !isEditing ? (
+                {annotation.measure ? (
                   <span className="text-xs px-3 py-1.5 bg-amber-100 text-amber-700 rounded-full inline-block">
                     {annotation.measure}
                   </span>
-                ) : !isEditing ? (
+                ) : (
                   <p className="text-sm text-gray-400 italic">Aucune mesure indiquée</p>
-                ) : null}
+                )}
               </div>
 
               {/* Stratégie */}
               <div>
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Stratégie</h4>
-                {annotation?.strategy && annotation.strategy.length > 0 && !isEditing ? (
+                {annotation.strategy && annotation.strategy.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {annotation.strategy.map(s => (
                       <span key={s} className="text-xs px-3 py-1.5 rounded-full bg-indigo-100 text-indigo-700">
@@ -286,15 +286,15 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
                       </span>
                     ))}
                   </div>
-                ) : !isEditing ? (
+                ) : (
                   <p className="text-sm text-gray-400 italic">Aucune stratégie indiquée</p>
-                ) : null}
+                )}
               </div>
 
               {/* Gardes */}
               <div>
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Gardes mentionnées</h4>
-                {annotation?.guards_mentioned && annotation.guards_mentioned.length > 0 && !isEditing ? (
+                {annotation.guards_mentioned && annotation.guards_mentioned.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {annotation.guards_mentioned.map(g => (
                       <span key={g} className="text-xs px-3 py-1.5 rounded-full bg-green-100 text-green-700">
@@ -302,15 +302,15 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
                       </span>
                     ))}
                   </div>
-                ) : !isEditing ? (
+                ) : (
                   <p className="text-sm text-gray-400 italic">Aucune garde indiquée</p>
-                ) : null}
+                )}
               </div>
 
               {/* Techniques */}
               <div>
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Techniques</h4>
-                {annotation?.techniques && annotation.techniques.length > 0 && !isEditing ? (
+                {annotation.techniques && annotation.techniques.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {annotation.techniques.map(t => (
                       <span key={t} className="text-xs px-3 py-1.5 rounded-full bg-purple-100 text-purple-700">
@@ -318,19 +318,19 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
                       </span>
                     ))}
                   </div>
-                ) : !isEditing ? (
+                ) : (
                   <p className="text-sm text-gray-400 italic">Aucune technique indiquée</p>
-                ) : null}
+                )}
               </div>
 
               {/* Note */}
               <div>
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Note</h4>
-                {annotation?.note && !isEditing ? (
+                {annotation.note ? (
                   <p className="text-sm text-gray-700 whitespace-pre-wrap">{annotation.note}</p>
-                ) : !isEditing ? (
+                ) : (
                   <p className="text-sm text-gray-400 italic">Aucune note</p>
-                ) : null}
+                )}
               </div>
             </div>
           )}
@@ -341,9 +341,9 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
               
               {/* Armes */}
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-2">
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
                   Armes utilisées
-                </label>
+                </h4>
                 <div className="flex flex-wrap gap-2">
                   {WEAPONS.map(w => {
                     const active = formData.weapons?.includes(w);
@@ -372,9 +372,9 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
 
               {/* Mesure */}
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-2">
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
                   Mesure
-                </label>
+                </h4>
                 <select
                   value={formData.measure ?? ''}
                   onChange={(e) => setFormData(prev => ({ 
@@ -392,9 +392,9 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
 
               {/* Stratégie */}
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-2">
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
                   Stratégie
-                </label>
+                </h4>
                 <div className="flex flex-wrap gap-2">
                   {STRATEGIES.map(s => {
                     const active = formData.strategy?.includes(s);
@@ -423,9 +423,9 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
 
               {/* Gardes */}
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-2">
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
                   Gardes mentionnées
-                </label>
+                </h4>
                 <div className="flex flex-wrap gap-2">
                   {GUARDS.map(g => {
                     const active = formData.guards_mentioned?.includes(g);
@@ -454,9 +454,9 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
 
               {/* Techniques */}
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-2">
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
                   Techniques
-                </label>
+                </h4>
                 <div className="flex gap-2 mb-2">
                   <input
                     type="text"
@@ -495,9 +495,9 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
 
               {/* Note */}
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-2">
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
                   Note
-                </label>
+                </h4>
                 <textarea
                   value={formData.note}
                   onChange={(e) => setFormData(prev => ({ ...prev, note: e.target.value }))}
