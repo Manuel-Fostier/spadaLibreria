@@ -57,10 +57,10 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
       <aside className="w-full md:w-72 bg-white border-r border-gray-100 flex-shrink-0 flex flex-col h-screen sticky top-0 z-20">
         <div className="p-8 pb-4">
           <h1 className="text-xl font-bold text-black tracking-tight flex items-center gap-2">
-            <div className="w-2 h-6 bg-indigo-600"></div>
-            ARS DIMICATORIA
+            <div className="w-2 h-6 bg-indigo-600"></div>            
+            SPADA LIBRERIA
           </h1>
-          <p className="text-xs text-gray-400 mt-2 font-medium pl-4">Platform v2.0</p>
+          <p className="text-xs text-gray-400 mt-2 font-medium pl-4">Platform v1.0</p>
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-8">
@@ -108,7 +108,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
       </aside>
 
       {/* MAIN CONTENT */}
-      <main className="flex-1 flex flex-col h-screen overflow-hidden bg-white">
+      <main className="flex-1 min-w-0 flex flex-col h-screen overflow-hidden bg-white">
         <header className="h-20 bg-white flex items-center px-8 justify-between border-b border-gray-100 z-10">
           <div className="flex items-center text-sm text-gray-400 font-medium">
             <BookOpen size={16} className="mr-2" />
