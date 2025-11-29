@@ -110,6 +110,7 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
     } else {
       await setAnnotation(sectionId, formData);
     }
+    
     setIsEditing(false);
   };
 

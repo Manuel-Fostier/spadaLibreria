@@ -6,7 +6,6 @@ import TextParser from './TextParser';
 import AnnotationPanel from './AnnotationPanel';
 import { GlossaryEntry, TreatiseSection } from '@/lib/dataLoader';
 import { useAnnotations } from '@/contexts/AnnotationContext';
-
 import { Weapon } from '@/lib/annotation';
 
 interface BolognesePlatformProps {
