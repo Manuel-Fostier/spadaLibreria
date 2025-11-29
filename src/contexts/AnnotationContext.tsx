@@ -13,11 +13,25 @@ interface AnnotationContextType {
 
 const AnnotationContext = createContext<AnnotationContextType | undefined>(undefined);
 
+// Extended type to handle legacy 'measure' field during migration
+interface LegacyAnnotation extends Omit<Annotation, 'measures'> {
+  measure?: Measure | null;
+  measures?: Measure[] | null;
+}
+
 export function AnnotationProvider({ children, initialAnnotations }: { children: ReactNode, initialAnnotations: Map<string, Annotation> }) {
-  const normalizeAnnotation = (ann: Annotation): Annotation => {
-    const validMeasure = ann.measure === null || MEASURES.includes(ann.measure as Measure)
-      ? ann.measure
-      : null;
+  const normalizeAnnotation = (ann: LegacyAnnotation): Annotation => {
+    // Handle migration from single 'measure' to 'measures' array
+    let validMeasures: Measure[] = [];
+    if (Array.isArray(ann.measures)) {
+      validMeasures = Array.from(new Set(
+        ann.measures.filter((m): m is Measure => MEASURES.includes(m as Measure))
+      ));
+    } else if (ann.measure && MEASURES.includes(ann.measure as Measure)) {
+      // Migrate single measure to array
+      validMeasures = [ann.measure as Measure];
+    }
+    
     const validStrategies = Array.isArray(ann.strategy)
       ? Array.from(new Set(
           ann.strategy.filter((s): s is Strategy => STRATEGIES.includes(s as Strategy))
@@ -36,14 +50,18 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
     const validTechniques = Array.isArray(ann.techniques)
       ? Array.from(new Set(ann.techniques.filter((t): t is string => typeof t === 'string')))
       : [];
+    
+    // Create new annotation without the legacy 'measure' field
+    const { measure: _measure, ...rest } = ann as LegacyAnnotation & { measure?: Measure | null };
+    
     return { 
-      ...ann, 
-      measure: validMeasure, 
+      ...rest, 
+      measures: validMeasures,
       strategy: validStrategies,
       weapons: validWeapons,
       guards_mentioned: validGuards,
       techniques: validTechniques
-    };
+    } as Annotation;
   };
 
   const normalizeMap = (map: Map<string, Annotation>): Map<string, Annotation> => {
@@ -52,12 +70,12 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
       const normalized = normalizeAnnotation({
         // provide defaults for legacy annotations
         ...ann,
-        measure: ann.measure ?? null,
+        measures: (ann as LegacyAnnotation).measures ?? [],
         strategy: ann.strategy ?? [],
         weapons: ann.weapons ?? [],
         guards_mentioned: ann.guards_mentioned ?? [],
         techniques: ann.techniques ?? [],
-      } as Annotation);
+      } as LegacyAnnotation);
       newMap.set(key, normalized);
     });
     return newMap;
@@ -95,8 +113,10 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
   const setAnnotation = async (sectionId: string, annotation: Omit<Annotation, 'id'>) => {
     const newAnnotation: Annotation = {
       ...annotation,
-      // validate measure against allowed values and provide default
-      measure: annotation.measure && MEASURES.includes(annotation.measure as Measure) ? annotation.measure : null,
+      // validate measures against allowed values
+      measures: Array.isArray(annotation.measures) ? Array.from(new Set(
+        annotation.measures.filter((m): m is Measure => MEASURES.includes(m as Measure))
+      )) : [],
       // normalize strategy to allowed set and unique
       strategy: Array.isArray(annotation.strategy) ? Array.from(new Set(
         annotation.strategy.filter((s): s is Strategy => STRATEGIES.includes(s as Strategy))
@@ -131,7 +151,9 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
       
       const merged = { ...existing, ...updates } as Annotation;
       // normalize new fields
-      const measure = merged.measure && MEASURES.includes(merged.measure as Measure) ? merged.measure : null;
+      const measures = Array.isArray(merged.measures) ? Array.from(new Set(
+        merged.measures.filter((m): m is Measure => MEASURES.includes(m as Measure))
+      )) : [];
       const strategy = Array.isArray(merged.strategy) ? Array.from(new Set(
         merged.strategy.filter((s): s is Strategy => STRATEGIES.includes(s as Strategy))
       )) : [];
@@ -145,7 +167,7 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
         merged.techniques.filter((t): t is string => typeof t === 'string')
       )) : [];
       
-      newMap.set(sectionId, { ...merged, measure, strategy, weapons, guards_mentioned, techniques });
+      newMap.set(sectionId, { ...merged, measures, strategy, weapons, guards_mentioned, techniques });
       return newMap;
     });
   };

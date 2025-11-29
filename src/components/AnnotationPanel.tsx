@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { X, Plus, Edit2, Save, ChevronRight, Check } from 'lucide-react';
 import { MEASURES, STRATEGIES, WEAPONS, GUARDS } from '@/lib/annotation';
 import { useAnnotations } from '@/contexts/AnnotationContext';
+import MeasureProgressBar from './MeasureProgressBar';
 
 type TabType = 'armes' | 'gardes' | 'techniques';
 
@@ -28,7 +29,7 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
     weapons: null as (typeof WEAPONS[number])[] | null,
     guards_mentioned: null as (typeof GUARDS[number])[] | null,
     techniques: null as string[] | null,
-    measure: null as (typeof MEASURES[number]) | null,
+    measures: null as (typeof MEASURES[number])[] | null,
     strategy: null as (typeof STRATEGIES[number])[] | null,
   });
   const [techniqueInput, setTechniqueInput] = useState('');
@@ -88,7 +89,7 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
         weapons: annotation.weapons || null,
         guards_mentioned: annotation.guards_mentioned || null,
         techniques: annotation.techniques || null,
-        measure: annotation.measure,
+        measures: annotation.measures || null,
         strategy: annotation.strategy || null,
       });
     } else {
@@ -98,7 +99,7 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
         weapons: null,
         guards_mentioned: null,
         techniques: null,
-        measure: null,
+        measures: null,
         strategy: null,
       });
     }
@@ -263,13 +264,20 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
                 )}
               </div>
 
-              {/* Mesure */}
+              {/* Mesures */}
               <div>
-                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Mesure</h4>
-                {annotation.measure ? (
-                  <span className="text-xs px-3 py-1.5 bg-amber-100 text-amber-700 rounded-full inline-block">
-                    {annotation.measure}
-                  </span>
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Mesures</h4>
+                {annotation.measures && annotation.measures.length > 0 ? (
+                  <div className="space-y-2">
+                    <div className="flex flex-wrap gap-2">
+                      {annotation.measures.map(m => (
+                        <span key={m} className="text-xs px-3 py-1.5 rounded-full bg-amber-100 text-amber-700">
+                          {m}
+                        </span>
+                      ))}
+                    </div>
+                    <MeasureProgressBar measures={annotation.measures} />
+                  </div>
                 ) : (
                   <p className="text-sm text-gray-400 italic">Aucune mesure indiquée</p>
                 )}
@@ -370,24 +378,40 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
                 </div>
               </div>
 
-              {/* Mesure */}
+              {/* Mesures */}
               <div>
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                  Mesure
+                  Mesures
                 </h4>
-                <select
-                  value={formData.measure ?? ''}
-                  onChange={(e) => setFormData(prev => ({ 
-                    ...prev, 
-                    measure: e.target.value ? (e.target.value as typeof MEASURES[number]) : null 
-                  }))}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                >
-                  <option value="">Sélectionner une mesure (optionnel)</option>
-                  {MEASURES.map(m => (
-                    <option key={m} value={m}>{m}</option>
-                  ))}
-                </select>
+                <div className="flex flex-wrap gap-2">
+                  {MEASURES.map(m => {
+                    const active = formData.measures?.includes(m);
+                    return (
+                      <button
+                        type="button"
+                        key={m}
+                        onClick={() => setFormData(prev => {
+                          const current = prev.measures || [];
+                          const hasValue = current.includes(m);
+                          const next = hasValue
+                            ? current.filter(x => x !== m)
+                            : [...current, m];
+                          return {
+                            ...prev,
+                            measures: next.length > 0 ? next : null,
+                          };
+                        })}
+                        className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                          active
+                            ? 'bg-amber-500 text-white border-amber-500'
+                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                        }`}
+                      >
+                        {m}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               {/* Stratégie */}
