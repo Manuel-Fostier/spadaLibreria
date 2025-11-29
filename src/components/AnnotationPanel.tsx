@@ -227,287 +227,301 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
           </div>
         </div>
 
-        {/* Tab bar */}
-        <div className="flex border-b border-gray-200 bg-white">
-          {tabs.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
-                activeTab === tab.id
-                  ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50/50'
-                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
         {/* Content area */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           
-          {/* Tags display for current tab */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                {activeTab === 'armes' && 'Armes sélectionnées'}
-                {activeTab === 'gardes' && 'Gardes mentionnées'}
-                {activeTab === 'techniques' && 'Techniques'}
-              </h4>
-              {!isEditing && (
-                <button
-                  onClick={handleStartEdit}
-                  className="p-1 hover:bg-gray-100 rounded transition-colors"
-                  title="Éditer"
-                >
-                  <Edit2 size={14} className="text-gray-500" />
-                </button>
-              )}
+          {/* Edit button */}
+          {!isEditing && (
+            <div className="flex justify-end">
+              <button
+                onClick={handleStartEdit}
+                className="px-3 py-1.5 text-sm text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors flex items-center gap-2"
+                title="Éditer"
+              >
+                <Edit2 size={14} />
+                Éditer
+              </button>
             </div>
-            
-            {currentTags.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {currentTags.map(tag => (
-                  <span
-                    key={tag.key}
-                    className={`text-xs px-3 py-1.5 rounded-full ${
-                      tag.type === 'weapon' ? 'bg-blue-100 text-blue-700' :
-                      tag.type === 'guard' ? 'bg-green-100 text-green-700' :
-                      'bg-purple-100 text-purple-700'
-                    }`}
-                  >
-                    {tag.type === 'weapon' && '⚔️ '}
-                    {tag.type === 'guard' && '🛡️ '}
-                    {tag.type === 'technique' && '⚡ '}
-                    {tag.label}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-gray-400 italic">
-                {activeTab === 'armes' && 'Aucune arme sélectionnée'}
-                {activeTab === 'gardes' && 'Aucune garde mentionnée'}
-                {activeTab === 'techniques' && 'Aucune technique ajoutée'}
-              </p>
-            )}
-          </div>
+          )}
 
-          {/* Additional metadata (always visible) */}
+          {/* All metadata sections (always visible) */}
           {(annotation || isEditing) && (
-            <div className="pt-4 border-t border-gray-100 space-y-3">
+            <div className="space-y-4">
+              {/* Armes */}
+              <div>
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Armes utilisées</h4>
+                {annotation?.weapons && annotation.weapons.length > 0 && !isEditing ? (
+                  <div className="flex flex-wrap gap-2">
+                    {annotation.weapons.map(w => (
+                      <span key={w} className="text-xs px-3 py-1.5 rounded-full bg-blue-100 text-blue-700">
+                        {w}
+                      </span>
+                    ))}
+                  </div>
+                ) : !isEditing ? (
+                  <p className="text-sm text-gray-400 italic">Arme non définie</p>
+                ) : null}
+              </div>
+
+              {/* Mesure */}
+              <div>
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Mesure</h4>
+                {annotation?.measure && !isEditing ? (
+                  <span className="text-xs px-3 py-1.5 bg-amber-100 text-amber-700 rounded-full inline-block">
+                    {annotation.measure}
+                  </span>
+                ) : !isEditing ? (
+                  <p className="text-sm text-gray-400 italic">Aucune mesure indiquée</p>
+                ) : null}
+              </div>
+
+              {/* Stratégie */}
+              <div>
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Stratégie</h4>
+                {annotation?.strategy && annotation.strategy.length > 0 && !isEditing ? (
+                  <div className="flex flex-wrap gap-2">
+                    {annotation.strategy.map(s => (
+                      <span key={s} className="text-xs px-3 py-1.5 rounded-full bg-indigo-100 text-indigo-700">
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                ) : !isEditing ? (
+                  <p className="text-sm text-gray-400 italic">Aucune stratégie indiquée</p>
+                ) : null}
+              </div>
+
+              {/* Gardes */}
+              <div>
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Gardes mentionnées</h4>
+                {annotation?.guards_mentioned && annotation.guards_mentioned.length > 0 && !isEditing ? (
+                  <div className="flex flex-wrap gap-2">
+                    {annotation.guards_mentioned.map(g => (
+                      <span key={g} className="text-xs px-3 py-1.5 rounded-full bg-green-100 text-green-700">
+                        {g}
+                      </span>
+                    ))}
+                  </div>
+                ) : !isEditing ? (
+                  <p className="text-sm text-gray-400 italic">Aucune garde indiquée</p>
+                ) : null}
+              </div>
+
+              {/* Techniques */}
+              <div>
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Techniques</h4>
+                {annotation?.techniques && annotation.techniques.length > 0 && !isEditing ? (
+                  <div className="flex flex-wrap gap-2">
+                    {annotation.techniques.map(t => (
+                      <span key={t} className="text-xs px-3 py-1.5 rounded-full bg-purple-100 text-purple-700">
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                ) : !isEditing ? (
+                  <p className="text-sm text-gray-400 italic">Aucune technique indiquée</p>
+                ) : null}
+              </div>
+
               {/* Note */}
-              {annotation?.note && !isEditing && (
-                <div>
-                  <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Note</h4>
+              <div>
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Note</h4>
+                {annotation?.note && !isEditing ? (
                   <p className="text-sm text-gray-700 whitespace-pre-wrap">{annotation.note}</p>
-                </div>
-              )}
-              
-              {/* Measure & Strategy badges */}
-              {!isEditing && annotation && (
-                <div className="flex flex-wrap gap-1.5">
-                  {annotation.measure && (
-                    <span className="text-xs px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full">📏 {annotation.measure}</span>
-                  )}
-                  {(annotation.strategy || []).map(s => (
-                    <span key={`s-${s}`} className="text-xs px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded-full">🎯 {s}</span>
-                  ))}
-                </div>
-              )}
+                ) : !isEditing ? (
+                  <p className="text-sm text-gray-400 italic">Aucune note</p>
+                ) : null}
+              </div>
             </div>
           )}
 
           {/* Edit form */}
           {isEditing && (
-            <div className="pt-4 border-t border-gray-100 space-y-4">
+            <div className="space-y-4">
               
-              {/* Tab-specific editing */}
-              {activeTab === 'armes' && (
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-2">
-                    Sélectionner les armes
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {WEAPONS.map(w => {
-                      const active = formData.weapons?.includes(w);
-                      return (
-                        <button
-                          type="button"
-                          key={w}
-                          onClick={() => setFormData(prev => ({
-                            ...prev,
-                            weapons: active
-                              ? prev.weapons?.filter(x => x !== w) || null
-                              : [...(prev.weapons || []), w]
-                          }))}
-                          className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
-                            active 
-                              ? 'bg-blue-600 text-white border-blue-600' 
-                              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
-                          }`}
-                        >
-                          {w}
-                        </button>
-                      );
-                    })}
-                  </div>
+              {/* Armes */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-2">
+                  Armes utilisées
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {WEAPONS.map(w => {
+                    const active = formData.weapons?.includes(w);
+                    return (
+                      <button
+                        type="button"
+                        key={w}
+                        onClick={() => setFormData(prev => ({
+                          ...prev,
+                          weapons: active
+                            ? prev.weapons?.filter(x => x !== w) || null
+                            : [...(prev.weapons || []), w]
+                        }))}
+                        className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                          active 
+                            ? 'bg-blue-600 text-white border-blue-600' 
+                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                        }`}
+                      >
+                        {w}
+                      </button>
+                    );
+                  })}
                 </div>
-              )}
+              </div>
 
-              {activeTab === 'gardes' && (
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-2">
-                    Sélectionner les gardes
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {GUARDS.map(g => {
-                      const active = formData.guards_mentioned?.includes(g);
-                      return (
-                        <button
-                          type="button"
-                          key={g}
-                          onClick={() => setFormData(prev => ({
-                            ...prev,
-                            guards_mentioned: active
-                              ? prev.guards_mentioned?.filter(x => x !== g) || null
-                              : [...(prev.guards_mentioned || []), g]
-                          }))}
-                          className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
-                            active 
-                              ? 'bg-green-600 text-white border-green-600' 
-                              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
-                          }`}
-                        >
-                          {g}
-                        </button>
-                      );
-                    })}
-                  </div>
+              {/* Mesure */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-2">
+                  Mesure
+                </label>
+                <select
+                  value={formData.measure ?? ''}
+                  onChange={(e) => setFormData(prev => ({ 
+                    ...prev, 
+                    measure: e.target.value ? (e.target.value as typeof MEASURES[number]) : null 
+                  }))}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                >
+                  <option value="">Sélectionner une mesure (optionnel)</option>
+                  {MEASURES.map(m => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Stratégie */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-2">
+                  Stratégie
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {STRATEGIES.map(s => {
+                    const active = formData.strategy?.includes(s);
+                    return (
+                      <button
+                        type="button"
+                        key={s}
+                        onClick={() => setFormData(prev => ({
+                          ...prev,
+                          strategy: active
+                            ? prev.strategy?.filter(x => x !== s) || null
+                            : [...(prev.strategy || []), s]
+                        }))}
+                        className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                          active 
+                            ? 'bg-indigo-600 text-white border-indigo-600' 
+                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                        }`}
+                      >
+                        {s}
+                      </button>
+                    );
+                  })}
                 </div>
-              )}
+              </div>
 
-              {activeTab === 'techniques' && (
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-2">
-                    Ajouter une technique
-                  </label>
-                  <div className="flex gap-2 mb-2">
-                    <input
-                      type="text"
-                      value={techniqueInput}
-                      onChange={(e) => setTechniqueInput(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTechnique())}
-                      placeholder="Nom de la technique"
-                      className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                    />
-                    <button
-                      onClick={handleAddTechnique}
-                      className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm"
-                    >
-                      +
-                    </button>
-                  </div>
-                  {formData.techniques && formData.techniques.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5">
-                      {formData.techniques.map(tech => (
-                        <span
-                          key={tech}
-                          className="text-xs px-2 py-1 bg-purple-600 text-white rounded-full flex items-center gap-1"
-                        >
-                          {tech}
-                          <button
-                            onClick={() => handleRemoveTechnique(tech)}
-                            className="hover:bg-purple-700 rounded-full p-0.5"
-                          >
-                            <X size={12} />
-                          </button>
-                        </span>
-                      ))}
-                    </div>
-                  )}
+              {/* Gardes */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-2">
+                  Gardes mentionnées
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {GUARDS.map(g => {
+                    const active = formData.guards_mentioned?.includes(g);
+                    return (
+                      <button
+                        type="button"
+                        key={g}
+                        onClick={() => setFormData(prev => ({
+                          ...prev,
+                          guards_mentioned: active
+                            ? prev.guards_mentioned?.filter(x => x !== g) || null
+                            : [...(prev.guards_mentioned || []), g]
+                        }))}
+                        className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                          active 
+                            ? 'bg-green-600 text-white border-green-600' 
+                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                        }`}
+                      >
+                        {g}
+                      </button>
+                    );
+                  })}
                 </div>
-              )}
+              </div>
 
-              {/* Common fields (always shown in edit mode) */}
-              <div className="pt-4 border-t border-gray-100 space-y-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
-                    Mesure
-                  </label>
-                  <select
-                    value={formData.measure ?? ''}
-                    onChange={(e) => setFormData(prev => ({ 
-                      ...prev, 
-                      measure: e.target.value ? (e.target.value as typeof MEASURES[number]) : null 
-                    }))}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  >
-                    <option value="">Sélectionner une mesure (optionnel)</option>
-                    {MEASURES.map(m => (
-                      <option key={m} value={m}>{m}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
-                    Stratégie
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {STRATEGIES.map(s => {
-                      const active = formData.strategy?.includes(s);
-                      return (
-                        <button
-                          type="button"
-                          key={s}
-                          onClick={() => setFormData(prev => ({
-                            ...prev,
-                            strategy: active
-                              ? prev.strategy?.filter(x => x !== s) || null
-                              : [...(prev.strategy || []), s]
-                          }))}
-                          className={`text-xs px-2 py-1 rounded-full border transition-colors ${
-                            active 
-                              ? 'bg-indigo-600 text-white border-indigo-600' 
-                              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
-                          }`}
-                        >
-                          {s}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
-                    Note
-                  </label>
-                  <textarea
-                    value={formData.note}
-                    onChange={(e) => setFormData(prev => ({ ...prev, note: e.target.value }))}
-                    placeholder="Écrivez votre annotation..."
-                    rows={4}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
+              {/* Techniques */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-2">
+                  Techniques
+                </label>
+                <div className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    value={techniqueInput}
+                    onChange={(e) => setTechniqueInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTechnique())}
+                    placeholder="Nom de la technique"
+                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                   />
+                  <button
+                    onClick={handleAddTechnique}
+                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm"
+                  >
+                    +
+                  </button>
                 </div>
+                {formData.techniques && formData.techniques.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {formData.techniques.map(tech => (
+                      <span
+                        key={tech}
+                        className="text-xs px-2 py-1 bg-purple-600 text-white rounded-full flex items-center gap-1"
+                      >
+                        {tech}
+                        <button
+                          onClick={() => handleRemoveTechnique(tech)}
+                          className="hover:bg-purple-700 rounded-full p-0.5"
+                        >
+                          <X size={12} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
 
-                <div className="flex gap-2">
-                  <button
-                    onClick={handleSave}
-                    className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium flex items-center justify-center gap-2"
-                  >
-                    <Save size={16} />
-                    {annotation ? 'Mettre à jour' : 'Enregistrer'}
-                  </button>
-                  <button
-                    onClick={handleCancel}
-                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium"
-                  >
-                    Annuler
-                  </button>
-                </div>
+              {/* Note */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-2">
+                  Note
+                </label>
+                <textarea
+                  value={formData.note}
+                  onChange={(e) => setFormData(prev => ({ ...prev, note: e.target.value }))}
+                  placeholder="Écrivez votre annotation..."
+                  rows={4}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
+                />
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex gap-2 pt-4 border-t border-gray-100">
+                <button
+                  onClick={handleSave}
+                  className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium flex items-center justify-center gap-2"
+                >
+                  <Save size={16} />
+                  {annotation ? 'Mettre à jour' : 'Enregistrer'}
+                </button>
+                <button
+                  onClick={handleCancel}
+                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium"
+                >
+                  Annuler
+                </button>
               </div>
             </div>
           )}
