@@ -1,4 +1,4 @@
-# Ars Dimicatoria v2.0
+# Spada Libreria
 
 Plateforme d'étude des traités d'escrime bolonaise avec données externalisées en YAML.
 
