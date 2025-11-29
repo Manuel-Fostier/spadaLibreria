@@ -120,15 +120,22 @@ function annotateWithGlossary(text, termMap) {
   for (const term of sortedTerms) {
     const key = termMap.get(term);
     // Create a case-insensitive regex that matches the term as a word
-    // Use negative lookbehind/lookahead to avoid matching terms already inside braces
-    const regex = new RegExp(`(?<!\\{)\\b(${escapeRegExp(term)})\\b(?!\\})`, 'gi');
-    const matches = annotatedText.match(regex);
+    const regex = new RegExp(`\\b(${escapeRegExp(term)})\\b`, 'gi');
     
-    if (matches) {
-      // Replace all occurrences with the annotated version
-      annotatedText = annotatedText.replace(regex, `{${key}}`);
+    // Use a replacer function to check if the match is already inside braces
+    annotatedText = annotatedText.replace(regex, (match, p1, offset, string) => {
+      // Check if this match is already inside braces by looking at surrounding chars
+      const charBefore = offset > 0 ? string[offset - 1] : '';
+      const charAfter = offset + match.length < string.length ? string[offset + match.length] : '';
+      
+      // Skip if already annotated (inside braces)
+      if (charBefore === '{' || charAfter === '}') {
+        return match;
+      }
+      
       usedTerms.add(key);
-    }
+      return `{${key}}`;
+    });
   }
   
   return { annotatedText, usedTerms };
@@ -273,13 +280,47 @@ async function extractTextFromPages(pdfPath, pages) {
   return allLines.join('\n');
 }
 
+// Term category configuration for mapping glossary types to annotation categories
+const TERM_CATEGORIES = {
+  guards: ['garde', 'guard'],
+  techniques: ['attaque', 'technique', 'attack', 'mouvement', 'tactique', 'frappe', 'coup', 'déplacement']
+};
+
+function slugify(text) {
+  // Convert text to a safe slug format for IDs
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+    .replace(/[^a-z0-9]+/g, '_')     // Replace non-alphanumeric with underscores
+    .replace(/^_+|_+$/g, '');        // Trim leading/trailing underscores
+}
+
 function generateId(master, book, chapter) {
-  const masterSlug = master.toLowerCase().replace(/\s+/g, '_');
+  const masterSlug = slugify(master);
   return `${masterSlug}_l${book}_c${chapter}`;
 }
 
 function generateAnnotationId() {
-  return `anno_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `anno_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+}
+
+function categorizeTermType(type) {
+  const lowerType = type.toLowerCase();
+  
+  for (const keyword of TERM_CATEGORIES.guards) {
+    if (lowerType.includes(keyword)) {
+      return 'guards';
+    }
+  }
+  
+  for (const keyword of TERM_CATEGORIES.techniques) {
+    if (lowerType.includes(keyword)) {
+      return 'techniques';
+    }
+  }
+  
+  return null;
 }
 
 function buildTreatiseEntry(section, metadata, lang, usedTerms, glossary) {
@@ -309,14 +350,13 @@ function buildTreatiseEntry(section, metadata, lang, usedTerms, glossary) {
   for (const termKey of usedTerms) {
     const glossaryEntry = glossary[termKey];
     if (glossaryEntry && glossaryEntry.type) {
-      const type = glossaryEntry.type.toLowerCase();
-      if (type.includes('garde') || type.includes('guard')) {
+      const category = categorizeTermType(glossaryEntry.type);
+      
+      if (category === 'guards') {
         if (!entry.annotation.guards_mentioned.includes(termKey)) {
           entry.annotation.guards_mentioned.push(termKey);
         }
-      } else if (type.includes('attaque') || type.includes('technique') || 
-                 type.includes('attack') || type.includes('mouvement') ||
-                 type.includes('tactique')) {
+      } else if (category === 'techniques') {
         if (!entry.annotation.techniques.includes(termKey)) {
           entry.annotation.techniques.push(termKey);
         }
