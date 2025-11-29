@@ -164,7 +164,6 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
       setIsCollapsed(true);
     }
   }, [saveToServer]);
-
   // If collapsed, show only the expand button
   if (isCollapsed) {
     return (
@@ -202,8 +201,8 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
         className="w-1 bg-gray-200 hover:bg-indigo-400 cursor-ew-resize transition-colors flex-shrink-0"
       />
       
-      {/* Collapse button */}
-      <button
+            {/* Collapse button */}
+            <button
         onClick={handleCollapse}
         className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-full bg-white shadow-lg border border-gray-200 border-r-0 rounded-l-lg p-2 hover:bg-gray-50 transition-colors z-10"
         aria-label="Replier le panneau"
@@ -244,7 +243,7 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
 
         {/* Content area */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
-
+          
           {/* All metadata sections (read mode only) */}
           {annotation && !isEditing && (
             <div className="space-y-4">

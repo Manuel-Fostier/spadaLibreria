@@ -47,7 +47,7 @@ export default function Term({ termKey, children, glossaryData }: TermProps) {
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xs font-bold text-gray-400 uppercase">FR</span>
-                <span className="text-xs font-semibold text-gray-700 italic">"{data.translation.fr}"</span>
+                <span className="text-xs font-semibold text-gray-700 italic">&ldquo;{data.translation.fr}&rdquo;</span>
               </div>
               <p className="text-gray-600 leading-snug text-xs">{data.definition.fr}</p>
             </div>
@@ -56,7 +56,7 @@ export default function Term({ termKey, children, glossaryData }: TermProps) {
             <div className="pt-2 border-t border-gray-100">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xs font-bold text-gray-400 uppercase">EN</span>
-                <span className="text-xs font-semibold text-gray-700 italic">"{data.translation.en}"</span>
+                <span className="text-xs font-semibold text-gray-700 italic">&ldquo;{data.translation.en}&rdquo;</span>
               </div>
               <p className="text-gray-600 leading-snug text-xs">{data.definition.en}</p>
             </div>
