@@ -113,6 +113,502 @@ guardia_alta:
     fr: Garde haute
     en: High guard
 
+guardia_alicorno:
+  term: Guardia di Alicorno
+  type: Garde
+  definition:
+    fr: |
+      Garde haute étendue du côté droit, la pointe dirigée vers l'adversaire et légèrement vers le bas, ressemblant à une corne de licorne.
+    en: |
+      High extended guard on the right side, point directed toward the opponent and slightly downward, resembling a unicorn's horn.
+  translation:
+    fr: Garde de la licorne
+    en: Unicorn guard
 
+guardia_entrare:
+  term: Guardia d'Entrare
+  type: Garde
+  definition:
+    fr: |
+      Garde facilitant l'entrée en mesure rapprochée. Position transitionnelle utilisée pour prendre l'initiative d'une attaque ou d'un contre.
+    en: |
+      Guard facilitating entering into close measure. Transitional position used to take the initiative for an attack or counter.
+  translation:
+    fr: Garde d'entrée
+    en: Guard of entering
 
+becca_cesa:
+  term: Becca Cesa
+  type: Garde
+  definition:
+    fr: |
+      Garde haute où le bras armé est levé, le fil vers l'avant et la pointe vers le bas, prête à délivrer une estocade plongeante. Le nom évoque un bec d'oiseau.
+    en: |
+      High guard where the sword arm is raised, true edge forward and point downward, ready to deliver a plunging thrust. The name evokes a bird's beak.
+  translation:
+    fr: Bec tranché
+    en: Cut beak
 
+becca_possa:
+  term: Becca Possa
+  type: Garde
+  definition:
+    fr: |
+      Garde haute similaire à Becca Cesa, avec une orientation différente de la main ou une présence plus avancée de la pointe, prête à changer rapidement de direction.
+    en: |
+      High guard similar to Becca Cesa, with a different hand orientation or more forward presence of the point, ready to quickly change direction.
+  translation:
+    fr: Bec posé
+    en: Rested beak
+
+cinghiara:
+  term: Cinghiara
+  type: Garde
+  definition:
+    fr: |
+      Qualificatif de garde indiquant que le pied gauche est avancé au lieu du droit. Crée une version inversée des gardes standard (ex: Cinghiara Porta di Ferro).
+    en: |
+      Guard qualifier indicating that the left foot is forward instead of the right. Creates a mirrored version of standard guards (e.g., Cinghiara Porta di Ferro).
+  translation:
+    fr: Sanglier
+    en: Boar
+
+coda_longa_stretta:
+  term: Coda Longa Stretta
+  type: Garde
+  definition:
+    fr: |
+      Variante de Coda Longa avec la main basse près du genou et la pointe dirigée vers les yeux de l'adversaire.
+    en: |
+      Variant of Coda Longa with the hand low near the knee and point directed toward the opponent's eyes.
+  translation:
+    fr: Queue longue étroite
+    en: Narrow long tail
+
+coda_longa_alta:
+  term: Coda Longa Alta
+  type: Garde
+  definition:
+    fr: |
+      Variante de Coda Longa avec la poignée à la taille et la pointe visant les yeux de l'adversaire, souvent avec le pied gauche en avant.
+    en: |
+      Variant of Coda Longa with the hilt at waist and point aimed at opponent's eyes, often with left foot forward.
+  translation:
+    fr: Queue longue haute
+    en: High long tail
+
+coda_longa_larga:
+  term: Coda Longa Larga
+  type: Garde
+  definition:
+    fr: |
+      Variante de Coda Longa avec la main au niveau du genou et la pointe dirigée vers le bas et vers la droite.
+    en: |
+      Variant of Coda Longa with the hand at knee level and point directed down and to the right.
+  translation:
+    fr: Queue longue large
+    en: Wide long tail
+
+porta_di_ferro_stretta:
+  term: Porta di Ferro Stretta
+  type: Garde
+  definition:
+    fr: |
+      Épée basse et centrée, pointe vers le haut et l'avant, pied droit avancé. Défensive mais prête pour une estocade.
+    en: |
+      Sword low and centered, point up and forward, right foot advanced. Defensive but poised for a thrust.
+  translation:
+    fr: Porte de fer étroite
+    en: Narrow iron gate
+
+porta_di_ferro_larga:
+  term: Porta di Ferro Larga
+  type: Garde
+  definition:
+    fr: |
+      Épée basse vers la gauche, pointe vers le bas et large, pied droit en avant. Met l'accent sur la couverture des lignes basses.
+    en: |
+      Sword low and to the left, point down and wide, right foot forward. Emphasizes coverage of lower lines.
+  translation:
+    fr: Porte de fer large
+    en: Wide iron gate
+
+###########################################################################################
+# Les Coups et Techniques Additionnels
+###########################################################################################
+
+tondo:
+  term: Tondo
+  type: Attaque / Frappe de taille
+  definition:
+    fr: |
+      Coup horizontal. Le mandritto tondo va de droite à gauche, le roverso tondo va de gauche à droite.
+    en: |
+      Horizontal cut. The mandritto tondo goes from right to left, the roverso tondo goes from left to right.
+  translation:
+    fr: Rond
+    en: Round cut
+
+sgualembro:
+  term: Sgualembro
+  type: Attaque / Frappe de taille
+  definition:
+    fr: |
+      Coup diagonal descendant, typiquement de l'épaule vers la hanche opposée. Le mandritto sgualembro vient de la droite, le roverso sgualembro de la gauche.
+    en: |
+      Diagonal descending cut, typically from shoulder to opposite hip. Mandritto sgualembro comes from the right, roverso sgualembro from the left.
+  translation:
+    fr: Coup oblique
+    en: Slanting cut
+
+montante:
+  term: Montante
+  type: Attaque / Frappe de taille
+  definition:
+    fr: |
+      Coup vertical ascendant, délivré du bas vers le haut. Utilisé pour contrôler le tempo et l'espace.
+    en: |
+      Vertical ascending cut, delivered from below upwards. Used for controlling tempo and space.
+  translation:
+    fr: Montant
+    en: Rising cut
+
+falso:
+  term: Falso
+  type: Attaque / Frappe de taille
+  definition:
+    fr: |
+      Tout coup exécuté avec le faux fil de l'épée (le fil orienté vers l'escrimeur), typiquement des coups ascendants.
+    en: |
+      Any cut performed with the false edge of the sword (the edge facing the wielder), typically rising cuts.
+  translation:
+    fr: Faux
+    en: False edge cut
+
+falso_dritto:
+  term: Falso Dritto
+  type: Attaque / Frappe de taille
+  definition:
+    fr: |
+      Coup ascendant avec le faux fil, exécuté du côté droit. Utilisé défensivement, notamment pour parer puis riposter.
+    en: |
+      Rising false edge cut made from the right side. Used defensively, especially for parrying and then riposting.
+  translation:
+    fr: Faux droit
+    en: Right false edge cut
+
+falso_manco:
+  term: Falso Manco
+  type: Attaque / Frappe de taille
+  definition:
+    fr: |
+      Coup ascendant avec le faux fil, exécuté du côté gauche. Fréquemment utilisé pour les actions défensives.
+    en: |
+      Rising false edge cut made from the left side. Frequently used for defensive actions.
+  translation:
+    fr: Faux gauche
+    en: Left false edge cut
+
+imbroccata:
+  term: Imbroccata
+  type: Attaque / Coup d'estoc
+  definition:
+    fr: |
+      Estocade descendante portée du haut vers le bas, souvent après une parade défensive.
+    en: |
+      Overhand descending thrust delivered from above, commonly following a defensive parry.
+  translation:
+    fr: Estocade plongeante
+    en: Descending thrust
+
+punta:
+  term: Punta
+  type: Attaque / Coup d'estoc
+  definition:
+    fr: |
+      La pointe; désigne toute attaque d'estoc avec la pointe de l'épée.
+    en: |
+      The point; refers to any thrusting or stabbing attack with the point of the sword.
+  translation:
+    fr: Pointe
+    en: Point / Thrust
+
+punta_riversa:
+  term: Punta Riversa
+  type: Attaque / Coup d'estoc
+  definition:
+    fr: |
+      Estocade portée du côté gauche, la paume vers le haut.
+    en: |
+      Thrust from the left side, palm upwards.
+  translation:
+    fr: Pointe renversée
+    en: Reversed thrust
+
+ridoppio:
+  term: Ridoppio
+  type: Attaque / Frappe de taille
+  definition:
+    fr: |
+      Coup ascendant avec le vrai fil, similaire au montante mais peut suivre un coup initial pour créer une attaque redoublée.
+    en: |
+      Rising true edge cut, much like montante, but can follow after an initial cut to create a redoubled attack.
+  translation:
+    fr: Redoublement
+    en: Redoubled cut
+
+tramazzone:
+  term: Tramazzone
+  type: Attaque / Frappe de taille
+  definition:
+    fr: |
+      Coup circulaire exécuté par rotation du poignet, souvent dans un mouvement continu et enveloppant.
+    en: |
+      Wheeling cut done by wrist rotation, often ending in circular, continuous movement.
+  translation:
+    fr: Coup tournoyant
+    en: Wheeling cut
+
+###########################################################################################
+# Concepts Tactiques
+###########################################################################################
+
+gioco_largo:
+  term: Gioco Largo
+  type: Tactique / Concept
+  definition:
+    fr: |
+      Jeu large. Escrime à distance, avec des mouvements amples et des gardes larges. Les épées sont généralement non croisées, les actions impliquent des coupes et estocades à distance.
+    en: |
+      Wide play. Fencing at a greater distance, with broad movements and guards. Swords are generally uncrossed, actions involve cuts and thrusts at range.
+  translation:
+    fr: Jeu large
+    en: Wide play
+
+gioco_stretto:
+  term: Gioco Stretto
+  type: Tactique / Concept
+  definition:
+    fr: |
+      Jeu serré. Combat rapproché quand les épées sont croisées ou contraintes. Ce mode implique souvent des saisies, désarmements ou jeu de dague.
+    en: |
+      Narrow play. Close-quarters combat when swords are crossed or constrained. This mode often involves grapples, disarms, or dagger play.
+  translation:
+    fr: Jeu serré
+    en: Narrow play
+
+###########################################################################################
+# Actions et Mouvements Additionnels
+###########################################################################################
+
+scanso:
+  term: Scanso
+  type: Mouvement / Déplacement
+  definition:
+    fr: |
+      Esquive; mouvement du corps pour éviter une attaque adverse tout en restant en mesure de contre-attaquer.
+    en: |
+      Dodge; body movement to avoid an opponent's attack while remaining in position to counter-attack.
+  translation:
+    fr: Esquive
+    en: Dodge / Void
+
+volta:
+  term: Volta
+  type: Mouvement / Déplacement
+  definition:
+    fr: |
+      Tour; rotation du corps utilisée pour esquiver ou se repositionner.
+    en: |
+      Turn; body rotation used to dodge or reposition.
+  translation:
+    fr: Volte
+    en: Turn / Volta
+
+mezza_volta:
+  term: Mezza Volta
+  type: Mouvement / Déplacement
+  definition:
+    fr: |
+      Demi-tour; demi-rotation du corps utilisée pour esquiver partiellement ou se repositionner.
+    en: |
+      Half turn; half rotation of the body used to partially dodge or reposition.
+  translation:
+    fr: Demi-volte
+    en: Half turn
+
+accrescere:
+  term: Accrescere
+  type: Mouvement / Déplacement
+  definition:
+    fr: |
+      Avancer; faire un pas en avant, augmentant la mesure vers l'adversaire.
+    en: |
+      To advance; to take a step forward, increasing the measure toward the opponent.
+  translation:
+    fr: Avancer
+    en: To advance
+
+discrescere:
+  term: Discrescere
+  type: Mouvement / Déplacement
+  definition:
+    fr: |
+      Reculer; faire un pas en arrière, diminuant la mesure vers l'adversaire.
+    en: |
+      To retreat; to take a step backward, decreasing the measure toward the opponent.
+  translation:
+    fr: Reculer
+    en: To retreat
+
+###########################################################################################
+# Armes et Équipement
+###########################################################################################
+
+spada:
+  term: Spada
+  type: Arme
+  definition:
+    fr: |
+      Épée; terme générique pour l'épée dans la tradition bolonaise. Souvent une épée à une main de type sidesword.
+    en: |
+      Sword; generic term for the sword in the Bolognese tradition. Often a one-handed sidesword type weapon.
+  translation:
+    fr: Épée
+    en: Sword
+
+spada_da_lato:
+  term: Spada da Lato
+  type: Arme
+  definition:
+    fr: |
+      Épée de côté; type d'épée à une main caractéristique de l'escrime bolonaise, portée au côté du corps.
+    en: |
+      Sidesword; type of one-handed sword characteristic of Bolognese fencing, worn at the side of the body.
+  translation:
+    fr: Épée de côté
+    en: Sidesword
+
+brocchiero:
+  term: Brocchiero
+  type: Arme / Protection
+  definition:
+    fr: |
+      Bocle; petit bouclier rond tenu dans la main gauche, utilisé pour parer et accompagner l'épée.
+    en: |
+      Buckler; small round shield held in the left hand, used for parrying and accompanying the sword.
+  translation:
+    fr: Bocle
+    en: Buckler
+
+rotella:
+  term: Rotella
+  type: Arme / Protection
+  definition:
+    fr: |
+      Rondache; grand bouclier rond attaché au bras gauche, offrant une protection plus étendue que le bocle.
+    en: |
+      Rotella; large round shield attached to the left arm, offering more extensive protection than the buckler.
+  translation:
+    fr: Rondache
+    en: Rotella / Round shield
+
+daga:
+  term: Daga
+  type: Arme
+  definition:
+    fr: |
+      Dague; arme courte tenue dans la main gauche, utilisée principalement dans le gioco stretto pour parer et attaquer.
+    en: |
+      Dagger; short weapon held in the left hand, used primarily in gioco stretto for parrying and attacking.
+  translation:
+    fr: Dague
+    en: Dagger
+
+cappa:
+  term: Cappa
+  type: Arme / Protection
+  definition:
+    fr: |
+      Cape; vêtement enroulé autour du bras gauche ou tenu dans la main, utilisé pour parer ou aveugler l'adversaire.
+    en: |
+      Cape; garment wrapped around the left arm or held in hand, used to parry or blind the opponent.
+  translation:
+    fr: Cape
+    en: Cape
+
+###########################################################################################
+# Termes Techniques Additionnels
+###########################################################################################
+
+filo:
+  term: Filo
+  type: Technique
+  definition:
+    fr: |
+      Fil; le tranchant de l'épée. "Filo dritto" (vrai fil) est le tranchant orienté vers l'adversaire, "filo falso" (faux fil) est le tranchant orienté vers l'escrimeur.
+    en: |
+      Edge; the cutting edge of the sword. "Filo dritto" (true edge) is the edge facing the opponent, "filo falso" (false edge) is the edge facing the wielder.
+  translation:
+    fr: Fil
+    en: Edge
+
+misura:
+  term: Misura
+  type: Tactique / Concept
+  definition:
+    fr: |
+      Mesure; distance entre les deux escrimeurs. Concept fondamental déterminant les actions possibles.
+    en: |
+      Measure; distance between the two fencers. Fundamental concept determining possible actions.
+  translation:
+    fr: Mesure
+    en: Measure / Distance
+
+tempo:
+  term: Tempo
+  type: Tactique / Concept
+  definition:
+    fr: |
+      Temps; le moment opportun pour exécuter une action. Concept de timing en escrime.
+    en: |
+      Time; the opportune moment to execute an action. Concept of timing in fencing.
+  translation:
+    fr: Temps
+    en: Time / Tempo
+
+stringere:
+  term: Stringere
+  type: Tactique / Technique
+  definition:
+    fr: |
+      Resserrer; action de contraindre la lame adverse, fermant la ligne et gagnant le contrôle.
+    en: |
+      To constrain; action of constraining the opponent's blade, closing the line and gaining control.
+  translation:
+    fr: Resserrer
+    en: To constrain
+
+cavare:
+  term: Cavare
+  type: Tactique / Technique
+  definition:
+    fr: |
+      Dégager; action de soustraire sa lame au contact de l'adversaire pour changer de ligne.
+    en: |
+      To disengage; action of removing one's blade from the opponent's contact to change lines.
+  translation:
+    fr: Dégager
+    en: To disengage
+
+battere:
+  term: Battere
+  type: Tactique / Technique
+  definition:
+    fr: |
+      Battre; frapper la lame adverse pour la déplacer et créer une ouverture.
+    en: |
+      To beat; to strike the opponent's blade to displace it and create an opening.
+  translation:
+    fr: Battre
+    en: To beat
