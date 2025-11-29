@@ -70,7 +70,7 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
       const normalized = normalizeAnnotation({
         // provide defaults for legacy annotations
         ...ann,
-        measures: (ann as LegacyAnnotation).measures ?? [],
+        measures: (ann as LegacyAnnotation).measures ?? null,
         strategy: ann.strategy ?? [],
         weapons: ann.weapons ?? [],
         guards_mentioned: ann.guards_mentioned ?? [],
