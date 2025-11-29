@@ -178,7 +178,8 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
   return (
     <div 
       ref={panelRef}
-      className="fixed inset-y-0 right-0 bg-white shadow-2xl z-50 flex"
+      className="bg-white shadow-2xl flex-shrink-0 h-screen sticky top-0 overflow-visible"      
+       
       style={{ width: panelWidth }}
     >
       {/* Resize handle */}
