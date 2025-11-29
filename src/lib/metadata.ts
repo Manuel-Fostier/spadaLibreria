@@ -1,5 +1,7 @@
 // Client-safe metadata types and constants
 
+// Authors list - populated from treatise data
+// Add new authors here as more treatises are added to the platform
 export const AUTHORS = [
   'achille_marozzo',
 ] as const;
