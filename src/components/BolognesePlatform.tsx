@@ -39,14 +39,14 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
     return treatiseData.filter(item => {
       if (selectedWeapon === 'all') return true;
       
-      // Check annotation weapons if annotation exists
+      // Check annotation weapons
       const annotation = getAnnotation(item.id);
       if (annotation && annotation.weapons) {
         return annotation.weapons.includes(selectedWeapon as any);
       }
       
-      // Fallback to metadata weapons if no annotation
-      return item.metadata.weapons.includes(selectedWeapon);
+      // No annotation, hide from filtered results
+      return false;
     });
   }, [selectedWeapon, treatiseData, getAnnotation]);
 

@@ -42,13 +42,11 @@ export const GUARDS = [
 export type Guard = typeof GUARDS[number];
 
 export interface Annotation {
-  id: string;
-  language: 'it' | 'fr' | 'en';
-  translator: string | null;
-  note: string;
-  weapons: Weapon[];
-  guards_mentioned: Guard[];
-  techniques: string[];
+  id: string;  
+  note: string | null;
+  weapons: Weapon[] | null;
+  guards_mentioned: Guard[] | null;
+  techniques: string[] | null;
   measure: Measure | null;
-  strategy: Strategy[];
+  strategy: Strategy[] | null;
 }

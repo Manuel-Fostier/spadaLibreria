@@ -36,14 +36,11 @@ export interface TreatiseSection {
     book: number;
     chapter: number;
     year: number;
-    weapons: string[];
-    guards_mentioned?: string[];
-    techniques?: string[];
   };
   content: {
-    it: string;
+    it?: string;
     fr: string;
-    en_versions: EnglishVersion[];
+    en_versions?: EnglishVersion[];
   };
   annotation?: Annotation;
 }

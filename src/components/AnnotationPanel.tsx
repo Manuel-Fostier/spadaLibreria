@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { X, Plus, Edit2, Save, MessageSquare } from 'lucide-react';
-import { Annotation, MEASURES, STRATEGIES, WEAPONS, GUARDS } from '@/lib/annotation';
+import { Annotation, MEASURES, STRATEGIES, WEAPONS, GUARDS, Weapon } from '@/lib/annotation';
 import { useAnnotations } from '@/contexts/AnnotationContext';
 
 interface AnnotationPanelProps {
@@ -13,19 +13,18 @@ interface AnnotationPanelProps {
 }
 
 export default function AnnotationPanel({ sectionId, onClose, availableLanguages, sectionMeta }: AnnotationPanelProps) {
-  const { getAnnotation, setAnnotation, updateAnnotation } = useAnnotations();
+  const { getAnnotation, setAnnotation, updateAnnotation, saveToServer } = useAnnotations();
   const annotation = getAnnotation(sectionId);
   
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
-    language: 'fr' as 'it' | 'fr' | 'en',
-    translator: null as string | null,
     note: '',
-    weapons: [] as (typeof WEAPONS[number])[],
-    guards_mentioned: [] as (typeof GUARDS[number])[],
-    techniques: [] as string[],
+    weapons: null as (typeof WEAPONS[number])[] | null,
+    guards_mentioned: null as (typeof GUARDS[number])[] | null,
+    techniques: null as string[] | null,
     measure: null as (typeof MEASURES[number]) | null,
-    strategy: [] as (typeof STRATEGIES[number])[],
+    strategy: null as (typeof STRATEGIES[number])[] | null,
   });
   const [techniqueInput, setTechniqueInput] = useState('');
 
@@ -33,33 +32,27 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
     if (annotation) {
       setIsEditing(true);
       setFormData({
-        language: annotation.language,
-        translator: annotation.translator,
-        note: annotation.note,
-        weapons: annotation.weapons || [],
-        guards_mentioned: annotation.guards_mentioned || [],
-        techniques: annotation.techniques || [],
+        note: annotation.note || '',
+        weapons: annotation.weapons || null,
+        guards_mentioned: annotation.guards_mentioned || null,
+        techniques: annotation.techniques || null,
         measure: annotation.measure,
-        strategy: annotation.strategy || [],
+        strategy: annotation.strategy || null,
       });
     } else {
       setIsEditing(true);
       setFormData({
-        language: 'fr',
-        translator: null,
         note: '',
-        weapons: [],
-        guards_mentioned: [],
-        techniques: [],
+        weapons: null,
+        guards_mentioned: null,
+        techniques: null,
         measure: null,
-        strategy: [],
+        strategy: null,
       });
     }
   };
 
   const handleSave = async () => {
-    if (!formData.note.trim()) return;
-
     if (annotation) {
       await updateAnnotation(sectionId, formData);
     } else {
@@ -74,10 +67,10 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
   };
 
   const handleAddTechnique = () => {
-    if (techniqueInput.trim() && !formData.techniques.includes(techniqueInput.trim())) {
+    if (techniqueInput.trim() && !formData.techniques?.includes(techniqueInput.trim())) {
       setFormData(prev => ({
         ...prev,
-        techniques: [...prev.techniques, techniqueInput.trim()]
+        techniques: [...(prev.techniques || []), techniqueInput.trim()]
       }));
       setTechniqueInput('');
     }
@@ -86,8 +79,20 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
   const handleRemoveTechnique = (tech: string) => {
     setFormData(prev => ({
       ...prev,
-      techniques: prev.techniques.filter(t => t !== tech)
+      techniques: prev.techniques?.filter(t => t !== tech) || null
     }));
+  };
+
+  const handleSaveToFile = async () => {
+    setIsSaving(true);
+    try {
+      await saveToServer();
+      alert('Annotations sauvegardées dans le fichier YAML avec succès!');
+    } catch (error) {
+      alert('Erreur lors de la sauvegarde: ' + (error instanceof Error ? error.message : 'Unknown error'));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -116,13 +121,6 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
           <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 space-y-3">
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-semibold text-indigo-600 uppercase">
-                    {annotation.language === 'it' && 'Italien'}
-                    {annotation.language === 'fr' && 'Français'}
-                    {annotation.language === 'en' && `Anglais ${annotation.translator ? `- ${annotation.translator}` : ''}`}
-                  </span>
-                </div>
                 <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">
                   {annotation.note}
                 </p>
@@ -170,23 +168,6 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
           <div className="bg-indigo-50 rounded-lg p-4 border-2 border-indigo-200 space-y-3">
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">
-                Version linguistique
-              </label>
-              <select
-                value={formData.language}
-                onChange={(e) => setFormData(prev => ({ ...prev, language: e.target.value as 'it' | 'fr' | 'en', translator: null }))}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-              >
-                {availableLanguages.map(lang => (
-                  <option key={lang.code + (lang.translator || '')} value={lang.code}>
-                    {lang.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">
                 Mesure
               </label>
               <select
@@ -207,7 +188,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
               </label>
               <div className="flex flex-wrap gap-2">
                 {STRATEGIES.map(s => {
-                  const active = formData.strategy.includes(s);
+                  const active = formData.strategy?.includes(s);
                   return (
                     <button
                       type="button"
@@ -215,8 +196,8 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                       onClick={() => setFormData(prev => ({
                         ...prev,
                         strategy: active
-                          ? prev.strategy.filter(x => x !== s)
-                          : [...prev.strategy, s]
+                          ? prev.strategy?.filter(x => x !== s) || null
+                          : [...(prev.strategy || []), s]
                       }))}
                       className={`text-xs px-2 py-1 rounded-full border ${active ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'}`}
                     >
@@ -233,7 +214,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
               </label>
               <div className="flex flex-wrap gap-2">
                 {WEAPONS.map(w => {
-                  const active = formData.weapons.includes(w);
+                  const active = formData.weapons?.includes(w);
                   return (
                     <button
                       type="button"
@@ -241,8 +222,8 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                       onClick={() => setFormData(prev => ({
                         ...prev,
                         weapons: active
-                          ? prev.weapons.filter(x => x !== w)
-                          : [...prev.weapons, w]
+                          ? prev.weapons?.filter(x => x !== w) || null
+                          : [...(prev.weapons || []), w]
                       }))}
                       className={`text-xs px-2 py-1 rounded-full border ${active ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'}`}
                     >
@@ -259,7 +240,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
               </label>
               <div className="flex flex-wrap gap-2">
                 {GUARDS.map(g => {
-                  const active = formData.guards_mentioned.includes(g);
+                  const active = formData.guards_mentioned?.includes(g);
                   return (
                     <button
                       type="button"
@@ -267,8 +248,8 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                       onClick={() => setFormData(prev => ({
                         ...prev,
                         guards_mentioned: active
-                          ? prev.guards_mentioned.filter(x => x !== g)
-                          : [...prev.guards_mentioned, g]
+                          ? prev.guards_mentioned?.filter(x => x !== g) || null
+                          : [...(prev.guards_mentioned || []), g]
                       }))}
                       className={`text-xs px-2 py-1 rounded-full border ${active ? 'bg-green-600 text-white border-green-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'}`}
                     >
@@ -299,7 +280,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                   +
                 </button>
               </div>
-              {formData.techniques.length > 0 && (
+              {formData.techniques && formData.techniques.length > 0 && (
                 <div className="flex flex-wrap gap-1.5">
                   {formData.techniques.map(tech => (
                     <span
@@ -335,8 +316,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
             <div className="flex gap-2">
               <button
                 onClick={handleSave}
-                disabled={!formData.note.trim()}
-                className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium flex items-center justify-center gap-2"
               >
                 <Save size={16} />
                 {annotation ? 'Mettre à jour' : 'Enregistrer'}
@@ -352,9 +332,9 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
         )}
       </div>
 
-      {/* Pied - Bouton d'ajout/édition */}
-      {!annotation && !isEditing && (
-        <div className="p-4 border-t border-gray-200 bg-gray-50">
+      {/* Pied - Boutons d'action */}
+      <div className="p-4 border-t border-gray-200 bg-gray-50 space-y-2">
+        {!annotation && !isEditing && (
           <button
             onClick={handleStartEdit}
             className="w-full px-4 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium flex items-center justify-center gap-2"
@@ -362,8 +342,17 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
             <Plus size={20} />
             Ajouter une annotation
           </button>
-        </div>
-      )}
+        )}
+        
+        <button
+          onClick={handleSaveToFile}
+          disabled={isSaving}
+          className="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Save size={20} />          
+          {isSaving ? 'Sauvegarde...' : 'Sauvegarder l\'annotation'}
+        </button>
+      </div>
     </div>
   );
 }

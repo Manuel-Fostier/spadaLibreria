@@ -65,14 +65,21 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
 
   const [annotations, setAnnotations] = useState<Map<string, Annotation>>(normalizeMap(initialAnnotations));
 
-  // Charger depuis localStorage au montage
+  // Merge localStorage with initialAnnotations (YAML takes precedence for existing sections)
   useEffect(() => {
     const stored = localStorage.getItem('treatise_annotations');
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        const map = new Map<string, Annotation>(Object.entries(parsed));
-        setAnnotations(normalizeMap(map));
+        const localMap = new Map<string, Annotation>(Object.entries(parsed));
+        
+        // Merge: start with localStorage, then override with YAML annotations
+        const merged = new Map<string, Annotation>(localMap);
+        initialAnnotations.forEach((ann, key) => {
+          merged.set(key, ann);
+        });
+        
+        setAnnotations(normalizeMap(merged));
       } catch (e) {
         console.error('Failed to load annotations from localStorage:', e);
       }
