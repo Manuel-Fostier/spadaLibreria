@@ -31,7 +31,7 @@ export default function AnnotationBadge({ annotation, onClick }: AnnotationBadge
           <p className="font-semibold mb-1">1 annotation</p>
           <p className="text-gray-300 leading-relaxed">{preview}</p>
           <div className="mt-2 text-gray-400 text-[10px]">
-            Cliquez pour voir l'annotation
+            Cliquez pour voir l&apos;annotation
           </div>
         </div>
       </div>
