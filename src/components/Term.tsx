@@ -9,6 +9,14 @@ interface TermProps {
   glossaryData: { [key: string]: GlossaryEntry };
 }
 
+// --- Gestion globale d'une seule tooltip active ---
+let globalActiveTerm: string | null = null;
+const globalListeners = new Set<() => void>();
+function setGlobalActiveTerm(next: string | null) {
+  globalActiveTerm = next;
+  globalListeners.forEach(l => l());
+}
+
 export default function Term({ termKey, children, glossaryData }: TermProps) {
   const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState<'top' | 'bottom'>('top');
@@ -109,6 +117,47 @@ export default function Term({ termKey, children, glossaryData }: TermProps) {
     }
   }, [showTooltip, termKey]);
 
+  // Fermer la tooltip en cliquant n'importe où hors du terme
+  useEffect(() => {
+    if (!showTooltip) return;
+    const handleDocumentMouseDown = (e: MouseEvent) => {
+      if (!spanRef.current) return;
+      // Si le clic n'est pas à l'intérieur du wrapper du terme -> fermer
+      if (!spanRef.current.contains(e.target as Node)) {
+        console.log('🖱️ Outside click -> hide tooltip');
+        setShowTooltip(false);
+        if (globalActiveTerm === termKey) setGlobalActiveTerm(null);
+      }
+    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        console.log('⎋ Escape key -> hide tooltip');
+        setShowTooltip(false);
+        if (globalActiveTerm === termKey) setGlobalActiveTerm(null);
+      }
+    };
+    document.addEventListener('mousedown', handleDocumentMouseDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleDocumentMouseDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showTooltip]);
+
+  // Synchroniser l'état local avec l'état global pour une seule tooltip visible
+  useEffect(() => {
+    const listener = () => {
+      // Si un autre terme (différent) est devenu actif -> masquer cette tooltip
+      if (globalActiveTerm !== termKey && showTooltip) {
+        setShowTooltip(false);
+      }
+    };
+    globalListeners.add(listener);
+    return () => {
+      globalListeners.delete(listener);
+    };
+  }, [termKey, showTooltip]);
+
   if (!data) {
     return (
       <span className="text-red-500 font-medium" title="Terme manquant">
@@ -133,8 +182,19 @@ export default function Term({ termKey, children, glossaryData }: TermProps) {
     <span 
       ref={spanRef}
       className="relative inline-block cursor-help group"
-      onMouseEnter={() => setShowTooltip(true)}
-      onMouseLeave={() => setShowTooltip(false)}
+      onMouseDown={() => {
+        // Ne pas ouvrir si une autre tooltip est déjà active
+        if (globalActiveTerm !== null && globalActiveTerm !== termKey) {
+          console.log('⛔ Tooltip already open, ignoring hover');
+          return;
+        }
+        // Activer globalement ce terme et afficher localement cette instance
+        setGlobalActiveTerm(termKey);
+        setShowTooltip(true);
+      }}
+      onMouseLeave={() => {
+        // On ne masque plus immédiatement (persistance jusqu'au clic extérieur)
+      }}
     >
       <span className="text-indigo-600 font-medium border-b border-indigo-200 hover:border-indigo-600 transition-colors">
         {children}
@@ -142,7 +202,7 @@ export default function Term({ termKey, children, glossaryData }: TermProps) {
       
       {showTooltip && (
         <div 
-          className={`absolute z-50 ${verticalClasses} ${horizontalClasses} w-[800px] max-w-[calc(100vw-32px)] p-0 bg-white text-gray-800 text-sm border border-gray-200 shadow-xl pointer-events-none rounded-lg overflow-hidden`}
+          className={`absolute z-50 ${verticalClasses} ${horizontalClasses} w-[800px] max-w-[calc(100vw-32px)] p-0 bg-white text-gray-800 text-sm border border-gray-200 shadow-xl rounded-lg overflow-hidden`}
           style={tooltipAlignment === 'left' ? { transform: 'translateX(40px)' } : undefined}
         >
           <div className="bg-gray-50 p-3 border-b border-gray-100 flex justify-between items-center">
