@@ -1,18 +1,21 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { X, Plus, Edit2, Save, ChevronRight, Check } from 'lucide-react';
-import { MEASURES, STRATEGIES, WEAPONS, GUARDS } from '@/lib/annotation';
+import { X, Plus, Edit2, Save, ChevronRight, Check, MessageSquare } from 'lucide-react';
+import { MEASURES, STRATEGIES, WEAPONS, GUARDS, Measure } from '@/lib/annotation';
 import { useAnnotations } from '@/contexts/AnnotationContext';
+import MeasureProgressBar from './MeasureProgressBar';
 
 type TabType = 'armes' | 'gardes' | 'techniques';
 
 interface AnnotationPanelProps {
   sectionId: string;
   onClose: () => void;
+  availableLanguages?: Array<{ code: 'it' | 'fr' | 'en'; label: string; translator?: string }>;
+  sectionMeta?: { weapons: string[]; guards_mentioned?: string[]; techniques?: string[] };
 }
 
-export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelProps) {
+export default function AnnotationPanel({ sectionId, onClose, availableLanguages: _availableLanguages, sectionMeta: _sectionMeta }: AnnotationPanelProps) {
   const { getAnnotation, setAnnotation, updateAnnotation, saveToServer } = useAnnotations();
   const annotation = getAnnotation(sectionId);
   
@@ -21,6 +24,7 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
   const [panelWidth, setPanelWidth] = useState(384); // 24rem = 384px (md:w-96)
   const [isResizing, setIsResizing] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const [isSaving, setIsSaving] = useState(false);
   
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -28,7 +32,7 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
     weapons: null as (typeof WEAPONS[number])[] | null,
     guards_mentioned: null as (typeof GUARDS[number])[] | null,
     techniques: null as string[] | null,
-    measure: null as (typeof MEASURES[number]) | null,
+    measures: null as (typeof MEASURES[number])[] | null,
     strategy: null as (typeof STRATEGIES[number])[] | null,
   });
   const [techniqueInput, setTechniqueInput] = useState('');
@@ -88,7 +92,7 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
         weapons: annotation.weapons || null,
         guards_mentioned: annotation.guards_mentioned || null,
         techniques: annotation.techniques || null,
-        measure: annotation.measure,
+        measures: annotation.measures || null,
         strategy: annotation.strategy || null,
       });
     } else {
@@ -98,7 +102,7 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
         weapons: null,
         guards_mentioned: null,
         techniques: null,
-        measure: null,
+        measures: null,
         strategy: null,
       });
     }
@@ -135,6 +139,18 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
     }));
   };
 
+  const handleToggleMeasure = (measure: Measure) => {
+    setFormData(prev => {
+      const current = prev.measures || [];
+      const hasMeasure = current.includes(measure);
+      const next = hasMeasure ? current.filter(m => m !== measure) : [...current, measure];
+      return {
+        ...prev,
+        measures: next.length > 0 ? next : null,
+      };
+    });
+  };
+
   // Get tags for current tab
   const getCurrentTags = () => {
     const data = isEditing ? formData : annotation;
@@ -162,6 +178,22 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
     } catch {
       setSaveStatus('idle');
       setIsCollapsed(true);
+    }
+  }, [saveToServer]);
+
+  const handleSaveToFile = useCallback(async () => {
+    setIsSaving(true);
+    setSaveStatus('saving');
+    try {
+      await saveToServer();
+      setSaveStatus('saved');
+      alert('Annotations sauvegardées dans le fichier YAML avec succès!');
+    } catch (error) {
+      setSaveStatus('idle');
+      const message = error instanceof Error ? error.message : 'Erreur inconnue';
+      alert(`Erreur lors de la sauvegarde: ${message}`);
+    } finally {
+      setIsSaving(false);
     }
   }, [saveToServer]);
   // If collapsed, show only the expand button
@@ -238,6 +270,13 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
                 <Edit2 size={16} className="text-gray-600" />
               </button>
             )}
+            <button
+              onClick={handleClose}
+              className="p-1.5 hover:bg-gray-200 rounded-lg transition-colors"
+              aria-label="Fermer le panneau"
+            >
+              <X size={16} className="text-gray-600" />
+            </button>
           </div>
         </div>
 
@@ -263,13 +302,11 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
                 )}
               </div>
 
-              {/* Mesure */}
+              {/* Mesures */}
               <div>
-                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Mesure</h4>
-                {annotation.measure ? (
-                  <span className="text-xs px-3 py-1.5 bg-amber-100 text-amber-700 rounded-full inline-block">
-                    {annotation.measure}
-                  </span>
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Mesures</h4>
+                {annotation.measures && annotation.measures.length > 0 ? (
+                  <MeasureProgressBar measures={annotation.measures} />
                 ) : (
                   <p className="text-sm text-gray-400 italic">Aucune mesure indiquée</p>
                 )}
@@ -335,6 +372,13 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
             </div>
           )}
 
+          {!annotation && !isEditing && (
+            <div className="text-center text-gray-400 py-12">
+              <MessageSquare size={48} className="mx-auto mb-3 opacity-30" />
+              <p className="text-sm">Aucune annotation pour cette section</p>
+            </div>
+          )}
+
           {/* Edit form */}
           {isEditing && (
             <div className="space-y-4">
@@ -370,24 +414,18 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
                 </div>
               </div>
 
-              {/* Mesure */}
+              {/* Mesures */}
               <div>
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                  Mesure
+                  Mesures
                 </h4>
-                <select
-                  value={formData.measure ?? ''}
-                  onChange={(e) => setFormData(prev => ({ 
-                    ...prev, 
-                    measure: e.target.value ? (e.target.value as typeof MEASURES[number]) : null 
-                  }))}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                >
-                  <option value="">Sélectionner une mesure (optionnel)</option>
-                  {MEASURES.map(m => (
-                    <option key={m} value={m}>{m}</option>
-                  ))}
-                </select>
+                <MeasureProgressBar
+                  measures={formData.measures}
+                  onToggle={handleToggleMeasure}
+                />
+                {!formData.measures || formData.measures.length === 0 ? (
+                  <p className="mt-3 text-xs text-gray-400 italic">Aucune mesure sélectionnée</p>
+                ) : null}
               </div>
 
               {/* Stratégie */}
@@ -527,9 +565,9 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
           )}
         </div>
 
-        {/* Footer - Add annotation button only when no annotation and not editing */}
-        {!annotation && !isEditing && (
-          <div className="p-4 border-t border-gray-200 bg-gray-50">
+        {/* Footer */}
+        <div className="p-4 border-t border-gray-200 bg-gray-50 space-y-2">
+          {!annotation && !isEditing && (
             <button
               onClick={handleStartEdit}
               className="w-full px-4 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium flex items-center justify-center gap-2"
@@ -537,8 +575,17 @@ export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelP
               <Plus size={20} />
               Ajouter une annotation
             </button>
-          </div>
-        )}
+          )}
+
+          <button
+            onClick={handleSaveToFile}
+            disabled={isSaving}
+            className="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Save size={20} />
+            {isSaving ? 'Sauvegarde...' : 'Sauvegarder l\'annotation'}
+          </button>
+        </div>
       </div>
     </div>
   );

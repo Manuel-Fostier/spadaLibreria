@@ -47,6 +47,6 @@ export interface Annotation {
   weapons: Weapon[] | null;
   guards_mentioned: Guard[] | null;
   techniques: string[] | null;
-  measure: Measure | null;
+  measures: Measure[] | null;
   strategy: Strategy[] | null;
 }

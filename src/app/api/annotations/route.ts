@@ -10,6 +10,11 @@ interface AnnotationsMap {
   [sectionId: string]: Annotation;
 }
 
+interface TreatiseSection {
+  id: string;
+  annotation?: Annotation;
+}
+
 // POST - Sauvegarder toutes les annotations
 export async function POST(request: NextRequest) {
   try {
@@ -21,7 +26,7 @@ export async function POST(request: NextRequest) {
     for (const filename of treatiseFiles) {
       const filePath = path.join(TREATISES_DIR, filename);
       const fileContents = fs.readFileSync(filePath, 'utf8');
-      const sections = yaml.load(fileContents) as any[];
+      const sections = yaml.load(fileContents) as TreatiseSection[];
 
       let modified = false;
 
@@ -64,7 +69,7 @@ export async function GET() {
     for (const filename of treatiseFiles) {
       const filePath = path.join(TREATISES_DIR, filename);
       const fileContents = fs.readFileSync(filePath, 'utf8');
-      const sections = yaml.load(fileContents) as any[];
+      const sections = yaml.load(fileContents) as TreatiseSection[];
 
       for (const section of sections) {
         if (section.annotation) {
