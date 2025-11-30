@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { X, Plus, Edit2, Save, ChevronRight, Check, MessageSquare } from 'lucide-react';
-import { MEASURES, STRATEGIES, WEAPONS, GUARDS } from '@/lib/annotation';
+import { MEASURES, STRATEGIES, WEAPONS, GUARDS, Measure } from '@/lib/annotation';
 import { useAnnotations } from '@/contexts/AnnotationContext';
 import MeasureProgressBar from './MeasureProgressBar';
 
@@ -137,6 +137,18 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
       ...prev,
       techniques: prev.techniques?.filter(t => t !== tech) || null
     }));
+  };
+
+  const handleToggleMeasure = (measure: Measure) => {
+    setFormData(prev => {
+      const current = prev.measures || [];
+      const hasMeasure = current.includes(measure);
+      const next = hasMeasure ? current.filter(m => m !== measure) : [...current, measure];
+      return {
+        ...prev,
+        measures: next.length > 0 ? next : null,
+      };
+    });
   };
 
   // Get tags for current tab
@@ -294,16 +306,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
               <div>
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Mesures</h4>
                 {annotation.measures && annotation.measures.length > 0 ? (
-                  <div className="space-y-2">
-                    <div className="flex flex-wrap gap-2">
-                      {annotation.measures.map(m => (
-                        <span key={m} className="text-xs px-3 py-1.5 rounded-full bg-amber-100 text-amber-700">
-                          {m}
-                        </span>
-                      ))}
-                    </div>
-                    <MeasureProgressBar measures={annotation.measures} />
-                  </div>
+                  <MeasureProgressBar measures={annotation.measures} />
                 ) : (
                   <p className="text-sm text-gray-400 italic">Aucune mesure indiquée</p>
                 )}
@@ -416,35 +419,13 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
                   Mesures
                 </h4>
-                <div className="flex flex-wrap gap-2">
-                  {MEASURES.map(m => {
-                    const active = formData.measures?.includes(m);
-                    return (
-                      <button
-                        type="button"
-                        key={m}
-                        onClick={() => setFormData(prev => {
-                          const current = prev.measures || [];
-                          const hasValue = current.includes(m);
-                          const next = hasValue
-                            ? current.filter(x => x !== m)
-                            : [...current, m];
-                          return {
-                            ...prev,
-                            measures: next.length > 0 ? next : null,
-                          };
-                        })}
-                        className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
-                          active
-                            ? 'bg-amber-500 text-white border-amber-500'
-                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
-                        }`}
-                      >
-                        {m}
-                      </button>
-                    );
-                  })}
-                </div>
+                <MeasureProgressBar
+                  measures={formData.measures}
+                  onToggle={handleToggleMeasure}
+                />
+                {!formData.measures || formData.measures.length === 0 ? (
+                  <p className="mt-3 text-xs text-gray-400 italic">Aucune mesure sélectionnée</p>
+                ) : null}
               </div>
 
               {/* Stratégie */}
