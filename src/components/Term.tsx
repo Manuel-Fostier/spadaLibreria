@@ -18,40 +18,96 @@ export default function Term({ termKey, children, glossaryData }: TermProps) {
   const data = glossaryData[termKey];
 
   useEffect(() => {
+    console.log('🔄 useEffect triggered - showTooltip:', showTooltip, 'termKey:', termKey);
     if (showTooltip && spanRef.current) {
       const rect = spanRef.current.getBoundingClientRect();
       const spaceAbove = rect.top;
-      
-      setTooltipPosition(spaceAbove < 400 ? 'bottom' : 'top');
-      
-      const tooltipWidth = 800;
+      const spaceBelow = window.innerHeight - rect.bottom;
+
+      // Position verticale
+      const nextVertical = spaceAbove < 400 ? 'bottom' : 'top';
+      setTooltipPosition(nextVertical);
+      console.log('🔍 Position Debug:', { termKey, spaceAbove, spaceBelow, nextVertical });
+
+      const tooltipWidth = 800; // largeur prévue
       const viewportWidth = window.innerWidth;
-      const margin = 16;
-      
-      // Calculer l'espace disponible de chaque côté du terme
-      const spaceLeft = rect.left;
-      const spaceRight = viewportWidth - rect.right;
-      const spaceCenter = Math.min(
-        rect.left + rect.width / 2,
-        viewportWidth - (rect.left + rect.width / 2)
-      ) * 2;
-      
-      // Déterminer le meilleur alignement
-      if (spaceCenter >= tooltipWidth + margin * 2) {
-        // Assez d'espace pour centrer
-        setTooltipAlignment('center');
-      } else if (spaceRight >= tooltipWidth + margin) {
-        // Assez d'espace à droite, aligner à gauche du terme
-        setTooltipAlignment('left');
-      } else if (spaceLeft >= tooltipWidth + margin) {
-        // Assez d'espace à gauche, aligner à droite du terme
-        setTooltipAlignment('right');
-      } else {
-        // Pas assez d'espace, centrer quand même (avec réduction de largeur)
-        setTooltipAlignment('center');
+      const margin = 16; // marge latérale sécuritaire
+
+      // Recherche d'un conteneur de texte plus étroit que le viewport (ex: colonne centrale)
+      let containerRect: DOMRect | null = null;
+      let el: HTMLElement | null = spanRef.current.parentElement;
+      while (el) {
+        const r = el.getBoundingClientRect();
+        // heuristique: largeur inférieure au viewport - 100 et supérieure à 400 (évite petits wrappers)
+        if (r.width < viewportWidth - 100 && r.width > 400) {
+          containerRect = r;
+          break;
+        }
+        el = el.parentElement;
       }
+      if (!containerRect) {
+        // fallback: tenter main ou article
+        const main = document.querySelector('main');
+        if (main) {
+          const r = main.getBoundingClientRect();
+          if (r.width < viewportWidth - 100 && r.width > 400) containerRect = r as DOMRect;
+        }
+      }
+
+      // Espace calculé relatif au conteneur ou au viewport si pas trouvé
+      let spaceLeft: number;
+      let spaceRight: number;
+      if (containerRect) {
+        spaceLeft = rect.left - containerRect.left;
+        spaceRight = containerRect.right - rect.right;
+      } else {
+        spaceLeft = rect.left;
+        spaceRight = viewportWidth - rect.right;
+      }
+
+      // Largeur utilisable pour centrer (doublée car on prend le min des demi-espaces)
+      const centerHalfLeft = containerRect ? (rect.left + rect.width / 2 - containerRect.left) : (rect.left + rect.width / 2);
+      const centerHalfRight = containerRect ? (containerRect.right - (rect.left + rect.width / 2)) : (viewportWidth - (rect.left + rect.width / 2));
+      const spaceCenter = Math.min(centerHalfLeft, centerHalfRight) * 2;
+
+      const thresholdEdge = 180; // seuil : si proche bord gauche/droite du conteneur
+
+      const canCenter = spaceCenter >= tooltipWidth + margin * 2;
+      const canAlignLeft = spaceRight >= tooltipWidth + margin;
+      const canAlignRight = spaceLeft >= tooltipWidth + margin;
+
+      console.log('📐 Alignment Debug (container mode):', {
+        containerWidth: containerRect?.width ?? viewportWidth,
+        containerLeft: containerRect?.left ?? 0,
+        spaceLeft,
+        spaceRight,
+        spaceCenter,
+        tooltipWidth,
+        canCenter,
+        canAlignLeft,
+        canAlignRight,
+        thresholdEdge
+      });
+
+      let nextHorizontal: 'left' | 'center' | 'right' = 'center';
+      if (canCenter) {
+        // Même si on peut centrer, si très proche du bord gauche, on préfère aligner à gauche
+        if (spaceLeft < thresholdEdge) nextHorizontal = 'left';
+        else if (spaceRight < thresholdEdge) nextHorizontal = 'right';
+        else nextHorizontal = 'center';
+      } else if (canAlignLeft) {
+        nextHorizontal = 'left';
+      } else if (canAlignRight) {
+        nextHorizontal = 'right';
+      } else {
+        // Dernier recours: aligner à gauche et laisser le overflow-y gérer la lecture
+        nextHorizontal = 'left';
+      }
+
+      console.log('✅ Chosen horizontal alignment:', nextHorizontal);
+      setTooltipAlignment(nextHorizontal);
     }
-  }, [showTooltip]);
+  }, [showTooltip, termKey]);
 
   if (!data) {
     return (
@@ -87,6 +143,7 @@ export default function Term({ termKey, children, glossaryData }: TermProps) {
       {showTooltip && (
         <div 
           className={`absolute z-50 ${verticalClasses} ${horizontalClasses} w-[800px] max-w-[calc(100vw-32px)] p-0 bg-white text-gray-800 text-sm border border-gray-200 shadow-xl pointer-events-none rounded-lg overflow-hidden`}
+          style={tooltipAlignment === 'left' ? { transform: 'translateX(40px)' } : undefined}
         >
           <div className="bg-gray-50 p-3 border-b border-gray-100 flex justify-between items-center">
             <span className="font-bold text-gray-900 text-base">{data.term}</span>
