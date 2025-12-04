@@ -178,7 +178,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                       <h4 className="text-xs font-bold text-gray-400 mb-4 flex items-center gap-2 pb-2 border-b border-gray-100">
                         Français
                       </h4>
-                      <div className="text-gray-600">
+                      <div className="text-gray-600 leading-relaxed whitespace-pre-line text-justify">
                         <TextParser text={section.content.fr} glossaryData={glossaryData} />
                       </div>
                     </div>

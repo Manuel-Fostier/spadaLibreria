@@ -10,7 +10,8 @@ Spada Libreria is a platform for studying Bolognese fencing treatises. The appli
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
 - **Data Format**: YAML files for content (glossary and treatises)
-- **Package Manager**: npm
+- **Package Manager**: npm (for Node.js), uv (for Python)
+- **Python**: 3.13+ (for data extraction scripts)
 
 ## Project Structure
 
@@ -23,6 +24,8 @@ src/
 data/
 ├── glossary.yaml  # Glossary terms with FR/EN definitions
 └── treatises/     # YAML files containing treatise sections
+scripts/
+└── extract_book.py  # Python script for extracting text from PDFs
 ```
 
 ## Key Architecture Principles
@@ -35,6 +38,7 @@ data/
 
 ## Commands
 
+### Node.js / Next.js
 ```bash
 npm install    # Install dependencies
 npm run dev    # Start development server at http://localhost:3000
@@ -42,13 +46,50 @@ npm run build  # Build for production
 npm run lint   # Run ESLint
 ```
 
+### Python Scripts
+```bash
+uv sync                    # Synchronize Python dependencies
+uv add <package>           # Add a new Python dependency
+uv run extract-book        # Run the extraction script
+```
+
 ## Code Style Guidelines
 
+### TypeScript / React
 - Use TypeScript with proper type definitions
 - Use `'use client'` directive for client-side components
 - Use Tailwind CSS for styling (no CSS modules)
 - Follow React functional component patterns with hooks
 - Use absolute imports with `@/` prefix (e.g., `@/lib/dataLoader`)
+
+### Python
+- Use Python 3.13+ features
+- Follow PEP 8 style guide
+- Use type hints where appropriate
+- Use `argparse` for command-line scripts (not `input()`)
+
+## Dependency Management
+
+### **CRITICAL RULE**: When adding a Python dependency:
+
+1. **NEVER** manually edit `pyproject.toml` dependencies
+2. **ALWAYS** use: `uv add <package-name>`
+3. This ensures proper dependency resolution and lockfile updates
+
+Example:
+```bash
+# ✅ Correct
+uv add pyyaml
+
+# ❌ Wrong
+# Manually editing pyproject.toml
+```
+
+### Node.js Dependencies
+Use standard npm commands:
+```bash
+npm install <package>
+```
 
 ## Data File Formats
 
@@ -85,9 +126,28 @@ term_key:
         text: English translation with {glossary_terms}
 ```
 
+**Note**: The `annotation` field should NOT be included in generated YAML files from extraction scripts.
+
+## Python Scripts Guidelines
+
+### Extract Book Script
+
+The `extract_book.py` script extracts text from PDF treatises and should:
+
+1. Use `argparse` for command-line arguments
+2. Accept `--pdf` and `--pages` arguments
+3. Generate YAML files in the format described above
+4. Save to `data/treatises/{author}_{book}.yaml`
+5. NOT include `annotation` fields in output
+
+Example usage:
+```bash
+uv run extract-book marozzo --pages "34-102"
+```
+
 ## Testing
 
-No test framework is currently set up. When adding tests, prefer using Jest with React Testing Library.
+No test framework is currently set up. When adding tests, prefer using Jest with React Testing Library for JavaScript/TypeScript, and pytest for Python.
 
 ## Important Notes
 
@@ -95,3 +155,7 @@ No test framework is currently set up. When adding tests, prefer using Jest with
 - API routes are in `src/app/api/` and use Next.js App Router conventions
 - Data loading uses server-side functions with `fs` and `js-yaml`
 - Client components must not import server-side modules like `fs`
+- Python environment is managed by `uv`, not pip or conda directly
+
+- **Audience**: This is a learning project for beginners in web technologies (transitioning from C/systems programming)
+- **Deployment**: This is a local-only application. It will never be deployed online. All development and usage is on the developer's machine

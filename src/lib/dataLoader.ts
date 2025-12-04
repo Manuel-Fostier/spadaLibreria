@@ -51,15 +51,19 @@ export function loadGlossary(): GlossaryData {
   return yaml.load(fileContents) as GlossaryData;
 }
 
-export function loadTreatise(filename: string): TreatiseSection[] {
-  const filePath = path.join(process.cwd(), 'data', 'treatises', filename);
-  const fileContents = fs.readFileSync(filePath, 'utf8');
-  return yaml.load(fileContents) as TreatiseSection[];
-}
-
-export function getAllTreatises(): string[] {
+export function loadAllTreatises(): TreatiseSection[] {
   const treatisesDir = path.join(process.cwd(), 'data', 'treatises');
-  return fs.readdirSync(treatisesDir).filter(file => file.endsWith('.yaml'));
+  const files = fs.readdirSync(treatisesDir).filter(file => file.endsWith('.yaml'));
+  
+  let allSections: TreatiseSection[] = [];
+  for (const file of files) {
+    const filePath = path.join(treatisesDir, file);
+    const fileContents = fs.readFileSync(filePath, 'utf8');
+    const sections = yaml.load(fileContents) as TreatiseSection[];
+    allSections = allSections.concat(sections);
+  }
+  
+  return allSections;
 }
 // Re-export constants and types for server-side consumers
 export { MEASURES, STRATEGIES };
