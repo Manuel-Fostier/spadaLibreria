@@ -63,8 +63,12 @@ def create_and_append_paragraphs(text, chapter):
     if text == "":
         return ""
 
+    # Insérer un retour à la ligne avant chaque bullet point pour forcer la séparation
+    # C'est fait ici et non dans `extract_text_elements()`car les bullets point sont utilisée pour créer des listes au sein des paragraphes
+    text = re.sub(r'([●○•◦])', r'\n\1', text)
+    
     # Split the accumulated text into paragraphs
-    paragraphs_text = re.split(r"\n(?=[A-ZÉÈÊËÀÂÎÔÛÜÇ])", text)
+    paragraphs_text = re.split(r"\n(?=[A-ZÉÈÊËÀÂÎÔÛÜÇ●○•◦])", text)
     # Associate each Paragraph to current Chapter
     for para_index, para in enumerate(paragraphs_text, start=1):
         chapter.paragraph_list.append(Paragraph(para, para_index, chapter))
