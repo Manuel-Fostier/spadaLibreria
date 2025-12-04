@@ -25,7 +25,7 @@ data/
 ├── glossary.yaml  # Glossary terms with FR/EN definitions
 └── treatises/     # YAML files containing treatise sections
 scripts/
-└── extract_marozzo.py  # Python script for extracting text from PDFs
+└── extract_book.py  # Python script for extracting text from PDFs
 ```
 
 ## Key Architecture Principles
@@ -50,7 +50,7 @@ npm run lint   # Run ESLint
 ```bash
 uv sync                    # Synchronize Python dependencies
 uv add <package>           # Add a new Python dependency
-uv run extract-marozzo     # Run the extraction script
+uv run extract-book        # Run the extraction script
 ```
 
 ## Code Style Guidelines
@@ -130,9 +130,9 @@ term_key:
 
 ## Python Scripts Guidelines
 
-### Extract Marozzo Script
+### Extract Book Script
 
-The `extract_marozzo.py` script extracts text from PDF treatises and should:
+The `extract_book.py` script extracts text from PDF treatises and should:
 
 1. Use `argparse` for command-line arguments
 2. Accept `--pdf` and `--pages` arguments
@@ -142,7 +142,7 @@ The `extract_marozzo.py` script extracts text from PDF treatises and should:
 
 Example usage:
 ```bash
-uv run extract-marozzo --pdf "Achille Marozzo - opéra nova.pdf" --pages "34-102"
+uv run extract-book marozzo --pages "34-102"
 ```
 
 ## Testing

@@ -11,4 +11,4 @@ dependencies = [
 ]
 
 [project.scripts]
-extract-marozzo = "scripts.extract_marozzo:main"
+extract-book = "scripts.extract_book:main"

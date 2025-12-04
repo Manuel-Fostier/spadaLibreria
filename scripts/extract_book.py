@@ -250,9 +250,9 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Exemples d'utilisation:
-  uv run scripts/extract_marozzo.py marozzo --pages "34-102"
-  uv run scripts/extract_marozzo.py manciolino --pages "1-50"
-  uv run scripts/extract_marozzo.py marozzo --pages "32,34,60,63"
+  uv run extract-book marozzo --pages "34-102"
+  uv run extract-book manciolino --pages "1-50"
+  uv run extract-book marozzo_l2 --pages "20"
         """
     )
     
