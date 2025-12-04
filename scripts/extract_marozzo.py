@@ -1,7 +1,12 @@
 import pdfplumber
 import re
 import argparse
-import yaml
+from ruamel.yaml import YAML
+from ruamel.yaml.scalarstring import LiteralScalarString
+
+yaml = YAML()
+yaml.preserve_quotes = True
+yaml.default_flow_style = False
 
 
 class TextElement:
@@ -192,7 +197,7 @@ def convert_to_yaml_structure(title_list, config, debug=False):
                         "year": config["year"]
                     },
                     "content": {
-                        "fr": paragraphs_text
+                        "fr": LiteralScalarString(paragraphs_text)
                     }
                 }
                 sections.append(section)
@@ -322,8 +327,8 @@ Exemples d'utilisation:
 
         # Sauvegarder dans le fichier YAML
         output_filename = f"data/treatises/{config['master_id']}_opera_nova_livre{config['book']}.yaml"
-        with open(output_filename, 'w', encoding='utf-8') as f:
-            yaml.dump(sections, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
+        with open(output_filename, 'w', encoding='utf-8') as f:            
+            yaml.dump(sections, f)
 
         print(f"Fichier YAML généré : {output_filename}")
         print(f"Nombre de sections : {len(sections)}")
