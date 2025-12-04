@@ -156,3 +156,6 @@ No test framework is currently set up. When adding tests, prefer using Jest with
 - Data loading uses server-side functions with `fs` and `js-yaml`
 - Client components must not import server-side modules like `fs`
 - Python environment is managed by `uv`, not pip or conda directly
+
+- **Audience**: This is a learning project for beginners in web technologies (transitioning from C/systems programming)
+- **Deployment**: This is a local-only application. It will never be deployed online. All development and usage is on the developer's machine
