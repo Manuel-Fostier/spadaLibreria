@@ -191,17 +191,23 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Exemples d'utilisation:
-  python extract_marozzo.py --pdf "Achille Marozzo - opéra nova.pdf" --pages "34-102"
-  python extract_marozzo.py --pdf "Achille Marozzo - opéra nova.pdf" --pages "35-55"
-  python extract_marozzo.py --pdf "Achille Marozzo - opéra nova.pdf" --pages "32,34,60,63"
+  uv run scripts/extract_marozzo.py marozzo --pages "34-102"
+  uv run scripts/extract_marozzo.py manciolino --pages "1-50"
+  uv run scripts/extract_marozzo.py marozzo --pages "32,34,60,63"
         """
     )
     
+    # Mapping des auteurs vers leurs fichiers PDF
+    PDF_MAPPING = {
+        "marozzo": "data/treatises/Achille Marozzo - opéra nova.pdf",
+        "manciolino": "data/treatises/Antonio Manciolino - opéra nova.pdf",
+    }
+    
     parser.add_argument(
-        "--pdf",
+        "author",
         type=str,
-        default="Achille Marozzo - opéra nova.pdf",
-        help="Chemin vers le fichier PDF (défaut: Achille Marozzo - opéra nova.pdf)"
+        choices=PDF_MAPPING.keys(),
+        help="Nom de l'auteur (marozzo ou manciolino)"
     )
     
     parser.add_argument(
@@ -213,7 +219,7 @@ Exemples d'utilisation:
     
     args = parser.parse_args()
     
-    pdf_path = args.pdf
+    pdf_path = PDF_MAPPING[args.author]
     search_range = args.pages
 
     # Exemple de plages de pages à extraire
