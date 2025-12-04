@@ -1,5 +1,6 @@
 import pdfplumber
 import re
+import argparse
 
 
 class TextElement:
@@ -185,10 +186,37 @@ def parse_page_range(input_str):
         return []
 
 def main():
-    pdf_path = "Achille Marozzo - opéra nova.pdf"    
+    parser = argparse.ArgumentParser(
+        description="Extraire le texte d'un PDF de traité d'escrime",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Exemples d'utilisation:
+  python extract_marozzo.py --pdf "Achille Marozzo - opéra nova.pdf" --pages "34-102"
+  python extract_marozzo.py --pdf "Achille Marozzo - opéra nova.pdf" --pages "35-55"
+  python extract_marozzo.py --pdf "Achille Marozzo - opéra nova.pdf" --pages "32,34,60,63"
+        """
+    )
     
-    # search_range  = input("Personnaliser la plage de pages (ex: 32-65 ou 32, 34, 60, 63): ")
-    search_range = '1-10'
+    parser.add_argument(
+        "--pdf",
+        type=str,
+        default="Achille Marozzo - opéra nova.pdf",
+        help="Chemin vers le fichier PDF (défaut: Achille Marozzo - opéra nova.pdf)"
+    )
+    
+    parser.add_argument(
+        "--pages",
+        type=str,
+        required=True,
+        help="Plage de pages à extraire (ex: 32-65 ou 32,34,60,63)"
+    )
+    
+    args = parser.parse_args()
+    
+    pdf_path = args.pdf
+    search_range = args.pages
+
+    # Exemple de plages de pages à extraire
     # search_range = '34-102' # Livre 3
     # search_range = '35-55' # 1er assault
     # search_range = '56-65' # 2eme assault
