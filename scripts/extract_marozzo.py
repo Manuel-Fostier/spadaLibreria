@@ -188,7 +188,8 @@ def main():
     pdf_path = "Achille Marozzo - opéra nova.pdf"    
     
     # search_range  = input("Personnaliser la plage de pages (ex: 32-65 ou 32, 34, 60, 63): ")
-    search_range = '34-102' # Livre 3
+    search_range = '1-10'
+    # search_range = '34-102' # Livre 3
     # search_range = '35-55' # 1er assault
     # search_range = '56-65' # 2eme assault
     # search_range = '35-65'  # 1er et 2eme assault
@@ -202,24 +203,27 @@ def main():
     else:
         title_list = extract_text_elements(pdf_path, page_range)
 
-        # Initialize DatabaseManager
-        from database import DatabaseManager
-        db_manager = DatabaseManager()
-        db_manager.connect()
-        db_manager.create_tables()
+        print("Extraction terminée.")
 
         # Insert each title into the database
         for title in title_list:
-            title_id = db_manager.insert_entry(language="fr", content=title.text, entry_type="title")
+            print(f"Title: {title.text}")
             for title1 in title.titles_1_list:
-                title1_id = db_manager.insert_entry(language="fr", content=title1.text, parent_id=title_id, entry_type="title1")
+                print(f"  Title1: {title1.text}")
                 for chapter in title1.chapter_list:
-                    chapter_id = db_manager.insert_entry(language="fr", content=chapter.text, parent_id=title1_id, entry_type="chapter")
-                    for paragraph in chapter.paragraph_list:
-                        db_manager.insert_entry(language="fr", content=paragraph.text, parent_id=chapter_id, entry_type="paragraph")
+                    print(f"    Chapter: {chapter.text}")
+                    # for paragraph in chapter.paragraph_list:
+                        # print(f"      Paragraph: {paragraph.text}")
+        #     title_id = db_manager.insert_entry(language="fr", content=title.text, entry_type="title")
+        #     for title1 in title.titles_1_list:
+        #         title1_id = db_manager.insert_entry(language="fr", content=title1.text, parent_id=title_id, entry_type="title1")
+        #         for chapter in title1.chapter_list:
+        #             chapter_id = db_manager.insert_entry(language="fr", content=chapter.text, parent_id=title1_id, entry_type="chapter")
+        #             for paragraph in chapter.paragraph_list:
+        #                 db_manager.insert_entry(language="fr", content=paragraph.text, parent_id=chapter_id, entry_type="paragraph")
 
 
-        db_manager.close()
+        # db_manager.close()
 
 if __name__ == "__main__":
     main()
