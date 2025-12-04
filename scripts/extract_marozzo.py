@@ -1,6 +1,7 @@
 import pdfplumber
 import re
 import argparse
+import yaml
 
 
 class TextElement:
@@ -149,6 +150,55 @@ def extract_text_elements(pdf_path, page_range):
 
     return titles
 
+def extract_chapter_number(title):
+    """Extrait le numéro de chapitre du titre (ex: 'Chap. 94' ou 'Chapitre 95')"""
+    # Pattern pour 'Chap. XXX' ou 'Chapitre XXX' (insensible à la casse)
+    pattern = r'(?:chap|chapitre)\s*\.?\s*(\d+)'
+    match = re.search(pattern, title, re.IGNORECASE)
+    if match:
+        return int(match.group(1))
+    return None
+
+def convert_to_yaml_structure(title_list, config, debug=False):
+    """Convertit la structure extraite en format YAML conforme"""
+    sections = []
+    
+    for title in title_list:
+        for title1 in title.titles_1_list:
+            for chapter in title1.chapter_list:
+                if not chapter.text or chapter.text.strip() == "":
+                    continue
+                
+                # Extraire le vrai numéro de chapitre depuis le titre
+                chapter_number = extract_chapter_number(chapter.text)
+                if chapter_number is None:
+                    chapter_number = chapter.index
+                
+                if debug:
+                    print(f"DEBUG - Titre: {chapter.text}")
+                    print(f"DEBUG - Chapter number extrait: {chapter_number}")
+                
+                # Fusionner tous les paragraphes avec des retours à la ligne
+                paragraphs_text = "\n".join([p.text for p in chapter.paragraph_list if p.text.strip()])
+                
+                section = {
+                    "id": f"{config['master_id']}_l{config['book']}_c{chapter_number}",
+                    "title": chapter.text,
+                    "metadata": {
+                        "master": config["master_id"],
+                        "work": config["work"],
+                        "book": config["book"],
+                        "chapter": chapter_number,
+                        "year": config["year"]
+                    },
+                    "content": {
+                        "fr": paragraphs_text
+                    }
+                }
+                sections.append(section)
+    
+    return sections
+
 def parse_page_range(input_str):
     try:
         # Vérifier si input_str contient des caractères non numériques ou spéciaux autres que '-'
@@ -197,10 +247,32 @@ Exemples d'utilisation:
         """
     )
     
-    # Mapping des auteurs vers leurs fichiers PDF
+    # Mapping des auteurs/livres vers leurs fichiers PDF et métadonnées
     PDF_MAPPING = {
-        "marozzo": "data/treatises/Achille Marozzo - opéra nova.pdf",
-        "manciolino": "data/treatises/Antonio Manciolino - opéra nova.pdf",
+        "marozzo": {
+            "pdf": "data/treatises/Achille Marozzo - opéra nova.pdf",
+            "master": "Achille Marozzo",
+            "master_id": "achille_marozzo",
+            "work": "Opera Nova",
+            "book": 1,
+            "year": 1536
+        },
+        "marozzo_l2": {
+            "pdf": "data/treatises/Achille Marozzo - opéra nova - livre 2.pdf",
+            "master": "Achille Marozzo",
+            "master_id": "achille_marozzo",
+            "work": "Opera Nova",
+            "book": 2,
+            "year": 1536
+        },
+        "manciolino": {
+            "pdf": "data/treatises/Antonio Manciolino - opéra nova.pdf",
+            "master": "Antonio Manciolino",
+            "master_id": "antonio_manciolino",
+            "work": "Opera Nova",
+            "book": 1,
+            "year": 1531
+        },
     }
     
     parser.add_argument(
@@ -217,47 +289,44 @@ Exemples d'utilisation:
         help="Plage de pages à extraire (ex: 32-65 ou 32,34,60,63)"
     )
     
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Afficher les informations de debug"
+    )
+    
     args = parser.parse_args()
     
-    pdf_path = PDF_MAPPING[args.author]
+    config = PDF_MAPPING[args.author]
+    pdf_path = config["pdf"]
     search_range = args.pages
 
-    # Exemple de plages de pages à extraire
-    # search_range = '34-102' # Livre 3
-    # search_range = '35-55' # 1er assault
-    # search_range = '56-65' # 2eme assault
-    # search_range = '35-65'  # 1er et 2eme assault
-    # search_range = '66-70' # 3eme assault droit fil contre droit fil
-    # search_range = '70-73' # 3eme assault falso contre falso
-    # search_range = '66-73' # 3eme assault complet
-    # search_range = '56'
     page_range = parse_page_range(search_range)
     if not page_range:
         print("Plage invalide !")
     else:
         title_list = extract_text_elements(pdf_path, page_range)
 
-        print("Extraction terminée.")
-
-        # Insert each title into the database
+        # Debug: Afficher la structure extraite
         for title in title_list:
-            print(f"Title: {title.text}")
+            print(f"Titre: {title.text}")            
             for title1 in title.titles_1_list:
-                print(f"  Title1: {title1.text}")
+                print(f"  Titre1: {title1.text}")
                 for chapter in title1.chapter_list:
-                    print(f"    Chapter: {chapter.text}")
-                    # for paragraph in chapter.paragraph_list:
-                        # print(f"      Paragraph: {paragraph.text}")
-        #     title_id = db_manager.insert_entry(language="fr", content=title.text, entry_type="title")
-        #     for title1 in title.titles_1_list:
-        #         title1_id = db_manager.insert_entry(language="fr", content=title1.text, parent_id=title_id, entry_type="title1")
-        #         for chapter in title1.chapter_list:
-        #             chapter_id = db_manager.insert_entry(language="fr", content=chapter.text, parent_id=title1_id, entry_type="chapter")
-        #             for paragraph in chapter.paragraph_list:
-        #                 db_manager.insert_entry(language="fr", content=paragraph.text, parent_id=chapter_id, entry_type="paragraph")
+                    print(f"    Chapitre: {chapter.text}")
+                    for paragraph in chapter.paragraph_list:
+                        print(f"      Paragraphe: {paragraph.text}")                
 
+        # Convertir en structure YAML
+        sections = convert_to_yaml_structure(title_list, config, debug=args.debug)
 
-        # db_manager.close()
+        # Sauvegarder dans le fichier YAML
+        output_filename = f"data/treatises/{config['master_id']}_opera_nova_livre{config['book']}.yaml"
+        with open(output_filename, 'w', encoding='utf-8') as f:
+            yaml.dump(sections, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
+
+        print(f"Fichier YAML généré : {output_filename}")
+        print(f"Nombre de sections : {len(sections)}")
 
 if __name__ == "__main__":
     main()
