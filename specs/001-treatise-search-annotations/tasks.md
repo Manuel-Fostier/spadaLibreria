@@ -53,18 +53,18 @@
 
 **Independent Test**: Type "mandritto" in search bar → Press Enter → See all chapters containing "mandritto", "mandritti", "coup droit", "forehand cut" from all treatises with highlights
 
-**GitHub Issues**: This phase CLOSES Issue #1 (Refonte panneau filtres) and Issue #21 (Surbrillance mots recherchés)
+**GitHub Issues**: This phase CLOSES [Issue #1](https://github.com/Manuel-Fostier/spadaLibreria/issues/1) (Refonte panneau filtres) and [Issue #21](https://github.com/Manuel-Fostier/spadaLibreria/issues/21) (Surbrillance mots recherchés)
 
 ### Implementation for User Story 1
 
-- [ ] T011 [P] [US1] Create SearchBar component in `src/components/SearchBar.tsx` (input field, Enter to search, displays active search terms with [x] to remove)
-- [ ] T012 [P] [US1] Create SearchResults component in `src/components/SearchResults.tsx` (displays chapters with preview, highlight matches, language badges IT/FR/EN)
-- [ ] T013 [US1] Modify BolognesePlatform in `src/components/BolognesePlatform.tsx` to integrate SearchBar into left sidebar (replace/extend existing weapon filter)
+- [ ] T011 [P] [US1] Create SearchBar component in `src/components/SearchBar.tsx` (input field, Enter to search, displays active search terms with [x] to remove) - [Issue #1](https://github.com/Manuel-Fostier/spadaLibreria/issues/1)
+- [ ] T012 [P] [US1] Create SearchResults component in `src/components/SearchResults.tsx` (displays chapters with preview, highlight matches, language badges IT/FR/EN) - [Issue #21](https://github.com/Manuel-Fostier/spadaLibreria/issues/21)
+- [ ] T013 [US1] Modify BolognesePlatform in `src/components/BolognesePlatform.tsx` to integrate SearchBar into left sidebar (replace/extend existing weapon filter) - [Issue #1](https://github.com/Manuel-Fostier/spadaLibreria/issues/1)
 - [ ] T014 [US1] Add SearchContext provider to app root in `src/app/page.tsx` (wrap AnnotationProvider with SearchProvider)
-- [ ] T015 [US1] Implement search result click navigation in BolognesePlatform (clicking result scrolls to chapter and opens it)
-- [ ] T016 [US1] Extend TextParser in `src/components/TextParser.tsx` to support highlighting search terms (add optional highlightTerms prop)
-- [ ] T017 [US1] Add keyboard shortcuts for search (Ctrl+F to focus search bar, Escape to clear search)
-- [ ] T018 [US1] Implement "No results found" state in SearchResults with suggestions for related terms from glossary
+- [ ] T015 [US1] Implement search result click navigation in BolognesePlatform (clicking result scrolls to chapter and opens it) - [Issue #1](https://github.com/Manuel-Fostier/spadaLibreria/issues/1)
+- [ ] T016 [US1] Extend TextParser in `src/components/TextParser.tsx` to support highlighting search terms (add optional highlightTerms prop) - [Issue #21](https://github.com/Manuel-Fostier/spadaLibreria/issues/21)
+- [ ] T017 [US1] Add keyboard shortcuts for search (Ctrl+F to focus search bar, Escape to clear search) - [Issue #1](https://github.com/Manuel-Fostier/spadaLibreria/issues/1)
+- [ ] T018 [US1] Implement "No results found" state in SearchResults with suggestions for related terms from glossary - [Issue #21](https://github.com/Manuel-Fostier/spadaLibreria/issues/21)
 
 **Checkpoint**: User Story 1 complete - cross-treatise search with highlighting fully functional, Issues #1 and #21 can be closed
 
@@ -97,14 +97,16 @@
 
 **Note**: This extends EXISTING annotation system (AnnotationContext, AnnotationPanel already implemented) - no new annotation UI needed
 
+**GitHub Issues**: Related to [Issue #1](https://github.com/Manuel-Fostier/spadaLibreria/issues/1) (part of left panel refonte)
+
 ### Implementation for User Story 3
 
-- [ ] T025 [P] [US3] Create TagFilter component in `src/components/TagFilter.tsx` (dropdowns for weapons, guards, techniques from annotation enums)
-- [ ] T026 [US3] Add filter methods to AnnotationContext in `src/contexts/AnnotationContext.tsx` (filterByWeapons, filterByGuards, filterByTechniques, getUniqueTags)
-- [ ] T027 [US3] Integrate TagFilter into SearchResults component (filters applied to search results, cumulative AND logic)
-- [ ] T028 [US3] Implement annotation badge indicators in SearchResults (show which chapters have annotations, display tag counts)
-- [ ] T029 [US3] Add "Show only annotated chapters" toggle in search UI (quick filter for chapters with any annotation)
-- [ ] T030 [US3] Implement multi-tag filtering (select multiple weapons/guards/techniques, use OR within category, AND across categories)
+- [ ] T025 [P] [US3] Create TagFilter component in `src/components/TagFilter.tsx` (dropdowns for weapons, guards, techniques from annotation enums) - [Issue #1](https://github.com/Manuel-Fostier/spadaLibreria/issues/1)
+- [ ] T026 [US3] Add filter methods to AnnotationContext in `src/contexts/AnnotationContext.tsx` (filterByWeapons, filterByGuards, filterByTechniques, getUniqueTags) - [Issue #1](https://github.com/Manuel-Fostier/spadaLibreria/issues/1)
+- [ ] T027 [US3] Integrate TagFilter into SearchResults component (filters applied to search results, cumulative AND logic) - [Issue #1](https://github.com/Manuel-Fostier/spadaLibreria/issues/1)
+- [ ] T028 [US3] Implement annotation badge indicators in SearchResults (show which chapters have annotations, display tag counts) - [Issue #1](https://github.com/Manuel-Fostier/spadaLibreria/issues/1)
+- [ ] T029 [US3] Add "Show only annotated chapters" toggle in search UI (quick filter for chapters with any annotation) - [Issue #1](https://github.com/Manuel-Fostier/spadaLibreria/issues/1)
+- [ ] T030 [US3] Implement multi-tag filtering (select multiple weapons/guards/techniques, use OR within category, AND across categories) - [Issue #1](https://github.com/Manuel-Fostier/spadaLibreria/issues/1)
 
 **Checkpoint**: User Story 3 complete - search results can be filtered by annotation metadata, researchers can focus on specific contexts
 
@@ -136,6 +138,8 @@
 ## Phase 7: Polish & Cross-Cutting Concerns
 
 **Purpose**: Improvements affecting multiple user stories and final validation
+
+**GitHub Issues**: Related to [Issue #17](https://github.com/Manuel-Fostier/spadaLibreria/issues/17) (annotation UX consistency)
 
 - [ ] T039 [P] Update README.md with search feature documentation (how to use search, saved searches, annotation filtering, LLM setup)
 - [ ] T040 [P] Update `.github/copilot-instructions.md` with search architecture (SearchContext, variant generation rules, localStorage patterns)
