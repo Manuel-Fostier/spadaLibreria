@@ -9,6 +9,45 @@ Build a cross-treatise search tool with variant matching and cross-language supp
 
 **Technical Approach**: Extend existing Next.js 15 application with new search infrastructure using browser-side indexing (no backend required). Leverage existing YAML data structure and glossary for cross-language mapping. Store annotations and saved searches in browser localStorage. Integrate local LLM via API calls to LM Studio or Ollama for P4 enhancement.
 
+## 🔍 Key Findings from Codebase Analysis
+
+**CRITICAL DISCOVERIES**:
+
+1. **Mature Annotation System Already Exists**
+   - ✅ AnnotationContext, AnnotationPanel, AnnotationBadge components fully implemented
+   - ✅ API routes `/api/annotations` handle YAML persistence (POST/GET)
+   - ✅ Annotation model includes: `weapons`, `guards_mentioned`, `techniques`, `measures`, `strategy`, `note`
+   - ⚠️ Original plan proposed "new annotation system with tags" - **CONFLICT RESOLVED**: Use existing annotations as tags
+
+2. **Storage Architecture Clarification**
+   - ✅ Annotations persist to YAML files (per constitution: data lives in `data/`)
+   - ✅ localStorage used for temporary/preference data only (merged with YAML on load)
+   - ⚠️ Original plan said "annotations in localStorage" - **CORRECTED**: Follow existing YAML pattern
+   - ✅ Saved searches will use localStorage (user preference, not content)
+
+3. **GitHub Issues Directly Addressed**
+   - Issue #1 (OPEN): Refonte panneau filtres - P1 implements search bar with cumulative filtering
+   - Issue #21 (OPEN): Surbrillance mots recherchés - P1 implements highlighting in search results
+   - **Impact**: P1 completion will close 2 open issues
+
+4. **Existing Components to Leverage**
+   - ✅ TextParser: Already handles `{term}` syntax and glossary links
+   - ✅ MeasureProgressBar: Visual measure progression (recent addition)
+   - ✅ ComparisonModal: Translation comparison UI exists
+   - ✅ BolognesePlatform: Main viewer with weapon filtering already working
+
+5. **Architecture Alignment**
+   - ✅ Server-side data loading via `dataLoader.ts` (fs + js-yaml)
+   - ✅ Client components with `'use client'` directive correctly used
+   - ✅ Absolute imports with `@/` prefix established
+   - ✅ Constitution compliance: Content separation, local-only, beginner-friendly tools
+
+**PLAN ADJUSTMENTS**:
+- Use existing annotation fields (weapons/guards/techniques) as filterable "tags" instead of creating new tag system
+- Integrate search into existing BolognesePlatform sidebar (not separate page)
+- Extend AnnotationContext with search-specific filter methods
+- Follow existing YAML persistence pattern for any annotation extensions
+
 ## Technical Context
 
 **Language/Version**: TypeScript 5.x, Node.js 18+, Python 3.13+ (for future data processing if needed)  
@@ -25,13 +64,27 @@ Build a cross-treatise search tool with variant matching and cross-language supp
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-✅ **Content lives in `data/` YAML**: New search/annotation features do not modify treatise YAML files; annotations stored separately in localStorage  
+✅ **Content lives in `data/` YAML**: ⚠️ **PARTIAL CONFLICT** - Current annotation system saves to YAML files via API route (`/api/annotations`), NOT localStorage as initially planned. This violates the original plan but ALIGNS with constitution (YAML = authoritative). Need to clarify: saved searches in localStorage (user preference), but annotations follow existing pattern (YAML persistence).  
 ✅ **Local-only**: No external services; LLM via local API (LM Studio/Ollama); no telemetry  
-✅ **Tooling**: Continue using `npm` for JS/TS deps; `uv` for Python if data scripts needed  
+✅ **Tooling**: Continue using `npm` for JS/TS deps; `uv` for Python (extraction scripts exist)  
 ✅ **Quality/format**: Preserve existing glossary `{term}` links; respect server/client boundaries (search runs client-side)  
 ✅ **Accessibility/UX**: Maintain readable typography; ensure search UI is keyboard-friendly; preserve existing glossary tooltips
 
-**PASS**: All gates satisfied. Feature aligns with constitution principles.
+**FINDINGS FROM CODEBASE ANALYSIS**:
+- ✅ Annotation system ALREADY EXISTS and is MATURE (AnnotationContext, AnnotationPanel, API routes)
+- ✅ Annotations persist to YAML via POST /api/annotations (writes to `data/treatises/*.yaml`)
+- ✅ Annotations loaded on app start (GET /api/annotations) and merged with localStorage
+- ✅ Current annotation model supports: `note`, `weapons`, `guards_mentioned`, `techniques`, `measures[]`, `strategy[]`
+- ⚠️ Plan's "new annotation system with tags" CONFLICTS with existing annotation system
+- ⚠️ Need to EXTEND existing system, not replace it
+
+**PASS WITH CLARIFICATIONS**: Feature aligns with constitution but must integrate with existing annotation infrastructure.
+
+**GITHUB ISSUES CONTEXT**:
+- Issue #1 (OPEN): Refonte panneau filtres - DIRECTLY addressed by P1 search implementation
+- Issue #21 (OPEN): Surbrillance mots recherchés - DIRECTLY addressed by P1 highlighting
+- Issues closed: #5, #15, #19 confirm annotation system maturity and Python script infrastructure
+- P1 completion will close Issues #1 and #21
 
 ## Project Structure
 
@@ -52,31 +105,39 @@ specs/001-treatise-search-annotations/
 
 ### Source Code (repository root)
 
+**IMPORTANT**: Codebase already has mature annotation system. This feature adds SEARCH + extends annotations.
+
 Extending existing Next.js structure:
 
 ```text
 src/
 ├── app/
-│   ├── page.tsx                    # [MODIFY] Add search UI integration
+│   ├── page.tsx                    # [EXISTING] Loads BolognesePlatform with AnnotationProvider
 │   ├── layout.tsx                  # [EXISTING] No changes
 │   ├── globals.css                 # [EXISTING] No changes
-│   └── search/                     # [NEW] Search page/route
+│   ├── api/
+│   │   ├── annotations/route.ts    # [EXISTING] POST (save to YAML) / GET (load from YAML)
+│   │   ├── glossary/route.ts       # [EXISTING] GET glossary data
+│   │   └── treatises/[filename]/route.ts # [EXISTING] GET treatise by filename
+│   └── search/                     # [NEW] Search page/route (optional - may integrate in main page)
 │       └── page.tsx                # Search interface with results
 ├── components/
 │   ├── Term.tsx                    # [EXISTING] Glossary tooltips
 │   ├── TextParser.tsx              # [EXISTING] Parse {term} syntax
-│   ├── BolognesePlatform.tsx       # [EXISTING] Main treatise viewer
-│   ├── SearchBar.tsx               # [NEW] Search input with autocomplete
+│   ├── BolognesePlatform.tsx       # [EXISTING] Main treatise viewer - MODIFY to add search bar
+│   ├── AnnotationPanel.tsx         # [EXISTING - MATURE] Full annotation UI with tabs (armes/gardes/techniques)
+│   ├── AnnotationBadge.tsx         # [EXISTING] Annotation badge/button for each section
+│   ├── MeasureProgressBar.tsx      # [EXISTING] Visual measure progression (Gioco Largo → Presa)
+│   ├── ComparisonModal.tsx         # [EXISTING] Compare translations modal
+│   ├── SearchBar.tsx               # [NEW] Search input with variant suggestions
 │   ├── SearchResults.tsx           # [NEW] Display search results with highlighting
-│   ├── SavedSearchList.tsx         # [NEW] Manage saved searches
-│   ├── AnnotationPanel.tsx         # [EXISTING - may need modification]
-│   ├── AnnotationEditor.tsx        # [NEW] Add/edit annotations with tags
-│   ├── TagFilter.tsx               # [NEW] Filter by annotation tags
-│   └── LLMAssistant.tsx            # [NEW] Chat interface for local LLM
+│   ├── SavedSearchList.tsx         # [NEW] Manage saved searches in sidebar
+│   ├── TagFilter.tsx               # [NEW] Filter by annotation metadata (weapons/guards/techniques)
+│   └── LLMAssistant.tsx            # [NEW-P4] Chat interface for local LLM
 ├── contexts/
-│   ├── AnnotationContext.tsx       # [EXISTING - may need expansion]
-│   ├── SearchContext.tsx           # [NEW] Manage search state
-│   └── LLMContext.tsx              # [NEW] Manage LLM connection and conversation
+│   ├── AnnotationContext.tsx       # [EXISTING - ROBUST] Manages annotations, localStorage merge, server sync
+│   ├── SearchContext.tsx           # [NEW] Manage search state, index, saved searches
+│   └── LLMContext.tsx              # [NEW-P4] Manage LLM connection and conversation
 ├── lib/
 │   ├── dataLoader.ts               # [EXISTING] Load YAML files
 │   ├── annotation.ts               # [EXISTING] Annotation utilities
@@ -188,16 +249,18 @@ All complexity is inherent to feature requirements (search variants, cross-langu
    - Validation: Unique searchTerm; valid dates
    - Persistence: localStorage under key "spada:savedSearches"
 
-4. **Annotation**
-   - Fields: id (UUID), chapterReference (ChapterReference), text (string), tags (Tag[]), createdAt (Date), modifiedAt (Date)
-   - Relationships: N annotations : 1 chapter (via reference)
-   - Validation: Valid chapter reference; tags array can be empty; text can be empty if tags exist
-   - Persistence: localStorage under key "spada:annotations"
+4. **Annotation** (EXISTING - extends current implementation)
+   - Current fields: id, note, weapons[], guards_mentioned[], techniques[], measures[], strategy[]
+   - Already persists to YAML via `/api/annotations` POST
+   - Already loaded on app start via `/api/annotations` GET
+   - AnnotationContext manages state with localStorage fallback
+   - **For search feature**: Use existing fields as "tags" (weapons/guards/techniques are tag equivalents)
+   - **NO NEW TAG SYSTEM NEEDED** - existing metadata serves this purpose
 
-5. **Tag**
-   - Fields: name (string), color (string optional), usageCount (number)
-   - Validation: Unique name (case-insensitive); color hex code if provided
-   - Relationships: Many tags : many annotations
+5. **Tag** (REMOVED - use existing annotation metadata instead)
+   - ~~Fields: name (string), color (string optional), usageCount (number)~~
+   - **REPLACED BY**: Use annotation.weapons, annotation.guards_mentioned, annotation.techniques as filterable metadata
+   - **Rationale**: Avoid duplicating existing annotation infrastructure; constitution prefers simplicity
 
 6. **ChapterReference**
    - Fields: treatiseFile (string), chapterId (string)
@@ -240,26 +303,34 @@ export interface SearchIndex {
 }
 
 // contracts/annotations.ts
+// NOTE: Annotation interface ALREADY EXISTS in src/lib/annotation.ts
+// This contract documents EXISTING system + search integration extensions
+
 export interface Annotation {
   id: string;
-  chapterReference: ChapterReference;
-  text: string;
-  tags: Tag[];
-  createdAt: Date;
-  modifiedAt: Date;
+  note: string | null;
+  weapons: Weapon[] | null;        // Used as searchable tags
+  guards_mentioned: Guard[] | null; // Used as searchable tags
+  techniques: string[] | null;      // Used as searchable tags
+  measures: Measure[] | null;
+  strategy: Strategy[] | null;
 }
 
-export interface Tag {
-  name: string;
-  color?: string;
+// Annotation enums already defined in src/lib/annotation.ts:
+// WEAPONS, GUARDS, MEASURES, STRATEGIES
+
+export interface AnnotationFilterOptions {
+  weapons?: Weapon[];
+  guards?: Guard[];
+  techniques?: string[];
 }
 
-export interface AnnotationStorage {
-  getAnnotations(chapterRef?: ChapterReference): Annotation[];
-  saveAnnotation(annotation: Annotation): void;
-  deleteAnnotation(id: string): void;
-  filterByTags(tags: string[]): Annotation[];
-  getAllTags(): Tag[];
+export interface AnnotationSearchExtensions {
+  // Extend existing useAnnotations hook with search-specific methods
+  filterAnnotationsByMetadata(filter: AnnotationFilterOptions): Map<string, Annotation>;
+  getUniqueWeapons(): Weapon[];
+  getUniqueGuards(): Guard[];
+  getUniqueTechniques(): string[];
 }
 
 // contracts/llm.ts
@@ -308,22 +379,23 @@ export interface LLMClient {
    4. Click saved term to re-run search instantly
    ```
 
-3. **Annotate a chapter**:
+3. **Annotate a chapter** (EXISTING FEATURE - documented for completeness):
    ```
-   1. View a chapter from search results or treatise browser
-   2. Click "Add Annotation" button
-   3. Enter note text (optional)
-   4. Add tags (e.g., "beginner", "solo practice")
-   5. Save annotation
-   6. Annotation appears in sidebar and on chapter
+   1. View a chapter from treatise browser
+   2. Click "Annotation" badge/button on section
+   3. AnnotationPanel opens on right side
+   4. Add/edit: note, weapons, guards_mentioned, techniques, measures, strategy
+   5. Auto-saves on close (persists to YAML via API)
+   6. AnnotationBadge shows on annotated sections
    ```
 
-4. **Filter search by tags**:
+4. **Filter search by annotation metadata** (NEW - extends existing annotations):
    ```
    1. Perform a search (e.g., "mandritto")
-   2. In search results, click tag filter dropdown
-   3. Select tags (e.g., "beginner")
-   4. Results filtered to show only annotated chapters with those tags
+   2. In search results sidebar, use TagFilter dropdowns
+   3. Select weapons (e.g., "spada_brocchiero"), guards, or techniques
+   4. Results filtered to show only chapters with matching annotation metadata
+   5. Leverages existing annotation.weapons/guards_mentioned/techniques fields
    ```
 
 5. **Ask LLM assistant** (P4):
@@ -380,12 +452,64 @@ Expected task breakdown:
 - **P3 Phase**: Annotation editor, tag filtering, annotation list view
 - **P4 Phase**: LLM client, assistant UI, context integration
 
+## Alignment with Existing GitHub Issues
+
+**Related Open Issues**:
+
+1. **Issue #21: Surbrillance des mots recherchés dans le filtre**
+   - **Status**: OPEN (created 2025-12-04)
+   - **Relation**: DIRECTLY ADDRESSED by P1 (search with highlighting)
+   - **Implementation**: SearchResults component will highlight matched variants in text
+   - **Note**: Issue mentions using TextParser component - confirmed this is correct approach
+
+2. **Issue #1: Refonte du Panneau de Filtres (Gauche)**
+   - **Status**: OPEN (created 2025-11-29)
+   - **Relation**: ALIGNED with P1 search bar implementation
+   - **Requirements**: Search field with tag accumulation, weapons dropdown, authors dropdown
+   - **Implementation**: SearchBar + SavedSearchList components integrate into left sidebar
+   - **Note**: Issue proposes cumulative AND filtering - matches spec FR-003
+
+3. **Issue #17: Améliorer la visibilité du bouton d'annotation actif**
+   - **Status**: OPEN (created 2025-11-29)
+   - **Relation**: ORTHOGONAL to search feature but affects UX
+   - **Note**: Should be implemented alongside search to maintain consistent UX
+   - **Scope**: Visual highlight for active annotation button; remove collapse button
+
+4. **Issue #7: Implémentation d'un Module Statistiques**
+   - **Status**: OPEN (created 2025-11-29)
+   - **Relation**: COMPLEMENTARY to search/annotations
+   - **Note**: Statistics module could leverage search index for performance
+   - **Scope**: Out of scope for this feature (P1-P4); can be separate feature
+
+**Related Closed Issues (informational)**:
+
+5. **Issue #19: Mettre à jour extracteur_string.py** (CLOSED)
+   - Confirms Python script for YAML generation exists
+   - Scripts in `scripts/` directory already established
+
+6. **Issue #15: Remplacer l'affichage de la mesure par une barre de progression** (CLOSED)
+   - MeasureProgressBar component now exists
+   - Confirms annotation system maturity
+
+7. **Issue #5: Refonte du Panneau d'Annotations** (CLOSED)
+   - AnnotationPanel with tabs (armes/gardes/techniques) implemented
+   - Auto-save on close implemented
+   - Confirms current annotation architecture
+
+**Key Insights**:
+- Issue #21 expects highlighting AFTER Issue #1 filter refonte
+- This feature COMBINES both: search (Issue #21) + filter refonte (Issue #1)
+- Should close Issues #1 and #21 upon P1 completion
+- Issue #17 is independent but recommended for consistency
+
 ## Notes
 
 - **Incremental Delivery**: Implement P1 first for immediate value (search); P2-P4 can be added later
+- **Issue Resolution**: P1 completion closes Issues #1 and #21; consider Issue #17 for UX consistency
 - **No Backend**: All features run client-side or via Next.js server rendering; no API server needed
-- **localStorage Limits**: Monitor usage; warn user if approaching 5 MB limit
+- **localStorage Strategy**: Saved searches in localStorage; annotations follow existing YAML persistence pattern
 - **LLM Optional**: P4 is a future enhancement; app fully functional without it
 - **Testing Strategy**: Add tests for core search logic (variant generation, cross-language mapping) when constitution requires it
 - **Performance**: Build search index on first load; cache in React context for subsequent searches
 - **Glossary Dependency**: Search quality depends on completeness of glossary.yaml term equivalents
+- **Annotation Integration**: Use existing annotation metadata (weapons/guards/techniques) as search filters - no new tag system needed
