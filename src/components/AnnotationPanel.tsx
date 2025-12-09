@@ -2,11 +2,52 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { X, Plus, Edit2, Save, ChevronRight, Check, MessageSquare } from 'lucide-react';
-import { MEASURES, STRATEGIES, WEAPONS, GUARDS, Measure } from '@/lib/annotation';
+import { MEASURES, STRATEGIES, WEAPONS, GUARDS, WEAPON_TYPES } from '@/lib/annotation';
 import { useAnnotations } from '@/contexts/AnnotationContext';
 import MeasureProgressBar from './MeasureProgressBar';
 
 type TabType = 'armes' | 'gardes' | 'techniques';
+type ToggleVariant = 'armes' | 'gardes' | 'techniques' | 'strategies' | 'weaponTypes';
+
+const CHIP_PALETTE: Record<string, string> = {
+  weapon: 'bg-sky-50 text-sky-600 border-sky-100',
+  weaponType: 'bg-amber-50 text-amber-700 border-amber-200',
+  strategy: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+  guard: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  technique: 'bg-purple-50 text-purple-700 border-purple-200',
+  default: 'bg-gray-100 text-gray-500 border-gray-200',
+};
+
+const INTERACTIVE_STYLES: Record<ToggleVariant, { active: string; inactive: string }> = {
+  armes: {
+    active: 'bg-sky-600 text-white border-sky-600 shadow',
+    inactive: 'bg-white text-gray-700 border-gray-300 hover:bg-slate-50',
+  },
+  gardes: {
+    active: 'bg-emerald-600 text-white border-emerald-600 shadow',
+    inactive: 'bg-white text-gray-700 border-gray-300 hover:bg-slate-50',
+  },
+  techniques: {
+    active: 'bg-purple-600 text-white border-purple-600 shadow',
+    inactive: 'bg-white text-gray-700 border-gray-300 hover:bg-slate-50',
+  },
+  strategies: {
+    active: 'bg-indigo-600 text-white border-indigo-600 shadow',
+    inactive: 'bg-white text-gray-700 border-gray-300 hover:bg-slate-50',
+  },
+  weaponTypes: {
+    active: 'bg-amber-600 text-white border-amber-600 shadow',
+    inactive: 'bg-white text-gray-700 border-gray-300 hover:bg-slate-50',
+  },
+};
+
+const chipClass = (variant: keyof typeof CHIP_PALETTE) =>
+  `text-xs px-3 py-1.5 rounded-full border ${CHIP_PALETTE[variant] ?? CHIP_PALETTE.default}`;
+
+const getToggleClasses = (variant: ToggleVariant, active: boolean) => {
+  const pattern = INTERACTIVE_STYLES[variant];
+  return `text-xs px-3 py-1.5 rounded-full border transition-colors font-semibold ${active ? pattern.active : pattern.inactive}`;
+};
 
 interface AnnotationPanelProps {
   sectionId: string;
@@ -292,13 +333,26 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                 {annotation.weapons && annotation.weapons.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {annotation.weapons.map(w => (
-                      <span key={w} className="text-xs px-3 py-1.5 rounded-full bg-blue-100 text-blue-700">
+                      <span key={w} className={chipClass('weapon')}>
                         {w}
                       </span>
                     ))}
                   </div>
                 ) : (
                   <p className="text-sm text-gray-400 italic">Arme non définie</p>
+                )}
+              </div>
+              {/* Type d'arme */}
+              <div>
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Type d'arme</h4>
+                {annotation.weapon_type ? (
+                  <div className="flex flex-wrap gap-2">
+                    <span className={chipClass('weaponType')}>
+                      {annotation.weapon_type}
+                    </span>
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-400 italic">Type d'arme non défini</p>
                 )}
               </div>
 
@@ -318,7 +372,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                 {annotation.strategy && annotation.strategy.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {annotation.strategy.map(s => (
-                      <span key={s} className="text-xs px-3 py-1.5 rounded-full bg-indigo-100 text-indigo-700">
+                      <span key={s} className={chipClass('strategy')}>
                         {s}
                       </span>
                     ))}
@@ -334,7 +388,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                 {annotation.guards_mentioned && annotation.guards_mentioned.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {annotation.guards_mentioned.map(g => (
-                      <span key={g} className="text-xs px-3 py-1.5 rounded-full bg-green-100 text-green-700">
+                      <span key={g} className={chipClass('guard')}>
                         {g}
                       </span>
                     ))}
@@ -350,7 +404,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                 {annotation.techniques && annotation.techniques.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {annotation.techniques.map(t => (
-                      <span key={t} className="text-xs px-3 py-1.5 rounded-full bg-purple-100 text-purple-700">
+                      <span key={t} className={chipClass('technique')}>
                         {t}
                       </span>
                     ))}
@@ -388,32 +442,54 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
                   Armes utilisées
                 </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {WEAPONS.map(w => {
+                      const active = formData.weapons?.includes(w);
+                      return (
+                        <button
+                          type="button"
+                          key={w}
+                          onClick={() => setFormData(prev => ({
+                            ...prev,
+                            weapons: active
+                              ? prev.weapons?.filter(x => x !== w) || null
+                              : [...(prev.weapons || []), w]
+                          }))}
+                          className={getToggleClasses('armes', Boolean(active))}
+                        >
+                          {w}
+                        </button>
+                      );
+                    })}
+                  </div>
+              </div>
+              {/* Type d'arme */}
+              <div>
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                  Type d'arme
+                </h4>
                 <div className="flex flex-wrap gap-2">
-                  {WEAPONS.map(w => {
-                    const active = formData.weapons?.includes(w);
+                  {WEAPON_TYPES.map(wt => {
+                    const active = formData.weapon_type?.includes(wt);
                     return (
                       <button
                         type="button"
-                        key={w}
+                        key={wt}
                         onClick={() => setFormData(prev => ({
                           ...prev,
-                          weapons: active
-                            ? prev.weapons?.filter(x => x !== w) || null
-                            : [...(prev.weapons || []), w]
+                          weapon_type: active
+                            ? prev.weapon_type?.filter(x => x !== wt) || null
+                            : [...(prev.weapon_type || []), wt]
                         }))}
-                        className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
-                          active 
-                            ? 'bg-blue-600 text-white border-blue-600' 
-                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
-                        }`}
+                        className={getToggleClasses('weaponTypes', Boolean(active))}
                       >
-                        {w}
+                        {wt}
                       </button>
                     );
                   })}
                 </div>
               </div>
-
+                
               {/* Mesures */}
               <div>
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
@@ -446,11 +522,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                             ? prev.strategy?.filter(x => x !== s) || null
                             : [...(prev.strategy || []), s]
                         }))}
-                        className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
-                          active 
-                            ? 'bg-indigo-600 text-white border-indigo-600' 
-                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
-                        }`}
+                        className={getToggleClasses('strategies', Boolean(active))}
                       >
                         {s}
                       </button>
@@ -477,11 +549,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                             ? prev.guards_mentioned?.filter(x => x !== g) || null
                             : [...(prev.guards_mentioned || []), g]
                         }))}
-                        className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
-                          active 
-                            ? 'bg-green-600 text-white border-green-600' 
-                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
-                        }`}
+                        className={getToggleClasses('gardes', Boolean(active))}
                       >
                         {g}
                       </button>

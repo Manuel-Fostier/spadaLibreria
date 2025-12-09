@@ -27,6 +27,12 @@ export const WEAPONS = [
 ] as const;
 export type Weapon = typeof WEAPONS[number];
 
+export const WEAPON_TYPES = [
+  'Epée aiguisée',
+  'Epée émoussée',
+] as const;
+export type WeaponType = typeof WEAPON_TYPES[number];
+
 export const GUARDS = [
   'coda_longa',
   'coda_longa_stretta',
@@ -45,6 +51,7 @@ export interface Annotation {
   id: string;  
   note: string | null;
   weapons: Weapon[] | null;
+  weapon_type: WeaponType | null;
   guards_mentioned: Guard[] | null;
   techniques: string[] | null;
   measures: Measure[] | null;
