@@ -3,12 +3,13 @@
 **Input**: Design documents from `/specs/001-treatise-search-annotations/`
 **Prerequisites**: plan.md, spec.md (v2.0), research.md, CODEBASE_ANALYSIS.md
 
-**Updated**: 2025-12-09 - Integration of 7 new features from spec.md v2.0 update
+- **Updated**: 2025-12-09 - Integration of 7 new features from spec.md v2.0 update plus FR-023 (French UI)
 - FR-002a: Similar words suggestion dropdown
 - FR-012a & FR-012b: Default annotation panel + button highlighting + smart scrolling
 - FR-009: Sword condition enum (sharp/blunt)
 - FR-021: Annotation display configuration menu
 - FR-022: Import file conflict handling
+- FR-023: French UI messaging/control requirement
 
 **Tests**: Tests are NOT explicitly requested in the spec. Following constitution: "Add tests when needed" - focusing on implementation first, tests can be added later if constitution requires.
 
@@ -29,6 +30,8 @@
 **Purpose**: Create UI/UX mockups for all features before writing code (user requirement: "maquettes avant l'implémentation")
 
 **Status**: Deliverables ready in `specs/001-treatise-search-annotations/mockups/`
+
+**Browser previews**: HTML renditions of each mockup now live in `specs/001-treatise-search-annotations/mockups/pages/` for quick visual validation.
 
 - [ ] T000 [P] Create mockups directory structure in `specs/001-treatise-search-annotations/mockups/`
 - [ ] T001 [P] [US1] Create SearchBar.md mockup in `specs/001-treatise-search-annotations/mockups/SearchBar.md` (similar words chips dropdown, wireframe ASCII art, interaction flow with 500ms response target)
@@ -205,6 +208,9 @@
 - [ ] T064 [P] Add accessibility improvements (ARIA labels for search components, keyboard navigation for results, screen reader support)
 - [ ] T065 Code review and refactoring (extract common patterns, remove duplication, ensure TypeScript strict mode compliance)
 - [ ] T066 Validate all success criteria from spec.md against implementation (SC-001 through SC-012)
+- [ ] T067 [P] [FR-023] Localize SearchBar/SearchResults/SavedSearchList copy to French (`src/components/SearchBar.tsx`, `src/components/SearchResults.tsx`, `src/components/SavedSearchList.tsx`)
+- [ ] T068 [P] [FR-023] Localize annotation UI copy (AnnotationPanel, AnnotationDisplaySettings, TagFilter, settings tooltips) to French per spec
+- [ ] T069 [P] [FR-023] Update import dialog UI/doc text to French and mention French browser preview titles under `specs/.../mockups/pages`
 
 **Checkpoint**: Feature complete, polished, documented, and validated
 

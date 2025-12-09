@@ -124,6 +124,7 @@ A researcher studying a complex technique wants contextual help. After selecting
 - **FR-020**: System MUST maintain referential integrity between annotations and treatise chapters by chapter ID
 - **FR-021**: System MUST provide a configuration menu allowing users to define which annotation fields to display under chapter titles
 - **FR-022**: System MUST handle import script file conflicts by prompting user to replace, rename, or cancel when output file already exists
+- **FR-023**: User interface messaging and controls MUST be provided in French
 
 ### Key Entities *(include if feature involves data)*
 
@@ -162,6 +163,7 @@ A researcher studying a complex technique wants contextual help. After selecting
 - Browser local storage is sufficient for annotations and saved searches (reasonable limits: <1000 entries)
 - French linguistic rules are simpler to implement than full natural language processing (focus on common patterns)
 - Performance is acceptable with current treatise corpus size (<100 chapters across all treatises)
+- Interface and tooltips default to French, matching the researcher's native language preference
 
 ## Configuration & Settings
 
