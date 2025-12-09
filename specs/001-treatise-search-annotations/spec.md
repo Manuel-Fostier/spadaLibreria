@@ -13,7 +13,7 @@ A researcher searches for "mandritto" across all treatises. The system automatic
 
 **Why this priority**: This is the core value proposition - enabling comprehensive cross-treatise research that would be impossible to do manually. Without this, the tool provides no advantage over manual reading.
 
-**Independent Test**: Enter "mandritto" in search field → System displays all chapters containing "mandritto", "mandritti", "coup droit", "forehand cut" from all treatises in all three languages. User can read results without any other features working.
+**Independent Test**: Enter "mandritto" in search field → System displays all chapters containing "mandritto", "mandritti", "coup droit", "forehand cut" from all treatises in all three languages. User receives dropdown suggestion of similar words. User can read results without any other features working.
 
 **Acceptance Scenarios**:
 
@@ -22,6 +22,7 @@ A researcher searches for "mandritto" across all treatises. The system automatic
 3. **Given** I search for a French term like "coup droit", **When** results appear, **Then** equivalent Italian ("mandritto") and English ("forehand cut") chapters are also shown
 4. **Given** search results are displayed, **When** I click on a chapter, **Then** the full chapter text is displayed with the search term highlighted
 5. **Given** no matches are found, **When** the search completes, **Then** I see "No results found" with a suggestion to try related terms
+6. **Given** I type a search term, **When** the dropdown shows, **Then** I see a list of similar words from the glossary that I can click to search instead
 
 ---
 
@@ -49,16 +50,19 @@ A researcher wants to annotate chapters with personal notes and tags (e.g., "beg
 
 **Why this priority**: This enables personalized organization and deeper research workflows, but requires both search (P1) to find content and possibly saved searches (P2) for efficiency. It's the cherry on top, not the foundation.
 
-**Independent Test**: View a chapter → Add annotation with text "Good for beginners" and tag "beginner" → Search for "mandritto" → Filter results by tag "beginner" → See only annotated chapters. Delivers value independently by letting users build their own knowledge base.
+**Independent Test**: View a chapter (annotation panel opens by default) → Add annotation with text "Good for beginners" and tag "beginner" → Search for "mandritto" → Filter results by tag "beginner" → See only annotated chapters. The annotation button is highlighted when that annotation panel is open. As user scrolls, the annotation panel points to the centered paragraph. Delivers value independently by letting users build their own knowledge base.
 
 **Acceptance Scenarios**:
 
-1. **Given** I'm viewing a chapter, **When** I click "Add annotation", **Then** I can enter text and assign tags
-2. **Given** a chapter has annotations, **When** I view that chapter, **Then** my annotations are displayed alongside the treatise text
-3. **Given** I'm viewing search results, **When** I select a tag filter, **Then** only chapters with that tag are shown
-4. **Given** multiple tags are selected, **When** viewing results, **Then** chapters matching ANY of the selected tags are shown
-5. **Given** I've annotated a chapter, **When** I delete the annotation, **Then** it no longer appears and that chapter is excluded from tag-filtered searches
-6. **Given** I have annotations across multiple chapters, **When** I view my "All annotations" list, **Then** I see all annotations grouped by chapter with their tags
+1. **Given** I'm viewing a chapter, **When** the page loads, **Then** the annotation panel opens by default on the right side
+2. **Given** I'm viewing a chapter with the annotation panel open, **When** I scroll, **Then** the annotation panel automatically highlights the paragraph at the center of the viewport
+3. **Given** I have an annotation panel open, **When** I look at the button, **Then** it is highlighted/active to show the panel is open
+4. **Given** I'm viewing a chapter, **When** I click "Add annotation", **Then** I can enter text and assign tags including sword condition (sharp/blunt) and other metadata
+5. **Given** a chapter has annotations, **When** I view that chapter, **Then** my annotations are displayed alongside the treatise text
+6. **Given** I'm viewing search results, **When** I select a tag filter, **Then** only chapters with that tag are shown
+7. **Given** multiple tags are selected, **When** viewing results, **Then** chapters matching ANY of the selected tags are shown
+8. **Given** I've annotated a chapter, **When** I delete the annotation, **Then** it no longer appears and that chapter is excluded from tag-filtered searches
+9. **Given** I have annotations across multiple chapters, **When** I view my "All annotations" list, **Then** I see all annotations grouped by chapter with their tags
 
 ---
 
@@ -97,16 +101,19 @@ A researcher studying a complex technique wants contextual help. After selecting
 
 - **FR-001**: System MUST search across all treatise YAML files (Italian, French, English content) simultaneously
 - **FR-002**: System MUST automatically detect and search for word variants (plurals, conjugations, related forms)
+- **FR-002a**: System MUST propose a dropdown list of similar words from the glossary when user enters a search term
 - **FR-003**: System MUST cross-reference glossary to find equivalent terms across languages (e.g., mandritto → coup droit → forehand cut)
 - **FR-004**: System MUST display search results grouped by treatise and chapter with preview text showing match context
 - **FR-005**: System MUST highlight search terms in displayed chapter text
 - **FR-006**: Users MUST be able to save searched terms to a persistent list
 - **FR-007**: Users MUST be able to execute saved searches with a single click
 - **FR-008**: System MUST persist saved searches across application sessions (local storage)
-- **FR-009**: Users MUST be able to add annotations (text notes + tags) to any chapter
+- **FR-009**: Users MUST be able to add annotations (text notes + tags) to any chapter, including sword condition enum (sharp/blunt)
 - **FR-010**: System MUST persist annotations across sessions in local storage (not in YAML files)
 - **FR-011**: Users MUST be able to filter search results by annotation tags
-- **FR-012**: System MUST display all annotations for a chapter when viewing that chapter
+- **FR-012**: System MUST display all annotations for a chapter when viewing that chapter, with annotation panel open by default
+- **FR-012a**: Annotation button MUST be highlighted when its panel is open
+- **FR-012b**: Annotation panel MUST automatically track and highlight the paragraph at the center of the viewport as user scrolls
 - **FR-013**: Users MUST be able to edit or delete existing annotations
 - **FR-014**: System MUST integrate a local LLM (model runs on user's machine)
 - **FR-015**: LLM assistant MUST have access to treatise content and user annotations for context-aware responses
@@ -115,14 +122,17 @@ A researcher studying a complex technique wants contextual help. After selecting
 - **FR-018**: System MUST support multi-word phrase searches (e.g., "coda longa e alta")
 - **FR-019**: Users MUST be able to view a list of all their annotations across all chapters
 - **FR-020**: System MUST maintain referential integrity between annotations and treatise chapters by chapter ID
+- **FR-021**: System MUST provide a configuration menu allowing users to define which annotation fields to display under chapter titles
+- **FR-022**: System MUST handle import script file conflicts by prompting user to replace, rename, or cancel when output file already exists
 
 ### Key Entities *(include if feature involves data)*
 
 - **SearchQuery**: The text entered by user, timestamp, optional saved flag, variant terms generated
 - **SearchResult**: Reference to chapter (treatise file + chapter ID), match count, language(s) with matches, preview snippet
 - **SavedSearch**: Search term text, creation date, last used date, usage count
-- **Annotation**: Chapter reference (treatise + chapter ID), annotation text, list of tags, creation date, last modified date
+- **Annotation**: Chapter reference (treatise + chapter ID), annotation text, list of tags, sword condition (sharp/blunt enum), creation date, last modified date
 - **Tag**: Tag name, usage count (how many annotations use it), color/category
+- **AnnotationDisplay**: Configuration for which annotation fields are visible under chapter titles (note, weapons, guards, techniques, sword condition, etc.)
 - **ChapterReference**: Treatise filename, chapter ID within treatise, used to link annotations to content
 - **LLMConversation**: Session history for LLM interactions, context (current chapter, search results, annotations visible)
 
@@ -138,7 +148,9 @@ A researcher studying a complex technique wants contextual help. After selecting
 - **SC-006**: LLM assistant responds to contextual questions within 10 seconds on typical hardware (local execution)
 - **SC-007**: System supports at least 100 saved searches and 500 annotations without performance degradation
 - **SC-008**: 90% of relevant chapters are found when searching for a technique term (high recall via variants)
-- **SC-009**: Users can annotate a chapter and apply 3 tags in under 30 seconds
+- **SC-009**: Users can annotate a chapter and apply 3 tags (including sword condition) in under 30 seconds
+- **SC-011**: Similar word suggestions appear in dropdown within 500ms of user typing
+- **SC-012**: Annotation panel tracks viewport center with <100ms latency as user scrolls
 - **SC-010**: Search highlighting makes term occurrences immediately visible in chapter text (no scrolling needed for first match)
 
 ## Assumptions
@@ -150,6 +162,33 @@ A researcher studying a complex technique wants contextual help. After selecting
 - Browser local storage is sufficient for annotations and saved searches (reasonable limits: <1000 entries)
 - French linguistic rules are simpler to implement than full natural language processing (focus on common patterns)
 - Performance is acceptable with current treatise corpus size (<100 chapters across all treatises)
+
+## Configuration & Settings
+
+### Annotation Display Configuration
+
+Users can configure which annotation fields appear as metadata under chapter titles. Available fields include:
+- Note text (first 50 characters)
+- Weapons (comma-separated list)
+- Guards mentioned
+- Techniques
+- Sword condition (sharp/blunt)
+- Measures
+- Strategy
+
+**Default display**: Weapons + Sword condition (if set)
+
+Configuration menu accessible from settings panel. Changes apply immediately across all chapters.
+
+### Import Script File Conflict Handling
+
+When running the import/extraction script and output file already exists, the system MUST prompt user with three options:
+
+1. **Replace** - Overwrite existing file with new content (original file is backed up as `.bak`)
+2. **Rename** - Save with incremented filename (e.g., `filename_1.yaml`, `filename_2.yaml`)
+3. **Cancel** - Abort import without saving
+
+This applies to all import operations including `extract-book.py` and similar data import scripts.
 
 ## Out of Scope
 
