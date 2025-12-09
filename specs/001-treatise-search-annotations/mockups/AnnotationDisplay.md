@@ -33,9 +33,6 @@ The AnnotationDisplay configuration menu allows users to customize which annotat
 ║ ☐ 📏 Measures/Distance                           ║
 ║   Example display: "passata, balestra"           ║
 ║                                                    ║
-║ ☐ 📝 Note Preview (first 50 chars)               ║
-║   Example display: "Classic forehand stroke at..." ║
-║                                                    ║
 ║ ☐ 📚 Strategy/Context                            ║
 ║   Example display: "Counter attack, solo practice" ║
 ║                                                    ║
@@ -48,9 +45,7 @@ The AnnotationDisplay configuration menu allows users to customize which annotat
 ╚════════════════════════════════════════════════════╝
 
 Default Configuration (Factory Reset):
-✓ Weapons: ON
-✓ Sword Condition: ON
-✗ All others: OFF
+✗ Every annotation : OFF
 
 This is stored in AnnotationDisplayContext and persisted to localStorage.
 ```
@@ -60,15 +55,14 @@ This is stored in AnnotationDisplayContext and persisted to localStorage.
 ### Before Configuration (Default)
 
 ```
-┌─────────────────────────────────────────┐
-│ Marozzo Opera Nova, Book 1, Chapter 3  │
-│                                         │
-│ Weapons: spada, brocchiero              │
-│ Condition: Sharp                        │
-│                                         │
-│ [Chapter text starts here...]           │
-│ "...guardia di coda..."                │
-└─────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────────────────────┐
+│ achille_marozzo - Opera Nova (1536)                                           │
+│ Chap. 94. La fin du combat ci-dessus dans cette neuvième et dernière partie.  │
+│                                                                               │
+│                                                                               │
+│ [Chapter text starts here...]                                                 │
+│ "...guardia di coda..."                                                       │
+└───────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### After User Customizes (Example)
@@ -79,20 +73,19 @@ User selects:
 - ☐ Guards Mentioned
 - ✓ Techniques
 - ☐ Measures
-- ✓ Note Preview
 
 Result:
 ```
-┌─────────────────────────────────────────┐
-│ Marozzo Opera Nova, Book 1, Chapter 3  │
-│                                         │
-│ Weapons: spada, brocchiero              │
-│ Techniques: attacco, cambio, parry      │
-│ Note: "Classic forehand stroke in..."  │
-│                                         │
-│ [Chapter text starts here...]           │
-│ "...guardia di coda..."                │
-└─────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────────────────────┐
+│ achille_marozzo - Opera Nova (1536)                                           │
+│ Chap. 94. La fin du combat ci-dessus dans cette neuvième et dernière partie.  │
+│                                                                               │
+│ Weapons: spada, brocchiero                                                    │
+│ Techniques: attacco, cambio, parry                                            │
+│                                                                               │
+│ [Chapter text starts here...]                                                 │
+│ "...guardia di coda..."                                                       │
+└───────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
