@@ -16,31 +16,29 @@ The AnnotationDisplay configuration menu allows users to customize which annotat
 ║ ⚙️ Annotation Display Configuration               ║
 ╟────────────────────────────────────────────────────╢
 ║                                                    ║
-║ Show as chapter summary (below chapter title):    ║
+║ Show as chapter summary (below chapter title):     ║
 ║                                                    ║
 ║ ☑ 🔸 Weapons                                      ║
-║   Example display: "spada, brocchiero"           ║
+║   Example display: "spada, brocchiero"             ║
 ║                                                    ║
-║ ☑ ⚔️ Sword Condition (sharp/blunt)               ║
-║   Example display: "Sharp"                        ║
+║ ☑ ⚔️ Sword Condition (sharp/blunt)                ║
+║   Example display: "Sharp"                         ║
 ║                                                    ║
-║ ☐ 🛡️ Guards Mentioned                            ║
-║   Example display: "coda longa, posta donna"     ║
+║ ☐ 🛡️ Guards Mentioned                             ║
+║   Example display: "coda longa, posta donna"       ║
 ║                                                    ║
 ║ ☐ 🎯 Techniques                                   ║
-║   Example display: "attacco, cambio"             ║
+║   Example display: "attacco, cambio"               ║
 ║                                                    ║
-║ ☐ 📏 Measures/Distance                           ║
-║   Example display: "passata, balestra"           ║
+║ ☐ 📏 Measures/Distance                            ║
+║   Example display: "passata, balestra"             ║
 ║                                                    ║
-║ ☐ 📚 Strategy/Context                            ║
+║ ☐ 📚 Strategy/Context                             ║
 ║   Example display: "Counter attack, solo practice" ║
 ║                                                    ║
 ╟────────────────────────────────────────────────────╢
-║ Show annotations:                                 ║
-║ ◉ Show all annotations  ◯ Hide summaries          ║
 ║                                                    ║
-║ [Reset to Default] [Apply Changes] [Close]       ║
+║ [Reset to Default] [Apply Changes] [Close]         ║
 ║                                                    ║
 ╚════════════════════════════════════════════════════╝
 

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Annotation Display Configuration</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    :root {
+      font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+      color: #0f172a;
+      background-color: #0f172a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, rgba(59,130,246,0.4), transparent 45%), #0f172a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+    .modal {
+      width: min(540px, 100%);
+      background: #ffffff;
+      border-radius: 1.25rem;
+      box-shadow: 0 35px 60px rgba(15,23,42,0.35);
+      padding: 2rem;
+      border: 1px solid rgba(15,23,42,0.08);
+      position: relative;
+    }
+    h1 {
+      font-size: 1.25rem;
+      margin: 0;
+      color: #0f172a;
+    }
+    .section-title {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #475569;
+      margin-bottom: 0.5rem;
+    }
+    .checkbox-row {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      border-radius: 0.75rem;
+      border: 1px solid #e5e7eb;
+      margin-bottom: 0.75rem;
+      background: #f9fafb;
+      align-items: center;
+    }
+    .checkbox-row input {
+      width: 1.1rem;
+      height: 1.1rem;
+      accent-color: #2563eb;
+    }
+    .checkbox-label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+    .checkbox-label span {
+      font-size: 0.85rem;
+      color: #0f172a;
+      font-weight: 600;
+    }
+    .checkbox-label small {
+      color: #475569;
+      font-size: 0.75rem;
+    }
+    .toggle-group {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .pill {
+      padding: 0.35rem 0.95rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: #e0e7ff;
+      color: #1e3a8a;
+    }
+    .pill.inactive {
+      background: #f3f4f6;
+      color: #475569;
+    }
+    .actions {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+    }
+    .actions button {
+      padding: 0.85rem 1.35rem;
+      border-radius: 0.9rem;
+      border: 1px solid transparent;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .btn-primary {
+      background: #2563eb;
+      color: white;
+      border-color: #2563eb;
+    }
+    .btn-secondary {
+      background: white;
+      color: #0f172a;
+      border-color: #e5e7eb;
+    }
+    .btn-reset {
+      background: #fef3c7;
+      color: #92400e;
+      border-color: #fde68a;
+    }
+    .disclaimer {
+      margin-top: 1rem;
+      font-size: 0.75rem;
+      color: #6b7280;
+      display: block;
+    }
+    .divider {
+      height: 1px;
+      width: 100%;
+      background: #e5e7eb;
+      margin: 1.5rem 0;
+    }
+    .preview-block {
+      border-radius: 1rem;
+      border: 1px dashed rgba(15,23,42,0.2);
+      padding: 1rem 1.25rem;
+      background: #f8fafc;
+      font-size: 0.85rem;
+      color: #374151;
+    }
+    .preview-block strong {
+      color: #111827;
+    }
+  </style>
+</head>
+<body>
+  <div class="modal" role="dialog" aria-label="Configuration de l'affichage des annotations">
+    <h1>⚙️ Configuration des annotations</h1>
+    <p class="disclaimer">Choisissez les informations à afficher sous les titres de chapitres. Les réglages sont sauvegardés en local et appliqués immédiatement.</p>
+    <div class="divider" aria-hidden="true"></div>
+
+    <div class="section">
+      <span class="section-title">Résumé par chapitre</span>
+      <label class="checkbox-row">
+        <input type="checkbox" checked>
+        <span class="checkbox-label">
+          <span>Armes</span>
+          <small>Affiche les armes listées dans l'annotation (ex. spada, brocchiero).</small>
+        </span>
+      </label>
+      <label class="checkbox-row">
+        <input type="checkbox" checked>
+        <span class="checkbox-label">
+          <span>Condition de l'épée</span>
+          <small>Afficher « Aiguisée » ou « Emoussée ».</small>
+        </span>
+      </label>
+      <label class="checkbox-row">
+        <input type="checkbox">
+        <span class="checkbox-label">
+          <span>Gardes mentionnées</span>
+          <small>Liste des gardes évoquées (coda longa, porta di ferro, ...).</small>
+        </span>
+      </label>
+      <label class="checkbox-row">
+        <input type="checkbox">
+        <span class="checkbox-label">
+          <span>Techniques</span>
+          <small>Affiche les techniques utilisées, pour rappel rapide.</small>
+        </span>
+      </label>
+      <label class="checkbox-row">
+        <input type="checkbox">
+        <span class="checkbox-label">
+          <span>Mesures </span>
+          <small>Indique les mesures, (Presa, Stretta di Mezza Spada, Gioco Stretto, Largo  ...) utilisées lors du combat.</small>
+        </span>
+      </label>
+      <label class="checkbox-row">
+        <input type="checkbox">
+        <span class="checkbox-label">
+          <span>Stratégie / Contexte</span>
+          <small>Montre la stratégie générale (Provocation, venue au fer...).</small>
+        </span>
+      </label>
+    </div>
+
+    <div class="divider" aria-hidden="true"></div>
+
+    <div class="actions">
+      <button class="btn-reset" type="button">Réinitialiser</button>
+      <button class="btn-secondary" type="button">Fermer</button>
+      <button class="btn-primary" type="button">Appliquer</button>
+    </div>
+  </div>
+</body>
+</html>
