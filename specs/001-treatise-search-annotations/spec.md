@@ -9,11 +9,11 @@
 
 ### User Story 1 - Cross-Treatise Text Search with Variant Matching (Priority: P1)
 
-A researcher searches for "mandritto" across all treatises. The system automatically searches for word variants (mandritti, mandriti) and equivalent terms in French (coup droit) and English (forehand cut), displaying all matching chapters from Italian, French, and English versions. The researcher can immediately see where this technique appears across all available sources.
+A researcher searches for "mandritto" across all treatises. The system automatically suggest word variants as selectable chips (mandritti, mandriti) and equivalent terms in French (coup droit) and English (forehand cut). Then based on user selection system will displays all matching chapters from Italian, French, and English versions. The researcher can immediately see where this technique appears across all available sources.
 
 **Why this priority**: This is the core value proposition - enabling comprehensive cross-treatise research that would be impossible to do manually. Without this, the tool provides no advantage over manual reading.
 
-**Independent Test**: Enter "mandritto" in search field → System displays all chapters containing "mandritto", "mandritti", "coup droit", "forehand cut" from all treatises in all three languages. User receives dropdown suggestion of similar words. User can read results without any other features working.
+**Independent Test**: Enter "mandritto" in search field → User receives suggestion of similar words as selectable chips example : "mandritto", "mandritti", "coup droit", "forehand cut". Then based on user selection system displays all chapters containing seleted words from all treatises in all three languages.  User can read results without any other features working.
 
 **Acceptance Scenarios**:
 
@@ -22,7 +22,7 @@ A researcher searches for "mandritto" across all treatises. The system automatic
 3. **Given** I search for a French term like "coup droit", **When** results appear, **Then** equivalent Italian ("mandritto") and English ("forehand cut") chapters are also shown
 4. **Given** search results are displayed, **When** I click on a chapter, **Then** the full chapter text is displayed with the search term highlighted
 5. **Given** no matches are found, **When** the search completes, **Then** I see "No results found" with a suggestion to try related terms
-6. **Given** I type a search term, **When** the dropdown shows, **Then** I see a list of similar words from the glossary that I can click to search instead
+6. **Given** I type a search term, **When** the chips shows, **Then** I see a list of similar words from the glossary that I can click to search instead
 
 ---
 
@@ -50,7 +50,7 @@ A researcher wants to annotate chapters with personal notes and tags (e.g., "beg
 
 **Why this priority**: This enables personalized organization and deeper research workflows, but requires both search (P1) to find content and possibly saved searches (P2) for efficiency. It's the cherry on top, not the foundation.
 
-**Independent Test**: View a chapter (annotation panel opens by default) → Add annotation with text "Good for beginners" and tag "beginner" → Search for "mandritto" → Filter results by tag "beginner" → See only annotated chapters. The annotation button is highlighted when that annotation panel is open. As user scrolls, the annotation panel points to the centered paragraph. Delivers value independently by letting users build their own knowledge base.
+**Independent Test**: View a chapter (annotation panel opens by default) → Add annotation with text "Provoc to push adversary to change guard" and tag "Provocation" → Search for "mandritto" → Filter results by tag "Provocation" → See only annotated chapters. The annotation button is highlighted when that annotation panel is open. As user scrolls, the annotation panel points to the centered paragraph. Delivers value independently by letting users build their own knowledge base.
 
 **Acceptance Scenarios**:
 
@@ -101,7 +101,7 @@ A researcher studying a complex technique wants contextual help. After selecting
 
 - **FR-001**: System MUST search across all treatise YAML files (Italian, French, English content) simultaneously
 - **FR-002**: System MUST automatically detect and search for word variants (plurals, conjugations, related forms)
-- **FR-002a**: System MUST propose a dropdown list of similar words from the glossary when user enters a search term
+- **FR-002a**: System MUST propose a chips list of similar words from the glossary when user enters a search term
 - **FR-003**: System MUST cross-reference glossary to find equivalent terms across languages (e.g., mandritto → coup droit → forehand cut)
 - **FR-004**: System MUST display search results grouped by treatise and chapter with preview text showing match context
 - **FR-005**: System MUST highlight search terms in displayed chapter text
@@ -168,7 +168,6 @@ A researcher studying a complex technique wants contextual help. After selecting
 ### Annotation Display Configuration
 
 Users can configure which annotation fields appear as metadata under chapter titles. Available fields include:
-- Note text (first 50 characters)
 - Weapons (comma-separated list)
 - Guards mentioned
 - Techniques
