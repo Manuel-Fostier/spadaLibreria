@@ -3,7 +3,7 @@
 **Feature**: Treatise Search and Annotation System (v2.0)  
 **Date**: December 9, 2025  
 **Location**: `specs/001-treatise-search-annotations/mockups/`  
-**Status**: ✅ All mockups complete - ready for implementation
+**Status**: ✅ Phase 0 mockups complete (T001, T003, T004, T007) - ready for implementation
 
 ## Purpose
 
@@ -25,11 +25,8 @@ Each mockup includes:
 | Task | Mockup | Feature | User Story | Spec Ref |
 |------|--------|---------|------------|----------|
 | T001 | SearchBar.md | Similar words suggestion dropdown | US1 | FR-002a, SC-011 |
-| T002 | SearchResults.md | Search results with highlighting | US1 | FR-004, FR-005, FR-017 |
 | T003 | AnnotationPanel.md | Default open, highlighting, scrolling | US3 | FR-012, FR-012a, FR-012b |
 | T004 | AnnotationDisplay.md | Configuration menu (7 fields) | US3 | FR-021 |
-| T005 | SwordConditionEnum.md | Sword condition (sharp/blunt) | US3 | FR-009 |
-| T006 | ImportDialog.md | File conflict handling | Phase 7 | FR-022 |
 | T007 | MOCKUPS_SUMMARY.md | Index & links (this file) | All | - |
 
 ---
@@ -61,33 +58,7 @@ User types "mandritto"
 
 ---
 
-### 2. Search Results (FR-004, FR-005)
-
-**Mockup**: `SearchResults.md`  
-**Component**: `src/components/SearchResults.tsx`  
-**User Story**: US1 (P1 - MVP)  
-**Task**: T002, T022 (implementation)
-
-**Features Shown**:
-- Results grouped by treatise and chapter
-- Highlighted search terms (yellow background)
-- Language badges [IT] [FR] [EN] showing which versions contain match
-- Annotation indicators with colors
-- Pagination (3 results per page)
-- Empty state with suggestions
-- Filtering UI
-
-**Example Result**:
-```
-1. Marozzo Opera Nova, Book 1, Ch 3
-   [IT] [FR] [EN] | Weapons: spada, brocchiero
-   "...attacca con un **mandritto** in testa..."
-   🔸 Weapons: 3 annotations
-```
-
----
-
-### 3. Annotation Panel Enhancements (FR-012, FR-012a, FR-012b)
+### 2. Annotation Panel Enhancements (FR-012, FR-012a, FR-012b)
 
 **Mockup**: `AnnotationPanel.md`  
 **Component**: `src/components/AnnotationPanel.tsx` (enhanced)  
@@ -119,7 +90,7 @@ User scrolls chapter
 
 ---
 
-### 4. Annotation Display Configuration (FR-021)
+### 3. Annotation Display Configuration (FR-021)
 
 **Mockup**: `AnnotationDisplay.md`  
 **Component**: `src/components/AnnotationDisplaySettings.tsx`  
@@ -150,57 +121,6 @@ Condition: Sharp
 
 ---
 
-### 5. Sword Condition Enum (FR-009)
-
-**Mockup**: `SwordConditionEnum.md`  
-**Component**: Added to `src/components/AnnotationForm.tsx`  
-**User Story**: US3 (P3)  
-**Task**: T005, T040 (implementation)
-
-**Features Shown**:
-- Radio button options: Sharp / Blunt / Unknown
-- Integrated into annotation form
-- Appears between "Tags" and "Weapons" sections
-- Used to distinguish combat vs. training techniques
-- Default displayed in chapter summaries (FR-021 default)
-
-**Example**:
-```
-⚔️ Sword Condition:
-  ◉ Sharp (combat techniques)
-  ◯ Blunt (training/practice)
-  ◯ Unknown / Not Specified
-```
-
----
-
-### 6. Import File Conflict Handling (FR-022)
-
-**Mockup**: `ImportDialog.md`  
-**Component**: `scripts/extract-book.py` (Python script)  
-**User Story**: Phase 7 (Polish)  
-**Task**: T006, T056 (implementation)
-
-**Features Shown**:
-- Dialog when output file already exists
-- Three options:
-  1. **Replace** - Overwrite with new file, backup as .bak
-  2. **Rename** - Save as marozzo_opera_nova_1.yaml
-  3. **Cancel** - Stop, don't save anything
-- Clear confirmation messages
-- Backup preservation strategy
-
-**Example Workflow**:
-```
-$ uv run extract-book marozzo --pages "34-102"
-⚠️ File conflict: marozzo_opera_nova.yaml exists
-Options: (1) Replace (2) Rename (3) Cancel
-User enters: 1
-✓ Backup created: marozzo_opera_nova.yaml.bak
-✓ File replaced
-```
-
----
 
 ## Feature Integration Map
 
@@ -208,7 +128,6 @@ User enters: 1
 
 Mockups involved:
 - `SearchBar.md` (T001) - User entry point with similar words
-- `SearchResults.md` (T002) - Displays search results with highlighting
 
 Spec references:
 - FR-002a: Similar words suggestion (500ms, SC-011)
@@ -218,8 +137,7 @@ Spec references:
 
 Implementation order:
 1. Create SearchBar component (T021) using SearchBar.md mockup
-2. Create SearchResults component (T022) using SearchResults.md mockup
-3. Integrate into BolognesePlatform (T023)
+2. Integrate into BolognesePlatform (T023) with results rendering per plan/spec (no dedicated SearchResults mockup required)
 
 ---
 
@@ -228,7 +146,6 @@ Implementation order:
 Mockups involved:
 - `AnnotationPanel.md` (T003) - Default open, highlighting, scrolling
 - `AnnotationDisplay.md` (T004) - Configuration menu
-- `SwordConditionEnum.md` (T005) - Annotation field
 
 Spec references:
 - FR-012: Default open panel
@@ -247,14 +164,7 @@ Implementation order:
 
 ### Phase 7: Polish & Cross-Cutting Concerns
 
-Mockups involved:
-- `ImportDialog.md` (T006) - File conflict handling
-
-Spec references:
-- FR-022: Import file conflict handling
-
-Implementation:
-- Add conflict handling to `scripts/extract-book.py` (T056)
+No active mockup tasks in scope.
 
 ---
 
@@ -264,7 +174,7 @@ Implementation:
 
 Before implementation begins, verify:
 
-- [ ] All 7 mockups created and reviewed
+- [ ] All Phase 0 mockups (T001, T003, T004, T007) created and reviewed
 - [ ] Each mockup includes:
   - [ ] Wireframe ASCII art
   - [ ] All component states
@@ -299,14 +209,6 @@ User feedback → Update mockup → Update spec if needed → Update tasks → I
 3. Implement: `isOpen` state default to `true`
 4. Validate: Panel visible on chapter view without click
 
-### For Task T040 (Sword Condition)
-
-1. Read: `SwordConditionEnum.md`
-2. Understand: Radio buttons for Sharp/Blunt/Unknown
-3. Implement: Add to annotation form in correct position
-4. Validate: Field saves to annotation.sword_condition
-
----
 
 ## File Organization
 
@@ -320,11 +222,8 @@ specs/001-treatise-search-annotations/
 │
 └── mockups/                   ← NEW DIRECTORY (Phase 0)
     ├── SearchBar.md           (FR-002a, SC-011)
-    ├── SearchResults.md       (FR-004, FR-005, FR-017)
     ├── AnnotationPanel.md     (FR-012, FR-012a, FR-012b)
     ├── AnnotationDisplay.md   (FR-021)
-    ├── SwordConditionEnum.md  (FR-009)
-    ├── ImportDialog.md        (FR-022)
     └── MOCKUPS_SUMMARY.md     (this file - index)
 ```
 
@@ -401,14 +300,10 @@ After implementation:
 
 ## Sign-Off
 
-**Mockups Status**: ✅ COMPLETE AND READY FOR IMPLEMENTATION
+**Mockups Status**: ✅ Phase 0 mockups (T001, T003, T004, T007) complete and ready for implementation
 
-All 7 feature mockups created and documented:
+Active mockups:
 - ✅ SearchBar (FR-002a)
-- ✅ SearchResults (FR-004, FR-005)
 - ✅ AnnotationPanel (FR-012, FR-012a, FR-012b)
 - ✅ AnnotationDisplay (FR-021)
-- ✅ SwordConditionEnum (FR-009)
-- ✅ ImportDialog (FR-022)
-
-Ready for Phase 1 implementation to begin.
+- ✅ MOCKUPS_SUMMARY (index)

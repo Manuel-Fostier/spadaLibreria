@@ -33,11 +33,11 @@
 
 **Browser previews**: HTML renditions of each mockup now live in `specs/001-treatise-search-annotations/mockups/pages/` for quick visual validation.
 
-- [ ] T000 [P] Create mockups directory structure in `specs/001-treatise-search-annotations/mockups/`
-- [ ] T001 [P] [US1] Create SearchBar.md mockup in `specs/001-treatise-search-annotations/mockups/SearchBar.md` (similar words chips dropdown, wireframe ASCII art, interaction flow with 500ms response target)
-- [ ] T003 [P] [US3] Create AnnotationPanel.md mockup in `specs/001-treatise-search-annotations/mockups/AnnotationPanel.md` (default open state, smart scrolling, button highlighting, sword condition enum field)
-- [ ] T004 [P] [US3] Create AnnotationDisplay.md mockup in `specs/001-treatise-search-annotations/mockups/AnnotationDisplay.md` (configuration menu with 7 checkboxes: note, weapons, guards, techniques, sword condition, measures, strategy; defaults)
-- [ ] T007 Create MOCKUPS_SUMMARY.md in `specs/001-treatise-search-annotations/mockups/` (index of all mockups, linking specs to mockup files)
+- [x] T000 [P] Create mockups directory structure in `specs/001-treatise-search-annotations/mockups/`
+- [x] T001 [P] [US1] Create SearchBar.md mockup in `specs/001-treatise-search-annotations/mockups/SearchBar.md` (similar words chips dropdown, wireframe ASCII art, interaction flow with 500ms response target)
+- [x] T003 [P] [US3] Create AnnotationPanel.md mockup in `specs/001-treatise-search-annotations/mockups/AnnotationPanel.md` (default open state, smart scrolling, button highlighting, sword condition enum field)
+- [x] T004 [P] [US3] Create AnnotationDisplay.md mockup in `specs/001-treatise-search-annotations/mockups/AnnotationDisplay.md` (configuration menu with 7 checkboxes: note, weapons, guards, techniques, sword condition, measures, strategy; defaults)
+- [x] T007 Create MOCKUPS_SUMMARY.md in `specs/001-treatise-search-annotations/mockups/` (index of all mockups, linking specs to mockup files)
 
 **Checkpoint**: All UI/UX mockups complete and reviewed before Phase 1 implementation begins
 
