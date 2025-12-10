@@ -38,8 +38,6 @@
 - [ ] T002 [P] [US1] Create SearchResults.md mockup in `specs/001-treatise-search-annotations/mockups/SearchResults.md` (search results layout, highlighting, language badges, pagination, annotation indicators)
 - [ ] T003 [P] [US3] Create AnnotationPanel.md mockup in `specs/001-treatise-search-annotations/mockups/AnnotationPanel.md` (default open state, smart scrolling, button highlighting, sword condition enum field)
 - [ ] T004 [P] [US3] Create AnnotationDisplay.md mockup in `specs/001-treatise-search-annotations/mockups/AnnotationDisplay.md` (configuration menu with 7 checkboxes: note, weapons, guards, techniques, sword condition, measures, strategy; defaults)
-- [ ] T005 [P] [US3] Create SwordConditionEnum.md mockup in `specs/001-treatise-search-annotations/mockups/SwordConditionEnum.md` (annotation form with sharp/blunt selector, integration into annotation fields)
-- [ ] T006 [P] Create ImportDialog.md mockup in `specs/001-treatise-search-annotations/mockups/ImportDialog.md` (file conflict resolution: Replace/Rename/Cancel dialog, backup strategy)
 - [ ] T007 Create MOCKUPS_SUMMARY.md in `specs/001-treatise-search-annotations/mockups/` (index of all mockups, linking specs to mockup files)
 
 **Checkpoint**: All UI/UX mockups complete and reviewed before Phase 1 implementation begins
@@ -233,7 +231,7 @@ Phase 6: Polish & FR-022
 3. T023-T028 sequential after components complete
 
 **US2 (Annotations)**:
-1. Phase 0: T003, T004, T005 mockups in parallel
+1. Phase 0: T003, T004 mockups in parallel
 2. Phase 4 (depends on Phase 2 completing T020: AnnotationDisplayContext)
 3. T030, T031, T032, T033, T035, T036 (multiple components & context updates) 
 4. T034, T037, T038, T039-T042 sequential
@@ -279,8 +277,6 @@ T001 - SearchBar.md (similar words dropdown)
 T002 - SearchResults.md (highlighting, badges)
 T003 - AnnotationPanel.md (default open, highlighting, scrolling)
 T004 - AnnotationDisplay.md (configuration menu)
-T005 - SwordConditionEnum.md (annotation field)
-T006 - ImportDialog.md (file conflict handling)
 T007 - MOCKUPS_SUMMARY.md (index and links)
 ```
 
