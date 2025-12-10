@@ -48,10 +48,10 @@ Bouton 📌 : fond bleu (active), fond gris translucide (inactif). Paragraphe en
 4. **Formulaire d’ajout (FR-009)**
    - Champs : note, tags, arme, condition d’épée, gardes, mesures, stratégie.
    - Condition d’épée (enum) : `coupant`, `mat`, `inconnu` via boutons radio.
-   - Sauvegarde enrichit `annotation.sword_condition` dans la base.
+   - Sauvegarde enrichit `annotation.weapon_type` dans la base.
 5. **Configuration d’affichage (FR-021)**
    - Menu modale activé par ⚙️.
-   - Options `showWeapons`, `showSwordCondition`, `showGuards`, etc.
+   - Options `showWeapons`, `showWeaponType`, `showGuards`, etc.
    - Valeurs persistées dans `localStorage` et context `AnnotationDisplayContext`.
 
 ## Variantes responsive
@@ -121,7 +121,6 @@ useEffect(() => {
 ## Interactions associées
 - `SearchResults.md` (T022) déclenche l’ouverture du panel via `onSelectChapter`.
 - `AnnotationDisplay.md` (T004) documente le menu ⚙️ (FR-021).
-- `SwordConditionEnum.md` (T005) précise les valeurs `sharp`, `blunt`, `unknown`.
 
 ## Critères de succès
 - ✅ FR-012 : panel visible par défaut pour tout chapitre.

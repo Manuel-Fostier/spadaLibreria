@@ -47,11 +47,11 @@
 
 **Purpose**: Create new type definitions, contexts, and component scaffolding
 
-- [ ] T008 Create TypeScript interfaces for search in `src/types/search.ts` (SearchQuery, SearchResult, SearchIndex, ChapterReference)
-- [ ] T009 [P] Create TypeScript interfaces for saved searches in `src/types/savedSearch.ts` (SavedSearch, SavedSearchStorage)
-- [ ] T010 [P] Create TypeScript interfaces for annotation display config in `src/types/annotationDisplay.ts` (AnnotationDisplay with 7 configurable fields)
-- [ ] T011 [P] Create LLM types in `src/types/llm.ts` (LLMRequest, LLMResponse, LLMConfig) for P4 foundation
-- [ ] T012 [P] Extend Annotation type in `src/types/annotation.ts` to include sword_condition enum field (sharp | blunt | null)
+- [x] T008 Create TypeScript interfaces for search in `src/types/search.ts` (SearchQuery, SearchResult, SearchIndex, ChapterReference)
+- [x] T009 [P] Create TypeScript interfaces for saved searches in `src/types/savedSearch.ts` (SavedSearch, SavedSearchStorage)
+- [x] T010 [P] Create TypeScript interfaces for annotation display config in `src/types/annotationDisplay.ts` (AnnotationDisplay with 7 configurable fields)
+- [x] T011 [P] Create LLM types in `src/types/llm.ts` (LLMRequest, LLMResponse, LLMConfig) for P4 foundation
+- [x] T012 [P] Extend Annotation type in `src/types/annotation.ts` to include weapon_type enum field (Epée aiguisée | Epée émoussée | null)
 
 **Checkpoint**: Type system extended with search-specific and annotation enhancement interfaces (TS1-TS3 from phase 1 COMPLETED in previous session)
 
@@ -119,19 +119,19 @@
 - **FR-012**: Annotation panel opens by default (default open state)
 - **FR-012a**: Annotation button highlighted when panel is open
 - **FR-012b (SC-012)**: Smart panel scrolling - tracks viewport center paragraph with <100ms latency
-- **FR-009**: Sword condition enum field (sharp/blunt)
-- **FR-021**: Configuration menu for annotation display fields (7 configurable: note, weapons, guards, techniques, sword condition, measures, strategy)
+- **FR-009**: Weapon type enum field (Epée aiguisée | Epée émoussée)
+- **FR-021**: Configuration menu for annotation display fields (7 configurable: note, weapons, guards, techniques, weapon type, measures, strategy)
 
 **GitHub Issues**: Related to [Issue #1](https://github.com/Manuel-Fostier/spadaLibreria/issues/1) (part of left panel refonte)
 
 ### Implementation for User Story 2
 
-- [ ] T030 [P] [US2] Create TagFilter component in `src/components/TagFilter.tsx` (dual-filter interface: annotation metadata dropdowns for weapons/guards/techniques/sword_condition AND treatise metadata dropdowns for master/work/book/year)
+- [ ] T030 [P] [US2] Create TagFilter component in `src/components/TagFilter.tsx` (dual-filter interface: annotation metadata dropdowns for weapons/guards/techniques/weapon_type AND treatise metadata dropdowns for master/work/book/year)
 - [ ] T031 [US2] Add filter methods to AnnotationContext in `src/contexts/AnnotationContext.tsx` (filterByWeapons, filterByGuards, filterByTechniques, filterByMetadata, getUniqueTags, getMetadataValues)
 - [ ] T032 [US2] Modify AnnotationPanel default state in `src/components/AnnotationPanel.tsx` to open by default (FR-012) - mockup: `specs/mockups/AnnotationPanel.md`
 - [ ] T033 [US2] Implement annotation button highlighting in BolognesePlatform (active state when panel is open per FR-012a) - mockup: `specs/mockups/AnnotationPanel.md`
 - [ ] T034 [US2] Implement smart scrolling in AnnotationPanel (tracks viewport center paragraph with <100ms latency per FR-012b/SC-012) using Intersection Observer API
-- [ ] T035 [US2] Extend Annotation form to include sword_condition selector (sharp/blunt enum per FR-009) - mockup: `specs/mockups/SwordConditionEnum.md`
+- [ ] T035 [US2] Extend Annotation form to include weapon_type selector (Epée aiguisée | Epée émoussée enum per FR-009)
 - [ ] T036 [US2] Create AnnotationDisplaySettings component in `src/components/AnnotationDisplaySettings.tsx` (configuration menu with 7 checkboxes per FR-021) - mockup: `specs/mockups/AnnotationDisplay.md`
 - [ ] T037 [US2] Implement AnnotationDisplayContext persistence (read/write config to localStorage per FR-021)
 - [ ] T038 [US2] Integrate AnnotationDisplaySettings into UI (settings button/menu, apply configuration to chapter annotations)

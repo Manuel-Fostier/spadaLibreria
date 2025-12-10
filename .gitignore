@@ -7,6 +7,9 @@ build
 .env.local
 .DS_Store
 __pycache__
+.venv
+.turbo
+.vercel
 *.pyc
 *.pyo
 *.db

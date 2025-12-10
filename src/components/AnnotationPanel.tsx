@@ -71,6 +71,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
   const [formData, setFormData] = useState({
     note: '',
     weapons: null as (typeof WEAPONS[number])[] | null,
+    weapon_type: null as (typeof WEAPON_TYPES[number]) | null,
     guards_mentioned: null as (typeof GUARDS[number])[] | null,
     techniques: null as string[] | null,
     measures: null as (typeof MEASURES[number])[] | null,
@@ -131,6 +132,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
       setFormData({
         note: annotation.note || '',
         weapons: annotation.weapons || null,
+        weapon_type: annotation.weapon_type || null,
         guards_mentioned: annotation.guards_mentioned || null,
         techniques: annotation.techniques || null,
         measures: annotation.measures || null,
@@ -141,6 +143,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
       setFormData({
         note: '',
         weapons: null,
+        weapon_type: null,
         guards_mentioned: null,
         techniques: null,
         measures: null,
@@ -470,16 +473,14 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {WEAPON_TYPES.map(wt => {
-                    const active = formData.weapon_type?.includes(wt);
+                    const active = formData.weapon_type === wt;
                     return (
                       <button
                         type="button"
                         key={wt}
                         onClick={() => setFormData(prev => ({
                           ...prev,
-                          weapon_type: active
-                            ? prev.weapon_type?.filter(x => x !== wt) || null
-                            : [...(prev.weapon_type || []), wt]
+                          weapon_type: active ? null : wt,
                         }))}
                         className={getToggleClasses('weaponTypes', Boolean(active))}
                       >

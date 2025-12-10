@@ -169,7 +169,7 @@ interface AnnotationDisplaySettingsProps {
 ```typescript
 interface AnnotationDisplayConfig {
   showWeapons: boolean;           // Default: true
-  showSwordCondition: boolean;    // Default: true (NEW FR-021)
+  showWeaponType: boolean;        // Default: true (NEW FR-021)
   showGuards: boolean;            // Default: false
   showTechniques: boolean;        // Default: false
   showMeasures: boolean;          // Default: false
@@ -186,7 +186,7 @@ interface AnnotationDisplayConfig {
   "version": "1.0",
   "config": {
     "showWeapons": true,
-    "showSwordCondition": true,
+    "showWeaponType": true,
     "showGuards": false,
     "showTechniques": false,
     "showMeasures": false,
@@ -205,12 +205,12 @@ const { displayConfig, updateDisplayConfig } = useAnnotationDisplay();
 
 // In any chapter component
 const shouldShowWeapons = displayConfig.showWeapons;  // true
-const shouldShowCondition = displayConfig.showSwordCondition;  // true
+const shouldShowCondition = displayConfig.showWeaponType;  // true
 const shouldShowGuards = displayConfig.showGuards;  // false
 
 // Render conditionally
 {shouldShowWeapons && <div>Weapons: {weapons}</div>}
-{shouldShowCondition && <div>Condition: {swordCondition}</div>}
+{shouldShowCondition && <div>Condition: {Weapon_type}</div>}
 ```
 
 ---

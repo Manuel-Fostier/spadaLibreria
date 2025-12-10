@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Annotation, MEASURES, STRATEGIES, WEAPONS, GUARDS, Measure, Strategy, Weapon, Guard } from '@/lib/annotation';
+import { Annotation, MEASURES, STRATEGIES, WEAPONS, WEAPON_TYPES, GUARDS, Measure, Strategy, Weapon, WeaponType, Guard } from '@/lib/annotation';
 
 interface AnnotationContextType {
   annotations: Map<string, Annotation>;
@@ -43,6 +43,9 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
           ann.weapons.filter((w): w is Weapon => WEAPONS.includes(w as Weapon))
         ))
       : [];
+    const validWeaponTypes = ann.weapon_type && WEAPON_TYPES.includes(ann.weapon_type as WeaponType)
+      ? ann.weapon_type as WeaponType
+      : null;
     const validGuards = Array.isArray(ann.guards_mentioned)
       ? Array.from(new Set(
           ann.guards_mentioned.filter((g): g is Guard => GUARDS.includes(g as Guard))
@@ -60,6 +63,7 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
       measures: validMeasures,
       strategy: validStrategies,
       weapons: validWeapons,
+      weapon_type: validWeaponTypes,
       guards_mentioned: validGuards,
       techniques: validTechniques
     } as Annotation;
@@ -74,6 +78,7 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
         measures: (ann as LegacyAnnotation).measures ?? null,
         strategy: ann.strategy ?? [],
         weapons: ann.weapons ?? [],
+        weapon_type: ann.weapon_type ?? null,
         guards_mentioned: ann.guards_mentioned ?? [],
         techniques: ann.techniques ?? [],
       } as LegacyAnnotation);
@@ -127,6 +132,10 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
       weapons: Array.isArray(annotation.weapons) ? Array.from(new Set(
         annotation.weapons.filter((w): w is Weapon => WEAPONS.includes(w as Weapon))
       )) : [],
+      // normalize weapon_type
+      weapon_type: annotation.weapon_type && WEAPON_TYPES.includes(annotation.weapon_type as WeaponType)
+        ? annotation.weapon_type as WeaponType
+        : null,
       // normalize guards
       guards_mentioned: Array.isArray(annotation.guards_mentioned) ? Array.from(new Set(
         annotation.guards_mentioned.filter((g): g is Guard => GUARDS.includes(g as Guard))
@@ -163,6 +172,9 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
       const weapons = Array.isArray(merged.weapons) ? Array.from(new Set(
         merged.weapons.filter((w): w is Weapon => WEAPONS.includes(w as Weapon))
       )) : [];
+      const weapon_type = merged.weapon_type && WEAPON_TYPES.includes(merged.weapon_type as WeaponType)
+        ? merged.weapon_type as WeaponType
+        : null;
       const guards_mentioned = Array.isArray(merged.guards_mentioned) ? Array.from(new Set(
         merged.guards_mentioned.filter((g): g is Guard => GUARDS.includes(g as Guard))
       )) : [];
@@ -170,7 +182,7 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
         merged.techniques.filter((t): t is string => typeof t === 'string')
       )) : [];
       
-      newMap.set(sectionId, { ...merged, measures, strategy, weapons, guards_mentioned, techniques });
+      newMap.set(sectionId, { ...merged, measures, strategy, weapons, weapon_type, guards_mentioned, techniques });
       return newMap;
     });
     setIsDirty(true);
