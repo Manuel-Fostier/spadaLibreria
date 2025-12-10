@@ -42,10 +42,11 @@ A researcher wants to annotate chapters with personal notes and tags (e.g., "Spa
 3. **Given** I have an annotation panel open, **When** I look at the button, **Then** it is highlighted/active to show the panel is open
 4. **Given** I'm viewing a chapter, **When** I click "Add annotation", **Then** I can enter text and assign tags including sword condition (sharp/blunt) and other metadata
 5. **Given** a chapter has annotations, **When** I view that chapter, **Then** my annotations are displayed alongside the treatise text
-6. **Given** I've performed a search and viewing matching chapters, **When** I select a tag filter, **Then** only matching chapters with that tag are shown
-7. **Given** multiple tags are selected, **When** viewing filtered results, **Then** chapters matching ANY of the selected tags are shown
-8. **Given** I've annotated a chapter, **When** I delete the annotation, **Then** it no longer appears and that chapter is excluded from tag-filtered searches
-9. **Given** I'm reading through search results in BolognesePlatform, **When** I navigate between chapters (Page Down, scrolling, or chapter buttons), **Then** the transition is smooth and the reading experience matches PDF scrolling fluidity
+6. **Given** I've performed a search and viewing matching chapters, **When** I select annotation tag filters, **Then** only matching chapters with that tag are shown
+7. **Given** I've performed a search and viewing matching chapters, **When** I filter by metadata (e.g., master="Marozzo", book=2), **Then** only chapters from that treatise/book are shown
+8. **Given** multiple annotation tags and metadata filters are selected, **When** viewing filtered results, **Then** chapters matching the filters are shown with cumulative AND logic across categories
+9. **Given** I've annotated a chapter, **When** I delete the annotation, **Then** it no longer appears and that chapter is excluded from tag-filtered searches
+10. **Given** I'm reading through search results in BolognesePlatform, **When** I navigate between chapters (Page Down, scrolling, or chapter buttons), **Then** the transition is smooth and the reading experience matches PDF scrolling fluidity
 
 ---
 
@@ -92,7 +93,8 @@ A researcher studying a complex technique wants contextual help. After selecting
 - **FR-005**: System MUST highlight search terms in displayed chapter text
 - **FR-009**: Users MUST be able to add annotations (text notes + tags) to any chapter, including sword condition enum (sharp/blunt)
 - **FR-010**: System MUST persist annotations across sessions in local storage
-- **FR-011**: Users MUST be able to filter search results by annotation tags
+- **FR-011**: Users MUST be able to filter search results by annotation tags (weapons, guards, techniques, sword condition)
+- **FR-011a**: Users MUST be able to filter search results by treatise metadata (master, work, book, year)
 - **FR-012**: System MUST display all annotations for a chapter when viewing that chapter, with annotation panel open by default
 - **FR-012a**: Annotation button MUST be highlighted when its panel is open
 - **FR-012b**: Annotation panel MUST automatically track and highlight the paragraph at the center of the viewport as user scrolls
@@ -115,7 +117,9 @@ A researcher studying a complex technique wants contextual help. After selecting
 - **Annotation**: Chapter reference (treatise + chapter ID), annotation text, list of tags, sword condition (sharp/blunt enum), creation date, last modified date
 - **Tag**: Tag name, usage count (how many annotations use it), color/category
 - **AnnotationDisplay**: Configuration for which annotation fields are visible under chapter titles (note, weapons, guards, techniques, sword condition, etc.)
-- **ChapterReference**: Treatise filename, chapter ID within treatise, used to link annotations to content
+- **ChapterMetadata**: Treatise metadata fields extracted from YAML (master, work, book, year) used for metadata-based filtering
+- **MetadataFilter**: User-selected metadata filters (e.g., master="Marozzo", book=2, year=1536) applied to search results
+- **ChapterReference**: Treatise filename, chapter ID within treatise, combined with metadata to link annotations and filter results
 - **LLMConversation**: Session history for LLM interactions, context (current chapter, search results, annotations visible)
 
 ## Success Criteria *(mandatory)*

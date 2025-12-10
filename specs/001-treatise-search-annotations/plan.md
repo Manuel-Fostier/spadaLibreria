@@ -132,7 +132,7 @@ src/
 │   ├── MeasureProgressBar.tsx      # [EXISTING] Visual measure progression (Gioco Largo → Presa)
 │   ├── ComparisonModal.tsx         # [EXISTING] Compare translations modal
 │   ├── SearchBar.tsx               # [NEW] Search input with variant suggestions - triggers BolognesePlatform update
-│   ├── TagFilter.tsx               # [NEW] Filter search results by annotation metadata (weapons/guards/techniques)
+│   ├── TagFilter.tsx               # [NEW] Filter search results by annotation metadata and treatise metadata (weapons/guards/techniques/master/work/book/year)
 │   └── LLMAssistant.tsx            # [NEW-P4] Chat interface for local LLM
 ├── contexts/
 │   ├── AnnotationContext.tsx       # [EXISTING - ROBUST] Manages annotations, localStorage merge, server sync
@@ -374,13 +374,22 @@ export interface LLMClient {
 4. **Filter search by annotation metadata** (NEW - extends existing annotations):
    ```
    1. Perform a search (e.g., "mandritto")
-   2. In search results sidebar, use TagFilter dropdowns
+   2. In search results sidebar, use TagFilter dropdowns for annotation metadata
    3. Select weapons (e.g., "spada_brocchiero"), guards, or techniques
    4. Results filtered to show only chapters with matching annotation metadata
    5. Leverages existing annotation.weapons/guards_mentioned/techniques fields
    ```
 
-5. **Ask LLM assistant** (P4):
+5. **Filter search by treatise metadata** (NEW - extends filtering):
+   ```
+   1. Perform a search (e.g., "mandritto")
+   2. In search results sidebar, use MetadataFilter dropdowns
+   3. Select master (e.g., "Marozzo"), work, book, or year
+   4. Results filtered to show only chapters from specified treatise/book/year
+   5. Can combine annotation and metadata filters (cumulative AND logic)
+   ```
+
+6. **Ask LLM assistant** (P3):
    ```
    1. Configure LM Studio or Ollama URL in settings
    2. View a chapter

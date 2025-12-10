@@ -129,8 +129,8 @@
 
 ### Implementation for User Story 2
 
-- [ ] T030 [P] [US2] Create TagFilter component in `src/components/TagFilter.tsx` (dropdowns for weapons, guards, techniques from annotation enums)
-- [ ] T031 [US2] Add filter methods to AnnotationContext in `src/contexts/AnnotationContext.tsx` (filterByWeapons, filterByGuards, filterByTechniques, getUniqueTags)
+- [ ] T030 [P] [US2] Create TagFilter component in `src/components/TagFilter.tsx` (dual-filter interface: annotation metadata dropdowns for weapons/guards/techniques/sword_condition AND treatise metadata dropdowns for master/work/book/year)
+- [ ] T031 [US2] Add filter methods to AnnotationContext in `src/contexts/AnnotationContext.tsx` (filterByWeapons, filterByGuards, filterByTechniques, filterByMetadata, getUniqueTags, getMetadataValues)
 - [ ] T032 [US2] Modify AnnotationPanel default state in `src/components/AnnotationPanel.tsx` to open by default (FR-012) - mockup: `specs/mockups/AnnotationPanel.md`
 - [ ] T033 [US2] Implement annotation button highlighting in BolognesePlatform (active state when panel is open per FR-012a) - mockup: `specs/mockups/AnnotationPanel.md`
 - [ ] T034 [US2] Implement smart scrolling in AnnotationPanel (tracks viewport center paragraph with <100ms latency per FR-012b/SC-012) using Intersection Observer API
@@ -138,7 +138,7 @@
 - [ ] T036 [US2] Create AnnotationDisplaySettings component in `src/components/AnnotationDisplaySettings.tsx` (configuration menu with 7 checkboxes per FR-021) - mockup: `specs/mockups/AnnotationDisplay.md`
 - [ ] T037 [US2] Implement AnnotationDisplayContext persistence (read/write config to localStorage per FR-021)
 - [ ] T038 [US2] Integrate AnnotationDisplaySettings into UI (settings button/menu, apply configuration to chapter annotations)
-- [ ] T039 [US2] Integrate TagFilter into SearchResults component (filters applied to search results, cumulative AND logic)
+- [ ] T039 [US2] Integrate TagFilter into SearchResults component (both annotation AND metadata filters applied to search results with cumulative AND logic across all categories)
 - [ ] T040 [US2] Implement annotation badge indicators in SearchResults (show which chapters have annotations, display tag counts)
 - [ ] T041 [US2] Add "Show only annotated chapters" toggle in search UI (quick filter for chapters with any annotation)
 - [ ] T042 [US2] Implement multi-tag filtering (select multiple weapons/guards/techniques, use OR within category, AND across categories)
