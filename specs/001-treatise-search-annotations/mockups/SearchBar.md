@@ -191,7 +191,6 @@ When user tries to add "mandritto" again:
 ```typescript
 interface SearchBarProps {
   onSearch: (terms: SearchResult[]) => void;  // Called on Enter
-  onSave?: (search: SavedSearch) => void;     // Called on Save
   placeholder?: string;                        // Default: "Search treatises..."
   maxSelections?: number;                      // Default: 10
   debounceMs?: number;                         // Default: 500 for suggestions
@@ -267,7 +266,7 @@ padding: 12px 16px;
 
 ### Keyboard Accessibility
 
-- Tab: Move to next control (Save button, Clear button)
+- Tab: Move to next control (Clear button)
 - Arrow Up/Down: Navigate dropdown suggestions
 - Enter: Select suggestion or execute search
 - Escape: Close dropdown
@@ -286,16 +285,18 @@ padding: 12px 16px;
 - Variant generation includes: plurals, conjugations, related forms
 
 ✅ **FR-001**: System MUST search across all treatise YAML files
-- SearchBar collects terms, passes to SearchContext (T024)
+- SearchBar collects terms, passes to BolognesePlatform context (T024)
 - SearchEngine executes search (T016)
+
+✅ **FR-004a**: When user enters search term(s) and/or selects chip(s), SearchBar triggers an update to BolognesePlatform showing matching chapters
 
 ---
 
 ## Related Mockups
 
-- SearchResults.md (T022) - Displays results from SearchBar queries
-- AnnotationPanel.md (T003) - Panel opens when user clicks result
-- SavedSearchList.md - Shows previously saved searches below SearchBar
+- SearchResults.md (T022) - Integrated into BolognesePlatform display (not separate page)
+- AnnotationPanel.md (T003) - Panel opens when user views result chapters
+- BolognesePlatform enhancements for smooth chapter pagination (T029)
 
 ---
 
@@ -306,3 +307,4 @@ padding: 12px 16px;
 - Show **loading state** during glossary lookup (animate spinner)
 - Ensure **keyboard-only navigation** works for accessibility
 - Mobile: Stack chips vertically if needed (responsive design)
+- Direct integration with BolognesePlatform (no separate search results page)
