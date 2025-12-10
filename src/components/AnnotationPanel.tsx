@@ -226,7 +226,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
     setIsSaving(true);
     setSaveStatus('saving');
     try {
-      await saveToServer();
+      await saveToServer({ force: true });
       setSaveStatus('saved');
       alert('Annotations sauvegardées dans le fichier YAML avec succès!');
     } catch (error) {

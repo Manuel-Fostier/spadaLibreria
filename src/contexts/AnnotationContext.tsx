@@ -8,7 +8,8 @@ interface AnnotationContextType {
   setAnnotation: (sectionId: string, annotation: Omit<Annotation, 'id'>) => Promise<void>;
   updateAnnotation: (sectionId: string, updates: Partial<Annotation>) => Promise<void>;
   getAnnotation: (sectionId: string) => Annotation | undefined;
-  saveToServer: () => Promise<void>;
+  saveToServer: (options?: { force?: boolean }) => Promise<void>;
+  isDirty: boolean;
 }
 
 const AnnotationContext = createContext<AnnotationContextType | undefined>(undefined);
@@ -82,6 +83,7 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
   };
 
   const [annotations, setAnnotations] = useState<Map<string, Annotation>>(normalizeMap(initialAnnotations));
+  const [isDirty, setIsDirty] = useState(false);
 
   // Merge localStorage with initialAnnotations (YAML takes precedence for existing sections)
   useEffect(() => {
@@ -141,6 +143,7 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
       newMap.set(sectionId, newAnnotation);
       return newMap;
     });
+    setIsDirty(true);
   };
 
   const updateAnnotation = async (sectionId: string, updates: Partial<Annotation>) => {
@@ -170,13 +173,16 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
       newMap.set(sectionId, { ...merged, measures, strategy, weapons, guards_mentioned, techniques });
       return newMap;
     });
+    setIsDirty(true);
   };
 
   const getAnnotation = (sectionId: string): Annotation | undefined => {
     return annotations.get(sectionId);
   };
 
-  const saveToServer = async () => {
+  const saveToServer = async (options?: { force?: boolean }) => {
+    const force = options?.force ?? false;
+    if (!force && !isDirty) return;
     try {
       const obj = Object.fromEntries(annotations);
       const response = await fetch('/api/annotations', {
@@ -187,6 +193,7 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
       if (!response.ok) {
         throw new Error('Failed to save annotations to server');
       }
+      setIsDirty(false);
     } catch (error) {
       console.error('Error saving to server:', error);
       throw error;
@@ -200,6 +207,7 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
       updateAnnotation,
       getAnnotation,
       saveToServer,
+      isDirty,
     }}>
       {children}
     </AnnotationContext.Provider>
