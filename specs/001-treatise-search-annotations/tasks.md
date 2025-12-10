@@ -35,7 +35,6 @@
 
 - [ ] T000 [P] Create mockups directory structure in `specs/001-treatise-search-annotations/mockups/`
 - [ ] T001 [P] [US1] Create SearchBar.md mockup in `specs/001-treatise-search-annotations/mockups/SearchBar.md` (similar words chips dropdown, wireframe ASCII art, interaction flow with 500ms response target)
-- [ ] T002 [P] [US1] Create SearchResults.md mockup in `specs/001-treatise-search-annotations/mockups/SearchResults.md` (search results layout, highlighting, language badges, pagination, annotation indicators)
 - [ ] T003 [P] [US3] Create AnnotationPanel.md mockup in `specs/001-treatise-search-annotations/mockups/AnnotationPanel.md` (default open state, smart scrolling, button highlighting, sword condition enum field)
 - [ ] T004 [P] [US3] Create AnnotationDisplay.md mockup in `specs/001-treatise-search-annotations/mockups/AnnotationDisplay.md` (configuration menu with 7 checkboxes: note, weapons, guards, techniques, sword condition, measures, strategy; defaults)
 - [ ] T007 Create MOCKUPS_SUMMARY.md in `specs/001-treatise-search-annotations/mockups/` (index of all mockups, linking specs to mockup files)
@@ -226,7 +225,7 @@ Phase 6: Polish & FR-022
 ### Within Each User Story
 
 **US1 (Search)**:
-1. Phase 0: T001, T002 mockups in parallel
+1. Phase 0: T001 mockup
 2. Phase 3: T021, T022, T029 (search bar, search results integration, BolognesePlatform pagination) 
 3. T023-T028 sequential after components complete
 
@@ -274,7 +273,6 @@ Phase 6: Polish & FR-022
 
 T000 - Create mockups/ directory structure
 T001 - SearchBar.md (similar words dropdown)
-T002 - SearchResults.md (highlighting, badges)
 T003 - AnnotationPanel.md (default open, highlighting, scrolling)
 T004 - AnnotationDisplay.md (configuration menu)
 T007 - MOCKUPS_SUMMARY.md (index and links)
