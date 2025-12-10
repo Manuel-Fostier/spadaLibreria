@@ -5,7 +5,7 @@
 
 ## Summary
 
-Build a cross-treatise search tool with variant matching and cross-language support, saved searches, chapter annotations with tag filtering, and optional local LLM assistant. Core value: enable researchers to find technique terms (e.g., "mandritto") across all treatises in IT/FR/EN with automatic variant detection (mandritti, coup droit, forehand cut) and annotate chapters with personal notes and tags for focused study.
+Build a cross-treatise search tool with variant matching and cross-language support, chapter annotations with tag filtering, and optional local LLM assistant. Core value: enable researchers to find technique terms (e.g., "mandritto") across all treatises in IT/FR/EN with automatic variant detection (mandritti, coup droit, forehand cut) and annotate chapters with personal notes and tags for focused study.
 
 **Technical Approach**: Extend existing Next.js 15 application with new search infrastructure using browser-side indexing (no backend required). Leverage existing YAML data structure and glossary for cross-language mapping. Store annotations and saved searches in browser localStorage. Integrate local LLM via API calls to LM Studio or Ollama for P4 enhancement.
 
@@ -44,9 +44,11 @@ Build a cross-treatise search tool with variant matching and cross-language supp
 
 **PLAN ADJUSTMENTS**:
 - Use existing annotation fields (weapons/guards/techniques) as filterable "tags" instead of creating new tag system
-- Integrate search into existing BolognesePlatform sidebar (not separate page)
+- SearchBar directly updates BolognesePlatform with matching chapters (no separate SearchResults component)
+- BolognesePlatform displays multiple matching chapters with smooth PDF-like pagination/virtualization
 - Extend AnnotationContext with search-specific filter methods
 - Follow existing YAML persistence pattern for any annotation extensions
+- **REMOVED**: Saved Searches feature (User Story 2) - SearchBar executes searches directly without save/recall capability
 
 ## Technical Context
 
@@ -124,19 +126,16 @@ src/
 ├── components/
 │   ├── Term.tsx                    # [EXISTING] Glossary tooltips
 │   ├── TextParser.tsx              # [EXISTING] Parse {term} syntax
-│   ├── BolognesePlatform.tsx       # [EXISTING] Main treatise viewer - MODIFY to add search bar
+│   ├── BolognesePlatform.tsx       # [EXISTING-MODIFY] Main treatise viewer - add search bar and chapter pagination for results
 │   ├── AnnotationPanel.tsx         # [EXISTING - MATURE] Full annotation UI with tabs (armes/gardes/techniques)
 │   ├── AnnotationBadge.tsx         # [EXISTING] Annotation badge/button for each section
 │   ├── MeasureProgressBar.tsx      # [EXISTING] Visual measure progression (Gioco Largo → Presa)
 │   ├── ComparisonModal.tsx         # [EXISTING] Compare translations modal
-│   ├── SearchBar.tsx               # [NEW] Search input with variant suggestions
-│   ├── SearchResults.tsx           # [NEW] Display search results with highlighting
-│   ├── SavedSearchList.tsx         # [NEW] Manage saved searches in sidebar
-│   ├── TagFilter.tsx               # [NEW] Filter by annotation metadata (weapons/guards/techniques)
+│   ├── SearchBar.tsx               # [NEW] Search input with variant suggestions - triggers BolognesePlatform update
+│   ├── TagFilter.tsx               # [NEW] Filter search results by annotation metadata (weapons/guards/techniques)
 │   └── LLMAssistant.tsx            # [NEW-P4] Chat interface for local LLM
 ├── contexts/
 │   ├── AnnotationContext.tsx       # [EXISTING - ROBUST] Manages annotations, localStorage merge, server sync
-│   ├── SearchContext.tsx           # [NEW] Manage search state, index, saved searches
 │   └── LLMContext.tsx              # [NEW-P4] Manage LLM connection and conversation
 ├── lib/
 │   ├── dataLoader.ts               # [EXISTING] Load YAML files
@@ -145,7 +144,6 @@ src/
 │   ├── searchIndex.ts              # [NEW] Build and query search index
 │   ├── languageVariants.ts         # [NEW] Generate word variants (FR/IT conjugations, plurals)
 │   ├── glossaryMapper.ts           # [NEW] Map terms across languages using glossary
-│   ├── localStorage.ts             # [NEW] Persist annotations and saved searches
 │   ├── highlighter.ts              # [NEW] Highlight search terms in text
 │   └── llmClient.ts                # [NEW] Connect to LM Studio/Ollama API
 └── types/
@@ -244,12 +242,7 @@ All complexity is inherent to feature requirements (search variants, cross-langu
    - Relationships: References Chapter via treatise filename + chapter ID
    - Validation: Valid chapter reference; matchCount > 0
 
-3. **SavedSearch**
-   - Fields: id (UUID), searchTerm (string), createdAt (Date), lastUsedAt (Date), usageCount (number)
-   - Validation: Unique searchTerm; valid dates
-   - Persistence: localStorage under key "spada:savedSearches"
-
-4. **Annotation** (EXISTING - extends current implementation)
+3. **Annotation** (EXISTING - extends current implementation)
    - Current fields: id, note, weapons[], guards_mentioned[], techniques[], measures[], strategy[]
    - Already persists to YAML via `/api/annotations` POST
    - Already loaded on app start via `/api/annotations` GET
@@ -257,17 +250,12 @@ All complexity is inherent to feature requirements (search variants, cross-langu
    - **For search feature**: Use existing fields as "tags" (weapons/guards/techniques are tag equivalents)
    - **NO NEW TAG SYSTEM NEEDED** - existing metadata serves this purpose
 
-5. **Tag** (REMOVED - use existing annotation metadata instead)
-   - ~~Fields: name (string), color (string optional), usageCount (number)~~
-   - **REPLACED BY**: Use annotation.weapons, annotation.guards_mentioned, annotation.techniques as filterable metadata
-   - **Rationale**: Avoid duplicating existing annotation infrastructure; constitution prefers simplicity
-
-6. **ChapterReference**
+4. **ChapterReference**
    - Fields: treatiseFile (string), chapterId (string)
    - Validation: treatiseFile exists in data/treatises/; chapterId matches a section in that file
    - Purpose: Stable reference to chapter content (survives YAML updates if IDs unchanged)
 
-7. **SearchIndex**
+5. **SearchIndex**
    - Fields: chapters (Map<ChapterReference, ChapterContent>), termIndex (Map<string, ChapterReference[]>), glossaryIndex (Map<string, CrossLanguageTerms>)
    - Purpose: In-memory structure for fast searches
    - Lifecycle: Built on app load; refreshed on data changes
@@ -364,22 +352,16 @@ export interface LLMClient {
 
 1. **Search for a technique**:
    ```
-   1. Navigate to search page (/search)
-   2. Type "mandritto" in search bar
-   3. Press Enter or click Search button
-   4. See results grouped by treatise with language badges (IT/FR/EN)
-   5. Click a result to view full chapter with highlighted terms
+   1. Open the application (BolognesePlatform loads)
+   2. Type "mandritto" in SearchBar at top left
+   3. System detects variants (mandritti, coup droit, forehand cut) via glossary
+   4. Press Enter or click Search button
+   5. BolognesePlatform updates to display all matching chapters
+   6. Multiple chapters display with smooth PDF-like scrolling/pagination
+   7. Matched terms are highlighted in chapter text
    ```
 
-2. **Save a search**:
-   ```
-   1. After performing a search
-   2. Click "Save this search" button below search bar
-   3. Search term appears in "Saved Searches" sidebar
-   4. Click saved term to re-run search instantly
-   ```
-
-3. **Annotate a chapter** (EXISTING FEATURE - documented for completeness):
+2. **Navigate through search results**:
    ```
    1. View a chapter from treatise browser
    2. Click "Annotation" badge/button on section
@@ -430,13 +412,13 @@ Run `.specify/scripts/bash/update-agent-context.sh copilot` after Phase 1 comple
 
 After completing Phase 1 design:
 
-✅ **Content separation**: Annotations stored in localStorage, not in YAML files  
-✅ **Local-only**: LLM via local API (LM Studio/Ollama); no external calls  
+✅ **Content separation**: Annotations stored in YAML files via API (follows existing pattern), not in localStorage  
+✅ **Local-only**: LLM via local API (LM Studio/Ollama); no external calls; no saved searches persistence required  
 ✅ **Beginner-friendly**: Using standard React patterns; no complex libraries (no Lunr.js, etc.)  
 ✅ **Quality**: Search does not break existing glossary links; client-side processing respects server/client boundaries  
 ✅ **Accessibility**: Search UI will use semantic HTML; keyboard shortcuts for common actions
 
-**PASS**: Design maintains constitution compliance.
+**PASS**: Design maintains constitution compliance. Removed saved searches feature (User Story 2) eliminates need for localStorage persistence strategy.
 
 ## Phase 2 Planning: Implementation Tasks
 
@@ -446,11 +428,10 @@ After completing Phase 0 (research) and Phase 1 (design), run `/speckit.tasks` t
 
 Expected task breakdown:
 - **Setup Phase**: Project structure scaffolding, TypeScript types
-- **Foundational Phase**: SearchIndex, localStorage utilities, glossary mapping
-- **P1 Phase (MVP)**: Search UI, variant generation, cross-language matching, result display
-- **P2 Phase**: Saved searches UI and persistence
-- **P3 Phase**: Annotation editor, tag filtering, annotation list view
-- **P4 Phase**: LLM client, assistant UI, context integration
+- **Foundational Phase**: SearchIndex, glossary mapping
+- **P1 Phase (MVP)**: Search UI, variant generation, cross-language matching, result display in BolognesePlatform
+- **P2 Phase (was P3)**: Annotation editor extensions, tag filtering, annotation list view
+- **P3 Phase (was P4)**: LLM client, assistant UI, context integration
 
 ## Alignment with Existing GitHub Issues
 
@@ -466,8 +447,8 @@ Expected task breakdown:
    - **Status**: OPEN (created 2025-11-29)
    - **Relation**: ALIGNED with P1 search bar implementation
    - **Requirements**: Search field with tag accumulation, weapons dropdown, authors dropdown
-   - **Implementation**: SearchBar + SavedSearchList components integrate into left sidebar
-   - **Note**: Issue proposes cumulative AND filtering - matches spec FR-003
+   - **Implementation**: SearchBar integrates into BolognesePlatform with TagFilter component for result filtering
+   - **Note**: Issue proposes cumulative AND filtering - matches spec FR-003; no separate saved searches feature needed
 
 3. **Issue #17: Améliorer la visibilité du bouton d'annotation actif**
    - **Status**: OPEN (created 2025-11-29)
@@ -504,11 +485,12 @@ Expected task breakdown:
 
 ## Notes
 
-- **Incremental Delivery**: Implement P1 first for immediate value (search); P2-P4 can be added later
+- **Incremental Delivery**: Implement P1 first for immediate value (search); P2-P3 can be added later
 - **Issue Resolution**: P1 completion closes Issues #1 and #21; consider Issue #17 for UX consistency
 - **No Backend**: All features run client-side or via Next.js server rendering; no API server needed
-- **localStorage Strategy**: Saved searches in localStorage; annotations follow existing YAML persistence pattern
-- **LLM Optional**: P4 is a future enhancement; app fully functional without it
+- **No Saved Searches**: User Story 2 (saved searches) removed per user directive; SearchBar executes searches directly without save/recall
+- **Smooth Chapter Display**: BolognesePlatform must handle multiple matching chapters with PDF-like fluidity (virtualization/lazy-loading recommended for smooth scrolling)
+- **LLM Optional**: P3 is a future enhancement; app fully functional without it
 - **Testing Strategy**: Add tests for core search logic (variant generation, cross-language mapping) when constitution requires it
 - **Performance**: Build search index on first load; cache in React context for subsequent searches
 - **Glossary Dependency**: Search quality depends on completeness of glossary.yaml term equivalents

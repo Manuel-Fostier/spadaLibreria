@@ -23,50 +23,33 @@ A researcher searches for "mandritto" across all treatises. The system automatic
 4. **Given** search results are displayed, **When** I click on a chapter, **Then** the full chapter text is displayed with the search term highlighted
 5. **Given** no matches are found, **When** the search completes, **Then** I see "No results found" with a suggestion to try related terms
 6. **Given** I type a search term, **When** the chips shows, **Then** I see a list of similar words from the glossary that I can click to search instead
+7. **Given** I have selected search term(s) and press Enter or click Search, **When** the system executes the search, **Then** the BolognesePlatform updates to display all matching chapters from all treatises seamlessly
 
 ---
 
-### User Story 2 - Saved Search List for Quick Re-use (Priority: P2)
+### User Story 2 - Chapter Annotations with Tag-Based Filtering (Priority: P2)
 
-A researcher studying specific techniques wants to save frequently searched terms (mandritto, coda longa, stoccata) to a personal list. When returning to research sessions, they can click any saved term to instantly re-run that search without retyping, significantly speeding up comparative analysis across multiple study sessions.
+A researcher wants to annotate chapters with personal notes and tags (e.g., "Spada sola", "Épée aiguisée", "falso impuntato"). After annotating multiple chapters, they can filter search results to show only chapters with specific tags, enabling focused study of particular aspects (e.g., "show me all spada sola chapters involving falso impuntato").
 
-**Why this priority**: This addresses workflow efficiency for serious researchers who repeatedly search the same terms. It's valuable but the tool is still usable without it (users can just retype searches).
+**Why this priority**: This enables personalized organization and deeper research workflows that complement the search functionality. The smooth PDF-like reading experience in BolognesePlatform makes annotation during research natural and efficient.
 
-**Independent Test**: Search for "mandritto" → Click "Add to saved searches" → Close and reopen app → Click "mandritto" in saved searches list → Same results appear. No other features needed.
-
-**Acceptance Scenarios**:
-
-1. **Given** I've searched for "mandritto", **When** I click "Save this search", **Then** "mandritto" appears in my saved searches list
-2. **Given** I have saved searches, **When** I click on a saved search term, **Then** the search is executed automatically and results are displayed
-3. **Given** a saved search in my list, **When** I click "Remove", **Then** it is deleted from the list
-4. **Given** I have saved searches, **When** I close and reopen the application, **Then** my saved searches persist
-5. **Given** I attempt to save a duplicate term, **When** I click "Save this search", **Then** I see a message indicating the term is already saved
-
----
-
-### User Story 3 - Chapter Annotations with Tag-Based Filtering (Priority: P3)
-
-A researcher wants to annotate chapters with personal notes and tags (e.g., "beginner technique", "advanced", "solo practice", "with partner"). After annotating multiple chapters, they can filter search results to show only chapters with specific tags, enabling focused study of particular aspects (e.g., "show me all beginner techniques involving mandritto").
-
-**Why this priority**: This enables personalized organization and deeper research workflows, but requires both search (P1) to find content and possibly saved searches (P2) for efficiency. It's the cherry on top, not the foundation.
-
-**Independent Test**: View a chapter (annotation panel opens by default) → Add annotation with text "Provoc to push adversary to change guard" and tag "Provocation" → Search for "mandritto" → Filter results by tag "Provocation" → See only annotated chapters. The annotation button is highlighted when that annotation panel is open. As user scrolls, the annotation panel points to the centered paragraph. Delivers value independently by letting users build their own knowledge base.
+**Independent Test**: Search for "mandritto" → BolognesePlatform displays first matching chapter → Annotation panel opens by default → Add annotation with metadata → User can scroll through matching chapters fluently like reading a PDF → Filter next search by annotation tags to see only related chapters.
 
 **Acceptance Scenarios**:
 
-1. **Given** I'm viewing a chapter, **When** the page loads, **Then** the annotation panel opens by default on the right side
+1. **Given** I'm viewing a chapter in BolognesePlatform, **When** the page loads, **Then** the annotation panel opens by default on the right side
 2. **Given** I'm viewing a chapter with the annotation panel open, **When** I scroll, **Then** the annotation panel automatically highlights the paragraph at the center of the viewport
 3. **Given** I have an annotation panel open, **When** I look at the button, **Then** it is highlighted/active to show the panel is open
 4. **Given** I'm viewing a chapter, **When** I click "Add annotation", **Then** I can enter text and assign tags including sword condition (sharp/blunt) and other metadata
 5. **Given** a chapter has annotations, **When** I view that chapter, **Then** my annotations are displayed alongside the treatise text
-6. **Given** I'm viewing search results, **When** I select a tag filter, **Then** only chapters with that tag are shown
-7. **Given** multiple tags are selected, **When** viewing results, **Then** chapters matching ANY of the selected tags are shown
+6. **Given** I've performed a search and viewing matching chapters, **When** I select a tag filter, **Then** only matching chapters with that tag are shown
+7. **Given** multiple tags are selected, **When** viewing filtered results, **Then** chapters matching ANY of the selected tags are shown
 8. **Given** I've annotated a chapter, **When** I delete the annotation, **Then** it no longer appears and that chapter is excluded from tag-filtered searches
-9. **Given** I have annotations across multiple chapters, **When** I view my "All annotations" list, **Then** I see all annotations grouped by chapter with their tags
+9. **Given** I'm reading through search results in BolognesePlatform, **When** I navigate between chapters (Page Down, scrolling, or chapter buttons), **Then** the transition is smooth and the reading experience matches PDF scrolling fluidity
 
 ---
 
-### User Story 4 - Local LLM Assistant for Contextual Research (Priority: P4)
+### User Story 3 - Local LLM Assistant for Contextual Research (Priority: P3)
 
 A researcher studying a complex technique wants contextual help. After selecting a chapter, they can ask a local LLM assistant questions like "What are the key differences between this and the previous chapter?" or "Explain the tactical context of this technique." The assistant has access to all treatise content and can provide insights without sending data to external services.
 
@@ -103,13 +86,12 @@ A researcher studying a complex technique wants contextual help. After selecting
 - **FR-002**: System MUST automatically detect and search for word variants (plurals, conjugations, related forms)
 - **FR-002a**: System MUST propose a chips list of similar words from the glossary when user enters a search term
 - **FR-003**: System MUST cross-reference glossary to find equivalent terms across languages (e.g., mandritto → coup droit → forehand cut)
-- **FR-004**: System MUST display search results grouped by treatise and chapter with preview text showing match context
+- **FR-004**: System MUST update BolognesePlatform to display search results grouped by treatise and chapter with smooth PDF-like navigation
+- **FR-004a**: When user enters search term(s) and/or selects chip(s), SearchBar triggers an update to BolognesePlatform showing matching chapters
+- **FR-004b**: BolognesePlatform MUST display multiple matching chapters with smooth scrolling/pagination experience equivalent to reading a PDF
 - **FR-005**: System MUST highlight search terms in displayed chapter text
-- **FR-006**: Users MUST be able to save searched terms to a persistent list
-- **FR-007**: Users MUST be able to execute saved searches with a single click
-- **FR-008**: System MUST persist saved searches across application sessions (local storage)
 - **FR-009**: Users MUST be able to add annotations (text notes + tags) to any chapter, including sword condition enum (sharp/blunt)
-- **FR-010**: System MUST persist annotations across sessions in local storage (not in YAML files)
+- **FR-010**: System MUST persist annotations across sessions in local storage
 - **FR-011**: Users MUST be able to filter search results by annotation tags
 - **FR-012**: System MUST display all annotations for a chapter when viewing that chapter, with annotation panel open by default
 - **FR-012a**: Annotation button MUST be highlighted when its panel is open
@@ -128,9 +110,8 @@ A researcher studying a complex technique wants contextual help. After selecting
 
 ### Key Entities *(include if feature involves data)*
 
-- **SearchQuery**: The text entered by user, timestamp, optional saved flag, variant terms generated
+- **SearchQuery**: The text entered by user, timestamp, variant terms generated
 - **SearchResult**: Reference to chapter (treatise file + chapter ID), match count, language(s) with matches, preview snippet
-- **SavedSearch**: Search term text, creation date, last used date, usage count
 - **Annotation**: Chapter reference (treatise + chapter ID), annotation text, list of tags, sword condition (sharp/blunt enum), creation date, last modified date
 - **Tag**: Tag name, usage count (how many annotations use it), color/category
 - **AnnotationDisplay**: Configuration for which annotation fields are visible under chapter titles (note, weapons, guards, techniques, sword condition, etc.)
@@ -143,16 +124,16 @@ A researcher studying a complex technique wants contextual help. After selecting
 
 - **SC-001**: Users can find all instances of a technique term across 3 treatises (multiple chapters each) in under 5 seconds
 - **SC-002**: Search automatically includes word variants and cross-language equivalents without user configuration
-- **SC-003**: Users can save and re-execute a search in under 2 clicks (click saved term → see results)
+- **SC-003**: BolognesePlatform displays first matching chapter within 1 second of search execution
 - **SC-004**: Annotations persist across sessions without data loss (100% reliability for local storage)
 - **SC-005**: Users can filter 50+ search results by annotation tags in under 3 seconds
+- **SC-005a**: Smooth chapter-to-chapter navigation in BolognesePlatform between search results matches PDF reading fluidity (no stuttering/lag)
 - **SC-006**: LLM assistant responds to contextual questions within 10 seconds on typical hardware (local execution)
-- **SC-007**: System supports at least 100 saved searches and 500 annotations without performance degradation
+- **SC-007**: System supports at least 500 annotations without performance degradation
 - **SC-008**: 90% of relevant chapters are found when searching for a technique term (high recall via variants)
 - **SC-009**: Users can annotate a chapter and apply 3 tags (including sword condition) in under 30 seconds
 - **SC-011**: Similar word suggestions appear in dropdown within 500ms of user typing
 - **SC-012**: Annotation panel tracks viewport center with <100ms latency as user scrolls
-- **SC-010**: Search highlighting makes term occurrences immediately visible in chapter text (no scrolling needed for first match)
 
 ## Assumptions
 
