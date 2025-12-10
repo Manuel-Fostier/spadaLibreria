@@ -11,27 +11,24 @@ The SearchBar component is the primary interface for searching treatises. It inc
 1. Text input field with placeholder
 2. Similar words suggestion dropdown (500ms response time)
 3. Selected search term chips with remove buttons
-4. Search and Save buttons
 
 ## Wireframe ASCII
 
 ```
-╔════════════════════════════════════════════════════════════╗
-║  🔍  [Type search term...]                     [Enter] [×] ║
+╔═════════════════════════════════════════════════════════════╗
+║  [Type search term...]                     [Enter] [×] ║
 ║                                                             ║
-║  Similar words suggestions (auto-show, 500ms):             ║
-║  ┌─────────────────────────────────────────────────────┐   ║
-║  │ ✓ mandritto        mandritti        coup droit       │   ║
-║  │   forehand cut     [fencing term]    [autre term]    │   ║
-║  └─────────────────────────────────────────────────────┘   ║
+║  Similar words suggestions (auto-show, 500ms):              ║
+║  ┌─────────────────────────────────────────────────────┐    ║
+║  │ ✓ mandritto        mandritti        coup droit      │    ║
+║  └─────────────────────────────────────────────────────┘    ║
 ║                                                             ║
 ║  Selected terms (chips):                                    ║
-║  ┌──────────┐ ┌──────────┐ ┌──────────┐                   ║
-║  │ mandritto│ │ mandritti│ │ coup dr  │                   ║
-║  │    [×]   │ │    [×]   │ │    [×]   │                   ║
-║  └──────────┘ └──────────┘ └──────────┘                   ║
+║  ┌──────────┐ ┌──────────┐ ┌──────────┐                     ║
+║  │ mandritto│ │ mandritti│ │ coup dr  │                     ║
+║  │    [×]   │ │    [×]   │ │    [×]   │                     ║
+║  └──────────┘ └──────────┘ └──────────┘                     ║
 ║                                                             ║
-║  [💾 Save Search] [🔍 Search Now (8 results)]            ║
 ║                                                             ║
 ╚════════════════════════════════════════════════════════════╝
 ```
@@ -42,7 +39,7 @@ The SearchBar component is the primary interface for searching treatises. It inc
 
 ```
 ╔════════════════════════════════════════════════════════════╗
-║  🔍  [Type a word: e.g., "mandritto"]          [Clear (×)] ║
+║  [Type a word: e.g., "mandritto"]          [Clear (×)] ║
 ╚════════════════════════════════════════════════════════════╝
 ```
 
@@ -58,7 +55,7 @@ The SearchBar component is the primary interface for searching treatises. It inc
 
 ```
 ╔════════════════════════════════════════════════════════════╗
-║  🔍  [mandri...                              [Loading ⟳ ] ║
+║  [mandri...                                  [Loading ⟳ ] ║
 ╚════════════════════════════════════════════════════════════╝
 ```
 
@@ -73,27 +70,25 @@ The SearchBar component is the primary interface for searching treatises. It inc
 
 ```
 ╔════════════════════════════════════════════════════════════╗
-║  🔍  [mandritto]                                      [×]  ║
-║                                                             ║
-║  📋 Similar words from glossary:                           ║
+║  [mandritto]                                      [×]  ║
+║                                                            ║
+║  Similar words from glossary:                           ║
 ║  ┌─────────────────────────────────────────────────────┐   ║
-║  │  [IT] mandritto       - diritto stroke              │   ║
-║  │  [IT] mandritti       - plural, multiple strokes    │   ║
-║  │  [FR] coup droit      - French equivalent           │   ║
-║  │  [EN] forehand cut    - English translation         │   ║
-║  │  [IT] mandrittone     - large mandritto            │   ║
-║  │  [FR] frappe directe  - alternative French term   │   ║
+║  │  mandritto                                          │   ║
+║  │  mandritti                                          │   ║
+║  │  coup droit                                         │   ║
+║  │  forehand cut                                       │   ║
+║  │  mandrittone                                        │   ║
+║  │  frappe directe                                     │   ║
 ║  └─────────────────────────────────────────────────────┘   ║
-║                                                             ║
-║  Or press [Enter] to search only "mandritto"              ║
-║                                                             ║
+║                                                            ║
+║  Or press [Enter] to search only "mandritto"               ║
+║                                                            ║
 ╚════════════════════════════════════════════════════════════╝
 ```
 
 **Performance**:
 - ✅ Suggestions appear within **500ms** (SC-011 target)
-- ✅ Shows IT/FR/EN language badges
-- ✅ Includes brief definitions from glossary
 - ✅ Clickable chips for easy selection
 
 ---
@@ -102,30 +97,27 @@ The SearchBar component is the primary interface for searching treatises. It inc
 
 ```
 ╔════════════════════════════════════════════════════════════╗
-║  🔍  [mandritto]                               Clear all ║
-║                                                             ║
-║  Selected terms (6 results found):                          ║
-║  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐       ║
-║  │ mandritto    │ │ mandritti    │ │ coup droit   │ ✓    ║
-║  │ [IT] [×]     │ │ [IT] [×]     │ │ [FR] [×]     │       ║
-║  └──────────────┘ └──────────────┘ └──────────────┘       ║
-║  ┌──────────────┐ ┌──────────────┐                        ║
-║  │ forehand cut │ │ mandrittone  │                        ║
-║  │ [EN] [×]     │ │ [IT] [×]     │                        ║
-║  └──────────────┘ └──────────────┘                        ║
-║                                                             ║
-║  [💾 Save All] [🔍 Showing 8 results]                    ║
-║  [Edit] [Clear All]                                       ║
-║                                                             ║
+║  🔍  [mandritto]                               Clear all   ║
+║                                                            ║
+║  Selected terms (6 results found):                         ║
+║  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐        ║
+║  │ mandritto    │ │ mandritti    │ │ coup droit   │ ✓     ║
+║  │ [IT] [×]     │ │ [IT] [×]     │ │ [FR] [×]     │        ║
+║  └──────────────┘ └──────────────┘ └──────────────┘        ║
+║  ┌──────────────┐ ┌──────────────┐                         ║
+║  │ forehand cut │ │ mandrittone  │                         ║
+║  │ [EN] [×]     │ │ [IT] [×]     │                         ║
+║  └──────────────┘ └──────────────┘                         ║
+║                                                            ║
+║                                                            ║
 ╚════════════════════════════════════════════════════════════╝
 ```
 
 **Behavior**:
-- Each selected term shown as a chip with language badge
+- Each selected term shown as a chip
 - [×] button removes individual term
 - Result count updates dynamically
 - "Clear All" option removes all selections
-- "Save All" saves all selected terms as single saved search
 
 ---
 
@@ -137,36 +129,11 @@ When user tries to add "mandritto" again:
 ┌─────────────────────────────────────────┐
 │ ⚠️ "mandritto" already in selection    │
 │                                         │
-│ Would you like to:                      │
-│ [Add anyway] [Cancel]                   │
 └─────────────────────────────────────────┘
 ```
 
 ---
 
-### 6. Save Search State
-
-```
-╔════════════════════════════════════════════════════════════╗
-║  🔍  [mandritto]                              Clear all   ║
-║                                                             ║
-║  Selected terms (6 results):                               ║
-║  ┌──────────────┐ ┌──────────────┐                        ║
-║  │ mandritto    │ │ mandritti    │ ...                    ║
-║  │ [IT] [×]     │ │ [IT] [×]     │                        ║
-║  └──────────────┘ └──────────────┘                        ║
-║                                                             ║
-║  [✓ Saved as "mandritto"] [Edit name]   [🔍 New search]  ║
-║                                                             ║
-╚════════════════════════════════════════════════════════════╝
-```
-
-**After clicking "Save"**:
-- Button shows checkmark + "Saved as [name]"
-- Option to edit name before saving
-- Auto-generates name from first term (+ count if multiple)
-
----
 
 ## Interaction Flow
 
@@ -182,10 +149,10 @@ When user tries to add "mandritto" again:
 4. Sees loading spinner (500ms max)
    ↓
 5. Dropdown appears with similar words:
-   - mandritto [IT]
-   - mandritti [IT]
-   - coup droit [FR]
-   - forehand cut [EN]
+   - mandritto 
+   - mandritti 
+   - coup droit
+   - forehand cut
    ↓
 6. User presses Enter to search with "mandritto" only
    OR
@@ -201,9 +168,8 @@ When user tries to add "mandritto" again:
 2. Click "mandritti" → Added to chips
 3. Click "coup droit" → Added to chips
 4. Click "forehand cut" → Added to chips
-5. See result count: "6 results found"
-6. Click [💾 Save All] → Save as "mandritto searches"
-7. Click [🔍 Search Now] → SearchResults shows all matching chapters
+5. Sees loading spinner 
+6. SearchResults component displays results (T022)
 ```
 
 ### User Flow 3: Keyboard Navigation
