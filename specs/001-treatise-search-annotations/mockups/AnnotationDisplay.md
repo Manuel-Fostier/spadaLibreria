@@ -19,22 +19,16 @@ The AnnotationDisplay configuration menu allows users to customize which annotat
 ║ Show as chapter summary (below chapter title):     ║
 ║                                                    ║
 ║ ☑ 🔸 Weapons                                      ║
-║   Example display: "spada, brocchiero"             ║
 ║                                                    ║
 ║ ☑ ⚔️ Sword Condition (sharp/blunt)                ║
-║   Example display: "Sharp"                         ║
 ║                                                    ║
 ║ ☐ 🛡️ Guards Mentioned                             ║
-║   Example display: "coda longa, posta donna"       ║
 ║                                                    ║
 ║ ☐ 🎯 Techniques                                   ║
-║   Example display: "attacco, cambio"               ║
 ║                                                    ║
 ║ ☐ 📏 Measures/Distance                            ║
-║   Example display: "passata, balestra"             ║
 ║                                                    ║
 ║ ☐ 📚 Strategy/Context                             ║
-║   Example display: "Counter attack, solo practice" ║
 ║                                                    ║
 ╟────────────────────────────────────────────────────╢
 ║                                                    ║
@@ -134,22 +128,6 @@ Checkboxes reset to:
   ↓
 User clicks [Apply] to confirm
 ```
-
----
-
-## Field Descriptions
-
-Each field has an example of what it shows:
-
-| Field | Default | Example Display |
-|-------|---------|-----------------|
-| **Weapons** | ✓ ON | `spada, brocchiero, pugnale` |
-| **Sword Condition** | ✓ ON | `Sharp` or `Blunt` or `Unknown` |
-| **Guards** | ✗ OFF | `coda longa, posta di donna` |
-| **Techniques** | ✗ OFF | `attacco, cambio, parry, counter` |
-| **Measures** | ✗ OFF | `passata, balestra, stoccata` |
-| **Note Preview** | ✗ OFF | `"Classic forehand stroke at head level..."` (first 50 chars) |
-| **Strategy** | ✗ OFF | `Counter attack, Solo practice, Dueling` |
 
 ---
 

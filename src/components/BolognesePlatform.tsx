@@ -1,12 +1,15 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { BookOpen, ChevronRight, ChevronDown, MessageSquare } from 'lucide-react';
+import { BookOpen, ChevronRight, ChevronDown, MessageSquare, Settings } from 'lucide-react';
 import TextParser from './TextParser';
 import AnnotationPanel from './AnnotationPanel';
 import { GlossaryEntry, TreatiseSection } from '@/lib/dataLoader';
 import { useAnnotations } from '@/contexts/AnnotationContext';
-import { Weapon } from '@/lib/annotation';
+import { Annotation, Weapon } from '@/lib/annotation';
+import { useAnnotationDisplay } from '@/contexts/AnnotationDisplayContext';
+import { AnnotationDisplay } from '@/types/annotationDisplay';
+import AnnotationDisplaySettings from './AnnotationDisplaySettings';
 
 interface BolognesePlatformProps {
   glossaryData: { [key: string]: GlossaryEntry };
@@ -19,6 +22,46 @@ const WEAPONS = [
   { id: 'spada_brocchiero', label: 'Épée et Bocle' },
 ];
 
+const buildAnnotationSummary = (
+  displayConfig: AnnotationDisplay,
+  annotation: Annotation | undefined,
+) => {
+  if (!annotation) return [] as Array<{ label: string; value: string }>;
+
+  const summary: Array<{ label: string; value: string }> = [];
+
+  if (displayConfig.weapons && annotation.weapons && annotation.weapons.length) {
+    summary.push({ label: 'Armes', value: annotation.weapons.join(', ') });
+  }
+
+  if (displayConfig.weapon_type && annotation.weapon_type) {
+    summary.push({ label: 'État de l\'arme', value: annotation.weapon_type });
+  }
+
+  if (displayConfig.guards && annotation.guards_mentioned && annotation.guards_mentioned.length) {
+    summary.push({ label: 'Gardes', value: annotation.guards_mentioned.join(', ') });
+  }
+
+  if (displayConfig.techniques && annotation.techniques && annotation.techniques.length) {
+    summary.push({ label: 'Techniques', value: annotation.techniques.join(', ') });
+  }
+
+  if (displayConfig.measures && annotation.measures && annotation.measures.length) {
+    summary.push({ label: 'Mesures', value: annotation.measures.join(', ') });
+  }
+
+  if (displayConfig.strategy && annotation.strategy && annotation.strategy.length) {
+    summary.push({ label: 'Stratégie', value: annotation.strategy.join(', ') });
+  }
+
+  if (displayConfig.note && annotation.note) {
+    const preview = annotation.note.length > 80 ? `${annotation.note.slice(0, 77)}...` : annotation.note;
+    summary.push({ label: 'Note', value: preview });
+  }
+
+  return summary;
+};
+
 export default function BolognesePlatform({ glossaryData, treatiseData }: BolognesePlatformProps) {
   const [selectedWeapon, setSelectedWeapon] = useState('all');
   const [translatorPreferences, setTranslatorPreferences] = useState<{ [key: string]: string }>({});
@@ -26,6 +69,8 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   const { getAnnotation } = useAnnotations();
   const [showItalian, setShowItalian] = useState(false);
   const [showEnglish, setShowEnglish] = useState(false);
+  const [showDisplaySettings, setShowDisplaySettings] = useState(false);
+  const { displayConfig } = useAnnotationDisplay();
 
   const handleTranslatorChange = (sectionId: string, translatorName: string) => {
     setTranslatorPreferences(prev => ({
@@ -86,7 +131,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
 
       {/* MAIN CONTENT */}
       <main className="flex-1 min-w-0 flex flex-col h-screen overflow-hidden bg-white">
-        <header className="h-20 bg-white flex items-center px-8 justify-between border-b border-gray-100 z-10">
+        <header className="relative h-20 bg-white flex items-center px-8 justify-between border-b border-gray-100 z-10">
           <div className="flex items-center text-sm text-gray-400 font-medium">
             <BookOpen size={16} className="mr-2" />
             <span>Bibliothèque</span>
@@ -116,7 +161,26 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
             >
               Anglais {showEnglish ? '✓' : ''}
             </button>
+
+            <button
+              onClick={() => setShowDisplaySettings(prev => !prev)}
+              className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center gap-1 ${
+                showDisplaySettings
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+              title="Configuration de l'affichage des annotations"
+            >
+              <Settings size={14} />
+              Config
+            </button>
           </div>
+
+          {showDisplaySettings && (
+            <div className="absolute right-4 top-16 z-30 w-96 max-w-[calc(100%-2rem)]">
+              <AnnotationDisplaySettings onClose={() => setShowDisplaySettings(false)} />
+            </div>
+          )}
         </header>
 
         <div className="flex-1 overflow-y-auto bg-white">
@@ -153,6 +217,22 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                       Annotation
                     </button>
                   </div>
+
+                  {(() => {
+                    const annotation = getAnnotation(section.id);
+                    const summary = buildAnnotationSummary(displayConfig, annotation);
+                    if (!summary.length) return null;
+                    return (
+                      <div className="text-xs text-gray-700 bg-gray-50 border border-gray-100 rounded-lg p-3 space-y-1 mb-6">
+                        {summary.map(item => (
+                          <div key={item.label} className="flex gap-2">
+                            <span className="font-semibold text-gray-900">{item.label} :</span>
+                            <span className="text-gray-700">{item.value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })()}
 
                   {/* Columns dynamiques */}
                   <div className={`grid gap-8 lg:gap-12 text-sm leading-relaxed ${

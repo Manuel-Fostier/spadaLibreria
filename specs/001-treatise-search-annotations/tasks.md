@@ -70,7 +70,7 @@
 - [ ] T017 [P] Implement text highlighter utility in `src/lib/highlighter.ts` (highlightMatches function for search results)
 - [ ] T018 [P] Implement localStorage manager in `src/lib/localStorage.ts` (generic save/load/clear with size monitoring per research.md)
 - [ ] T019 Create SearchContext in `src/contexts/SearchContext.tsx` (manages search state, index, saved searches, loads glossary/treatises on mount)
-- [ ] T020 [P] Create AnnotationDisplayContext in `src/contexts/AnnotationDisplayContext.tsx` (manages which annotation fields are visible, persists to localStorage per FR-021)
+- [x] T020 [P] Create AnnotationDisplayContext in `src/contexts/AnnotationDisplayContext.tsx` (manages which annotation fields are visible, persists to localStorage per FR-021)
 
 **Checkpoint**: Foundation ready - search can now be implemented in components; annotation configuration infrastructure in place
 
@@ -132,9 +132,9 @@
 - [ ] T033 [US2] Implement annotation button highlighting in BolognesePlatform (active state when panel is open per FR-012a) - mockup: `specs/mockups/AnnotationPanel.md`
 - [ ] T034 [US2] Implement smart scrolling in AnnotationPanel (tracks viewport center paragraph with <100ms latency per FR-012b/SC-012) using Intersection Observer API
 - [ ] T035 [US2] Extend Annotation form to include weapon_type selector (Epée aiguisée | Epée émoussée enum per FR-009)
-- [ ] T036 [US2] Create AnnotationDisplaySettings component in `src/components/AnnotationDisplaySettings.tsx` (configuration menu with 7 checkboxes per FR-021) - mockup: `specs/mockups/AnnotationDisplay.md`
-- [ ] T037 [US2] Implement AnnotationDisplayContext persistence (read/write config to localStorage per FR-021)
-- [ ] T038 [US2] Integrate AnnotationDisplaySettings into UI (settings button/menu, apply configuration to chapter annotations)
+- [x] T036 [US2] Create AnnotationDisplaySettings component in `src/components/AnnotationDisplaySettings.tsx` (configuration menu with 7 checkboxes per FR-021) - mockup: `specs/mockups/AnnotationDisplay.md`
+- [x] T037 [US2] Implement AnnotationDisplayContext persistence (read/write config to localStorage per FR-021)
+- [x] T038 [US2] Integrate AnnotationDisplaySettings into UI (settings button/menu, apply configuration to chapter annotations)
 - [ ] T039 [US2] Integrate TagFilter into SearchResults component (both annotation AND metadata filters applied to search results with cumulative AND logic across all categories)
 - [ ] T040 [US2] Implement annotation badge indicators in SearchResults (show which chapters have annotations, display tag counts)
 - [ ] T041 [US2] Add "Show only annotated chapters" toggle in search UI (quick filter for chapters with any annotation)

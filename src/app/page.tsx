@@ -1,6 +1,7 @@
 import BolognesePlatform from '@/components/BolognesePlatform';
 import { loadGlossary, loadAllTreatises, Annotation } from '@/lib/dataLoader';
 import { AnnotationProvider } from '@/contexts/AnnotationContext';
+import { AnnotationDisplayProvider } from '@/contexts/AnnotationDisplayContext';
 import './globals.css';
 
 export default function Home() {
@@ -16,11 +17,13 @@ export default function Home() {
   });
 
   return (
-    <AnnotationProvider initialAnnotations={initialAnnotations}>
-      <BolognesePlatform 
-        glossaryData={glossaryData} 
-        treatiseData={treatiseData} 
-      />
-    </AnnotationProvider>
+    <AnnotationDisplayProvider>
+      <AnnotationProvider initialAnnotations={initialAnnotations}>
+        <BolognesePlatform 
+          glossaryData={glossaryData} 
+          treatiseData={treatiseData} 
+        />
+      </AnnotationProvider>
+    </AnnotationDisplayProvider>
   );
 }
