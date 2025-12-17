@@ -36,6 +36,11 @@ chmod +x start.sh
 ./start.sh
 ```
 
+Sur linux il faut surment convertir les fins de ligne :
+```bash
+dos2unix start.sh
+```
+
 Le script `start.sh` effectue automatiquement :
 - ✅ Vérification de l'installation de Node.js
 - 📦 Installation automatique de Node.js via nvm (si nécessaire)
