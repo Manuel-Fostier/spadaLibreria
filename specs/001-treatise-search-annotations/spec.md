@@ -7,23 +7,27 @@
 
 ## User Scenarios & Testing *(mandatory)*
 
-### User Story 1 - Cross-Treatise Text Search with Classic Options (Priority: P1)
+### User Story 1 - Simplified Cross-Treatise Text Search (Priority: P1)
 
-A researcher searches for "mandritto" across all treatises. The system provides classic search options: "Match Case", "Match Whole Word", and "Use Regular Expression". The researcher can toggle these options to refine their search. Based on the input and selected options, the system displays all matching chapters from Italian, French, and English versions. The researcher can immediately see where this technique appears across all available sources.
+A researcher searches for "mandritto" across all treatises. The system allows searching for exact terms, with options to match case, match whole words, or use regular expressions (similar to VS Code). The researcher can immediately see where this technique appears across all available sources.
 
-**Why this priority**: This is the core value proposition - enabling comprehensive cross-treatise research that would be impossible to do manually. Without this, the tool provides no advantage over manual reading.
+**Why this priority**: This is the core value proposition - enabling comprehensive cross-treatise research.
 
-**Independent Test**: Enter "mandritto" in search field → Toggle "Match Case" on → System displays only chapters containing "mandritto" with exact casing. Toggle "Match Whole Word" on → System displays only chapters where "mandritto" appears as a whole word. Enter "mandr.*" and toggle "Use Regular Expression" → System displays chapters matching the regex pattern.
+**Independent Test**:
+1. Enter "mandritto" in search field → Displays chapters with "mandritto".
+2. Toggle "Match Case" → Search "Mandritto" → Displays only capitalized instances.
+3. Toggle "Match Whole Word" → Search "man" → Does not match "mandritto".
+4. Toggle "Regex" → Search "mandrit.*" → Matches "mandritto", "mandritti".
 
 **Acceptance Scenarios**:
 
-1. **Given** the search field is empty, **When** I type "mandritto" and press Enter, **Then** I see a list of all chapters containing "mandritto" across all treatises in IT/FR/EN
-2. **Given** I search for "Mandritto" with "Match Case" enabled, **When** results are displayed, **Then** only chapters containing "Mandritto" (and not "mandritto") are included
-3. **Given** I search for "colpo" with "Match Whole Word" enabled, **When** results appear, **Then** chapters containing "colpo" are shown, but "colposo" are excluded
-4. **Given** I search for "mandr.*" with "Use Regular Expression" enabled, **When** results appear, **Then** chapters containing "mandritto", "mandritti", etc., are shown
-5. **Given** search results are displayed, **When** I click on a chapter, **Then** the full chapter text is displayed with the search term highlighted
-6. **Given** no matches are found, **When** the search completes, **Then** I see "No results found"
-7. **Given** I have entered a search term and selected options, **When** I press Enter or click Search, **Then** the BolognesePlatform updates to display all matching chapters from all treatises seamlessly
+1. **Given** the search field is empty, **When** I type "mandritto" and press Enter, **Then** I see a list of all chapters containing "mandritto" across all treatises.
+2. **Given** I enable "Match Case", **When** I search for "Mandritto", **Then** "mandritto" (lowercase) is NOT matched.
+3. **Given** I enable "Match Whole Word", **When** I search for "man", **Then** "mandritto" is NOT matched.
+4. **Given** I enable "Use Regular Expression", **When** I search for "mandrit.*", **Then** "mandritto" and "mandritti" ARE matched.
+5. **Given** no matches are found, **When** the search completes, **Then** I see "No results found".
+6. **Given** search results are displayed, **When** I click on a chapter, **Then** the full chapter text is displayed with the search term highlighted.
+7. **Given** I have selected search term(s) and press Enter or click Search, **When** the system executes the search, **Then** the BolognesePlatform updates to display all matching chapters from all treatises seamlessly.
 
 ---
 
@@ -83,9 +87,11 @@ A researcher studying a complex technique wants contextual help. After selecting
 ### Functional Requirements
 
 - **FR-001**: System MUST search across all treatise YAML files (Italian, French, English content) simultaneously
-- **FR-002**: System MUST provide a "Match Case" option to toggle case-sensitive search
-- **FR-003**: System MUST provide a "Match Whole Word" option to search for whole words only
-- **FR-003a**: System MUST provide a "Use Regular Expression" option to allow regex-based search queries
+- **FR-002**: System MUST provide a search interface implemented in phases:
+    1. Non-functional UI for validation
+    2. Single word search functionality
+    3. Advanced search options: "Match Case" and "Match Whole Word" toggles
+    4. "Use Regular Expression" toggle
 - **FR-004**: System MUST update BolognesePlatform to display search results grouped by treatise and chapter with smooth PDF-like navigation
 - **FR-004a**: When user enters search term(s) and executes search, SearchBar triggers an update to BolognesePlatform showing matching chapters
 - **FR-004b**: BolognesePlatform MUST display multiple matching chapters with smooth scrolling/pagination experience equivalent to reading a PDF
@@ -126,7 +132,6 @@ A researcher studying a complex technique wants contextual help. After selecting
 ### Measurable Outcomes
 
 - **SC-001**: Users can find all instances of a technique term across 3 treatises (multiple chapters each) in under 5 seconds
-- **SC-002**: Search respects "Match Case", "Match Whole Word", and "Regular Expression" settings correctly
 - **SC-003**: BolognesePlatform displays first matching chapter within 1 second of search execution
 - **SC-004**: Annotations persist across sessions without data loss (100% reliability for local storage)
 - **SC-005**: Users can filter 50+ search results by annotation tags in under 3 seconds
@@ -178,6 +183,7 @@ This applies to all import operations including `extract-book.py` and similar da
 - Cloud synchronization of annotations or saved searches
 - Export of annotations to external formats (PDF, Word, etc.)
 - Advanced NLP or linguistic analysis
+- Automatic variant matching and cross-language suggestions (moved to future release)
 - Real-time collaborative annotation with other researchers
 - Mobile app version (desktop web application only)
 - Integration with external reference management tools (Zotero, Mendeley)

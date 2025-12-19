@@ -5,9 +5,9 @@
 
 ## Summary
 
-Build a cross-treatise search tool with classic search options (Match Case, Match Whole Word, Regex), chapter annotations with tag filtering, and optional local LLM assistant. Core value: enable researchers to find technique terms (e.g., "mandritto") across all treatises in IT/FR/EN using precise search controls and annotate chapters with personal notes and tags for focused study.
+Build a cross-treatise search tool with advanced search options (Match Case, Match Whole Word, Regex), chapter annotations with tag filtering, and optional local LLM assistant. Core value: enable researchers to find technique terms (e.g., "mandritto") across all treatises in IT/FR/EN and annotate chapters with personal notes and tags for focused study.
 
-**Technical Approach**: Extend existing Next.js 15 application with new search infrastructure using browser-side indexing (no backend required). Leverage existing YAML data structure. Store annotations in YAML files via API and saved searches in browser localStorage. Integrate local LLM via API calls to LM Studio or Ollama for P3 enhancement.
+**Technical Approach**: Extend existing Next.js 15 application with new search infrastructure using browser-side indexing (no backend required). Leverage existing YAML data structure. Store annotations in browser localStorage (merged with YAML). Integrate local LLM via API calls to LM Studio or Ollama for P4 enhancement.
 
 ## 🔍 Key Findings from Codebase Analysis
 
@@ -49,6 +49,7 @@ Build a cross-treatise search tool with classic search options (Match Case, Matc
 - Extend AnnotationContext with search-specific filter methods
 - Follow existing YAML persistence pattern for any annotation extensions
 - **REMOVED**: Saved Searches feature (User Story 2) - SearchBar executes searches directly without save/recall capability
+- **REMOVED**: Automatic variant matching and cross-language search - Replaced with advanced search options (Case, Word, Regex)
 
 ## Technical Context
 
@@ -131,7 +132,7 @@ src/
 │   ├── AnnotationBadge.tsx         # [EXISTING] Annotation badge/button for each section
 │   ├── MeasureProgressBar.tsx      # [EXISTING] Visual measure progression (Gioco Largo → Presa)
 │   ├── ComparisonModal.tsx         # [EXISTING] Compare translations modal
-│   ├── SearchBar.tsx               # [NEW] Search input with variant suggestions - triggers BolognesePlatform update
+│   ├── SearchBar.tsx               # [NEW] Search input with advanced options (Case, Word, Regex) - triggers BolognesePlatform update
 │   ├── TagFilter.tsx               # [NEW] Filter search results by annotation metadata and treatise metadata (weapons/guards/techniques/master/work/book/year)
 │   └── LLMAssistant.tsx            # [NEW-P4] Chat interface for local LLM
 ├── contexts/
@@ -140,10 +141,8 @@ src/
 ├── lib/
 │   ├── dataLoader.ts               # [EXISTING] Load YAML files
 │   ├── annotation.ts               # [EXISTING] Annotation utilities
-│   ├── searchEngine.ts             # [NEW] Core search logic with variant matching
+│   ├── searchEngine.ts             # [NEW] Core search logic (Exact, Regex)
 │   ├── searchIndex.ts              # [NEW] Build and query search index
-│   ├── languageVariants.ts         # [NEW] Generate word variants (FR/IT conjugations, plurals)
-│   ├── glossaryMapper.ts           # [NEW] Map terms across languages using glossary
 │   ├── highlighter.ts              # [NEW] Highlight search terms in text
 │   └── llmClient.ts                # [NEW] Connect to LM Studio/Ollama API
 └── types/
@@ -160,7 +159,6 @@ data/
 tests/                              # [NEW] Test structure (when tests added)
 ├── unit/
 │   ├── searchEngine.test.ts
-│   ├── languageVariants.test.ts
 │   └── glossaryMapper.test.ts
 └── integration/
     ├── search.test.tsx
@@ -185,33 +183,38 @@ All complexity is inherent to feature requirements (search variants, cross-langu
    - Implementation: Support "Match Case", "Match Whole Word", and "Regular Expression" modes
    - Rationale: Balance simplicity (constitution principle) vs. performance (<5 sec requirement)
 
-2. **LocalStorage Limits & Strategy**
+2. **Regex Search Implementation**
+   - Research: Safe regex execution in browser (avoid ReDoS)
+   - Decision: Use standard RegExp with timeout or length limits if necessary
+   - Rationale: Provide power user capability without compromising stability
+
+3. **LocalStorage Limits & Strategy**
    - Research: Browser localStorage size limits (typically 5-10 MB)
    - Research: Estimate storage for 500 annotations + 100 saved searches (~1-2 MB)
    - Decision: Use JSON serialization; implement size monitoring and warnings
    - Rationale: localStorage sufficient for stated scale; avoid complexity of IndexedDB
 
-3. **Local LLM Integration**
+4. **Local LLM Integration**
    - Research: LM Studio API vs. Ollama API endpoints and authentication
    - Research: Typical response times for local models (7B parameter models)
    - Decision: Support both via configurable base URL; use streaming responses if available
    - Alternatives: WebAssembly LLM (too slow) vs. external API (violates privacy)
    - Rationale: LM Studio/Ollama provide standard REST APIs; keep integration simple
 
-4. **Search Result Highlighting**
+5. **Search Result Highlighting**
    - Research: React libraries for text highlighting (react-highlight-words)
-   - Decision: Custom highlighter to handle regex matches and case sensitivity
-   - Rationale: Need to highlight matches based on active search options (e.g., regex patterns)
+   - Decision: Custom highlighter to handle regex matches
+   - Rationale: Need to highlight all matches including regex patterns
 
 **Output**: research.md documenting all decisions with rationale
 
 ### Phase 0 Deliverable
 
 `specs/001-treatise-search-annotations/research.md` containing:
-- Search approach: in-memory index with classic search options
+- Search approach: in-memory index with regex-based matching
 - LocalStorage strategy: JSON serialization with size monitoring
 - LLM integration: REST API calls to LM Studio/Ollama with configurable endpoint
-- Highlighting: custom implementation supporting regex and case sensitivity
+- Highlighting: custom implementation supporting regex matches
 
 ## Phase 1: Design & Contracts
 
@@ -220,8 +223,8 @@ All complexity is inherent to feature requirements (search variants, cross-langu
 **Entities**:
 
 1. **SearchQuery**
-   - Fields: queryText (string), timestamp (Date), options (SearchOptions)
-   - Validation: Non-empty queryText
+   - Fields: queryText (string), timestamp (Date), matchCase (boolean), matchWholeWord (boolean), useRegex (boolean)
+   - Validation: Non-empty queryText; valid regex if useRegex is true
    - State: Created → Executing → Completed/Failed
 
 2. **SearchOptions**
@@ -246,7 +249,7 @@ All complexity is inherent to feature requirements (search variants, cross-langu
    - Validation: treatiseFile exists in data/treatises/; chapterId matches a section in that file
    - Purpose: Stable reference to chapter content (survives YAML updates if IDs unchanged)
 
-6. **SearchIndex**
+5. **SearchIndex**
    - Fields: chapters (Map<ChapterReference, ChapterContent>)
    - Purpose: In-memory structure for fast searches
    - Lifecycle: Built on app load; refreshed on data changes
@@ -266,7 +269,9 @@ export interface SearchOptions {
 export interface SearchQuery {
   queryText: string;
   timestamp: Date;
-  options: SearchOptions;
+  matchCase: boolean;
+  matchWholeWord: boolean;
+  useRegex: boolean;
 }
 
 export interface SearchResult {
@@ -276,7 +281,7 @@ export interface SearchResult {
   matchCount: number;
   languages: Language[];
   preview: string;
-  highlightPositions: { start: number; end: number }[];
+  highlightPositions: { start: number; end: number; }[];
 }
 
 export interface SearchIndex {
