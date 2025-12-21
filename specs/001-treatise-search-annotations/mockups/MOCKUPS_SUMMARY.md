@@ -24,7 +24,7 @@ Each mockup includes:
 
 | Task | Mockup | Feature | User Story | Spec Ref |
 |------|--------|---------|------------|----------|
-| T001 | SearchBar.md | Similar words suggestion dropdown | US1 | FR-002a, SC-011 |
+| T001 | SearchBar.md | Classic Search Options (Case, Word, Regex) | US1 | FR-002, FR-003, FR-003a |
 | T003 | AnnotationPanel.md | Default open, highlighting, scrolling | US3 | FR-012, FR-012a, FR-012b |
 | T004 | AnnotationDisplay.md | Configuration menu (7 fields) | US3 | FR-021 |
 | T007 | MOCKUPS_SUMMARY.md | Index & links (this file) | All | - |
@@ -33,7 +33,7 @@ Each mockup includes:
 
 ## Mockups by Feature (Spec v2.0)
 
-### 1. Similar Words Suggestion (FR-002a)
+### 1. Classic Search Options (FR-002, FR-003, FR-003a)
 
 **Mockup**: `SearchBar.md`  
 **Component**: `src/components/SearchBar.tsx`  
@@ -42,18 +42,18 @@ Each mockup includes:
 
 **Features Shown**:
 - Text input field with placeholder
-- Similar words dropdown showing within 500ms (SC-011)
-- Multiple language suggestions (IT/FR/EN)
-- Chips for selected terms
-- Save search functionality
+- Toggle buttons for search options:
+  - **Match Case** (Aa)
+  - **Match Whole Word** (|ab|)
+  - **Regular Expression** (.*)
+- Clear button and Search execution
 
 **Example Flow**:
 ```
-User types "mandritto" 
-  → Dropdown appears (500ms, SC-011)
-  → Shows: mandritto, mandritti, coup droit, forehand cut
-  → User clicks suggestions to multi-select
-  → Searches all terms together
+User types "Mandritto"
+  → Clicks "Aa" (Match Case) toggle
+  → Presses Enter
+  → System searches for exact case match "Mandritto"
 ```
 
 ---

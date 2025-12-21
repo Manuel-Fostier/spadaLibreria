@@ -5,9 +5,9 @@
 
 ## Summary
 
-Build a cross-treatise search tool with variant matching and cross-language support, chapter annotations with tag filtering, and optional local LLM assistant. Core value: enable researchers to find technique terms (e.g., "mandritto") across all treatises in IT/FR/EN with automatic variant detection (mandritti, coup droit, forehand cut) and annotate chapters with personal notes and tags for focused study.
+Build a cross-treatise search tool with classic search options (Match Case, Match Whole Word, Regex), chapter annotations with tag filtering, and optional local LLM assistant. Core value: enable researchers to find technique terms (e.g., "mandritto") across all treatises in IT/FR/EN using precise search controls and annotate chapters with personal notes and tags for focused study.
 
-**Technical Approach**: Extend existing Next.js 15 application with new search infrastructure using browser-side indexing (no backend required). Leverage existing YAML data structure and glossary for cross-language mapping. Store annotations and saved searches in browser localStorage. Integrate local LLM via API calls to LM Studio or Ollama for P4 enhancement.
+**Technical Approach**: Extend existing Next.js 15 application with new search infrastructure using browser-side indexing (no backend required). Leverage existing YAML data structure. Store annotations in YAML files via API and saved searches in browser localStorage. Integrate local LLM via API calls to LM Studio or Ollama for P3 enhancement.
 
 ## 🔍 Key Findings from Codebase Analysis
 
@@ -181,50 +181,37 @@ All complexity is inherent to feature requirements (search variants, cross-langu
 
 1. **Search Algorithm & Performance**
    - Research: Client-side full-text search approaches for ~100 chapters (~500KB total text)
-   - Decision: Use in-memory search index built on app load vs. browser IndexedDB for persistence
-   - Alternatives: Lunr.js (full-text search library) vs. custom regex-based search
+   - Decision: Use in-memory search index built on app load
+   - Implementation: Support "Match Case", "Match Whole Word", and "Regular Expression" modes
    - Rationale: Balance simplicity (constitution principle) vs. performance (<5 sec requirement)
 
-2. **Language Variant Generation**
-   - Research: French verb conjugation patterns (common regular/irregular verbs)
-   - Research: Italian plural rules and common technique term variations
-   - Decision: Rule-based patterns vs. lookup tables for most common terms
-   - Rationale: Full NLP libraries (like Spacy) too complex for beginner-friendly requirement; focus on common fencing terms
-
-3. **Cross-Language Mapping**
-   - Research: How to leverage existing glossary.yaml for term equivalents
-   - Decision: Build glossary lookup index on app load; cache in memory
-   - Alternatives: Pre-process glossary into search-optimized format vs. runtime lookup
-   - Rationale: Keep data in single source (glossary.yaml) per constitution
-
-4. **LocalStorage Limits & Strategy**
+2. **LocalStorage Limits & Strategy**
    - Research: Browser localStorage size limits (typically 5-10 MB)
    - Research: Estimate storage for 500 annotations + 100 saved searches (~1-2 MB)
    - Decision: Use JSON serialization; implement size monitoring and warnings
    - Rationale: localStorage sufficient for stated scale; avoid complexity of IndexedDB
 
-5. **Local LLM Integration**
+3. **Local LLM Integration**
    - Research: LM Studio API vs. Ollama API endpoints and authentication
    - Research: Typical response times for local models (7B parameter models)
    - Decision: Support both via configurable base URL; use streaming responses if available
    - Alternatives: WebAssembly LLM (too slow) vs. external API (violates privacy)
    - Rationale: LM Studio/Ollama provide standard REST APIs; keep integration simple
 
-6. **Search Result Highlighting**
+4. **Search Result Highlighting**
    - Research: React libraries for text highlighting (react-highlight-words)
-   - Decision: Custom highlighter to handle multiple language variants simultaneously
-   - Rationale: Need to highlight all detected variants, not just exact matches
+   - Decision: Custom highlighter to handle regex matches and case sensitivity
+   - Rationale: Need to highlight matches based on active search options (e.g., regex patterns)
 
 **Output**: research.md documenting all decisions with rationale
 
 ### Phase 0 Deliverable
 
 `specs/001-treatise-search-annotations/research.md` containing:
-- Search approach: in-memory index with regex-based variant matching
-- Variant generation: rule-based for common French/Italian patterns + glossary lookup
+- Search approach: in-memory index with classic search options
 - LocalStorage strategy: JSON serialization with size monitoring
 - LLM integration: REST API calls to LM Studio/Ollama with configurable endpoint
-- Highlighting: custom implementation supporting multiple variants
+- Highlighting: custom implementation supporting regex and case sensitivity
 
 ## Phase 1: Design & Contracts
 
@@ -233,16 +220,20 @@ All complexity is inherent to feature requirements (search variants, cross-langu
 **Entities**:
 
 1. **SearchQuery**
-   - Fields: queryText (string), timestamp (Date), variants (string[]), languageMappings (Record<string, string[]>)
-   - Validation: Non-empty queryText; auto-generate variants on creation
+   - Fields: queryText (string), timestamp (Date), options (SearchOptions)
+   - Validation: Non-empty queryText
    - State: Created → Executing → Completed/Failed
 
-2. **SearchResult**
+2. **SearchOptions**
+   - Fields: matchCase (boolean), matchWholeWord (boolean), useRegex (boolean)
+   - Default: All false
+
+3. **SearchResult**
    - Fields: chapterReference (ChapterReference), matchCount (number), languages (Language[]), preview (string), highlightPositions (number[])
    - Relationships: References Chapter via treatise filename + chapter ID
    - Validation: Valid chapter reference; matchCount > 0
 
-3. **Annotation** (EXISTING - extends current implementation)
+4. **Annotation** (EXISTING - extends current implementation)
    - Current fields: id, note, weapons[], guards_mentioned[], techniques[], measures[], strategy[]
    - Already persists to YAML via `/api/annotations` POST
    - Already loaded on app start via `/api/annotations` GET
@@ -250,13 +241,13 @@ All complexity is inherent to feature requirements (search variants, cross-langu
    - **For search feature**: Use existing fields as "tags" (weapons/guards/techniques are tag equivalents)
    - **NO NEW TAG SYSTEM NEEDED** - existing metadata serves this purpose
 
-4. **ChapterReference**
+5. **ChapterReference**
    - Fields: treatiseFile (string), chapterId (string)
    - Validation: treatiseFile exists in data/treatises/; chapterId matches a section in that file
    - Purpose: Stable reference to chapter content (survives YAML updates if IDs unchanged)
 
-5. **SearchIndex**
-   - Fields: chapters (Map<ChapterReference, ChapterContent>), termIndex (Map<string, ChapterReference[]>), glossaryIndex (Map<string, CrossLanguageTerms>)
+6. **SearchIndex**
+   - Fields: chapters (Map<ChapterReference, ChapterContent>)
    - Purpose: In-memory structure for fast searches
    - Lifecycle: Built on app load; refreshed on data changes
 
@@ -266,11 +257,16 @@ All complexity is inherent to feature requirements (search variants, cross-langu
 
 ```typescript
 // contracts/search.ts
+export interface SearchOptions {
+  matchCase: boolean;
+  matchWholeWord: boolean;
+  useRegex: boolean;
+}
+
 export interface SearchQuery {
   queryText: string;
   timestamp: Date;
-  variants: string[];
-  languageMappings: Record<Language, string[]>;
+  options: SearchOptions;
 }
 
 export interface SearchResult {
@@ -280,14 +276,12 @@ export interface SearchResult {
   matchCount: number;
   languages: Language[];
   preview: string;
-  highlightPositions: { start: number; end: number; variant: string }[];
+  highlightPositions: { start: number; end: number }[];
 }
 
 export interface SearchIndex {
   buildIndex(treatises: Treatise[]): void;
   search(query: SearchQuery): SearchResult[];
-  addVariants(term: string): string[];
-  mapCrossLanguage(term: string, fromLang: Language): Record<Language, string[]>;
 }
 
 // contracts/annotations.ts
@@ -354,7 +348,7 @@ export interface LLMClient {
    ```
    1. Open the application (BolognesePlatform loads)
    2. Type "mandritto" in SearchBar at top left
-   3. System detects variants (mandritti, coup droit, forehand cut) via glossary
+   3. Optionally toggle "Match Case", "Match Whole Word", or "Use Regex"
    4. Press Enter or click Search button
    5. BolognesePlatform updates to display all matching chapters
    6. Multiple chapters display with smooth PDF-like scrolling/pagination
@@ -415,7 +409,7 @@ Run `.specify/scripts/bash/update-agent-context.sh copilot` after Phase 1 comple
 - New search/annotation architecture
 - LocalStorage schema and limits
 - LLM integration patterns (LM Studio/Ollama APIs)
-- Search variant generation rules
+- Search options and regex support
 
 ### Re-evaluate Constitution Check Post-Design
 
@@ -437,8 +431,8 @@ After completing Phase 0 (research) and Phase 1 (design), run `/speckit.tasks` t
 
 Expected task breakdown:
 - **Setup Phase**: Project structure scaffolding, TypeScript types
-- **Foundational Phase**: SearchIndex, glossary mapping
-- **P1 Phase (MVP)**: Search UI, variant generation, cross-language matching, result display in BolognesePlatform
+- **Foundational Phase**: SearchIndex, search options logic
+- **P1 Phase (MVP)**: Search UI with options, result display in BolognesePlatform
 - **P2 Phase (was P3)**: Annotation editor extensions, tag filtering, annotation list view
 - **P3 Phase (was P4)**: LLM client, assistant UI, context integration
 
@@ -449,7 +443,7 @@ Expected task breakdown:
 1. **Issue #21: Surbrillance des mots recherchés dans le filtre**
    - **Status**: OPEN (created 2025-12-04)
    - **Relation**: DIRECTLY ADDRESSED by P1 (search with highlighting)
-   - **Implementation**: SearchResults component will highlight matched variants in text
+   - **Implementation**: SearchResults component will highlight matched terms in text
    - **Note**: Issue mentions using TextParser component - confirmed this is correct approach
 
 2. **Issue #1: Refonte du Panneau de Filtres (Gauche)**
@@ -500,7 +494,7 @@ Expected task breakdown:
 - **No Saved Searches**: User Story 2 (saved searches) removed per user directive; SearchBar executes searches directly without save/recall
 - **Smooth Chapter Display**: BolognesePlatform must handle multiple matching chapters with PDF-like fluidity (virtualization/lazy-loading recommended for smooth scrolling)
 - **LLM Optional**: P3 is a future enhancement; app fully functional without it
-- **Testing Strategy**: Add tests for core search logic (variant generation, cross-language mapping) when constitution requires it
+- **Testing Strategy**: Add tests for core search logic (regex, case sensitivity) when constitution requires it
 - **Performance**: Build search index on first load; cache in React context for subsequent searches
-- **Glossary Dependency**: Search quality depends on completeness of glossary.yaml term equivalents
+- **Glossary Dependency**: Glossary remains the source of truth for term definitions, but search no longer depends on it for variant matching
 - **Annotation Integration**: Use existing annotation metadata (weapons/guards/techniques) as search filters - no new tag system needed

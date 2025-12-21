@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <title>Search Bar Mockup</title>
+  <title>Search Bar Mockup - Classic Options (Inline)</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
     :root {
@@ -21,156 +21,175 @@
       background: #0b1120;
     }
     .mockup {
-      width: min(980px, 100%);
+      width: min(600px, 100%);
       background: #ffffff;
       border-radius: 1.5rem;
       padding: 2rem;
       box-shadow: 0 35px 80px rgba(15,23,42,0.45);
       border: 1px solid rgba(15,23,42,0.15);
-      display: grid;
-      gap: 1.5rem;
-      grid-template-columns: 2fr 1fr;
-    }
-    .section {
-      background: #f9fafb;
-      border-radius: 1.25rem;
-      padding: 1.25rem;
-      border: 1px solid #e5e7eb;
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 1.5rem;
     }
-    .section h2 {
+    .section-title {
       margin: 0;
-      font-size: 1rem;
+      font-size: 1.1rem;
       font-weight: 600;
       color: #0f172a;
+      margin-bottom: 0.5rem;
+    }
+    .search-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .input-group {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
     }
     .search-input {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      border: 2px solid #d1d5db;
-      border-radius: 1rem;
-      padding: 0.9rem 1.1rem;
-      background: #fff;
-    }
-    .search-input input {
-      border: none;
+      width: 100%;
+      border: 1px solid #3c3c3c; /* VS Code style dark border */
+      background: #252526; /* VS Code style dark bg */
+      color: #cccccc;
+      border-radius: 4px;
+      padding: 8px 12px;
+      padding-right: 120px; /* Space for buttons */
+      font-size: 14px;
       outline: none;
-      flex: 1;
-      font-size: 1rem;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    .search-input:focus {
+      border-color: #007fd4; /* VS Code focus blue */
+      box-shadow: 0 0 0 1px #007fd4;
+    }
+    .input-actions {
+      position: absolute;
+      right: 4px;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      height: 100%;
+    }
+    .toggle-btn {
       background: transparent;
-      color: #0f172a;
-    }
-    .badge {
-      margin-left: 0.35rem;
-      font-size: 0.65rem;
-      padding: 0.1rem 0.35rem;
-      border-radius: 999px;
-      background: rgba(15,23,42,0.08);
-    }
-    .pill {
-      padding: 0.35rem 0.85rem;
-      border-radius: 999px;
       border: 1px solid transparent;
-      font-size: 0.85rem;
-      font-weight: 600;
-      display: inline-flex;
-      gap: 0.35rem;
-      align-items: center;
-    }
-    .pill.it { background: #dbeafe; color: #1d4ed8; border-color: #bfdbfe; }
-    .pill.fr { background: #fee2e2; color: #b91c1c; border-color: #fecaca; }
-    .pill.en { background: #e0f2fe; color: #0369a1; border-color: #bae6fd; }
-    .suggestions {
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-    }
-    .state-card {
-      border-radius: 1rem;
-      background: white;
-      border: 1px solid #e5e7eb;
-      padding: 0.85rem 1rem;
-      box-shadow: 0 10px 30px rgba(15,23,42,0.12);
-    }
-    .state-card strong {
-      display: block;
-      font-size: 0.9rem;
-      margin-bottom: 0.25rem;
-    }
-    .state-card small {
-      color: #475569;
-      font-size: 0.8rem;
-    }
-    .selected-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-    .selected-chip {
-      background: #e0e7ff;
-      color: #312e81;
-      border: 1px solid #c7d2fe;
-      padding: 0.5rem 0.95rem;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      font-weight: 600;
-    }
-    .selected-chip button {
-      border: none;
-      background: transparent;
-      color: #1e3a8a;
+      border-radius: 3px;
       cursor: pointer;
-      padding: 0;
-    }
-    .state-list {
+      padding: 2px 4px;
+      color: #858585; /* VS Code inactive icon color */
+      font-size: 12px;
       display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 22px;
     }
-    .state-header {
-      font-size: 0.85rem;
+    .toggle-btn:hover {
+      background: #3e3e42; /* VS Code hover */
+    }
+    .toggle-btn.active {
+      background: #094771; /* VS Code active background */
+      color: #ffffff;
+      border-color: #007fd4;
+    }
+    .toggle-icon {
+      font-family: monospace;
+      font-weight: bold;
+    }
+    .state-label {
+      font-size: 0.75rem;
       text-transform: uppercase;
-      letter-spacing: 0.25em;
+      letter-spacing: 0.05em;
       color: #6b7280;
+      margin-top: 2rem;
+      margin-bottom: 0.5rem;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 0.25rem;
     }
-    .state-details {
-      font-size: 0.85rem;
-      color: #374151;
+    /* Light theme override for the mockup container to match VS Code style input */
+    .mockup-vscode-style {
+      background: #1e1e1e;
+      color: #cccccc;
+      border: 1px solid #454545;
+    }
+    .mockup-vscode-style .section-title {
+      color: #ffffff;
+    }
+    .mockup-vscode-style .state-label {
+      color: #858585;
+      border-color: #3e3e42;
     }
   </style>
 </head>
 <body>
-    <div class="section" aria-label="Barre de recherche">
-      <h2>Barre de recherche</h2>
-      <div class="search-input" role="search">        
-        <input type="text" placeholder="Mandrit*" aria-label="Recherche">
-        <span class="badge">Enter</span>
-        <span class="badge">×</span>
-      </div>
-      <div class="suggestions" aria-live="polite">
-        <div class="state-card">
-          <strong>Suggestions</strong>
-          <div style="display:flex; flex-wrap:wrap; gap:0.35rem;">
-            <span class="pill it">mandritto</span>
-            <span class="pill it">mandritti</span>
-            <span class="pill it">coup droit</span>
-            <span class="pill it">forehand cut</span>
-          </div>
-        </div>
-        <div class="state-card">
-          <strong>Chips sélectionnés</strong>
-          <div class="selected-chips">
-            <span class="selected-chip">mandritto<button aria-label="Supprimer mandritto">×</button></span>
-            <span class="selected-chip">mandritti<button aria-label="Supprimer mandritti">×</button></span>
-            <span class="selected-chip">coup droit<button aria-label="Supprimer coup droit">×</button></span>
-          </div>          
+
+  <div class="mockup mockup-vscode-style">
+    <div>
+      <h2 class="section-title">Search Bar (VS Code Style)</h2>
+      <p style="color: #858585; font-size: 0.9rem; margin-top: 0;">Inline Options: Match Case, Whole Word, Regex</p>
+    </div>
+
+    <!-- State 1: Empty -->
+    <div class="state-label">State 1: Initial / Empty</div>
+    <div class="search-container">
+      <div class="input-group">
+        <input type="text" class="search-input" placeholder="Search">
+        <div class="input-actions">
+          <button class="toggle-btn" aria-label="Match Case" title="Match Case (Alt+C)">
+            <span class="toggle-icon">Aa</span>
+          </button>
+          <button class="toggle-btn" aria-label="Match Whole Word" title="Match Whole Word (Alt+W)">
+            <span class="toggle-icon" style="text-decoration: underline;">ab</span>
+          </button>
+          <button class="toggle-btn" aria-label="Use Regular Expression" title="Use Regular Expression (Alt+R)">
+            <span class="toggle-icon">.*</span>
+          </button>
         </div>
       </div>
-    </div>  
+    </div>
+
+    <!-- State 2: Typing with Options -->
+    <div class="state-label">State 2: Case Sensitive Search</div>
+    <div class="search-container">
+      <div class="input-group">
+        <input type="text" class="search-input" value="Mandritto">
+        <div class="input-actions">
+          <button class="toggle-btn active" aria-label="Match Case" title="Match Case (Alt+C)">
+            <span class="toggle-icon">Aa</span>
+          </button>
+          <button class="toggle-btn" aria-label="Match Whole Word" title="Match Whole Word (Alt+W)">
+            <span class="toggle-icon" style="text-decoration: underline;">ab</span>
+          </button>
+          <button class="toggle-btn" aria-label="Use Regular Expression" title="Use Regular Expression (Alt+R)">
+            <span class="toggle-icon">.*</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- State 3: Regex Search -->
+    <div class="state-label">State 3: Regex Search</div>
+    <div class="search-container">
+      <div class="input-group">
+        <input type="text" class="search-input" value="mandr.*">
+        <div class="input-actions">
+          <button class="toggle-btn" aria-label="Match Case" title="Match Case (Alt+C)">
+            <span class="toggle-icon">Aa</span>
+          </button>
+          <button class="toggle-btn" aria-label="Match Whole Word" title="Match Whole Word (Alt+W)">
+            <span class="toggle-icon" style="text-decoration: underline;">ab</span>
+          </button>
+          <button class="toggle-btn active" aria-label="Use Regular Expression" title="Use Regular Expression (Alt+R)">
+            <span class="toggle-icon">.*</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
 </body>
 </html>

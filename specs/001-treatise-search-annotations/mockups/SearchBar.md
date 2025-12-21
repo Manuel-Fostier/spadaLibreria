@@ -1,7 +1,7 @@
 # SearchBar Component Mockup
 
-**Spec Reference**: FR-002a, SC-011 (Similar words suggestion)  
-**User Story**: US1 - Cross-Treatise Search with Variants  
+**Spec Reference**: FR-002, FR-003, FR-003a (Classic Search Options)  
+**User Story**: US1 - Cross-Treatise Search with Classic Options  
 **Task**: T021 [US1]  
 **File**: `src/components/SearchBar.tsx`
 
@@ -9,28 +9,18 @@
 
 The SearchBar component is the primary interface for searching treatises. It includes:
 1. Text input field with placeholder
-2. Similar words suggestion dropdown (500ms response time)
-3. Selected search term chips with remove buttons
+2. Toggle buttons for search options (Match Case, Match Whole Word, Regex)
+3. Search execution button
 
 ## Wireframe ASCII
 
 ```
-╔═════════════════════════════════════════════════════════════╗
-║  [Type search term...]                     [Enter] [×] ║
-║                                                             ║
-║  Similar words suggestions (auto-show, 500ms):              ║
-║  ┌─────────────────────────────────────────────────────┐    ║
-║  │ ✓ mandritto        mandritti        coup droit      │    ║
-║  └─────────────────────────────────────────────────────┘    ║
-║                                                             ║
-║  Selected terms (chips):                                    ║
-║  ┌──────────┐ ┌──────────┐ ┌──────────┐                     ║
-║  │ mandritto│ │ mandritti│ │ coup dr  │                     ║
-║  │    [×]   │ │    [×]   │ │    [×]   │                     ║
-║  └──────────┘ └──────────┘ └──────────┘                     ║
-║                                                             ║
-║                                                             ║
-╚════════════════════════════════════════════════════════════╝
+╔════════════════════════════════════════════════════════════════════════╗
+║  ┌──────────────────────────────────────────────────────────────────┐  ║
+║  │ 🔍 [Type search term...]                            Aa ab .*     │  ║
+║  └──────────────────────────────────────────────────────────────────┘  ║
+║                                                           --           ║
+╚════════════════════════════════════════════════════════════════════════╝
 ```
 
 ## Component States
@@ -38,148 +28,90 @@ The SearchBar component is the primary interface for searching treatises. It inc
 ### 1. Empty Search (Initial State)
 
 ```
-╔════════════════════════════════════════════════════════════╗
-║  [Type a word: e.g., "mandritto"]          [Clear (×)] ║
-╚════════════════════════════════════════════════════════════╝
+╔════════════════════════════════════════════════════════════════════════╗
+║  [Type a word: e.g., "mandritto"]                    [Aa] [ab] [.*]    ║
+║                                                            --          ║
+╚════════════════════════════════════════════════════════════════════════╝
 ```
 
 **Behavior**:
 - Placeholder text shows example search term
 - Input field focused (cursor blinking)
-- No dropdown shown yet
-- Clear button visible if any previous search
+- Options toggles are inactive (gray/outline)
+- Clear button visible if input has text
 
 ---
 
-### 2. User Typing (Before 500ms - No Suggestions Yet)
+### 2. User Typing with Options
 
 ```
-╔════════════════════════════════════════════════════════════╗
-║  [mandri...                                  [Loading ⟳ ] ║
-╚════════════════════════════════════════════════════════════╝
+╔════════════════════════════════════════════════════════════════════════╗
+║  [Mandritto                                          [Aa] [ab] [.*]    ║
+║                                                       ^    --          ║
+║                                                     active             ║
+╚════════════════════════════════════════════════════════════════════════╝
 ```
 
 **Behavior**:
-- User types "mandritto"
-- Small loading spinner appears
-- Waiting for glossary variant lookup
+- User types "Mandritto"
+- User clicks "Aa" (Match Case) -> Button becomes active (highlighted/filled)
+- Search is NOT executed automatically (wait for Enter or Search button)
 
 ---
 
-### 3. Suggestions Dropdown (After ~500ms - FR-002a, SC-011)
+### 3. Regex Search
 
 ```
-╔════════════════════════════════════════════════════════════╗
-║  [mandritto]                                      [×]  ║
-║                                                            ║
-║  Similar words from glossary:                           ║
-║  ┌─────────────────────────────────────────────────────┐   ║
-║  │  mandritto                                          │   ║
-║  │  mandritti                                          │   ║
-║  │  coup droit                                         │   ║
-║  │  forehand cut                                       │   ║
-║  │  mandrittone                                        │   ║
-║  │  frappe directe                                     │   ║
-║  └─────────────────────────────────────────────────────┘   ║
-║                                                            ║
-║  Or press [Enter] to search only "mandritto"               ║
-║                                                            ║
-╚════════════════════════════════════════════════════════════╝
-```
-
-**Performance**:
-- ✅ Suggestions appear within **500ms** (SC-011 target)
-- ✅ Clickable chips for easy selection
-
----
-
-### 4. Multiple Selections (After Clicking Suggestions)
-
-```
-╔════════════════════════════════════════════════════════════╗
-║  🔍  [mandritto]                               Clear all   ║
-║                                                            ║
-║  Selected terms (6 results found):                         ║
-║  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐        ║
-║  │ mandritto    │ │ mandritti    │ │ coup droit   │ ✓     ║
-║  │ [IT] [×]     │ │ [IT] [×]     │ │ [FR] [×]     │        ║
-║  └──────────────┘ └──────────────┘ └──────────────┘        ║
-║  ┌──────────────┐ ┌──────────────┐                         ║
-║  │ forehand cut │ │ mandrittone  │                         ║
-║  │ [EN] [×]     │ │ [IT] [×]     │                         ║
-║  └──────────────┘ └──────────────┘                         ║
-║                                                            ║
-║                                                            ║
-╚════════════════════════════════════════════════════════════╝
+╔════════════════════════════════════════════════════════════════════════╗
+║  [mandr.*                                           [Aa] [ab] [.*]     ║
+║                                                           --   ^       ║
+║                                                              active    ║
+╚════════════════════════════════════════════════════════════════════════╝
 ```
 
 **Behavior**:
-- Each selected term shown as a chip
-- [×] button removes individual term
-- Result count updates dynamically
-- "Clear All" option removes all selections
+- User types regex pattern "mandr.*"
+- User activates ".*" (Regex) option
+- System interprets input as regular expression
 
 ---
-
-### 5. Duplicate Detection
-
-```
-When user tries to add "mandritto" again:
-
-┌─────────────────────────────────────────┐
-│ ⚠️ "mandritto" already in selection    │
-│                                         │
-└─────────────────────────────────────────┘
-```
-
----
-
 
 ## Interaction Flow
 
-### User Flow 1: Single Search
+### User Flow 1: Simple Search
 
 ```
-1. User sees empty SearchBar with placeholder
+1. User sees empty SearchBar
    ↓
 2. Clicks input field (focus)
    ↓
 3. Types "mandritto"
    ↓
-4. Sees loading spinner (500ms max)
+4. Presses Enter
    ↓
-5. Dropdown appears with similar words:
-   - mandritto 
-   - mandritti 
-   - coup droit
-   - forehand cut
-   ↓
-6. User presses Enter to search with "mandritto" only
-   OR
-7. User clicks suggestion to add more terms before searching
-   ↓
-8. SearchResults component displays results (T022)
+5. SearchResults component displays results (T022)
 ```
 
-### User Flow 2: Multi-term Search with Similar Words
+### User Flow 2: Case Sensitive Search
 
 ```
-1. Type "mandritto" → See suggestions (500ms)
-2. Click "mandritti" → Added to chips
-3. Click "coup droit" → Added to chips
-4. Click "forehand cut" → Added to chips
-5. Sees loading spinner 
-6. SearchResults component displays results (T022)
+1. Types "Mandritto"
+   ↓
+2. Clicks "Aa" toggle (Match Case)
+   ↓
+3. Presses Enter
+   ↓
+4. Search executes looking for exact case match
 ```
 
 ### User Flow 3: Keyboard Navigation
 
 ```
 - Ctrl+F: Focus search bar
-- ↓/↑: Navigate suggestion dropdown
-- Enter: Select highlighted suggestion or execute search
-- Escape: Close dropdown / Clear search
-- Backspace: Remove selected chip
+- Tab: Move between input and option toggles
+- Space/Enter on toggle: Activate/Deactivate option
+- Enter on input: Execute search
+- Escape: Clear search / Blur input
 ```
 
 ---
@@ -189,38 +121,30 @@ When user tries to add "mandritto" again:
 ### Props
 
 ```typescript
-interface SearchBarProps {
-  onSearch: (terms: SearchResult[]) => void;  // Called on Enter
-  placeholder?: string;                        // Default: "Search treatises..."
-  maxSelections?: number;                      // Default: 10
-  debounceMs?: number;                         // Default: 500 for suggestions
+interface SearchOptions {
+  matchCase: boolean;
+  matchWholeWord: boolean;
+  useRegex: boolean;
 }
-```
 
-### Dropdown Behavior
-
-```typescript
-// Similar words suggestion performance requirements (SC-011)
-- User types → Start timer
-- Query glossary for variants (buildGlossaryIndex from T013)
-- Generate language variants (generateVariants from T014)
-- Show dropdown ≤ 500ms after typing stops
-
-// Glossary lookup
-const suggestions = mapCrossLanguage(inputTerm, 'it')
-  .concat(generateVariants(inputTerm, 'it'))
-  .concat(generateVariants(inputTerm, 'fr'))
-  .concat(generateVariants(inputTerm, 'en'))
-  .slice(0, 10)  // Limit dropdown to 10 suggestions
+interface SearchBarProps {
+  onSearch: (query: string, options: SearchOptions) => void;
+  placeholder?: string;
+}
 ```
 
 ### State Management
 
-- Current input value (controlled component)
-- Selected term chips (array of SearchQuery items)
-- Dropdown visibility state
-- Loading state during variant lookup
-- Focused suggestion index (for keyboard nav)
+- `query`: string (current input value)
+- `options`: SearchOptions object
+  - `matchCase`: boolean
+  - `matchWholeWord`: boolean
+  - `useRegex`: boolean
+
+### Validation
+
+- If `useRegex` is true, validate regex pattern before searching.
+- If invalid regex, show error state (red border or tooltip).
 
 ---
 
@@ -234,77 +158,52 @@ border: 2px solid #d1d5db;
 border-radius: 8px;
 padding: 12px 16px;
 font-size: 16px;
-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+width: 100%;
 
-/* Selected chips */
-background: #e0e7ff;  /* Light indigo */
-color: #3730a3;       /* Dark indigo */
-border-radius: 20px;
-padding: 6px 12px;
-margin: 4px;
+/* Option Toggles */
+button.toggle {
+  border: 1px solid #d1d5db;
+  background: white;
+  color: #6b7280;
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin-right: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
 
-/* Language badges [IT] [FR] [EN] */
-background: #f3f4f6;
-color: #6b7280;
-font-size: 12px;
-border-radius: 4px;
-padding: 2px 6px;
+button.toggle.active {
+  background: #e0e7ff;  /* Light indigo */
+  color: #3730a3;       /* Dark indigo */
+  border-color: #3730a3;
+}
 
-/* Dropdown */
-background: white;
-border: 1px solid #e5e7eb;
-border-radius: 8px;
-box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-max-height: 300px;
-overflow-y: auto;
-
-/* Suggestion items (hover) */
-background-color: #f9fafb;
-cursor: pointer;
-padding: 12px 16px;
+/* Icons */
+/* Use standard icons or text labels: "Aa", "|ab|", ".*" */
 ```
 
-### Keyboard Accessibility
+### Accessibility
 
-- Tab: Move to next control (Clear button)
-- Arrow Up/Down: Navigate dropdown suggestions
-- Enter: Select suggestion or execute search
-- Escape: Close dropdown
-- Shift+Tab: Move to previous control
+- `aria-label` for each toggle button ("Match Case", "Match Whole Word", "Use Regular Expression")
+- `aria-pressed` state for toggles
+- Keyboard focus indicators
 
 ---
 
 ## Success Criteria (from spec.md)
 
-✅ **SC-011**: Similar word suggestions appear in dropdown within 500ms
-- Verified: Dropdown shows within 500ms of user stopping typing
-- Performance: Glossary index built once on app load (T013)
+✅ **SC-002**: Search respects "Match Case", "Match Whole Word", and "Regular Expression" settings correctly
+- Verified: Toggles update state and pass correct options to search function
 
-✅ **FR-002a**: System MUST propose a chips list of similar words from the glossary when user enters a search term
-- Verified: Suggestions shown for all three languages (IT/FR/EN)
-- Variant generation includes: plurals, conjugations, related forms
+✅ **FR-002, FR-003, FR-003a**: System MUST provide options for Case, Whole Word, and Regex
+- Verified: UI elements present and functional
 
-✅ **FR-001**: System MUST search across all treatise YAML files
-- SearchBar collects terms, passes to BolognesePlatform context (T024)
-- SearchEngine executes search (T016)
-
-✅ **FR-004a**: When user enters search term(s) and/or selects chip(s), SearchBar triggers an update to BolognesePlatform showing matching chapters
+✅ **FR-004a**: When user enters search term(s) and executes search, SearchBar triggers an update
+- Verified: `onSearch` callback triggered on Enter
 
 ---
 
 ## Related Mockups
 
-- SearchResults.md (T022) - Integrated into BolognesePlatform display (not separate page)
-- AnnotationPanel.md (T003) - Panel opens when user views result chapters
-- BolognesePlatform enhancements for smooth chapter pagination (T029)
-
----
-
-## Notes
-
-- Suggest **debouncing** input to avoid excessive glossary lookups
-- Consider **caching** variant lookups for frequently searched terms
-- Show **loading state** during glossary lookup (animate spinner)
-- Ensure **keyboard-only navigation** works for accessibility
-- Mobile: Stack chips vertically if needed (responsive design)
-- Direct integration with BolognesePlatform (no separate search results page)
+- SearchResults.md (T022) - Integrated into BolognesePlatform display

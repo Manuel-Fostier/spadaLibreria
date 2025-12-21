@@ -3,8 +3,10 @@
 **Input**: Design documents from `/specs/001-treatise-search-annotations/`
 **Prerequisites**: plan.md, spec.md (v2.0), research.md, CODEBASE_ANALYSIS.md
 
-- **Updated**: 2025-12-09 - Integration of 7 new features from spec.md v2.0 update plus FR-023 (French UI)
-- FR-002a: Similar words suggestion dropdown
+- **Updated**: 2025-12-21 - Integration of classic search options (Match Case, Match Whole Word, Regex) from spec.md v2.1 update
+- FR-002: Match Case option
+- FR-003: Match Whole Word option
+- FR-003a: Regular Expression option
 - FR-012a & FR-012b: Default annotation panel + button highlighting + smart scrolling
 - FR-009: Sword condition enum (sharp/blunt)
 - FR-021: Annotation display configuration menu
@@ -34,7 +36,7 @@
 **Browser previews**: HTML renditions of each mockup now live in `specs/001-treatise-search-annotations/mockups/pages/` for quick visual validation.
 
 - [x] T000 [P] Create mockups directory structure in `specs/001-treatise-search-annotations/mockups/`
-- [x] T001 [P] [US1] Create SearchBar.md mockup in `specs/001-treatise-search-annotations/mockups/SearchBar.md` (similar words chips dropdown, wireframe ASCII art, interaction flow with 500ms response target)
+- [x] T001 [P] [US1] Create SearchBar.md mockup in `specs/001-treatise-search-annotations/mockups/SearchBar.md` (search input with toggle buttons for Match Case, Match Whole Word, Regex)
 - [x] T003 [P] [US3] Create AnnotationPanel.md mockup in `specs/001-treatise-search-annotations/mockups/AnnotationPanel.md` (default open state, smart scrolling, button highlighting, sword condition enum field)
 - [x] T004 [P] [US3] Create AnnotationDisplay.md mockup in `specs/001-treatise-search-annotations/mockups/AnnotationDisplay.md` (configuration menu with 7 checkboxes: note, weapons, guards, techniques, sword condition, measures, strategy; defaults)
 - [x] T007 Create MOCKUPS_SUMMARY.md in `specs/001-treatise-search-annotations/mockups/` (index of all mockups, linking specs to mockup files)
@@ -47,7 +49,7 @@
 
 **Purpose**: Create new type definitions, contexts, and component scaffolding
 
-- [x] T008 Create TypeScript interfaces for search in `src/types/search.ts` (SearchQuery, SearchResult, SearchIndex, ChapterReference)
+- [x] T008 Create TypeScript interfaces for search in `src/types/search.ts` (SearchQuery with options, SearchResult, SearchIndex, ChapterReference)
 - [x] T009 [P] Create TypeScript interfaces for saved searches in `src/types/savedSearch.ts` (SavedSearch, SavedSearchStorage)
 - [x] T010 [P] Create TypeScript interfaces for annotation display config in `src/types/annotationDisplay.ts` (AnnotationDisplay with 7 configurable fields)
 - [x] T011 [P] Create LLM types in `src/types/llm.ts` (LLMRequest, LLMResponse, LLMConfig) for P4 foundation
@@ -63,11 +65,9 @@
 
 **⚠️ CRITICAL**: No search functionality can work until this phase is complete
 
-- [ ] T013 Implement glossary index builder in `src/lib/glossaryMapper.ts` (buildGlossaryIndex, mapCrossLanguage functions per research.md)
-- [ ] T014 [P] Implement language variant generator in `src/lib/languageVariants.ts` (generateVariants for IT/FR patterns per research.md)
 - [ ] T015 [P] Implement search index builder in `src/lib/searchIndex.ts` (buildSearchIndex from treatise data, chapter indexing)
-- [ ] T016 Implement core search engine in `src/lib/searchEngine.ts` (search function with variant + cross-language matching per research.md)
-- [ ] T017 [P] Implement text highlighter utility in `src/lib/highlighter.ts` (highlightMatches function for search results)
+- [ ] T016 Implement core search engine in `src/lib/searchEngine.ts` (search function with regex/case/whole-word logic per research.md)
+- [ ] T017 [P] Implement text highlighter utility in `src/lib/highlighter.ts` (highlightMatches function supporting regex and case sensitivity)
 - [ ] T018 [P] Implement localStorage manager in `src/lib/localStorage.ts` (generic save/load/clear with size monitoring per research.md)
 - [ ] T019 Create SearchContext in `src/contexts/SearchContext.tsx` (manages search state, index, saved searches, loads glossary/treatises on mount)
 - [x] T020 [P] Create AnnotationDisplayContext in `src/contexts/AnnotationDisplayContext.tsx` (manages which annotation fields are visible, persists to localStorage per FR-021)
@@ -76,31 +76,33 @@
 
 ---
 
-## Phase 3: User Story 1 - Cross-Treatise Search with Variants (Priority: P1) 🎯 MVP
+## Phase 3: User Story 1 - Cross-Treatise Search with Classic Options (Priority: P1) 🎯 MVP
 
-**Goal**: Enable researchers to search for technique terms across all treatises with automatic variant and cross-language matching, including similar words suggestion (FR-002a)
+**Goal**: Enable researchers to search for technique terms across all treatises with precise control using Match Case, Match Whole Word, and Regex options.
 
-**Independent Test**: Type "mandritto" in search bar → See similar words chip suggestions (mandritti, coup droit, forehand cut) within 500ms (SC-011) → Press Enter → See all chapters with highlights
+**Independent Test**: Type "mandritto" in search bar → Toggle "Match Case" → See results update to show only exact matches → Press Enter → See all chapters with highlights
 
-**New Features for US1 (from spec v2.0)**:
-- **FR-002a (SC-011)**: Similar words suggestion dropdown when typing - shows glossary variants within 500ms
+**New Features for US1 (from spec v2.1)**:
+- **FR-002**: Match Case option
+- **FR-003**: Match Whole Word option
+- **FR-003a**: Regular Expression option
 - **FR-005**: Highlight search terms in displayed text
 
 **GitHub Issues**: This phase CLOSES [Issue #1](https://github.com/Manuel-Fostier/spadaLibreria/issues/1) (Refonte panneau filtres) and [Issue #21](https://github.com/Manuel-Fostier/spadaLibreria/issues/21) (Surbrillance mots recherchés)
 
 ### Implementation for User Story 1
 
-- [ ] T021 [P] [US1] Create SearchBar component in `src/components/SearchBar.tsx` (input field, similar words suggestion dropdown per FR-002a/SC-011, chips for selected terms, Enter to search) - mockup: `specs/mockups/SearchBar.md`
+- [ ] T021 [P] [US1] Create SearchBar component in `src/components/SearchBar.tsx` (input field, toggle buttons for options, Enter to search) - mockup: `specs/mockups/SearchBar.md`
 - [ ] T022 [P] [US1] Create SearchResults component in `src/components/SearchResults.tsx` (displays chapters with preview, highlight matches per FR-005, language badges IT/FR/EN, annotation badges) - mockup: `specs/mockups/SearchResults.md`
 - [ ] T023 [US1] Modify BolognesePlatform in `src/components/BolognesePlatform.tsx` to integrate SearchBar and SearchResults into left sidebar
 - [ ] T024 [US1] Add SearchContext provider to app root in `src/app/page.tsx` (wrap existing providers)
 - [ ] T025 [US1] Implement search result click navigation in BolognesePlatform (clicking result scrolls to chapter and opens it)
 - [ ] T026 [US1] Extend TextParser in `src/components/TextParser.tsx` to support highlighting search terms (add optional highlightTerms prop)
 - [ ] T027 [US1] Add keyboard shortcuts for search (Ctrl+F to focus search bar, Escape to clear search)
-- [ ] T028 [US1] Implement "No results found" state in SearchResults with suggestions for related terms from glossary
+- [ ] T028 [US1] Implement "No results found" state in SearchResults
 - [ ] T029 [US1] Modify BolognesePlatform to support smooth chapter pagination/virtualization for search results (PDF-like fluidity per FR-004b and SC-005a) - implement virtualization or lazy-loading strategy
 
-**Checkpoint**: User Story 1 complete - cross-treatise search with highlighting, similar words suggestion (500ms), and smooth PDF-like chapter navigation fully functional, Issues #1 and #21 can be closed
+**Checkpoint**: User Story 1 complete - cross-treatise search with highlighting, classic search options, and smooth PDF-like chapter navigation fully functional, Issues #1 and #21 can be closed
 
 ---
 
@@ -178,7 +180,7 @@
 
 - [ ] T051 [P] Implement import file conflict dialog in `scripts/extract-book.py` (FR-022, prompt user with Replace/Rename/Cancel options) - mockup: `specs/mockups/ImportDialog.md`
 - [ ] T052 [P] Update README.md with search feature documentation (how to use search, annotation filtering, LLM setup)
-- [ ] T053 [P] Update `.github/copilot-instructions.md` with search architecture (variant generation rules, AnnotationDisplayContext, BolognesePlatform chapter pagination)
+- [ ] T053 [P] Update `.github/copilot-instructions.md` with search architecture (search options, AnnotationDisplayContext, BolognesePlatform chapter pagination)
 - [ ] T054 Add performance monitoring for search operations (log search time, index build time, warn if >5 sec per success criteria)
 - [ ] T055 [P] Implement localStorage size warnings (monitor storage usage, warn at 4MB threshold per research.md)
 - [ ] T056 Add keyboard shortcuts documentation (in-app help tooltip showing Ctrl+F, Escape, etc.)
@@ -272,7 +274,7 @@ Phase 6: Polish & FR-022
 # Each mockup is independent of others
 
 T000 - Create mockups/ directory structure
-T001 - SearchBar.md (similar words dropdown)
+T001 - SearchBar.md (classic options toggles)
 T003 - AnnotationPanel.md (default open, highlighting, scrolling)
 T004 - AnnotationDisplay.md (configuration menu)
 T007 - MOCKUPS_SUMMARY.md (index and links)
@@ -284,12 +286,6 @@ T007 - MOCKUPS_SUMMARY.md (index and links)
 
 ### Developer A (Search Infrastructure)
 ```bash
-# T013 - Glossary mapper
-git checkout -b feat/glossary-mapper
-# implement buildGlossaryIndex, mapCrossLanguage
-# test with sample glossary terms
-git commit -m "feat: implement glossary cross-language mapping"
-
 # T015 - Search index (parallel with Dev B)
 git checkout -b feat/search-index
 # implement buildSearchIndex for treatises
@@ -298,11 +294,6 @@ git commit -m "feat: implement search index builder"
 
 ### Developer B (Utilities)
 ```bash
-# T014 - Variant generator (parallel with Dev A's T013)
-git checkout -b feat/variant-generator
-# implement generateVariants for IT/FR patterns
-git commit -m "feat: implement language variant generator"
-
 # T017 - Highlighter (parallel with Dev A's T015)
 git checkout -b feat/highlighter
 # implement highlightMatches utility
@@ -311,7 +302,7 @@ git commit -m "feat: implement text highlighter"
 
 ### Both developers then:
 ```bash
-# T016 - Search engine (requires T013, T014, T015)
+# T016 - Search engine (requires T015)
 # T019 - SearchContext (requires T016)
 # One developer implements while other does T018, T020
 ```
@@ -324,7 +315,7 @@ git commit -m "feat: implement text highlighter"
 ```bash
 # Phase 3: US1 - MVP Search
 git checkout -b feat/treatise-search
-T021 - SearchBar component (with similar words dropdown per FR-002a)
+T021 - SearchBar component (with classic options toggles)
 T022 - Integrate SearchResults display into BolognesePlatform
 T029 - Implement chapter pagination/virtualization for smooth PDF-like display
 T023 - BolognesePlatform sidebar integration
@@ -332,7 +323,7 @@ T024 - SearchContext provider
 T025-T028 - Enhancements (click nav, extend TextParser, shortcuts, no results)
 
 # Commit after each task
-git commit -m "feat: implement SearchBar with variant suggestions"
+git commit -m "feat: implement SearchBar with classic options"
 git commit -m "feat: integrate search results into BolognesePlatform with smooth pagination"
 # etc.
 ```
@@ -369,18 +360,16 @@ git commit -m "feat: implement default open AnnotationPanel with smart scrolling
 **Minimal Viable Product** = Phase 0 + Phase 1 + Phase 2 + Phase 3 (User Story 1)
 
 This delivers:
-- ✅ Cross-treatise search with variants
-- ✅ Cross-language matching via glossary
-- ✅ Similar words suggestion dropdown (FR-002a, 500ms response SC-011)
+- ✅ Cross-treatise search with classic options (Match Case, Match Whole Word, Regex)
 - ✅ Result highlighting (FR-005)
 - ✅ Closes GitHub Issues #1 and #21
 
 **Estimated effort**: 
 - Phase 0: 3-4 hours (mockups, user review)
 - Phase 1: 1-2 hours (TS types - already 3 files DONE)
-- Phase 2: 8-10 hours (complex search logic)
-- Phase 3: 6-8 hours (UI integration with similar words)
-- **Total MVP**: ~18-24 hours for single developer (or 12-16 hours with mockups pre-approved)
+- Phase 2: 4-6 hours (search logic)
+- Phase 3: 6-8 hours (UI integration)
+- **Total MVP**: ~14-20 hours for single developer (or 10-14 hours with mockups pre-approved)
 
 ### Incremental Delivery After MVP
 
@@ -407,8 +396,7 @@ After MVP (Phase 3), deliver in priority order:
 **Per constitution**: "Add tests when needed" - tests not mandatory for initial implementation
 
 **Recommended test additions** (if constitution later requires):
-- Unit tests for `languageVariants.ts` (variant generation patterns)
-- Unit tests for `glossaryMapper.ts` (cross-language mapping)
+- Unit tests for `searchEngine.ts` (regex, case sensitivity, whole word logic)
 - Integration tests for `searchEngine.ts` (search with real treatise data)
 - E2E tests for search user flows (Playwright or similar)
 
@@ -423,16 +411,14 @@ After MVP (Phase 3), deliver in priority order:
 After implementation, verify against spec.md success criteria:
 
 - [ ] **SC-001**: Search across 3 treatises completes in <5 seconds
-- [ ] **SC-002**: Variants and cross-language terms found automatically (test "mandritto" → finds "mandritti", "coup droit", "forehand cut")
+- [ ] **SC-002**: Search respects "Match Case", "Match Whole Word", and "Regular Expression" settings correctly
 - [ ] **SC-003**: BolognesePlatform updates with matching chapters within 1 second of search execution
 - [ ] **SC-004**: Annotations persist across sessions (100% reliability for YAML storage)
 - [ ] **SC-005**: Tag filtering of 50+ results in <3 seconds
 - [ ] **SC-005a**: Smooth chapter navigation between search results matches PDF reading fluidity
 - [ ] **SC-006**: LLM responses in <10 seconds (P3 only)
 - [ ] **SC-007**: 500+ annotations without performance degradation (no saved searches storage)
-- [ ] **SC-008**: 90%+ recall for technique terms (manual validation with known terms)
 - [ ] **SC-009**: Annotate chapter with 3 tags including sword condition in <30 seconds
-- [ ] **SC-011**: Similar word suggestions appear in dropdown within 500ms
 - [ ] **SC-012**: Annotation panel scroll tracking <100ms latency
 
 ---
