@@ -109,6 +109,7 @@ mandritto:
 ## Personnalisation
 
 ### Ajouter un nouveau traité
+Les pdf de Marozzo et Manciolino peuvent être parcouru avec le script `extract_book.py`.
 #TODO expliqué comment utiliser le script extract-first-line
 
 ### Ajouter des termes au glossaire
