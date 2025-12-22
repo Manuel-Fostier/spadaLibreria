@@ -25,7 +25,8 @@ data/
 ├── glossary.yaml  # Glossary terms with FR/EN definitions
 └── treatises/     # YAML files containing treatise sections
 scripts/
-└── extract_book.py  # Python script for extracting text from PDFs
+├── extract_book.py  # Python script for extracting text from PDFs
+└── yaml_annotate.py # Python script for adding annotations and glossary links
 ```
 
 ## Key Architecture Principles
@@ -50,7 +51,8 @@ npm run lint   # Run ESLint
 ```bash
 uv sync                    # Synchronize Python dependencies
 uv add <package>           # Add a new Python dependency
-uv run extract-book        # Run the extraction script
+uv run scripts/extract_book.py   # Run the extraction script
+uv run scripts/yaml_annotate.py  # Run the annotation script
 ```
 
 ## Code Style Guidelines
