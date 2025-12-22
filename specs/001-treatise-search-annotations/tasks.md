@@ -93,13 +93,12 @@
 ### Implementation for User Story 1
 
 - [ ] T021 [P] [US1] Create SearchBar component in `src/components/SearchBar.tsx` (input field, toggle buttons for options, Enter to search) - mockup: `specs/mockups/SearchBar.md`
-- [ ] T022 [P] [US1] Create SearchResults component in `src/components/SearchResults.tsx` (displays chapters with preview, highlight matches per FR-005, language badges IT/FR/EN, annotation badges) - mockup: `specs/mockups/SearchResults.md`
-- [ ] T023 [US1] Modify BolognesePlatform in `src/components/BolognesePlatform.tsx` to integrate SearchBar and SearchResults into left sidebar
+- [ ] T023 [US1] Modify BolognesePlatform in `src/components/BolognesePlatform.tsx` to integrate SearchBar and display matching chapters directly (pagination/virtualization) - NO separate SearchResults component
 - [ ] T024 [US1] Add SearchContext provider to app root in `src/app/page.tsx` (wrap existing providers)
 - [ ] T025 [US1] Implement search result click navigation in BolognesePlatform (clicking result scrolls to chapter and opens it)
 - [ ] T026 [US1] Extend TextParser in `src/components/TextParser.tsx` to support highlighting search terms (add optional highlightTerms prop)
 - [ ] T027 [US1] Add keyboard shortcuts for search (Ctrl+F to focus search bar, Escape to clear search)
-- [ ] T028 [US1] Implement "No results found" state in SearchResults
+- [ ] T028 [US1] Implement "No results found" state in BolognesePlatform
 - [ ] T029 [US1] Modify BolognesePlatform to support smooth chapter pagination/virtualization for search results (PDF-like fluidity per FR-004b and SC-005a) - implement virtualization or lazy-loading strategy
 
 **Checkpoint**: User Story 1 complete - cross-treatise search with highlighting, classic search options, and smooth PDF-like chapter navigation fully functional, Issues #1 and #21 can be closed
@@ -228,7 +227,7 @@ Phase 6: Polish & FR-022
 
 **US1 (Search)**:
 1. Phase 0: T001 mockup
-2. Phase 3: T021, T022, T029 (search bar, search results integration, BolognesePlatform pagination) 
+2. Phase 3: T021, T029 (search bar, BolognesePlatform pagination) 
 3. T023-T028 sequential after components complete
 
 **US2 (Annotations)**:
@@ -255,7 +254,7 @@ Phase 6: Polish & FR-022
 - T019 depends on T016
 
 **US1 Single-Track** (after Phase 2):
-- T021, T022, T029 (SearchBar, SearchResults, BolognesePlatform pagination)
+- T021, T029 (SearchBar, BolognesePlatform pagination)
 - Sequential T023-T028 (integration and enhancements)
 
 **US2 Single-Track** (can start in parallel with US1):
@@ -316,7 +315,6 @@ git commit -m "feat: implement text highlighter"
 # Phase 3: US1 - MVP Search
 git checkout -b feat/treatise-search
 T021 - SearchBar component (with classic options toggles)
-T022 - Integrate SearchResults display into BolognesePlatform
 T029 - Implement chapter pagination/virtualization for smooth PDF-like display
 T023 - BolognesePlatform sidebar integration
 T024 - SearchContext provider
