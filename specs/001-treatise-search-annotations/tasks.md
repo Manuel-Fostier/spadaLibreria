@@ -65,11 +65,11 @@
 
 **⚠️ CRITICAL**: No search functionality can work until this phase is complete
 
-- [ ] T015 [P] Implement search index builder in `src/lib/searchIndex.ts` (buildSearchIndex from treatise data, chapter indexing)
-- [ ] T016 Implement core search engine in `src/lib/searchEngine.ts` (search function with regex/case/whole-word logic per research.md)
-- [ ] T017 [P] Implement text highlighter utility in `src/lib/highlighter.ts` (highlightMatches function supporting regex and case sensitivity)
-- [ ] T018 [P] Implement localStorage manager in `src/lib/localStorage.ts` (generic save/load/clear with size monitoring per research.md)
-- [ ] T019 Create SearchContext in `src/contexts/SearchContext.tsx` (manages search state, index, saved searches, loads glossary/treatises on mount)
+- [x] T015 [P] Implement search index builder in `src/lib/searchIndex.ts` (buildSearchIndex from treatise data, chapter indexing)
+- [x] T016 Implement core search engine in `src/lib/searchEngine.ts` (search function with regex/case/whole-word logic per research.md)
+- [x] T017 [P] Implement text highlighter utility in `src/lib/highlighter.ts` (highlightMatches function supporting regex and case sensitivity)
+- [x] T018 [P] Implement localStorage manager in `src/lib/localStorage.ts` (generic save/load/clear with size monitoring per research.md)
+- [x] T019 Create SearchContext in `src/contexts/SearchContext.tsx` (manages search state, index, saved searches, loads glossary/treatises on mount)
 - [x] T020 [P] Create AnnotationDisplayContext in `src/contexts/AnnotationDisplayContext.tsx` (manages which annotation fields are visible, persists to localStorage per FR-021)
 
 **Checkpoint**: Foundation ready - search can now be implemented in components; annotation configuration infrastructure in place

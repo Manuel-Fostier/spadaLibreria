@@ -36,6 +36,8 @@ export interface SearchQuery {
   queryText: string;
   /** Timestamp when search was created */
   timestamp: Date;
+  /** Search options used */
+  options: SearchOptions;
   /** Generated word variants (e.g., ["mandritti", "mandriti"]) - per research.md */
   variants: string[];
   /**
@@ -125,6 +127,12 @@ export interface SearchOptions {
   includeVariants?: boolean;
   /** Include cross-language matches (enabled by default per spec) */
   includeCrossLanguage?: boolean;
+  /** Match exact case */
+  matchCase?: boolean;
+  /** Match whole word only */
+  matchWholeWord?: boolean;
+  /** Treat query as regular expression */
+  useRegex?: boolean;
 }
 
 /**
@@ -139,3 +147,4 @@ export interface SearchResultSet {
   /** True if results were truncated due to maxResults limit */
   truncated: boolean;
 }
+
