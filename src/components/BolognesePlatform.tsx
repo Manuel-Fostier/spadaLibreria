@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { BookOpen, ChevronRight, ChevronDown, MessageSquare, Settings } from 'lucide-react';
 import TextParser from './TextParser';
 import AnnotationPanel from './AnnotationPanel';
@@ -75,6 +75,11 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   const { displayConfig } = useAnnotationDisplay();
   const { results, lastQuery } = useSearch();
 
+  // --- VIRTUALIZATION / PAGINATION STATE ---
+  // We only render a subset of chapters to keep the page fast (like lazy loading images)
+  const [visibleCount, setVisibleCount] = useState(10); // Start with 10 chapters
+  const observerTarget = useRef<HTMLDivElement>(null); // The invisible line at the bottom
+
   const handleTranslatorChange = (sectionId: string, translatorName: string) => {
     setTranslatorPreferences(prev => ({
       ...prev,
@@ -101,6 +106,35 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
       return false;
     });
   }, [selectedWeapon, treatiseData, getAnnotation, results]);
+
+  // Reset to top when the content changes (new search or filter)
+  useEffect(() => {
+    setVisibleCount(10);
+    // Optional: Scroll to top if needed, but usually browser handles this on content change
+    // window.scrollTo(0, 0); 
+  }, [filteredContent]);
+
+  // "Infinite Scroll" logic: Watch for the bottom of the list
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          // When the bottom is visible, load 10 more items
+          setVisibleCount((prev) => Math.min(prev + 10, filteredContent.length));
+        }
+      },
+      { threshold: 0.1, rootMargin: '100px' } // Load a bit before reaching the exact bottom
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => observer.disconnect();
+  }, [filteredContent.length]);
+
+  const visibleSections = filteredContent.slice(0, visibleCount);
+  // -----------------------------------------
 
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans flex flex-col md:flex-row antialiased">
@@ -345,6 +379,11 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                 </div>
               );
             })}
+
+            {/* Sentinel for infinite scroll */}
+            <div ref={observerTarget} className="h-10 w-full flex items-center justify-center text-gray-300 text-xs">
+              {visibleCount < filteredContent.length && "Chargement..."}
+            </div>
           </div>
         </div>
       </main>
