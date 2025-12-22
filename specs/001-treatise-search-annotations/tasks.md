@@ -49,7 +49,7 @@
 
 **Purpose**: Create new type definitions, contexts, and component scaffolding
 
-- [x] T008 Create TypeScript interfaces for search in `src/types/search.ts` (SearchQuery with options, SearchResult, SearchIndex, ChapterReference)
+- [x] T008 Create TypeScript interfaces for search in `src/types/search.ts` (SearchQuery with options, SearchIndex, ChapterReference)
 - [x] T009 [REMOVED] Create TypeScript interfaces for saved searches (SavedSearch, SavedSearchStorage) - Feature removed
 - [x] T010 [P] Create TypeScript interfaces for annotation display config in `src/types/annotationDisplay.ts` (AnnotationDisplay with 7 configurable fields)
 - [x] T011 [P] Create LLM types in `src/types/llm.ts` (LLMRequest, LLMResponse, LLMConfig) for P4 foundation
@@ -92,13 +92,12 @@
 
 ### Implementation for User Story 1
 
-- [ ] T021 [P] [US1] Create SearchBar component in `src/components/SearchBar.tsx` (input field, toggle buttons for options, Enter to search) - mockup: `specs/mockups/SearchBar.md`
-- [ ] T023 [US1] Modify BolognesePlatform in `src/components/BolognesePlatform.tsx` to integrate SearchBar and display matching chapters directly (pagination/virtualization) - NO separate SearchResults component
-- [ ] T024 [US1] Add SearchContext provider to app root in `src/app/page.tsx` (wrap existing providers)
-- [ ] T025 [US1] Implement search result click navigation in BolognesePlatform (clicking result scrolls to chapter and opens it)
-- [ ] T026 [US1] Extend TextParser in `src/components/TextParser.tsx` to support highlighting search terms (add optional highlightTerms prop)
+- [x] T021 [P] [US1] Create SearchBar component in `src/components/SearchBar.tsx` (input field, toggle buttons for options, Enter to search) - mockup: `specs/mockups/SearchBar.md`
+- [x] T023 [US1] Modify BolognesePlatform in `src/components/BolognesePlatform.tsx` to integrate SearchBar and display matching chapters directly (pagination/virtualization) - NO separate SearchResults component
+- [x] T024 [US1] Add SearchContext provider to app root in `src/app/page.tsx` (wrap existing providers)
+- [ ] T026 [US1] Extend TextParser in `src/components/TextParser.tsx` to support highlighting search terms (add optional highlightTerms prop) - Will close issue #21
 - [ ] T027 [US1] Add keyboard shortcuts for search (Ctrl+F to focus search bar, Escape to clear search)
-- [ ] T028 [US1] Implement "No results found" state in BolognesePlatform
+- [x] T028 [US1] Implement "No results found" state in BolognesePlatform
 - [ ] T029 [US1] Modify BolognesePlatform to support smooth chapter pagination/virtualization for search results (PDF-like fluidity per FR-004b and SC-005a) - implement virtualization or lazy-loading strategy
 
 **Checkpoint**: User Story 1 complete - cross-treatise search with highlighting, classic search options, and smooth PDF-like chapter navigation fully functional, Issues #1 and #21 can be closed
@@ -127,7 +126,7 @@
 
 ### Implementation for User Story 2
 
-- [ ] T030 [P] [US2] Create TagFilter component in `src/components/TagFilter.tsx` (dual-filter interface: annotation metadata dropdowns for weapons/guards/techniques/weapon_type AND treatise metadata dropdowns for master/work/book/year)
+- [ ] T030 [P] [US2] Create TagFilter component in `src/components/TagFilter.tsx` (dual-filter interface: annotation metadata dropdowns for weapons/guards/techniques/weapon_type AND treatise metadata dropdowns for master/work/book/year) - NOTE: Delete existing basic weapon filter in BolognesePlatform.tsx when implementing this
 - [ ] T031 [US2] Add filter methods to AnnotationContext in `src/contexts/AnnotationContext.tsx` (filterByWeapons, filterByGuards, filterByTechniques, filterByMetadata, getUniqueTags, getMetadataValues)
 - [ ] T032 [US2] Modify AnnotationPanel default state in `src/components/AnnotationPanel.tsx` to open by default (FR-012) - mockup: `specs/mockups/AnnotationPanel.md`
 - [ ] T033 [US2] Implement annotation button highlighting in BolognesePlatform (active state when panel is open per FR-012a) - mockup: `specs/mockups/AnnotationPanel.md`
@@ -138,7 +137,6 @@
 - [x] T038 [US2] Integrate AnnotationDisplaySettings into UI (settings button/menu, apply configuration to chapter annotations)
 - [ ] T039 [US2] Integrate TagFilter into BolognesePlatform component (both annotation AND metadata filters applied to search results with cumulative AND logic across all categories)
 - [ ] T040 [US2] Implement annotation badge indicators in BolognesePlatform (show which chapters have annotations, display tag counts)
-- [ ] T041 [US2] Add "Show only annotated chapters" toggle in search UI (quick filter for chapters with any annotation)
 - [ ] T042 [US2] Implement multi-tag filtering (select multiple weapons/guards/techniques, use OR within category, AND across categories)
 
 **Checkpoint**: User Story 2 complete - annotation panel enhanced with default open state, highlighting, smart scrolling, sword condition, and configuration menu; search results can be filtered by annotation metadata

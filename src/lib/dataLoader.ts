@@ -4,7 +4,7 @@ import yaml from 'js-yaml';
 import { Annotation, MEASURES, STRATEGIES } from '@/lib/annotation';
 import { GlossaryData, TreatiseSection, GlossaryEntry, EnglishVersion } from '@/types/data';
 
-export { GlossaryData, TreatiseSection, GlossaryEntry, EnglishVersion };
+export type { GlossaryData, TreatiseSection, GlossaryEntry, EnglishVersion };
 
 export function loadGlossary(): GlossaryData {
   const filePath = path.join(process.cwd(), 'data', 'glossary.yaml');

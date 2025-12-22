@@ -2,6 +2,7 @@ import BolognesePlatform from '@/components/BolognesePlatform';
 import { loadGlossary, loadAllTreatises, Annotation } from '@/lib/dataLoader';
 import { AnnotationProvider } from '@/contexts/AnnotationContext';
 import { AnnotationDisplayProvider } from '@/contexts/AnnotationDisplayContext';
+import { SearchProvider } from '@/contexts/SearchContext';
 import './globals.css';
 
 export default function Home() {
@@ -19,10 +20,12 @@ export default function Home() {
   return (
     <AnnotationDisplayProvider>
       <AnnotationProvider initialAnnotations={initialAnnotations}>
-        <BolognesePlatform 
-          glossaryData={glossaryData} 
-          treatiseData={treatiseData} 
-        />
+        <SearchProvider treatiseData={treatiseData} glossaryData={glossaryData}>
+          <BolognesePlatform 
+            glossaryData={glossaryData} 
+            treatiseData={treatiseData} 
+          />
+        </SearchProvider>
       </AnnotationProvider>
     </AnnotationDisplayProvider>
   );

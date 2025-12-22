@@ -10,6 +10,8 @@ import { Annotation, Weapon } from '@/lib/annotation';
 import { useAnnotationDisplay } from '@/contexts/AnnotationDisplayContext';
 import { AnnotationDisplay } from '@/types/annotationDisplay';
 import AnnotationDisplaySettings from './AnnotationDisplaySettings';
+import SearchBar from './SearchBar';
+import { useSearch } from '@/contexts/SearchContext';
 
 interface BolognesePlatformProps {
   glossaryData: { [key: string]: GlossaryEntry };
@@ -71,6 +73,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   const [showEnglish, setShowEnglish] = useState(false);
   const [showDisplaySettings, setShowDisplaySettings] = useState(false);
   const { displayConfig } = useAnnotationDisplay();
+  const { results } = useSearch();
 
   const handleTranslatorChange = (sectionId: string, translatorName: string) => {
     setTranslatorPreferences(prev => ({
@@ -80,6 +83,11 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   };
 
   const filteredContent = useMemo(() => {
+    if (results) {
+      const matchingIds = new Set(results.results.map(r => r.chapterReference.chapterId));
+      return treatiseData.filter(item => matchingIds.has(item.id));
+    }
+
     return treatiseData.filter(item => {
       if (selectedWeapon === 'all') return true;
       
@@ -92,7 +100,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
       // No annotation, hide from filtered results
       return false;
     });
-  }, [selectedWeapon, treatiseData, getAnnotation]);
+  }, [selectedWeapon, treatiseData, getAnnotation, results]);
 
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans flex flex-col md:flex-row antialiased">
@@ -108,6 +116,10 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-8">
+          <div className="mb-6">
+            <SearchBar />
+          </div>
+
           <div>
             <h3 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-4">Filtres</h3>
             <div className="space-y-1">
@@ -186,6 +198,13 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
         <div className="flex-1 overflow-y-auto bg-white">
           <div className="max-w-7xl mx-auto p-8 lg:p-12 space-y-12">
             
+            {filteredContent.length === 0 && results && (
+              <div className="text-center py-12 text-gray-500">
+                <p className="text-lg font-medium">Aucun résultat trouvé</p>
+                <p className="text-sm">Essayez d'autres termes de recherche.</p>
+              </div>
+            )}
+
             {filteredContent.map((section) => {
               const englishVersions = section.content.en_versions || [];
               const selectedTransName = englishVersions.length > 0 
