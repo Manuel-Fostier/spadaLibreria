@@ -96,7 +96,6 @@
 - [x] T023 [US1] Modify BolognesePlatform in `src/components/BolognesePlatform.tsx` to integrate SearchBar and display matching chapters directly (pagination/virtualization) - NO separate SearchResults component
 - [x] T024 [US1] Add SearchContext provider to app root in `src/app/page.tsx` (wrap existing providers)
 - [x] T026 [US1] Extend TextParser in `src/components/TextParser.tsx` to support highlighting search terms (add optional highlightTerms prop) - Will close issue #21
-- [ ] T027 [US1] Add keyboard shortcuts for search (Ctrl+F to focus search bar, Escape to clear search)
 - [x] T028 [US1] Implement "No results found" state in BolognesePlatform
 - [ ] T029 [US1] Modify BolognesePlatform to support smooth chapter pagination/virtualization for search results (PDF-like fluidity per FR-004b and SC-005a) - implement virtualization or lazy-loading strategy
 
@@ -180,10 +179,8 @@
 - [ ] T053 [P] Update `.github/copilot-instructions.md` with search architecture (search options, AnnotationDisplayContext, BolognesePlatform chapter pagination)
 - [ ] T054 Add performance monitoring for search operations (log search time, index build time, warn if >5 sec per success criteria)
 - [ ] T055 [P] Implement localStorage size warnings (monitor storage usage, warn at 4MB threshold per research.md)
-- [ ] T056 Add keyboard shortcuts documentation (in-app help tooltip showing Ctrl+F, Escape, etc.)
 - [ ] T057 [P] Add loading states for all async operations (search index building, LLM responses, annotation saves)
 - [ ] T058 Optimize search index build performance (lazy loading, chunked processing if needed for scale)
-- [ ] T059 [P] Add accessibility improvements (ARIA labels for search components, keyboard navigation for results, screen reader support)
 - [ ] T060 Code review and refactoring (extract common patterns, remove duplication, ensure TypeScript strict mode compliance)
 - [ ] T061 Validate all success criteria from spec.md against implementation (SC-001 through SC-012)
 - [ ] T062 [P] [FR-023] Localize SearchBar/BolognesePlatform copy to French (`src/components/SearchBar.tsx`, `src/components/BolognesePlatform.tsx`)

@@ -418,8 +418,7 @@ After completing Phase 1 design:
 ✅ **Content separation**: Annotations stored in YAML files via API (follows existing pattern), not in localStorage  
 ✅ **Local-only**: LLM via local API (LM Studio/Ollama); no external calls; no saved searches persistence required  
 ✅ **Beginner-friendly**: Using standard React patterns; no complex libraries (no Lunr.js, etc.)  
-✅ **Quality**: Search does not break existing glossary links; client-side processing respects server/client boundaries  
-✅ **Accessibility**: Search UI will use semantic HTML; keyboard shortcuts for common actions
+✅ **Quality**: Search does not break existing glossary links; client-side processing respects server/client boundaries
 
 **PASS**: Design maintains constitution compliance. Removed saved searches feature (User Story 2) eliminates need for localStorage persistence strategy.
 
