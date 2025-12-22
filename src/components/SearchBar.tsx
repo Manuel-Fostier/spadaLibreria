@@ -42,6 +42,42 @@ export default function SearchBar() {
     }
   };
 
+  const toggleMatchCase = () => {
+    const newValue = !matchCase;
+    setMatchCase(newValue);
+    if (searchText.trim()) {
+      performSearch(searchText, {
+        matchCase: newValue,
+        matchWholeWord: wholeWord,
+        useRegex
+      });
+    }
+  };
+
+  const toggleWholeWord = () => {
+    const newValue = !wholeWord;
+    setWholeWord(newValue);
+    if (searchText.trim()) {
+      performSearch(searchText, {
+        matchCase,
+        matchWholeWord: newValue,
+        useRegex
+      });
+    }
+  };
+
+  const toggleRegex = () => {
+    const newValue = !useRegex;
+    setUseRegex(newValue);
+    if (searchText.trim()) {
+      performSearch(searchText, {
+        matchCase,
+        matchWholeWord: wholeWord,
+        useRegex: newValue
+      });
+    }
+  };
+
   return (
     <div className="w-full">
       <div className="relative flex items-center">
@@ -70,7 +106,7 @@ export default function SearchBar() {
           )}
 
           <button
-            onClick={() => setMatchCase(!matchCase)}
+            onClick={toggleMatchCase}
             className={`w-6 h-6 flex items-center justify-center rounded text-xs font-bold transition-colors ${
               matchCase 
                 ? 'bg-indigo-100 text-indigo-700' 
@@ -81,7 +117,7 @@ export default function SearchBar() {
             Aa
           </button>
           <button
-            onClick={() => setWholeWord(!wholeWord)}
+            onClick={toggleWholeWord}
             className={`w-6 h-6 flex items-center justify-center rounded text-xs font-bold transition-colors ${
               wholeWord 
                 ? 'bg-indigo-100 text-indigo-700' 
@@ -92,7 +128,7 @@ export default function SearchBar() {
             <span className="underline">ab</span>
           </button>
           <button
-            onClick={() => setUseRegex(!useRegex)}
+            onClick={toggleRegex}
             className={`w-6 h-6 flex items-center justify-center rounded text-xs font-bold transition-colors ${
               useRegex 
                 ? 'bg-indigo-100 text-indigo-700' 

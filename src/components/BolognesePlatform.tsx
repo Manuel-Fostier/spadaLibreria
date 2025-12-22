@@ -73,7 +73,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   const [showEnglish, setShowEnglish] = useState(false);
   const [showDisplaySettings, setShowDisplaySettings] = useState(false);
   const { displayConfig } = useAnnotationDisplay();
-  const { results } = useSearch();
+  const { results, lastQuery } = useSearch();
 
   const handleTranslatorChange = (sectionId: string, translatorName: string) => {
     setTranslatorPreferences(prev => ({
@@ -267,7 +267,11 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                           Italien (original)
                         </h4>
                         <div className="text-gray-800 font-medium font-serif text-base">
-                          <TextParser text={section.content.it} glossaryData={glossaryData} />
+                          <TextParser 
+                            text={section.content.it} 
+                            glossaryData={glossaryData} 
+                            highlightQuery={lastQuery}
+                          />
                         </div>
                       </div>
                     )}
@@ -278,7 +282,11 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                         Français
                       </h4>
                       <div className="text-gray-600 leading-relaxed whitespace-pre-line text-justify">
-                        <TextParser text={section.content.fr} glossaryData={glossaryData} />
+                        <TextParser 
+                          text={section.content.fr} 
+                          glossaryData={glossaryData} 
+                          highlightQuery={lastQuery}
+                        />
                       </div>
                     </div>
 
@@ -321,7 +329,11 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                       
                         <div className="text-gray-600">
                           {activeTranslation ? (
-                            <TextParser text={activeTranslation.text} glossaryData={glossaryData} />
+                            <TextParser 
+                              text={activeTranslation.text} 
+                              glossaryData={glossaryData} 
+                              highlightQuery={lastQuery}
+                            />
                           ) : (
                             <p className="text-gray-400 italic">Traduction non disponible</p>
                           )}

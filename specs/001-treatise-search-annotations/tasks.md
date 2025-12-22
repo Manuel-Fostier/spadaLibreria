@@ -95,7 +95,7 @@
 - [x] T021 [P] [US1] Create SearchBar component in `src/components/SearchBar.tsx` (input field, toggle buttons for options, Enter to search) - mockup: `specs/mockups/SearchBar.md`
 - [x] T023 [US1] Modify BolognesePlatform in `src/components/BolognesePlatform.tsx` to integrate SearchBar and display matching chapters directly (pagination/virtualization) - NO separate SearchResults component
 - [x] T024 [US1] Add SearchContext provider to app root in `src/app/page.tsx` (wrap existing providers)
-- [ ] T026 [US1] Extend TextParser in `src/components/TextParser.tsx` to support highlighting search terms (add optional highlightTerms prop) - Will close issue #21
+- [x] T026 [US1] Extend TextParser in `src/components/TextParser.tsx` to support highlighting search terms (add optional highlightTerms prop) - Will close issue #21
 - [ ] T027 [US1] Add keyboard shortcuts for search (Ctrl+F to focus search bar, Escape to clear search)
 - [x] T028 [US1] Implement "No results found" state in BolognesePlatform
 - [ ] T029 [US1] Modify BolognesePlatform to support smooth chapter pagination/virtualization for search results (PDF-like fluidity per FR-004b and SC-005a) - implement virtualization or lazy-loading strategy
