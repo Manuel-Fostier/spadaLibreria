@@ -91,7 +91,7 @@ A researcher studying a complex technique wants contextual help. After selecting
 - **FR-004b**: BolognesePlatform MUST display multiple matching chapters with smooth scrolling/pagination experience equivalent to reading a PDF
 - **FR-005**: System MUST highlight search terms in displayed chapter text
 - **FR-009**: Users MUST be able to add annotations (text notes + tags) to any chapter, including sword condition enum (sharp/blunt)
-- **FR-010**: System MUST persist annotations across sessions in local storage
+- **FR-010**: System MUST persist annotations across sessions locally (YAML)
 - **FR-011**: Users MUST be able to filter search results by annotation tags (weapons, guards, techniques, sword condition)
 - **FR-011a**: Users MUST be able to filter search results by treatise metadata (master, work, book, year)
 - **FR-012**: System MUST display all annotations for a chapter when viewing that chapter, with annotation panel open by default
@@ -103,7 +103,7 @@ A researcher studying a complex technique wants contextual help. After selecting
 - **FR-016**: System MUST NOT send any data to external services (privacy constraint)
 - **FR-017**: Search results MUST indicate which language version(s) contain matches (IT/FR/EN badges)
 - **FR-018**: System MUST support multi-word phrase searches (e.g., "coda longa e alta")
-- **FR-019**: Users MUST be able to view a list of all their annotations across all chapters
+- [REMOVED] FR-019: Users MUST be able to view a list of all their annotations across all chapters
 - **FR-020**: System MUST maintain referential integrity between annotations and treatise chapters by chapter ID
 - **FR-021**: System MUST provide a configuration menu allowing users to define which annotation fields to display under chapter titles
 - **FR-022**: System MUST handle import script file conflicts by prompting user to replace, rename, or cancel when output file already exists

@@ -50,7 +50,7 @@
 **Purpose**: Create new type definitions, contexts, and component scaffolding
 
 - [x] T008 Create TypeScript interfaces for search in `src/types/search.ts` (SearchQuery with options, SearchResult, SearchIndex, ChapterReference)
-- [x] T009 [P] Create TypeScript interfaces for saved searches in `src/types/savedSearch.ts` (SavedSearch, SavedSearchStorage)
+- [x] T009 [REMOVED] Create TypeScript interfaces for saved searches (SavedSearch, SavedSearchStorage) - Feature removed
 - [x] T010 [P] Create TypeScript interfaces for annotation display config in `src/types/annotationDisplay.ts` (AnnotationDisplay with 7 configurable fields)
 - [x] T011 [P] Create LLM types in `src/types/llm.ts` (LLMRequest, LLMResponse, LLMConfig) for P4 foundation
 - [x] T012 [P] Extend Annotation type in `src/types/annotation.ts` to include weapon_type enum field (Epée aiguisée | Epée émoussée | null)
@@ -137,8 +137,8 @@
 - [x] T036 [US2] Create AnnotationDisplaySettings component in `src/components/AnnotationDisplaySettings.tsx` (configuration menu with 7 checkboxes per FR-021) - mockup: `specs/mockups/AnnotationDisplay.md`
 - [x] T037 [US2] Implement AnnotationDisplayContext persistence (read/write config to localStorage per FR-021)
 - [x] T038 [US2] Integrate AnnotationDisplaySettings into UI (settings button/menu, apply configuration to chapter annotations)
-- [ ] T039 [US2] Integrate TagFilter into SearchResults component (both annotation AND metadata filters applied to search results with cumulative AND logic across all categories)
-- [ ] T040 [US2] Implement annotation badge indicators in SearchResults (show which chapters have annotations, display tag counts)
+- [ ] T039 [US2] Integrate TagFilter into BolognesePlatform component (both annotation AND metadata filters applied to search results with cumulative AND logic across all categories)
+- [ ] T040 [US2] Implement annotation badge indicators in BolognesePlatform (show which chapters have annotations, display tag counts)
 - [ ] T041 [US2] Add "Show only annotated chapters" toggle in search UI (quick filter for chapters with any annotation)
 - [ ] T042 [US2] Implement multi-tag filtering (select multiple weapons/guards/techniques, use OR within category, AND across categories)
 
@@ -189,7 +189,7 @@
 - [ ] T059 [P] Add accessibility improvements (ARIA labels for search components, keyboard navigation for results, screen reader support)
 - [ ] T060 Code review and refactoring (extract common patterns, remove duplication, ensure TypeScript strict mode compliance)
 - [ ] T061 Validate all success criteria from spec.md against implementation (SC-001 through SC-012)
-- [ ] T062 [P] [FR-023] Localize SearchBar/SearchResults copy to French (`src/components/SearchBar.tsx`, `src/components/SearchResults.tsx`)
+- [ ] T062 [P] [FR-023] Localize SearchBar/BolognesePlatform copy to French (`src/components/SearchBar.tsx`, `src/components/BolognesePlatform.tsx`)
 - [ ] T063 [P] [FR-023] Localize annotation UI copy (AnnotationPanel, AnnotationDisplaySettings, TagFilter, settings tooltips) to French per spec
 - [ ] T064 [P] [FR-023] Update import dialog UI/doc text to French and mention French browser preview titles under `specs/.../mockups/pages`
 
