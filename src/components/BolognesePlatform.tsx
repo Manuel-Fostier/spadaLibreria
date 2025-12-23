@@ -68,6 +68,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   const [selectedWeapon, setSelectedWeapon] = useState('all');
   const [translatorPreferences, setTranslatorPreferences] = useState<{ [key: string]: string }>({});
   const [annotationSection, setAnnotationSection] = useState<string | null>(null);
+  const [isPanelOpen, setIsPanelOpen] = useState(true); // FR-012: Default open
   const { getAnnotation } = useAnnotations();
   const [showItalian, setShowItalian] = useState(false);
   const [showEnglish, setShowEnglish] = useState(false);
@@ -98,14 +99,64 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
       
       // Check annotation weapons
       const annotation = getAnnotation(item.id);
-      if (annotation && annotation.weapons) {
-        return annotation.weapons.includes(selectedWeapon as Weapon);
-      }
+      if (!annotation || !annotation.weapons) return false;
       
-      // No annotation, hide from filtered results
-      return false;
+      return annotation.weapons.includes(selectedWeapon as Weapon);
     });
-  }, [selectedWeapon, treatiseData, getAnnotation, results]);
+  }, [results, treatiseData, selectedWeapon, getAnnotation]);
+
+  // Initialize annotation section (FR-012)
+  useEffect(() => {
+    if (!annotationSection && filteredContent.length > 0) {
+      setAnnotationSection(filteredContent[0].id);
+    }
+  }, [filteredContent, annotationSection]);
+
+  // FR-012b / SC-012: Smart scrolling
+  useEffect(() => {
+    if (!isPanelOpen) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Find the entry closest to the center of the viewport
+        const center = window.innerHeight / 2;
+        let closestEntry: IntersectionObserverEntry | null = null;
+        let minDistance = Infinity;
+
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const rect = entry.boundingClientRect;
+            const entryCenter = rect.top + rect.height / 2;
+            const distance = Math.abs(center - entryCenter);
+            
+            if (distance < minDistance) {
+              minDistance = distance;
+              closestEntry = entry;
+            }
+          }
+        });
+
+        if (closestEntry) {
+          const sectionId = (closestEntry as IntersectionObserverEntry).target.getAttribute('data-section-id');
+          if (sectionId) {
+            setAnnotationSection(sectionId);
+          }
+        }
+      },
+      { 
+        threshold: [0, 0.25, 0.5, 0.75, 1],
+        rootMargin: '-40% 0px -40% 0px' // Focus on the center band
+      }
+    );
+
+    // Observe all section elements
+    const sections = document.querySelectorAll('[data-section-id]');
+    sections.forEach(section => observer.observe(section));
+
+    return () => observer.disconnect();
+  }, [filteredContent, isPanelOpen]);
+
+
 
   // Reset to top when the content changes (new search or filter)
   useEffect(() => {
@@ -249,7 +300,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                 : null;
 
               return (
-                <div key={section.id} className="group">
+                <div key={section.id} className="group" data-section-id={section.id}>
                   
                   {/* Section Header */}
                   <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 pb-4 border-b border-gray-100 gap-4">
@@ -262,8 +313,15 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                     
                     {/* Bouton d'annotation */}
                     <button
-                      onClick={() => setAnnotationSection(annotationSection === section.id ? null : section.id)}
-                      className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors text-xs font-medium flex items-center gap-1.5"
+                      onClick={() => {
+                        setAnnotationSection(section.id);
+                        setIsPanelOpen(true);
+                      }}
+                      className={`px-3 py-1.5 rounded-lg transition-colors text-xs font-medium flex items-center gap-1.5 ${
+                        isPanelOpen && annotationSection === section.id
+                          ? 'bg-sky-600 text-white font-semibold'
+                          : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                      }`}
                       title="Gérer les annotations"
                     >
                       <MessageSquare size={14} />
@@ -389,10 +447,10 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
       </main>
 
       {/* Panneau d'annotations */}
-      {annotationSection && (
+      {isPanelOpen && annotationSection && (
         <AnnotationPanel
           sectionId={annotationSection}
-          onClose={() => setAnnotationSection(null)}
+          onClose={() => setIsPanelOpen(false)}
         />
       )}
     </div>

@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { X, Plus, Edit2, Save, ChevronRight, Check, MessageSquare } from 'lucide-react';
-import { MEASURES, STRATEGIES, WEAPONS, GUARDS, WEAPON_TYPES } from '@/lib/annotation';
+import { MEASURES, STRATEGIES, WEAPONS, GUARDS, WEAPON_TYPES, Measure } from '@/lib/annotation';
 import { useAnnotations } from '@/contexts/AnnotationContext';
 import MeasureProgressBar from './MeasureProgressBar';
 
@@ -81,6 +81,12 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
   
   const panelRef = useRef<HTMLDivElement>(null);
   const resizeRef = useRef<HTMLDivElement>(null);
+
+  // Reset editing state when section changes (Smart Scrolling safety)
+  useEffect(() => {
+    setIsEditing(false);
+    setSaveStatus('idle');
+  }, [sectionId]);
 
   // Handle auto-save on close
   const handleClose = useCallback(async () => {

@@ -53,8 +53,8 @@ export function AnnotationDisplayProvider({ children }: { children: ReactNode })
 
     if (stored) {
       try {
-        const parsed = JSON.parse(stored) as StoragePayload | AnnotationDisplay;
-        const parsedConfig = 'config' in (parsed as StoragePayload) ? (parsed as StoragePayload).config : parsed;
+        const parsed = JSON.parse(stored);
+        const parsedConfig = (parsed && 'config' in parsed) ? parsed.config : parsed;
         setDisplayConfig(sanitizeConfig(parsedConfig));
       } catch (error) {
         console.error('Failed to parse annotation display config from localStorage', error);
