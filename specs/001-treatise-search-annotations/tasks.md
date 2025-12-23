@@ -135,7 +135,7 @@
 - [x] T037 [US2] Implement AnnotationDisplayContext persistence (read/write config to localStorage per FR-021)
 - [x] T038 [US2] Integrate AnnotationDisplaySettings into UI (settings button/menu, apply configuration to chapter annotations)
 - [x] T039 [US2] Integrate TagFilter into BolognesePlatform component (both annotation AND metadata filters applied to search results with cumulative AND logic across all categories)
-- [ ] T040 [US2] Implement annotation badge indicators in BolognesePlatform (show which chapters have annotations, display tag counts)
+- [x] T040 [US2] Implement annotation badge indicators in BolognesePlatform (show which chapters have annotations, display tag counts)
 - [x] T042 [US2] Implement multi-tag filtering (select multiple weapons/guards/techniques, use OR within category, AND across categories)
 
 **Checkpoint**: User Story 2 complete - annotation panel enhanced with default open state, highlighting, smart scrolling, sword condition, and configuration menu; search results can be filtered by annotation metadata

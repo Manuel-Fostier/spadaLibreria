@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { BookOpen, ChevronRight, ChevronDown, MessageSquare, Settings } from 'lucide-react';
 import TextParser from './TextParser';
 import AnnotationPanel from './AnnotationPanel';
+import AnnotationBadge from './AnnotationBadge';
 import { GlossaryEntry, TreatiseSection } from '@/lib/dataLoader';
 import { useAnnotations } from '@/contexts/AnnotationContext';
 import { Annotation } from '@/lib/annotation';
@@ -320,7 +321,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
               </div>
             )}
 
-            {filteredContent.map((section) => {
+            {visibleSections.map((section) => {
               const englishVersions = section.content.en_versions || [];
               const selectedTransName = englishVersions.length > 0 
                 ? (translatorPreferences[section.id] || englishVersions[0].translator)
@@ -328,6 +329,8 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
               const activeTranslation = englishVersions.length > 0
                 ? (englishVersions.find(v => v.translator === selectedTransName) || englishVersions[0])
                 : null;
+              
+              const annotation = getAnnotation(section.id);
 
               return (
                 <div key={section.id} className="group" data-section-id={section.id}>
@@ -342,25 +345,35 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                     </div>
                     
                     {/* Bouton d'annotation */}
-                    <button
-                      onClick={() => {
-                        setAnnotationSection(section.id);
-                        setIsPanelOpen(true);
-                      }}
-                      className={`px-3 py-1.5 rounded-lg transition-colors text-xs font-medium flex items-center gap-1.5 ${
-                        isPanelOpen && annotationSection === section.id
-                          ? 'bg-sky-600 text-white font-semibold'
-                          : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                      }`}
-                      title="Gérer les annotations"
-                    >
-                      <MessageSquare size={14} />
-                      Annotation
-                    </button>
+                    {annotation ? (
+                      <AnnotationBadge 
+                        annotation={annotation}
+                        isActive={isPanelOpen && annotationSection === section.id}
+                        onClick={() => {
+                          setAnnotationSection(section.id);
+                          setIsPanelOpen(true);
+                        }}
+                      />
+                    ) : (
+                      <button
+                        onClick={() => {
+                          setAnnotationSection(section.id);
+                          setIsPanelOpen(true);
+                        }}
+                        className={`px-3 py-1.5 rounded-lg transition-colors text-xs font-medium flex items-center gap-1.5 ${
+                          isPanelOpen && annotationSection === section.id
+                            ? 'bg-sky-600 text-white font-semibold'
+                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                        }`}
+                        title="Gérer les annotations"
+                      >
+                        <MessageSquare size={14} />
+                        Annotation
+                      </button>
+                    )}
                   </div>
 
                   {(() => {
-                    const annotation = getAnnotation(section.id);
                     const summary = buildAnnotationSummary(displayConfig, annotation);
                     if (!summary.length) return null;
                     return (
