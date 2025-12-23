@@ -8,6 +8,13 @@ interface AnnotationContextType {
   setAnnotation: (sectionId: string, annotation: Omit<Annotation, 'id'>) => Promise<void>;
   updateAnnotation: (sectionId: string, updates: Partial<Annotation>) => Promise<void>;
   getAnnotation: (sectionId: string) => Annotation | undefined;
+  getUniqueValues: (field: keyof Annotation) => string[];
+  getMatchingSectionIds: (filters: {
+    weapons?: string;
+    guards?: string;
+    techniques?: string;
+    weapon_type?: string;
+  }) => Set<string>;
   saveToServer: (options?: { force?: boolean }) => Promise<void>;
   isDirty: boolean;
 }
@@ -192,6 +199,53 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
     return annotations.get(sectionId);
   };
 
+  const getUniqueValues = (field: keyof Annotation): string[] => {
+    const values = new Set<string>();
+    annotations.forEach((ann) => {
+      const val = ann[field];
+      if (Array.isArray(val)) {
+        val.forEach((v) => {
+          if (typeof v === 'string') values.add(v);
+        });
+      } else if (typeof val === 'string') {
+        values.add(val);
+      }
+    });
+    return Array.from(values).sort();
+  };
+
+  const getMatchingSectionIds = (filters: {
+    weapons?: string;
+    guards?: string;
+    techniques?: string;
+    weapon_type?: string;
+  }): Set<string> => {
+    const matchingIds = new Set<string>();
+    
+    annotations.forEach((ann, id) => {
+      let matches = true;
+
+      if (filters.weapons && (!ann.weapons || !ann.weapons.includes(filters.weapons as Weapon))) {
+        matches = false;
+      }
+      if (filters.guards && (!ann.guards_mentioned || !ann.guards_mentioned.includes(filters.guards as Guard))) {
+        matches = false;
+      }
+      if (filters.techniques && (!ann.techniques || !ann.techniques.includes(filters.techniques))) {
+        matches = false;
+      }
+      if (filters.weapon_type && ann.weapon_type !== filters.weapon_type) {
+        matches = false;
+      }
+
+      if (matches) {
+        matchingIds.add(id);
+      }
+    });
+
+    return matchingIds;
+  };
+
   const saveToServer = async (options?: { force?: boolean }) => {
     const force = options?.force ?? false;
     if (!force && !isDirty) return;
@@ -218,6 +272,8 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
       setAnnotation,
       updateAnnotation,
       getAnnotation,
+      getUniqueValues,
+      getMatchingSectionIds,
       saveToServer,
       isDirty,
     }}>

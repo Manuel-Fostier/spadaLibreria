@@ -12,6 +12,7 @@ import { AnnotationDisplay } from '@/types/annotationDisplay';
 import AnnotationDisplaySettings from './AnnotationDisplaySettings';
 import SearchBar from './SearchBar';
 import { useSearch } from '@/contexts/SearchContext';
+import TagFilter, { FilterState, initialFilterState } from './TagFilter';
 
 interface BolognesePlatformProps {
   glossaryData: { [key: string]: GlossaryEntry };
@@ -65,12 +66,13 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   const [translatorPreferences, setTranslatorPreferences] = useState<{ [key: string]: string }>({});
   const [annotationSection, setAnnotationSection] = useState<string | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(true); // FR-012: Default open
-  const { getAnnotation } = useAnnotations();
+  const { getAnnotation, getUniqueValues, getMatchingSectionIds } = useAnnotations();
   const [showItalian, setShowItalian] = useState(false);
   const [showEnglish, setShowEnglish] = useState(false);
   const [showDisplaySettings, setShowDisplaySettings] = useState(false);
   const { displayConfig } = useAnnotationDisplay();
   const { results, lastQuery } = useSearch();
+  const [filters, setFilters] = useState<FilterState>(initialFilterState);
 
   // --- VIRTUALIZATION / PAGINATION STATE ---
   // We only render a subset of chapters to keep the page fast (like lazy loading images)
@@ -84,14 +86,62 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
     }));
   };
 
+  const filterOptions = useMemo(() => {
+    // Annotation options from context
+    const weapons = getUniqueValues('weapons');
+    const guards = getUniqueValues('guards_mentioned');
+    const techniques = getUniqueValues('techniques');
+    const weapon_type = getUniqueValues('weapon_type');
+
+    // Treatise options from data
+    const master = Array.from(new Set(treatiseData.map(t => t.metadata.master))).sort();
+    const work = Array.from(new Set(treatiseData.map(t => t.metadata.work))).sort();
+    const book = Array.from(new Set(treatiseData.map(t => t.metadata.book))).sort((a, b) => a - b);
+    const year = Array.from(new Set(treatiseData.map(t => t.metadata.year))).sort((a, b) => a - b);
+
+    return {
+      weapons,
+      guards,
+      techniques,
+      weapon_type,
+      master,
+      work,
+      book,
+      year
+    };
+  }, [treatiseData, getUniqueValues]);
+
   const filteredContent = useMemo(() => {
+    let content = treatiseData;
+
+    // 1. Apply Search Results
     if (results) {
       const matchingIds = new Set(results.results.map(r => r.chapterReference.chapterId));
-      return treatiseData.filter(item => matchingIds.has(item.id));
+      content = content.filter(item => matchingIds.has(item.id));
     }
 
-    return treatiseData;
-  }, [results, treatiseData]);
+    // 2. Apply Treatise Metadata Filters
+    if (filters.master) content = content.filter(t => t.metadata.master === filters.master);
+    if (filters.work) content = content.filter(t => t.metadata.work === filters.work);
+    if (filters.book) content = content.filter(t => t.metadata.book.toString() === filters.book);
+    if (filters.year) content = content.filter(t => t.metadata.year.toString() === filters.year);
+
+    // 3. Apply Annotation Filters
+    const hasAnnotationFilters = filters.weapons || filters.guards || filters.techniques || filters.weapon_type;
+    
+    if (hasAnnotationFilters) {
+      const matchingAnnotationIds = getMatchingSectionIds({
+        weapons: filters.weapons || undefined,
+        guards: filters.guards || undefined,
+        techniques: filters.techniques || undefined,
+        weapon_type: filters.weapon_type || undefined
+      });
+      
+      content = content.filter(item => matchingAnnotationIds.has(item.id));
+    }
+
+    return content;
+  }, [results, treatiseData, filters, getMatchingSectionIds]);
 
   // Initialize annotation section (FR-012)
   useEffect(() => {
@@ -146,6 +196,8 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
 
 
 
+
+        
   // Reset to top when the content changes (new search or filter)
   useEffect(() => {
     setVisibleCount(10);
@@ -191,6 +243,14 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-8">
           <div className="mb-6">
             <SearchBar />
+          </div>
+
+          <div className="mb-6">
+            <TagFilter 
+              options={filterOptions}
+              filters={filters}
+              onFilterChange={setFilters}
+            />
           </div>
 
         </div>

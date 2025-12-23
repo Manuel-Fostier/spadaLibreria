@@ -1,7 +1,7 @@
 - id: achille_marozzo_l2_c94
   title: Chap. 94. La fin du combat ci-dessus dans cette neuvième et dernière partie.
   metadata:
-    master: achille_marozzo
+    master: Achille Marozzo
     work: Opera Nova
     book: 2
     chapter: 94
@@ -12,7 +12,7 @@
   annotation:
     note: ""
     weapons:
-    - spada_sola
+    - Spada sola
     guards_mentioned: []
     techniques: []
     measures: []
@@ -22,7 +22,7 @@
 - id: achille_marozzo_l2_c95
   title: Chap. 95. Lequel traite du combat de l’épée seule.
   metadata:
-    master: achille_marozzo
+    master: Achille Marozzo
     work: Opera Nova
     book: 2
     chapter: 95
@@ -30,13 +30,17 @@
   annotation:
     note: ""
     weapons:
-    - spada_sola
+    - Spada sola
     guards_mentioned:
-    - coda_longa_stretta
-    - porta_di_ferro_larga
-    - porta_di_ferro_stretta
+    - Coda Longa e Stretta
+    - Porta di Ferro Larga
+    - Porta di Ferro Stretta
     techniques:
-    - falso tondo
+    - Falso
+    - Fendente
+    - Mandritto
+    - Roverso
+    - Tondo
     measures:
     - Stretta di Mezza Spada
     - Gioco Stretto
@@ -51,7 +55,7 @@
 - id: achille_marozzo_l2_c96
   title: Chap. 96. Qui traite de la seconde partie.
   metadata:
-    master: achille_marozzo
+    master: Achille Marozzo
     work: Opera Nova
     book: 2
     chapter: 96
@@ -62,9 +66,14 @@
   annotation:
     note: ""
     weapons:
-    - spada_sola
-    guards_mentioned: []
-    techniques: []
+    - Spada sola
+    guards_mentioned:
+    - Coda Longa e Alta
+    - Coda Longa e Stretta
+    techniques:
+    - Falso
+    - Roverso
+    - Tondo
     measures: []
     strategy: []
     weapon_type: Epée aiguisée
@@ -72,7 +81,7 @@
 - id: achille_marozzo_l2_c97
   title: Chap. 97. Qui parle des quatre contres à la stoccata.
   metadata:
-    master: achille_marozzo
+    master: Achille Marozzo
     work: Opera Nova
     book: 2
     chapter: 97
@@ -92,9 +101,16 @@
   annotation:
     note: ""
     weapons:
-    - spada_sola
-    guards_mentioned: []
-    techniques: []
+    - Spada sola
+    guards_mentioned:
+    - Coda Longa e Alta
+    techniques:
+    - Falso
+    - Fendente
+    - Mandritto
+    - Punta
+    - Roverso
+    - Tondo
     measures: []
     strategy: []
     weapon_type: Epée aiguisée
@@ -102,7 +118,7 @@
 - id: achille_marozzo_l2_c98
   title: Chap. 98. Qui dit le contre de la stoccata.
   metadata:
-    master: achille_marozzo
+    master: Achille Marozzo
     work: Opera Nova
     book: 2
     chapter: 98
@@ -110,9 +126,13 @@
   annotation:
     note: ""
     weapons:
-    - spada_sola
-    guards_mentioned: []
-    techniques: []
+    - Spada sola
+    guards_mentioned:
+    - Cinghiara Porta di Ferro
+    - Coda Longa e Alta
+    techniques:
+    - Mandritto
+    - Roverso
     measures: []
     strategy: []
     weapon_type: Epée aiguisée
@@ -122,7 +142,7 @@
 - id: achille_marozzo_l2_c99
   title: Chap. 99. Qui traite aussi du contre de la stoccata.
   metadata:
-    master: achille_marozzo
+    master: Achille Marozzo
     work: Opera Nova
     book: 2
     chapter: 99
@@ -130,9 +150,12 @@
   annotation:
     note: ""
     weapons:
-    - spada_sola
-    guards_mentioned: []
-    techniques: []
+    - Spada sola
+    guards_mentioned:
+    - Coda Longa e Alta
+    - Coda Longa e Stretta
+    techniques:
+    - Punta
     measures: []
     strategy: []
     weapon_type: Epée aiguisée
@@ -142,7 +165,7 @@
 - id: achille_marozzo_l2_c100
   title: Chap. 100. Qui traite de l’agent avec le mandritto.
   metadata:
-    master: achille_marozzo
+    master: Achille Marozzo
     work: Opera Nova
     book: 2
     chapter: 100
@@ -150,9 +173,15 @@
   annotation:
     note: ""
     weapons:
-    - spada_sola
-    guards_mentioned: []
-    techniques: []
+    - Spada sola
+    guards_mentioned:
+    - Cinghiara Porta di Ferro
+    - Coda Longa e Alta
+    - Coda Longa e Stretta
+    - Porta di Ferro Stretta
+    techniques:
+    - Mandritto
+    - Roverso
     measures: []
     strategy: []
     weapon_type: Epée aiguisée
@@ -162,7 +191,7 @@
 - id: achille_marozzo_l2_c101
   title: Chap. 101. La dernière partie sur le combat à l’épée seule.
   metadata:
-    master: achille_marozzo
+    master: Achille Marozzo
     work: Opera Nova
     book: 2
     chapter: 101
@@ -170,9 +199,16 @@
   annotation:
     note: ""
     weapons:
-    - spada_sola
-    guards_mentioned: []
-    techniques: []
+    - Spada sola
+    guards_mentioned:
+    - Coda Longa e Stretta
+    - Porta di Ferro Larga
+    - Porta di Ferro Stretta
+    techniques:
+    - Falso
+    - Mandritto
+    - Punta
+    - Roverso
     measures: []
     strategy: []
     weapon_type: Epée aiguisée

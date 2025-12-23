@@ -19,11 +19,11 @@ export const STRATEGIES = [
 export type Strategy = typeof STRATEGIES[number];
 
 export const WEAPONS = [
-  'spada_sola',
-  'spada_brocchiero',
-  'spada_targa',
-  'spada_rotella',
-  'spada_due_mani',
+  'Spada sola',
+  'Spada brocchiero',
+  'Spada targa',
+  'Spada rotella',
+  'Spada due mani',
 ] as const;
 export type Weapon = typeof WEAPONS[number];
 
@@ -34,16 +34,25 @@ export const WEAPON_TYPES = [
 export type WeaponType = typeof WEAPON_TYPES[number];
 
 export const GUARDS = [
-  'coda_longa',
-  'coda_longa_stretta',
-  'coda_longa_alta',
-  'porta_di_ferro',
-  'porta_di_ferro_larga',
-  'porta_di_ferro_stretta',
-  'guardia_alta',
-  'guardia_di_testa',
-  'guardia_di_faccia',
-  'cinghiara_porta_di_ferro',
+  'Becca Cesa',
+  'Becca Possa',
+  'Coda Longa',
+  'Coda Longa e Alta',
+  'Coda Longa e Larga',
+  'Coda Longa e Stretta',
+  'Coda Longa e Distesa',
+  'Porta di Ferro',
+  'Porta di Ferro Larga',
+  'Porta di Ferro Stretta',
+  'Guardia Alta',
+  'Guardia di Alicorno',
+  'Guardia di Faccia',
+  'Guardia di Testa',
+  'Guardia d\'Intrare',
+  'Cinghiara Porta di Ferro',
+  'Guardia di Sopra Braccio',
+  'Guardia di Sotto Braccio',
+  
 ] as const;
 export type Guard = typeof GUARDS[number];
 

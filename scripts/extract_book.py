@@ -194,7 +194,7 @@ def convert_to_yaml_structure(title_list, config, debug=False):
                     "id": f"{config['master_id']}_l{config['book']}_c{chapter_number}",
                     "title": chapter.text,
                     "metadata": {
-                        "master": config["master_id"],
+                        "master": config["master"],
                         "work": config["work"],
                         "book": config["book"],
                         "chapter": chapter_number,

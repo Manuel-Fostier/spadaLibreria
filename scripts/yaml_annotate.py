@@ -31,10 +31,24 @@ def load_glossary(glossary_path):
 class TextEnricher:
     def __init__(self, glossary_data):
         self.term_map = {}
+        self.term_categories = {}
+        self.term_display = {}
+
         for key, entry in glossary_data.items():
             term = entry.get('term', '').strip()
+            term_type = entry.get('type', '')
+
             if term:
                 self.term_map[term.lower()] = key
+                self.term_display[key] = term
+            
+            # Categorize
+            if 'Garde' in term_type:
+                self.term_categories[key] = 'guard'
+            elif any(x in term_type for x in ['Attaque', 'Frappe', 'Coup', 'Technique', 'Mouvement']):
+                self.term_categories[key] = 'technique'
+            else:
+                self.term_categories[key] = None
         
         # Sort by length descending to handle substrings correctly
         self.sorted_terms = sorted(self.term_map.keys(), key=len, reverse=True)
@@ -46,6 +60,12 @@ class TextEnricher:
             self.pattern = re.compile(pattern_str, re.IGNORECASE)
         else:
             self.pattern = None
+
+    def get_category(self, key):
+        return self.term_categories.get(key)
+    
+    def get_term(self, key):
+        return self.term_display.get(key, key)
 
     def enrich(self, text):
         if not text or not self.pattern:
@@ -109,12 +129,20 @@ def process_file(file_path, enricher):
 
         # 2. Enrich Content
         content = section.get('content', {})
+        found_keys = set()
         
         # Helper to enrich and preserve block style
         def enrich_field(obj, key):
             if key in obj and isinstance(obj[key], str):
                 original = obj[key]
                 enriched = enricher.enrich(original)
+                
+                # Extract keys from enriched text
+                keys = re.findall(r'\{([^}]+)\}', enriched)
+                for k in keys:
+                    if enricher.get_category(k) is not None:
+                        found_keys.add(k)
+
                 if enriched != original:
                     # Use PreservedScalarString to keep | style if it was multiline or just to be safe
                     # Check if original was multiline or if we want to force it?
@@ -131,6 +159,24 @@ def process_file(file_path, enricher):
         if 'en_versions' in content and isinstance(content['en_versions'], list):
             for version in content['en_versions']:
                 if enrich_field(version, 'text'): enriched_count += 1
+
+        # Populate annotation fields based on found keys
+        if 'annotation' in section:
+            guards = []
+            techniques = []
+            
+            for key in found_keys:
+                cat = enricher.get_category(key)
+                if cat == 'guard':
+                    guards.append(enricher.get_term(key))
+                elif cat == 'technique':
+                    techniques.append(enricher.get_term(key))
+            
+            guards.sort()
+            techniques.sort()
+            
+            section['annotation']['guards_mentioned'] = guards
+            section['annotation']['techniques'] = techniques
 
     # Save back
     with open(file_path, 'w', encoding='utf-8') as f:

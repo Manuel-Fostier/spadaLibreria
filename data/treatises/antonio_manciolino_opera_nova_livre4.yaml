@@ -1,7 +1,7 @@
 - id: antonio_manciolino_l4_c12
   title: Chapitre douze. Du jeu à l’épée seule
   metadata:
-    master: antonio_manciolino
+    master: Antonio Manciolino
     work: Opera Nova
     book: 4
     chapter: 12
@@ -42,7 +42,15 @@
     note:
     weapons: []
     weapon_type:
-    guards_mentioned: []
-    techniques: []
+    guards_mentioned:
+    - Guardia di Faccia
+    - Guardia di Testa
+    - Porta di Ferro Stretta
+    techniques:
+    - Falso
+    - Fendente
+    - Mandritto
+    - Punta
+    - Roverso
     measures: []
     strategy: []
