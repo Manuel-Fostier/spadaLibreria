@@ -110,8 +110,16 @@ mandritto:
 ## Personnalisation
 
 ### Ajouter un nouveau traité
-Les pdf de Marozzo et Manciolino peuvent être parcouru avec le script `extract_book.py`.
-#TODO expliqué comment utiliser le script extract-first-line
+
+1. **Extraction du texte** : Utilisez le script `extract_book.py` pour extraire le texte depuis les PDF.
+   ```bash
+   uv run extract-book marozzo --pages "34-102"
+   ```
+
+2. **Annotation et Enrichissement** : Utilisez le script `yaml_annotate.py` pour ajouter les champs d'annotation et lier automatiquement les termes du glossaire dans le texte.
+   ```bash
+   uv run yaml-annotate data/treatises/votre_fichier.yaml
+   ```
 
 ### Ajouter des termes au glossaire
 

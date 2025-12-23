@@ -12,3 +12,4 @@ dependencies = [
 
 [project.scripts]
 extract-book = "scripts.extract_book:main"
+yaml-annotate = "scripts.yaml_annotate:main"
