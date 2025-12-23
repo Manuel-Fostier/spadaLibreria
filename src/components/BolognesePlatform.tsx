@@ -6,7 +6,7 @@ import TextParser from './TextParser';
 import AnnotationPanel from './AnnotationPanel';
 import { GlossaryEntry, TreatiseSection } from '@/lib/dataLoader';
 import { useAnnotations } from '@/contexts/AnnotationContext';
-import { Annotation, Weapon } from '@/lib/annotation';
+import { Annotation } from '@/lib/annotation';
 import { useAnnotationDisplay } from '@/contexts/AnnotationDisplayContext';
 import { AnnotationDisplay } from '@/types/annotationDisplay';
 import AnnotationDisplaySettings from './AnnotationDisplaySettings';
@@ -18,11 +18,7 @@ interface BolognesePlatformProps {
   treatiseData: TreatiseSection[];
 }
 
-const WEAPONS = [
-  { id: 'all', label: 'Toutes les armes' },
-  { id: 'spada_sola', label: 'Épée Seule' },
-  { id: 'spada_brocchiero', label: 'Épée et Bocle' },
-];
+
 
 const buildAnnotationSummary = (
   displayConfig: AnnotationDisplay,
@@ -65,7 +61,7 @@ const buildAnnotationSummary = (
 };
 
 export default function BolognesePlatform({ glossaryData, treatiseData }: BolognesePlatformProps) {
-  const [selectedWeapon, setSelectedWeapon] = useState('all');
+
   const [translatorPreferences, setTranslatorPreferences] = useState<{ [key: string]: string }>({});
   const [annotationSection, setAnnotationSection] = useState<string | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(true); // FR-012: Default open
@@ -94,16 +90,8 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
       return treatiseData.filter(item => matchingIds.has(item.id));
     }
 
-    return treatiseData.filter(item => {
-      if (selectedWeapon === 'all') return true;
-      
-      // Check annotation weapons
-      const annotation = getAnnotation(item.id);
-      if (!annotation || !annotation.weapons) return false;
-      
-      return annotation.weapons.includes(selectedWeapon as Weapon);
-    });
-  }, [results, treatiseData, selectedWeapon, getAnnotation]);
+    return treatiseData;
+  }, [results, treatiseData]);
 
   // Initialize annotation section (FR-012)
   useEffect(() => {
@@ -205,24 +193,6 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
             <SearchBar />
           </div>
 
-          <div>
-            <h3 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-4">Filtres</h3>
-            <div className="space-y-1">
-              {WEAPONS.map(weapon => (
-                <button 
-                  key={weapon.id}
-                  onClick={() => setSelectedWeapon(weapon.id)} 
-                  className={`w-full text-left px-4 py-2.5 text-sm rounded transition-all ${
-                    selectedWeapon === weapon.id 
-                      ? 'bg-indigo-50 text-indigo-700 font-bold' 
-                      : 'text-gray-600 hover:bg-gray-50'
-                  }`}
-                >
-                  {weapon.label}
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
       </aside>
 

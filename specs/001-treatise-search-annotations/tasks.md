@@ -125,7 +125,7 @@
 
 ### Implementation for User Story 2
 
-- [ ] T030 [P] [US2] Create TagFilter component in `src/components/TagFilter.tsx` (dual-filter interface: annotation metadata dropdowns for weapons/guards/techniques/weapon_type AND treatise metadata dropdowns for master/work/book/year) - NOTE: Delete existing basic weapon filter in BolognesePlatform.tsx when implementing this
+- [x] T030 [P] [US2] Create TagFilter component in `src/components/TagFilter.tsx` (dual-filter interface: annotation metadata dropdowns for weapons/guards/techniques/weapon_type AND treatise metadata dropdowns for master/work/book/year) - NOTE: Delete existing basic weapon filter in BolognesePlatform.tsx when implementing this
 - [ ] T031 [US2] Add filter methods to AnnotationContext in `src/contexts/AnnotationContext.tsx` (filterByWeapons, filterByGuards, filterByTechniques, filterByMetadata, getUniqueTags, getMetadataValues)
 - [x] T032 [US2] Modify AnnotationPanel default state in `src/components/AnnotationPanel.tsx` to open by default (FR-012) - mockup: `specs/mockups/AnnotationPanel.md`
 - [x] T033 [US2] Implement annotation button highlighting in BolognesePlatform (active state when panel is open per FR-012a) - mockup: `specs/mockups/AnnotationPanel.md`
