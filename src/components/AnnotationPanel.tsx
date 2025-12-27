@@ -2,7 +2,17 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { X, Plus, Edit2, Save, ChevronRight, Check, MessageSquare } from 'lucide-react';
-import { MEASURES, STRATEGIES, WEAPONS, GUARDS, WEAPON_TYPES, Measure } from '@/lib/annotation';
+import { 
+  MEASURES, 
+  STRATEGIES, 
+  WEAPONS, 
+  GUARDS, 
+  WEAPON_TYPES, 
+  ENGAGEMENT_DISTANCES,
+  STRIKES,
+  TARGETS,
+  Measure 
+} from '@/lib/annotation';
 import { useAnnotations } from '@/contexts/AnnotationContext';
 import MeasureProgressBar from './MeasureProgressBar';
 
@@ -76,6 +86,9 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
     techniques: null as string[] | null,
     measures: null as (typeof MEASURES[number])[] | null,
     strategy: null as (typeof STRATEGIES[number])[] | null,
+    engagement_distances: null as (typeof ENGAGEMENT_DISTANCES[number])[] | null,
+    strikes: null as (typeof STRIKES[number])[] | null,
+    targets: null as (typeof TARGETS[number])[] | null,
   });
   const [techniqueInput, setTechniqueInput] = useState('');
   
@@ -143,6 +156,9 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
         techniques: annotation.techniques || null,
         measures: annotation.measures || null,
         strategy: annotation.strategy || null,
+        engagement_distances: annotation.engagement_distances || null,
+        strikes: annotation.strikes || null,
+        targets: annotation.targets || null,
       });
     } else {
       setIsEditing(true);
@@ -154,6 +170,9 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
         techniques: null,
         measures: null,
         strategy: null,
+        engagement_distances: null,
+        strikes: null,
+        targets: null,
       });
     }
   };
@@ -604,6 +623,87 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                     ))}
                   </div>
                 )}
+              </div>
+
+              {/* Distances d'engagement */}
+              <div>
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                  Distances d&apos;engagement
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {ENGAGEMENT_DISTANCES.map(d => {
+                    const active = formData.engagement_distances?.includes(d);
+                    return (
+                      <button
+                        type="button"
+                        key={d}
+                        onClick={() => setFormData(prev => ({
+                          ...prev,
+                          engagement_distances: active
+                            ? prev.engagement_distances?.filter(x => x !== d) || null
+                            : [...(prev.engagement_distances || []), d]
+                        }))}
+                        className={getToggleClasses('techniques', Boolean(active))}
+                      >
+                        {d}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Coups */}
+              <div>
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                  Coups
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {STRIKES.map(s => {
+                    const active = formData.strikes?.includes(s);
+                    return (
+                      <button
+                        type="button"
+                        key={s}
+                        onClick={() => setFormData(prev => ({
+                          ...prev,
+                          strikes: active
+                            ? prev.strikes?.filter(x => x !== s) || null
+                            : [...(prev.strikes || []), s]
+                        }))}
+                        className={getToggleClasses('techniques', Boolean(active))}
+                      >
+                        {s}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Cibles */}
+              <div>
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                  Cibles
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {TARGETS.map(t => {
+                    const active = formData.targets?.includes(t);
+                    return (
+                      <button
+                        type="button"
+                        key={t}
+                        onClick={() => setFormData(prev => ({
+                          ...prev,
+                          targets: active
+                            ? prev.targets?.filter(x => x !== t) || null
+                            : [...(prev.targets || []), t]
+                        }))}
+                        className={getToggleClasses('techniques', Boolean(active))}
+                      >
+                        {t}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               {/* Note */}

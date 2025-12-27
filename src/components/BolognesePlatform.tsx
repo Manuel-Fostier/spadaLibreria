@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { BookOpen, ChevronRight, ChevronDown, MessageSquare, Settings } from 'lucide-react';
+import { BookOpen, ChevronRight, ChevronDown, MessageSquare, Settings, BarChart3 } from 'lucide-react';
 import TextParser from './TextParser';
 import AnnotationPanel from './AnnotationPanel';
 import AnnotationBadge from './AnnotationBadge';
@@ -14,6 +14,7 @@ import AnnotationDisplaySettings from './AnnotationDisplaySettings';
 import SearchBar from './SearchBar';
 import { useSearch } from '@/contexts/SearchContext';
 import TagFilter, { FilterState, initialFilterState } from './TagFilter';
+import StatisticsModal from './StatisticsModal';
 
 interface BolognesePlatformProps {
   glossaryData: { [key: string]: GlossaryEntry };
@@ -71,6 +72,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   const [showItalian, setShowItalian] = useState(false);
   const [showEnglish, setShowEnglish] = useState(false);
   const [showDisplaySettings, setShowDisplaySettings] = useState(false);
+  const [showStatistics, setShowStatistics] = useState(false);
   const { displayConfig } = useAnnotationDisplay();
   const { results, lastQuery } = useSearch();
   const [filters, setFilters] = useState<FilterState>(initialFilterState);
@@ -291,6 +293,15 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
             </button>
 
             <button
+              onClick={() => setShowStatistics(true)}
+              className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center gap-1 bg-gray-100 text-gray-600 hover:bg-gray-200"
+              title="Afficher les statistiques"
+            >
+              <BarChart3 size={14} />
+              Stats
+            </button>
+
+            <button
               onClick={() => setShowDisplaySettings(prev => !prev)}
               className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center gap-1 ${
                 showDisplaySettings
@@ -495,6 +506,11 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
           sectionId={annotationSection}
           onClose={() => setIsPanelOpen(false)}
         />
+      )}
+
+      {/* Modale de statistiques */}
+      {showStatistics && (
+        <StatisticsModal onClose={() => setShowStatistics(false)} />
       )}
     </div>
   );
