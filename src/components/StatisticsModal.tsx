@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { X, BarChart3 } from 'lucide-react';
 import { useAnnotations } from '@/contexts/AnnotationContext';
-import { HIGH_GUARDS, LOW_GUARDS, Guard, EngagementDistance, Strike, Target } from '@/lib/annotation';
+import { HIGH_GUARDS, LOW_GUARDS } from '@/lib/annotation';
 
 type StatisticsCategory = 'guards' | 'distances' | 'strikes' | 'targets';
 
@@ -24,7 +24,7 @@ export default function StatisticsModal({ onClose }: StatisticsModalProps) {
   // Calculate statistics
   const statistics = useMemo(() => {
     const guardsCount = new Map<string, number>();
-    const distancesCount = new Map<string, number>();
+    const measuresCount = new Map<string, number>();
     const strikesCount = new Map<string, number>();
     const targetsCount = new Map<string, number>();
 
@@ -36,10 +36,10 @@ export default function StatisticsModal({ onClose }: StatisticsModalProps) {
         });
       }
 
-      // Count engagement distances
-      if (ann.engagement_distances) {
-        ann.engagement_distances.forEach((distance) => {
-          distancesCount.set(distance, (distancesCount.get(distance) || 0) + 1);
+      // Count measures (engagement distances)
+      if (ann.measures) {
+        ann.measures.forEach((measure) => {
+          measuresCount.set(measure, (measuresCount.get(measure) || 0) + 1);
         });
       }
 
@@ -60,7 +60,7 @@ export default function StatisticsModal({ onClose }: StatisticsModalProps) {
 
     return {
       guardsCount,
-      distancesCount,
+      measuresCount,
       strikesCount,
       targetsCount,
     };
@@ -93,7 +93,7 @@ export default function StatisticsModal({ onClose }: StatisticsModalProps) {
 
       return { highGuards: highGuardsData, lowGuards: lowGuardsData };
     } else if (selectedCategory === 'distances') {
-      const items: BarData[] = Array.from(statistics.distancesCount.entries())
+      const items: BarData[] = Array.from(statistics.measuresCount.entries())
         .map(([label, count]) => ({ label, count, color: 'bg-purple-500' }))
         .sort((a, b) => b.count - a.count);
       return { items };

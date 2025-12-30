@@ -8,7 +8,6 @@ import {
   WEAPONS, 
   GUARDS, 
   WEAPON_TYPES, 
-  ENGAGEMENT_DISTANCES,
   STRIKES,
   TARGETS,
   Measure 
@@ -86,7 +85,6 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
     techniques: null as string[] | null,
     measures: null as (typeof MEASURES[number])[] | null,
     strategy: null as (typeof STRATEGIES[number])[] | null,
-    engagement_distances: null as (typeof ENGAGEMENT_DISTANCES[number])[] | null,
     strikes: null as (typeof STRIKES[number])[] | null,
     targets: null as (typeof TARGETS[number])[] | null,
   });
@@ -156,7 +154,6 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
         techniques: annotation.techniques || null,
         measures: annotation.measures || null,
         strategy: annotation.strategy || null,
-        engagement_distances: annotation.engagement_distances || null,
         strikes: annotation.strikes || null,
         targets: annotation.targets || null,
       });
@@ -170,7 +167,6 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
         techniques: null,
         measures: null,
         strategy: null,
-        engagement_distances: null,
         strikes: null,
         targets: null,
       });
@@ -623,33 +619,6 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                     ))}
                   </div>
                 )}
-              </div>
-
-              {/* Distances d'engagement */}
-              <div>
-                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                  Distances d&apos;engagement
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {ENGAGEMENT_DISTANCES.map(d => {
-                    const active = formData.engagement_distances?.includes(d);
-                    return (
-                      <button
-                        type="button"
-                        key={d}
-                        onClick={() => setFormData(prev => ({
-                          ...prev,
-                          engagement_distances: active
-                            ? prev.engagement_distances?.filter(x => x !== d) || null
-                            : [...(prev.engagement_distances || []), d]
-                        }))}
-                        className={getToggleClasses('techniques', Boolean(active))}
-                      >
-                        {d}
-                      </button>
-                    );
-                  })}
-                </div>
               </div>
 
               {/* Coups */}

@@ -81,14 +81,6 @@ export const LOW_GUARDS: Guard[] = [
   'Guardia di Sotto Braccio',
 ];
 
-export const ENGAGEMENT_DISTANCES = [
-  'Larga Misura',
-  'Giusta Misura',
-  'Misura Stretta',
-  'Stretta di Mezza Spada',
-] as const;
-export type EngagementDistance = typeof ENGAGEMENT_DISTANCES[number];
-
 export const STRIKES = [
   'Mandritto',
   'Roverso',
@@ -122,7 +114,6 @@ export interface Annotation {
   techniques: string[] | null;
   measures: Measure[] | null;
   strategy: Strategy[] | null;
-  engagement_distances: EngagementDistance[] | null;
   strikes: Strike[] | null;
   targets: Target[] | null;
 }

@@ -11,7 +11,6 @@ import {
   LOW_GUARDS,
   MEASURES,
   STRATEGIES,
-  ENGAGEMENT_DISTANCES,
   STRIKES,
   TARGETS,
   type Weapon,
@@ -19,7 +18,6 @@ import {
   type Guard,
   type Measure,
   type Strategy,
-  type EngagementDistance,
   type Strike,
   type Target,
 } from '@/lib/annotation';
@@ -33,8 +31,7 @@ export {
   LOW_GUARDS,
   MEASURES,
   STRATEGIES,
-  ENGAGEMENT_DISTANCES,
   STRIKES,
   TARGETS,
 };
-export type { Weapon, WeaponType, Guard, Measure, Strategy, EngagementDistance, Strike, Target };
+export type { Weapon, WeaponType, Guard, Measure, Strategy, Strike, Target };
