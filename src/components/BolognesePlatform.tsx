@@ -97,6 +97,8 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
     const guards = getUniqueValues('guards_mentioned');
     const techniques = getUniqueValues('techniques');
     const weapon_type = getUniqueValues('weapon_type');
+    const strikes = getUniqueValues('strikes');
+    const targets = getUniqueValues('targets');
 
     // Treatise options from data
     const master = Array.from(new Set(treatiseData.map(t => t.metadata.master))).sort();
@@ -109,6 +111,8 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
       guards,
       techniques,
       weapon_type,
+      strikes,
+      targets,
       master,
       work,
       book,
@@ -132,14 +136,16 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
     if (filters.year) content = content.filter(t => t.metadata.year.toString() === filters.year);
 
     // 3. Apply Annotation Filters
-    const hasAnnotationFilters = filters.weapons || filters.guards || filters.techniques || filters.weapon_type;
+    const hasAnnotationFilters = filters.weapons || filters.guards || filters.techniques || filters.weapon_type || filters.strikes || filters.targets;
     
     if (hasAnnotationFilters) {
       const matchingAnnotationIds = getMatchingSectionIds({
         weapons: filters.weapons || undefined,
         guards: filters.guards || undefined,
         techniques: filters.techniques || undefined,
-        weapon_type: filters.weapon_type || undefined
+        weapon_type: filters.weapon_type || undefined,
+        strikes: filters.strikes || undefined,
+        targets: filters.targets || undefined
       });
       
       content = content.filter(item => matchingAnnotationIds.has(item.id));
@@ -262,6 +268,18 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
             />
           </div>
 
+          {/* Statistics button below filters */}
+          <div className="mb-6">
+            <button
+              onClick={() => setShowStatistics(true)}
+              className="w-full px-4 py-3 text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm"
+              title="Afficher les statistiques"
+            >
+              <BarChart3 size={16} />
+              Statistiques
+            </button>
+          </div>
+
         </div>
       </aside>
 
@@ -296,15 +314,6 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
               }`}
             >
               Anglais {showEnglish ? '✓' : ''}
-            </button>
-
-            <button
-              onClick={() => setShowStatistics(true)}
-              className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center gap-1 bg-gray-100 text-gray-600 hover:bg-gray-200"
-              title="Afficher les statistiques"
-            >
-              <BarChart3 size={14} />
-              Stats
             </button>
 
             <button

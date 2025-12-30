@@ -30,6 +30,8 @@ interface AnnotationContextType {
     guards?: string;
     techniques?: string;
     weapon_type?: string;
+    strikes?: string;
+    targets?: string;
   }) => Set<string>;
   saveToServer: (options?: { force?: boolean }) => Promise<void>;
   isDirty: boolean;
@@ -273,6 +275,8 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
     guards?: string;
     techniques?: string;
     weapon_type?: string;
+    strikes?: string;
+    targets?: string;
   }): Set<string> => {
     const matchingIds = new Set<string>();
     
@@ -289,6 +293,12 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
         matches = false;
       }
       if (filters.weapon_type && ann.weapon_type !== filters.weapon_type) {
+        matches = false;
+      }
+      if (filters.strikes && (!ann.strikes || !ann.strikes.includes(filters.strikes as Strike))) {
+        matches = false;
+      }
+      if (filters.targets && (!ann.targets || !ann.targets.includes(filters.targets as Target))) {
         matches = false;
       }
 

@@ -10,6 +10,8 @@ export interface FilterState {
   guards: string;
   techniques: string;
   weapon_type: string;
+  strikes: string;
+  targets: string;
   
   // Treatise filters
   master: string;
@@ -23,6 +25,8 @@ export const initialFilterState: FilterState = {
   guards: '',
   techniques: '',
   weapon_type: '',
+  strikes: '',
+  targets: '',
   master: '',
   work: '',
   book: '',
@@ -36,6 +40,8 @@ interface TagFilterProps {
     guards: string[];
     techniques: string[];
     weapon_type: string[];
+    strikes: string[];
+    targets: string[];
     master: string[];
     work: string[];
     book: number[];
@@ -244,6 +250,34 @@ export default function TagFilter({ options, filters, onFilterChange, className 
                     >
                       <option value="">Toutes</option>
                       {options.techniques.map(opt => (
+                        <option key={opt} value={opt}>{opt}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-slate-500 mb-1">Coups</label>
+                    <select
+                      value={filters.strikes}
+                      onChange={(e) => handleChange('strikes', e.target.value)}
+                      className="w-full text-sm border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    >
+                      <option value="">Tous</option>
+                      {options.strikes.map(opt => (
+                        <option key={opt} value={opt}>{opt}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-slate-500 mb-1">Cibles</label>
+                    <select
+                      value={filters.targets}
+                      onChange={(e) => handleChange('targets', e.target.value)}
+                      className="w-full text-sm border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    >
+                      <option value="">Toutes</option>
+                      {options.targets.map(opt => (
                         <option key={opt} value={opt}>{opt}</option>
                       ))}
                     </select>
