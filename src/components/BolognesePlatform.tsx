@@ -68,7 +68,8 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   const [translatorPreferences, setTranslatorPreferences] = useState<{ [key: string]: string }>({});
   const [annotationSection, setAnnotationSection] = useState<string | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(true); // FR-012: Default open
-  const [isManualSelection, setIsManualSelection] = useState(false); // Track manual section selection
+  // Track when user manually selects a section to prevent auto-scrolling until panel is closed
+  const [isManualSelection, setIsManualSelection] = useState(false);
   const { getAnnotation, getUniqueValues, getMatchingSectionIds } = useAnnotations();
   const [showItalian, setShowItalian] = useState(false);
   const [showEnglish, setShowEnglish] = useState(false);
@@ -154,9 +155,12 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
     }
   }, [filteredContent, annotationSection]);
 
-  // FR-012b / SC-012: Smart scrolling - only when panel is closed or no manual selection
+  // FR-012b / SC-012: Smart scrolling behavior
+  // Auto-updates annotation section based on scroll position when:
+  // 1. Panel is closed (isPanelOpen is false), OR
+  // 2. Panel is open but user hasn't manually selected a section (isManualSelection is false)
   useEffect(() => {
-    // Don't auto-update if panel is open and user has manually selected a section
+    // Don't auto-update if panel is open AND user has manually selected a section
     if (isPanelOpen && isManualSelection) return;
 
     const observer = new IntersectionObserver(
