@@ -438,6 +438,38 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                 )}
               </div>
 
+              {/* Coups */}
+              <div>
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Coups</h4>
+                {annotation.strikes && annotation.strikes.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {annotation.strikes.map(s => (
+                      <span key={s} className={chipClass('technique')}>
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-400 italic">Aucun coup indiqué</p>
+                )}
+              </div>
+
+              {/* Cibles */}
+              <div>
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Cibles</h4>
+                {annotation.targets && annotation.targets.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {annotation.targets.map(t => (
+                      <span key={t} className={chipClass('technique')}>
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-400 italic">Aucune cible indiquée</p>
+                )}
+              </div>
+
               {/* Note */}
               <div>
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Note</h4>
