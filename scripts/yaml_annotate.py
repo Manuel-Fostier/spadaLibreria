@@ -45,7 +45,10 @@ class TextEnricher:
             # Categorize
             if 'Garde' in term_type:
                 self.term_categories[key] = 'guard'
-            elif any(x in term_type for x in ['Attaque', 'Frappe', 'Coup', 'Technique', 'Mouvement']):
+            elif any(x in term_type for x in ['Attaque', 'Frappe', 'Coup d\'estoc']):
+                # Attacks and strikes (cutting/thrusting attacks)
+                self.term_categories[key] = 'strike'
+            elif any(x in term_type for x in ['Technique', 'Mouvement', 'Tactique']):
                 self.term_categories[key] = 'technique'
             else:
                 self.term_categories[key] = None
@@ -123,7 +126,9 @@ def process_file(file_path, enricher):
                 'guards_mentioned': [],
                 'techniques': [],
                 'measures': [],
-                'strategy': []
+                'strategy': [],
+                'strikes': [],
+                'targets': []
             }
             modified_count += 1
 
@@ -164,6 +169,7 @@ def process_file(file_path, enricher):
         if 'annotation' in section:
             guards = []
             techniques = []
+            strikes = []
             
             for key in found_keys:
                 cat = enricher.get_category(key)
@@ -171,12 +177,20 @@ def process_file(file_path, enricher):
                     guards.append(enricher.get_term(key))
                 elif cat == 'technique':
                     techniques.append(enricher.get_term(key))
+                elif cat == 'strike':
+                    strikes.append(enricher.get_term(key))
             
             guards.sort()
             techniques.sort()
+            strikes.sort()
             
             section['annotation']['guards_mentioned'] = guards
             section['annotation']['techniques'] = techniques
+            section['annotation']['strikes'] = strikes
+            
+            # Ensure targets field exists (empty by default, user fills manually)
+            if 'targets' not in section['annotation']:
+                section['annotation']['targets'] = []
 
     # Save back
     with open(file_path, 'w', encoding='utf-8') as f:
