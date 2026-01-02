@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Filter, ChevronDown, ChevronUp, Tag, Book, Check } from 'lucide-react';
 
 // Define types for the filter state
@@ -66,22 +67,63 @@ interface MultiSelectProps {
 
 function MultiSelect({ label, value, options, onChange, placeholder = "Tous" }: MultiSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Calculate position and toggle open state
+  const toggleOpen = () => {
+    if (!isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setPosition({
+        top: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+        width: rect.width,
+      });
+    }
+    setIsOpen(!isOpen);
+  };
+
+  // Handle clicks outside and scrolling
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+    if (!isOpen) return;
+
+    // Close on scroll to prevent detached menus
+    const handleScroll = (event: Event) => {
+      // If scrolling inside the dropdown, don't close
+      if (dropdownRef.current && dropdownRef.current.contains(event.target as Node)) {
+        return;
+      }
+      setIsOpen(false);
+    };
+    const handleResize = () => setIsOpen(false);
+    
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        dropdownRef.current && 
+        !dropdownRef.current.contains(e.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(e.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
 
+    // Use capture for scroll to detect scrolling in any parent container
+    window.addEventListener('scroll', handleScroll, true);
+    window.addEventListener('resize', handleResize);
     document.addEventListener('mousedown', handleClickOutside);
+
     return () => {
+      window.removeEventListener('scroll', handleScroll, true);
+      window.removeEventListener('resize', handleResize);
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []);
+  }, [isOpen]);
 
   const handleOptionClick = (option: string, event: React.MouseEvent) => {
+    event.stopPropagation();
+    
     if (event.shiftKey) {
       // Add/Remove from selection
       if (value.includes(option)) {
@@ -89,8 +131,9 @@ function MultiSelect({ label, value, options, onChange, placeholder = "Tous" }: 
       } else {
         onChange([...value, option]);
       }
+      // Keep dropdown open for more selections
     } else {
-      // Select only this option (or toggle if it's the only one selected?)
+      // Select only this option
       if (value.length === 1 && value[0] === option) {
         // If clicking the only selected item, deselect it (go back to "All")
         onChange([]);
@@ -108,19 +151,30 @@ function MultiSelect({ label, value, options, onChange, placeholder = "Tous" }: 
       : `${value.length} sélectionnés`;
 
   return (
-    <div className="relative" ref={containerRef}>
+    <div className="relative">
       <label className="block text-xs font-medium text-slate-500 mb-1">{label}</label>
       <button
+        ref={buttonRef}
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={toggleOpen}
         className="w-full text-left text-sm border border-gray-300 rounded-md shadow-sm px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 flex justify-between items-center"
       >
         <span className="block truncate">{displayValue}</span>
         <ChevronDown size={16} className="text-gray-400" />
       </button>
 
-      {isOpen && (
-        <div className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+      {isOpen && createPortal(
+        <div
+          ref={dropdownRef}
+          style={{
+            position: 'absolute',
+            top: position.top,
+            left: position.left,
+            minWidth: position.width,
+            zIndex: 9999,
+          }}
+          className="bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto mt-1 text-sm whitespace-nowrap"
+        >
           <div 
             className={`cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-blue-50 ${value.length === 0 ? 'text-blue-600 font-semibold' : 'text-gray-900'}`}
             onClick={() => {
@@ -128,7 +182,7 @@ function MultiSelect({ label, value, options, onChange, placeholder = "Tous" }: 
               setIsOpen(false);
             }}
           >
-            <span className="block truncate">{placeholder}</span>
+            <span className="block">{placeholder}</span>
             {value.length === 0 && (
               <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600">
                 <Check size={16} />
@@ -143,7 +197,7 @@ function MultiSelect({ label, value, options, onChange, placeholder = "Tous" }: 
                 className={`cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-blue-50 ${isSelected ? 'text-blue-600 font-semibold' : 'text-gray-900'}`}
                 onClick={(e) => handleOptionClick(option, e)}
               >
-                <span className="block truncate">{option}</span>
+                <span className="block">{option}</span>
                 {isSelected && (
                   <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600">
                     <Check size={16} />
@@ -152,7 +206,8 @@ function MultiSelect({ label, value, options, onChange, placeholder = "Tous" }: 
               </div>
             );
           })}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
