@@ -50,6 +50,8 @@ class TextEnricher:
                 self.term_categories[key] = 'strike'
             elif any(x in term_type for x in ['Technique', 'Mouvement', 'Tactique']):
                 self.term_categories[key] = 'technique'
+            elif 'Cible' in term_type:
+                self.term_categories[key] = 'target'
             else:
                 self.term_categories[key] = None
         
@@ -170,6 +172,7 @@ def process_file(file_path, enricher):
             guards = []
             techniques = []
             strikes = []
+            targets = []
             
             for key in found_keys:
                 cat = enricher.get_category(key)
@@ -179,18 +182,18 @@ def process_file(file_path, enricher):
                     techniques.append(enricher.get_term(key))
                 elif cat == 'strike':
                     strikes.append(enricher.get_term(key))
+                elif cat == 'target':
+                    targets.append(enricher.get_term(key))
             
             guards.sort()
             techniques.sort()
             strikes.sort()
+            targets.sort()
             
             section['annotation']['guards_mentioned'] = guards
             section['annotation']['techniques'] = techniques
             section['annotation']['strikes'] = strikes
-            
-            # Ensure targets field exists (empty by default, user fills manually)
-            if 'targets' not in section['annotation']:
-                section['annotation']['targets'] = []
+            section['annotation']['targets'] = targets
 
     # Save back
     with open(file_path, 'w', encoding='utf-8') as f:

@@ -671,3 +671,97 @@ battere:
   translation:
     fr: Battre
     en: To beat
+
+###########################################################################################
+# Les Cibles
+###########################################################################################
+
+tete:
+  term: Tête
+  type: Cible
+  definition:
+    fr: La tête de l'adversaire.
+    en: The opponent's head.
+  translation:
+    fr: Tête
+    en: Head
+
+jambe:
+  term: Jambe
+  type: Cible
+  definition:
+    fr: La jambe de l'adversaire, souvent la jambe avancée.
+    en: The opponent's leg, often the leading leg.
+  translation:
+    fr: Jambe
+    en: Leg
+
+bras:
+  term: Bras
+  type: Cible
+  definition:
+    fr: Le bras de l'adversaire, souvent le bras armé.
+    en: The opponent's arm, often the sword arm.
+  translation:
+    fr: Bras
+    en: Arm
+
+main:
+  term: Main
+  type: Cible
+  definition:
+    fr: La main de l'adversaire, cible privilégiée pour désarmer ou blesser.
+    en: The opponent's hand, a prime target to disarm or wound.
+  translation:
+    fr: Main
+    en: Hand
+
+face:
+  term: Face
+  type: Cible
+  definition:
+    fr: Le visage de l'adversaire.
+    en: The opponent's face.
+  translation:
+    fr: Visage
+    en: Face
+
+flanc:
+  term: Flanc
+  type: Cible
+  definition:
+    fr: Le flanc ou le côté du corps de l'adversaire.
+    en: The flank or side of the opponent's body.
+  translation:
+    fr: Flanc
+    en: Flank
+
+poitrine:
+  term: Poitrine
+  type: Cible
+  definition:
+    fr: La poitrine ou le torse de l'adversaire.
+    en: The opponent's chest or torso.
+  translation:
+    fr: Poitrine
+    en: Chest
+
+cuisse:
+  term: Cuisse
+  type: Cible
+  definition:
+    fr: La cuisse de l'adversaire.
+    en: The opponent's thigh.
+  translation:
+    fr: Cuisse
+    en: Thigh
+
+pied:
+  term: Pied
+  type: Cible
+  definition:
+    fr: Le pied de l'adversaire.
+    en: The opponent's foot.
+  translation:
+    fr: Pied
+    en: Foot
