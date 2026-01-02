@@ -205,13 +205,13 @@ def process_file(file_path, enricher):
             targets.sort()
             
             section['annotation']['guards_mentioned'] = guards
-            section['annotation']['guards_count'] = guards_count if guards_count else None
+            section['annotation']['guards_count'] = guards_count or None
             section['annotation']['techniques'] = techniques
-            section['annotation']['techniques_count'] = techniques_count if techniques_count else None
+            section['annotation']['techniques_count'] = techniques_count or None
             section['annotation']['strikes'] = strikes
-            section['annotation']['strikes_count'] = strikes_count if strikes_count else None
+            section['annotation']['strikes_count'] = strikes_count or None
             section['annotation']['targets'] = targets
-            section['annotation']['targets_count'] = targets_count if targets_count else None
+            section['annotation']['targets_count'] = targets_count or None
 
     # Save back
     with open(file_path, 'w', encoding='utf-8') as f:
