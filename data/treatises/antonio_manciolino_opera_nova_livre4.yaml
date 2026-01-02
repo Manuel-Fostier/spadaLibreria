@@ -65,3 +65,24 @@
     - Pied
     - Poitrine
     - Tête
+    guards_count:
+      Porta di Ferro Stretta: 4
+      Guardia di Faccia: 2
+      Guardia di Testa: 1
+    techniques_count:
+    strikes_count:
+      Roverso: 9
+      Punta: 5
+      Mandritto: 8
+      Fendente: 1
+      Falso: 6
+    targets_count:
+      Main: 2
+      Flanc: 1
+      Face: 3
+      Tête: 5
+      Jambe: 6
+      Poitrine: 2
+      Pied: 8
+      Cuisse: 1
+      Bras: 2

@@ -137,6 +137,8 @@ def process_file(file_path, enricher):
         # 2. Enrich Content
         content = section.get('content', {})
         found_keys = set()
+        # Count occurrences of each term key
+        key_counts = {}
         
         # Helper to enrich and preserve block style
         def enrich_field(obj, key):
@@ -144,11 +146,12 @@ def process_file(file_path, enricher):
                 original = obj[key]
                 enriched = enricher.enrich(original)
                 
-                # Extract keys from enriched text
+                # Extract keys from enriched text and count them
                 keys = re.findall(r'\{([^}]+)\}', enriched)
                 for k in keys:
                     if enricher.get_category(k) is not None:
                         found_keys.add(k)
+                        key_counts[k] = key_counts.get(k, 0) + 1
 
                 if enriched != original:
                     # Use PreservedScalarString to keep | style if it was multiline or just to be safe
@@ -170,20 +173,31 @@ def process_file(file_path, enricher):
         # Populate annotation fields based on found keys
         if 'annotation' in section:
             guards = []
+            guards_count = {}
             techniques = []
+            techniques_count = {}
             strikes = []
+            strikes_count = {}
             targets = []
+            targets_count = {}
             
             for key in found_keys:
                 cat = enricher.get_category(key)
+                term = enricher.get_term(key)
+                count = key_counts.get(key, 0)
+                
                 if cat == 'guard':
-                    guards.append(enricher.get_term(key))
+                    guards.append(term)
+                    guards_count[term] = count
                 elif cat == 'technique':
-                    techniques.append(enricher.get_term(key))
+                    techniques.append(term)
+                    techniques_count[term] = count
                 elif cat == 'strike':
-                    strikes.append(enricher.get_term(key))
+                    strikes.append(term)
+                    strikes_count[term] = count
                 elif cat == 'target':
-                    targets.append(enricher.get_term(key))
+                    targets.append(term)
+                    targets_count[term] = count
             
             guards.sort()
             techniques.sort()
@@ -191,9 +205,13 @@ def process_file(file_path, enricher):
             targets.sort()
             
             section['annotation']['guards_mentioned'] = guards
+            section['annotation']['guards_count'] = guards_count or None
             section['annotation']['techniques'] = techniques
+            section['annotation']['techniques_count'] = techniques_count or None
             section['annotation']['strikes'] = strikes
+            section['annotation']['strikes_count'] = strikes_count or None
             section['annotation']['targets'] = targets
+            section['annotation']['targets_count'] = targets_count or None
 
     # Save back
     with open(file_path, 'w', encoding='utf-8') as f:
