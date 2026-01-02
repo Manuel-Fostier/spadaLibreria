@@ -12,13 +12,15 @@
   annotation:
     note: ""
     weapons:
-    - Spada sola
+      - Spada sola
     guards_mentioned: []
     techniques: []
     measures: []
     strategy: []
     weapon_type: Epée aiguisée
     id: anno_1765406321139_xj06ullw1
+    strikes: []
+    targets: []
 - id: achille_marozzo_l2_c95
   title: Chap. 95. Lequel traite du combat de l’épée seule.
   metadata:
@@ -30,25 +32,27 @@
   annotation:
     note: ""
     weapons:
-    - Spada sola
+      - Spada sola
     guards_mentioned:
-    - Coda Longa e Stretta
-    - Porta di Ferro Larga
-    - Porta di Ferro Stretta
-    techniques:
-    - Falso
-    - Fendente
-    - Mandritto
-    - Roverso
-    - Tondo
+      - Coda Longa e Stretta
+      - Porta di Ferro Larga
+      - Porta di Ferro Stretta
+    techniques: []
     measures:
-    - Stretta di Mezza Spada
-    - Gioco Stretto
+      - Stretta di Mezza Spada
+      - Gioco Stretto
     strategy:
-    - provocation
-    - invitation
+      - provocation
+      - invitation
     weapon_type: Epée aiguisée
     id: anno_1765318780408_nh2pvt18n
+    strikes:
+      - Falso
+      - Fendente
+      - Mandritto
+      - Roverso
+      - Tondo
+    targets: []
   content:
     fr: |
       Maintenant, regarde que je veux que tu t’arranges en {coda_longa_stretta} avec le pied droit devant, le gauche étant arrangé par derrière le droit. Et la main gauche sera derrière à ton dos et ton bras d’épée sera tendu fortement devant vers la droite de ton ennemi. Et de là, tu frapperas ensemble un {falso} {tondo} à la face de ton ennemi avec d’un {mandritto} {fendente} qui tombera en {porta_di_ferro_larga} tout en avançant dans cette frappe de ton pied droit en avant. Et si alors ton ennemi te tire à la tête où à la jambe, dans le temps où il tirera tu frapperas un {falso} de bas en haut à la main d’épée de ton ennemi, et puis tu le suivras d’un {fendente} traversato doublé à la face : c’est-à-dire que tu en tireras deux dans un même temps. La jambe gauche poussant la droite devant et ton épée tombera en {porta_di_ferro_larga}. Étant dans cette {porta_di_ferro_larga} et ton ennemi te tirant une stoccata ou un {mandritto} à la tête ou un {roverso}, à chacune de ces bottes je veux que tu frappes du {falso} de ton épée dans le coup qu’il te tire. Et dans cette frappe, tu passeras d’un grand pas de ton pied gauche devant vers le côté droit de l’ennemi, et dans ce pas tu lui donneras un {roverso} sgualembrato qui frappera de la tête jusqu’à la pointe des pieds. Et pour te couvrir, tu jetteras le pied gauche d’un grand pas derrière le droit, et dans ce pas tu lui tireras un {mandritto} traversato à son bras d’épée, et celui-ci tombera en {porta_di_ferro_stretta}. Et de là tu feras une demi-volte du poing et tu t’arrangeras en {coda_longa_stretta} comme je te disais ci-dessus, aussi avec le bras d’épée bien tendu vers la droite de l’ennemi et la jambe gauche arrangée comme ci-dessus.
@@ -66,18 +70,20 @@
   annotation:
     note: ""
     weapons:
-    - Spada sola
+      - Spada sola
     guards_mentioned:
-    - Coda Longa e Alta
-    - Coda Longa e Stretta
-    techniques:
-    - Falso
-    - Roverso
-    - Tondo
+      - Coda Longa e Alta
+      - Coda Longa e Stretta
+    techniques: []
+    strikes:
+      - Falso
+      - Roverso
+      - Tondo
     measures: []
     strategy: []
     weapon_type: Epée aiguisée
     id: anno_1765406379294_8nx4rhigc
+    targets: []
 - id: achille_marozzo_l2_c97
   title: Chap. 97. Qui parle des quatre contres à la stoccata.
   metadata:
@@ -101,20 +107,22 @@
   annotation:
     note: ""
     weapons:
-    - Spada sola
+      - Spada sola
     guards_mentioned:
-    - Coda Longa e Alta
-    techniques:
-    - Falso
-    - Fendente
-    - Mandritto
-    - Punta
-    - Roverso
-    - Tondo
+      - Coda Longa e Alta
+    techniques: []
+    strikes:
+      - Falso
+      - Fendente
+      - Mandritto
+      - Punta
+      - Roverso
+      - Tondo
     measures: []
     strategy: []
     weapon_type: Epée aiguisée
     id: anno_1765406289574_i3608fp29
+    targets: []
 - id: achille_marozzo_l2_c98
   title: Chap. 98. Qui dit le contre de la stoccata.
   metadata:
@@ -126,16 +134,18 @@
   annotation:
     note: ""
     weapons:
-    - Spada sola
+      - Spada sola
     guards_mentioned:
-    - Cinghiara Porta di Ferro
-    - Coda Longa e Alta
-    techniques:
-    - Mandritto
-    - Roverso
+      - Cinghiara Porta di Ferro
+      - Coda Longa e Alta
+    techniques: []
+    strikes:
+      - Mandritto
+      - Roverso
     measures: []
     strategy: []
     weapon_type: Epée aiguisée
+    targets: []
   content:
     fr: |
       Étant resté comme je te l’indiquais ci-dessus bien en garde de {coda_longa_alta} et ton ennemi te tirant une stoccata, tu sais que je t’ai dit ci-dessus que tu peux passer du pied droit devant vers le côté gauche de l’ennemi et tirer dans ce pas un {roverso} traversato. Et cela fait, pour te couvrir tu jetteras le pied droit derrière le gauche et tu tireras un {mandritto} à son bras d’épée. Et ce {mandritto} tombera en {cinghiara_porta_di_ferro}. Et de là, tu feras une demi-volte du poing et tu seras retourné comme je t’ai montré ci-dessus : c’est-à-dire en {coda_longa_alta}.
@@ -150,15 +160,17 @@
   annotation:
     note: ""
     weapons:
-    - Spada sola
+      - Spada sola
     guards_mentioned:
-    - Coda Longa e Alta
-    - Coda Longa e Stretta
-    techniques:
-    - Punta
+      - Coda Longa e Alta
+      - Coda Longa e Stretta
+    techniques: []
+    strikes:
+      - Punta
     measures: []
     strategy: []
     weapon_type: Epée aiguisée
+    targets: []
   content:
     fr: |
       Maintenant, note qu’étant encore en {coda_longa_alta} et que quelqu’un te tire une stoccata, je veux que dans le temps où lui tirera cette stoccata que tu passes du pied droit fortement vers le côté gauche de ton ennemi et que dans ce pas tu lui chasses une {punta} au flanc. Et cela fait, tu feras une demi-volte du poing et tu t’arrangeras en {coda_longa_stretta} avec le pied droit devant bien proprement et bien arrangé avec ton bras d’épée bien tendu vers la droite de l’ennemi et ton pied gauche accommodée derrière le droit.
@@ -173,18 +185,20 @@
   annotation:
     note: ""
     weapons:
-    - Spada sola
+      - Spada sola
     guards_mentioned:
-    - Cinghiara Porta di Ferro
-    - Coda Longa e Alta
-    - Coda Longa e Stretta
-    - Porta di Ferro Stretta
-    techniques:
-    - Mandritto
-    - Roverso
+      - Cinghiara Porta di Ferro
+      - Coda Longa e Alta
+      - Coda Longa e Stretta
+      - Porta di Ferro Stretta
+    techniques: []
+    strikes:
+      - Mandritto
+      - Roverso
     measures: []
     strategy: []
     weapon_type: Epée aiguisée
+    targets: []
   content:
     fr: |
       Étant en {coda_longa_stretta} et ton ennemi étant en {coda_longa_alta} ou stretta comme toi, de là je veux que tu jettes le pied gauche vers son côté droit, et dans ce pas tu lui donneras un {mandritto} fortement à travers sa main d’épée de sorte que ton épée tombera en {cinghiara_porta_di_ferro} stretta. Et là, tu avanceras aussitôt de ton pied droit devant et tu lui donneras un {roverso} à la jambe. Et pour te couvrir, tu jetteras le pied droit derrière le pied gauche, et dans ce pas tu tireras un autre {roverso} sgualembrato de gamba levata. Et ton épée sera tombée en {coda_longa_alta}. Et de là, tu jetteras le pied droit devant et tu t’arrangeras en {porta_di_ferro_stretta}, et la jambe gauche sera arrangée derrière la droite.
@@ -199,19 +213,21 @@
   annotation:
     note: ""
     weapons:
-    - Spada sola
+      - Spada sola
     guards_mentioned:
-    - Coda Longa e Stretta
-    - Porta di Ferro Larga
-    - Porta di Ferro Stretta
-    techniques:
-    - Falso
-    - Mandritto
-    - Punta
-    - Roverso
+      - Coda Longa e Stretta
+      - Porta di Ferro Larga
+      - Porta di Ferro Stretta
+    techniques: []
+    strikes:
+      - Falso
+      - Mandritto
+      - Punta
+      - Roverso
     measures: []
     strategy: []
     weapon_type: Epée aiguisée
+    targets: []
   content:
     fr: |
       Étant allé en {porta_di_ferro_stretta} et ton ennemi étant comme toi, alors je veux que tu tires le pied droit devant et que tu frappes d’un {falso} de bas en haut dans l’épée de l’ennemi, de sorte que la tienne et la sienne soient ensemble à {falso} contre {falso}. Alors je veux que tu avances fortement du pied gauche devant vers son côté droit et tu mettras ta jambe à l’extérieur de sa jambe droite afin que lui ne te fasse pas de croche-pied. Et dans ce pas que tu feras avec ton pied gauche, tu feras une demi-volte du poing et tu lui pousseras une {punta} dritta à la face en levant ta main vers le haut de sorte que par peur de cette {punta} il lèvera le bras de l’épée vers l’extérieur. Et toi alors, tu pourras jeter ta main gauche à son épée ou au bras droit de cette épée, et là tu lui feras une prise. Et si tu ne veux pas faire la prise, dans le temps où il lèvera, tu passeras de ton pied droit vers son côté gauche et dans ce pas tu lui donneras à son bras d’épée, ou à la tête un {mandritto} traversato doublé, c’est-à-dire que tu tireras deux mandritti dans un temps. Et le dernier tombera en {porta_di_ferro_larga}. Et de là, si ton ennemi te tire une botte quelconque, tu frapperas d’un {falso} de bas en haut dans son épée et tu lui donneras un {roverso} à la tête en passant du pied gauche vers son côté droit. Et pour te couvrir, tu jetteras le pied droit derrière le gauche, et dans ce pas tu tireras à son visage une stoccata la main au-dessus. Et ton épée tombera en porta di ferro. Et alors, tu feras une demi-volte du poing et tu t’arrangeras en {coda_longa_stretta} avec le pied droit devant bien proprement.

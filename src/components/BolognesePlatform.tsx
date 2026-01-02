@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { BookOpen, ChevronRight, ChevronDown, MessageSquare, Settings } from 'lucide-react';
+import { BookOpen, ChevronRight, ChevronDown, MessageSquare, Settings, BarChart3 } from 'lucide-react';
 import TextParser from './TextParser';
 import AnnotationPanel from './AnnotationPanel';
 import AnnotationBadge from './AnnotationBadge';
@@ -14,6 +14,7 @@ import AnnotationDisplaySettings from './AnnotationDisplaySettings';
 import SearchBar from './SearchBar';
 import { useSearch } from '@/contexts/SearchContext';
 import TagFilter, { FilterState, initialFilterState } from './TagFilter';
+import StatisticsModal from './StatisticsModal';
 
 interface BolognesePlatformProps {
   glossaryData: { [key: string]: GlossaryEntry };
@@ -67,10 +68,13 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   const [translatorPreferences, setTranslatorPreferences] = useState<{ [key: string]: string }>({});
   const [annotationSection, setAnnotationSection] = useState<string | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(true); // FR-012: Default open
+  // Track when user manually selects a section to prevent auto-scrolling until panel is closed
+  const [isManualSelection, setIsManualSelection] = useState(false);
   const { getAnnotation, getUniqueValues, getMatchingSectionIds } = useAnnotations();
   const [showItalian, setShowItalian] = useState(false);
   const [showEnglish, setShowEnglish] = useState(false);
   const [showDisplaySettings, setShowDisplaySettings] = useState(false);
+  const [showStatistics, setShowStatistics] = useState(false);
   const { displayConfig } = useAnnotationDisplay();
   const { results, lastQuery } = useSearch();
   const [filters, setFilters] = useState<FilterState>(initialFilterState);
@@ -93,6 +97,8 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
     const guards = getUniqueValues('guards_mentioned');
     const techniques = getUniqueValues('techniques');
     const weapon_type = getUniqueValues('weapon_type');
+    const strikes = getUniqueValues('strikes');
+    const targets = getUniqueValues('targets');
 
     // Treatise options from data
     const master = Array.from(new Set(treatiseData.map(t => t.metadata.master))).sort();
@@ -105,6 +111,8 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
       guards,
       techniques,
       weapon_type,
+      strikes,
+      targets,
       master,
       work,
       book,
@@ -128,14 +136,16 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
     if (filters.year) content = content.filter(t => t.metadata.year.toString() === filters.year);
 
     // 3. Apply Annotation Filters
-    const hasAnnotationFilters = filters.weapons || filters.guards || filters.techniques || filters.weapon_type;
+    const hasAnnotationFilters = filters.weapons || filters.guards || filters.techniques || filters.weapon_type || filters.strikes || filters.targets;
     
     if (hasAnnotationFilters) {
       const matchingAnnotationIds = getMatchingSectionIds({
         weapons: filters.weapons || undefined,
         guards: filters.guards || undefined,
         techniques: filters.techniques || undefined,
-        weapon_type: filters.weapon_type || undefined
+        weapon_type: filters.weapon_type || undefined,
+        strikes: filters.strikes || undefined,
+        targets: filters.targets || undefined
       });
       
       content = content.filter(item => matchingAnnotationIds.has(item.id));
@@ -151,9 +161,13 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
     }
   }, [filteredContent, annotationSection]);
 
-  // FR-012b / SC-012: Smart scrolling
+  // FR-012b / SC-012: Smart scrolling behavior
+  // Auto-updates annotation section based on scroll position when:
+  // 1. Panel is closed (isPanelOpen is false), OR
+  // 2. Panel is open but user hasn't manually selected a section (isManualSelection is false)
   useEffect(() => {
-    if (!isPanelOpen) return;
+    // Don't auto-update if panel is open AND user has manually selected a section
+    if (isPanelOpen && isManualSelection) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -193,7 +207,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
     sections.forEach(section => observer.observe(section));
 
     return () => observer.disconnect();
-  }, [filteredContent, isPanelOpen]);
+  }, [filteredContent, isPanelOpen, isManualSelection]);
 
 
 
@@ -252,6 +266,18 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
               filters={filters}
               onFilterChange={setFilters}
             />
+          </div>
+
+          {/* Statistics button below filters */}
+          <div className="mb-6">
+            <button
+              onClick={() => setShowStatistics(true)}
+              className="w-full px-4 py-3 text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm"
+              title="Afficher les statistiques"
+            >
+              <BarChart3 size={16} />
+              Statistiques
+            </button>
           </div>
 
         </div>
@@ -352,6 +378,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                         onClick={() => {
                           setAnnotationSection(section.id);
                           setIsPanelOpen(true);
+                          setIsManualSelection(true); // Mark as manual selection
                         }}
                       />
                     ) : (
@@ -359,6 +386,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                         onClick={() => {
                           setAnnotationSection(section.id);
                           setIsPanelOpen(true);
+                          setIsManualSelection(true); // Mark as manual selection
                         }}
                         className={`px-3 py-1.5 rounded-lg transition-colors text-xs font-medium flex items-center gap-1.5 ${
                           isPanelOpen && annotationSection === section.id
@@ -493,8 +521,16 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
       {isPanelOpen && annotationSection && (
         <AnnotationPanel
           sectionId={annotationSection}
-          onClose={() => setIsPanelOpen(false)}
+          onClose={() => {
+            setIsPanelOpen(false);
+            setIsManualSelection(false); // Reset manual selection when panel is closed
+          }}
         />
+      )}
+
+      {/* Modale de statistiques */}
+      {showStatistics && (
+        <StatisticsModal onClose={() => setShowStatistics(false)} />
       )}
     </div>
   );

@@ -56,6 +56,55 @@ export const GUARDS = [
 ] as const;
 export type Guard = typeof GUARDS[number];
 
+// Guard categories for statistics
+export const HIGH_GUARDS: Guard[] = [
+  'Guardia Alta',
+  'Guardia di Alicorno',
+  'Guardia di Faccia',
+  'Guardia di Testa',
+  'Guardia d\'Intrare',
+  'Becca Cesa',
+  'Becca Possa',
+];
+
+export const LOW_GUARDS: Guard[] = [
+  'Coda Longa',
+  'Coda Longa e Alta',
+  'Coda Longa e Larga',
+  'Coda Longa e Stretta',
+  'Coda Longa e Distesa',
+  'Porta di Ferro',
+  'Porta di Ferro Larga',
+  'Porta di Ferro Stretta',
+  'Cinghiara Porta di Ferro',
+  'Guardia di Sopra Braccio',
+  'Guardia di Sotto Braccio',
+];
+
+export const STRIKES = [
+  'Mandritto',
+  'Roverso',
+  'Fendente',
+  'Tondo',
+  'Stoccata',
+  'Punta',
+  'Falso',
+  'Tramazone',
+  'Sgualembrato',
+] as const;
+export type Strike = typeof STRIKES[number];
+
+export const TARGETS = [
+  'Tête',
+  'Visage',
+  'Bras',
+  'Main',
+  'Torse',
+  'Jambe',
+  'Pied',
+] as const;
+export type Target = typeof TARGETS[number];
+
 export interface Annotation {
   id: string;  
   note: string | null;
@@ -65,4 +114,6 @@ export interface Annotation {
   techniques: string[] | null;
   measures: Measure[] | null;
   strategy: Strategy[] | null;
+  strikes: Strike[] | null;
+  targets: Target[] | null;
 }

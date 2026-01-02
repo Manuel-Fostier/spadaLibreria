@@ -39,18 +39,20 @@
       Et cela est une défense singulière qui peut se faire dans ce jeu. 
   annotation:
     id: antonio_manciolino_l4_c12_ann
-    note:
+    note: null
     weapons: []
-    weapon_type:
+    weapon_type: null
     guards_mentioned:
-    - Guardia di Faccia
-    - Guardia di Testa
-    - Porta di Ferro Stretta
-    techniques:
-    - Falso
-    - Fendente
-    - Mandritto
-    - Punta
-    - Roverso
+      - Guardia di Faccia
+      - Guardia di Testa
+      - Porta di Ferro Stretta
+    techniques: []
+    strikes:
+      - Falso
+      - Fendente
+      - Mandritto
+      - Punta
+      - Roverso
     measures: []
     strategy: []
+    targets: []

@@ -1,7 +1,23 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Annotation, MEASURES, STRATEGIES, WEAPONS, WEAPON_TYPES, GUARDS, Measure, Strategy, Weapon, WeaponType, Guard } from '@/lib/annotation';
+import { 
+  Annotation, 
+  MEASURES, 
+  STRATEGIES, 
+  WEAPONS, 
+  WEAPON_TYPES, 
+  GUARDS, 
+  STRIKES,
+  TARGETS,
+  Measure, 
+  Strategy, 
+  Weapon, 
+  WeaponType, 
+  Guard,
+  Strike,
+  Target
+} from '@/lib/annotation';
 
 interface AnnotationContextType {
   annotations: Map<string, Annotation>;
@@ -14,6 +30,8 @@ interface AnnotationContextType {
     guards?: string;
     techniques?: string;
     weapon_type?: string;
+    strikes?: string;
+    targets?: string;
   }) => Set<string>;
   saveToServer: (options?: { force?: boolean }) => Promise<void>;
   isDirty: boolean;
@@ -61,6 +79,16 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
     const validTechniques = Array.isArray(ann.techniques)
       ? Array.from(new Set(ann.techniques.filter((t): t is string => typeof t === 'string')))
       : [];
+    const validStrikes = Array.isArray(ann.strikes)
+      ? Array.from(new Set(
+          ann.strikes.filter((s): s is Strike => STRIKES.includes(s as Strike))
+        ))
+      : [];
+    const validTargets = Array.isArray(ann.targets)
+      ? Array.from(new Set(
+          ann.targets.filter((t): t is Target => TARGETS.includes(t as Target))
+        ))
+      : [];
     
     // Create new annotation without the legacy 'measure' field
     const { measure: _measure, ...rest } = ann as LegacyAnnotation & { measure?: Measure | null };
@@ -72,7 +100,9 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
       weapons: validWeapons,
       weapon_type: validWeaponTypes,
       guards_mentioned: validGuards,
-      techniques: validTechniques
+      techniques: validTechniques,
+      strikes: validStrikes,
+      targets: validTargets
     } as Annotation;
   };
 
@@ -88,6 +118,8 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
         weapon_type: ann.weapon_type ?? null,
         guards_mentioned: ann.guards_mentioned ?? [],
         techniques: ann.techniques ?? [],
+        strikes: ann.strikes ?? [],
+        targets: ann.targets ?? [],
       } as LegacyAnnotation);
       newMap.set(key, normalized);
     });
@@ -151,6 +183,14 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
       techniques: Array.isArray(annotation.techniques) ? Array.from(new Set(
         annotation.techniques.filter((t): t is string => typeof t === 'string')
       )) : [],
+      // normalize strikes
+      strikes: Array.isArray(annotation.strikes) ? Array.from(new Set(
+        annotation.strikes.filter((s): s is Strike => STRIKES.includes(s as Strike))
+      )) : [],
+      // normalize targets
+      targets: Array.isArray(annotation.targets) ? Array.from(new Set(
+        annotation.targets.filter((t): t is Target => TARGETS.includes(t as Target))
+      )) : [],
       id: `anno_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     };
 
@@ -188,8 +228,24 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
       const techniques = Array.isArray(merged.techniques) ? Array.from(new Set(
         merged.techniques.filter((t): t is string => typeof t === 'string')
       )) : [];
+      const strikes = Array.isArray(merged.strikes) ? Array.from(new Set(
+        merged.strikes.filter((s): s is Strike => STRIKES.includes(s as Strike))
+      )) : [];
+      const targets = Array.isArray(merged.targets) ? Array.from(new Set(
+        merged.targets.filter((t): t is Target => TARGETS.includes(t as Target))
+      )) : [];
       
-      newMap.set(sectionId, { ...merged, measures, strategy, weapons, weapon_type, guards_mentioned, techniques });
+      newMap.set(sectionId, { 
+        ...merged, 
+        measures, 
+        strategy, 
+        weapons, 
+        weapon_type, 
+        guards_mentioned, 
+        techniques,
+        strikes,
+        targets
+      });
       return newMap;
     });
     setIsDirty(true);
@@ -219,6 +275,8 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
     guards?: string;
     techniques?: string;
     weapon_type?: string;
+    strikes?: string;
+    targets?: string;
   }): Set<string> => {
     const matchingIds = new Set<string>();
     
@@ -235,6 +293,12 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
         matches = false;
       }
       if (filters.weapon_type && ann.weapon_type !== filters.weapon_type) {
+        matches = false;
+      }
+      if (filters.strikes && (!ann.strikes || !ann.strikes.includes(filters.strikes as Strike))) {
+        matches = false;
+      }
+      if (filters.targets && (!ann.targets || !ann.targets.includes(filters.targets as Target))) {
         matches = false;
       }
 
