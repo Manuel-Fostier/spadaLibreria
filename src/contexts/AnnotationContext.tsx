@@ -26,12 +26,12 @@ interface AnnotationContextType {
   getAnnotation: (sectionId: string) => Annotation | undefined;
   getUniqueValues: (field: keyof Annotation) => string[];
   getMatchingSectionIds: (filters: {
-    weapons?: string;
-    guards?: string;
-    techniques?: string;
-    weapon_type?: string;
-    strikes?: string;
-    targets?: string;
+    weapons?: string | string[];
+    guards?: string | string[];
+    techniques?: string | string[];
+    weapon_type?: string | string[];
+    strikes?: string | string[];
+    targets?: string | string[];
   }) => Set<string>;
   saveToServer: (options?: { force?: boolean }) => Promise<void>;
   isDirty: boolean;
@@ -271,35 +271,53 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
   };
 
   const getMatchingSectionIds = (filters: {
-    weapons?: string;
-    guards?: string;
-    techniques?: string;
-    weapon_type?: string;
-    strikes?: string;
-    targets?: string;
+    weapons?: string | string[];
+    guards?: string | string[];
+    techniques?: string | string[];
+    weapon_type?: string | string[];
+    strikes?: string | string[];
+    targets?: string | string[];
   }): Set<string> => {
     const matchingIds = new Set<string>();
     
     annotations.forEach((ann, id) => {
       let matches = true;
 
-      if (filters.weapons && (!ann.weapons || !ann.weapons.includes(filters.weapons as Weapon))) {
-        matches = false;
+      if (filters.weapons) {
+        const vals = Array.isArray(filters.weapons) ? filters.weapons : [filters.weapons];
+        if (vals.length > 0 && (!ann.weapons || !vals.some(v => ann.weapons!.includes(v as Weapon)))) {
+          matches = false;
+        }
       }
-      if (filters.guards && (!ann.guards_mentioned || !ann.guards_mentioned.includes(filters.guards as Guard))) {
-        matches = false;
+      if (filters.guards) {
+        const vals = Array.isArray(filters.guards) ? filters.guards : [filters.guards];
+        if (vals.length > 0 && (!ann.guards_mentioned || !vals.some(v => ann.guards_mentioned!.includes(v as Guard)))) {
+          matches = false;
+        }
       }
-      if (filters.techniques && (!ann.techniques || !ann.techniques.includes(filters.techniques))) {
-        matches = false;
+      if (filters.techniques) {
+        const vals = Array.isArray(filters.techniques) ? filters.techniques : [filters.techniques];
+        if (vals.length > 0 && (!ann.techniques || !vals.some(v => ann.techniques!.includes(v)))) {
+          matches = false;
+        }
       }
-      if (filters.weapon_type && ann.weapon_type !== filters.weapon_type) {
-        matches = false;
+      if (filters.weapon_type) {
+        const vals = Array.isArray(filters.weapon_type) ? filters.weapon_type : [filters.weapon_type];
+        if (vals.length > 0 && (!ann.weapon_type || !vals.includes(ann.weapon_type))) {
+          matches = false;
+        }
       }
-      if (filters.strikes && (!ann.strikes || !ann.strikes.includes(filters.strikes as Strike))) {
-        matches = false;
+      if (filters.strikes) {
+        const vals = Array.isArray(filters.strikes) ? filters.strikes : [filters.strikes];
+        if (vals.length > 0 && (!ann.strikes || !vals.some(v => ann.strikes!.includes(v as Strike)))) {
+          matches = false;
+        }
       }
-      if (filters.targets && (!ann.targets || !ann.targets.includes(filters.targets as Target))) {
-        matches = false;
+      if (filters.targets) {
+        const vals = Array.isArray(filters.targets) ? filters.targets : [filters.targets];
+        if (vals.length > 0 && (!ann.targets || !vals.some(v => ann.targets!.includes(v as Target)))) {
+          matches = false;
+        }
       }
 
       if (matches) {

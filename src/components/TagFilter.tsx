@@ -1,36 +1,36 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Filter, ChevronDown, ChevronUp, X, Tag, Book } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Filter, ChevronDown, ChevronUp, Tag, Book, Check } from 'lucide-react';
 
 // Define types for the filter state
 export interface FilterState {
   // Annotation filters
-  weapons: string;
-  guards: string;
-  techniques: string;
-  weapon_type: string;
-  strikes: string;
-  targets: string;
+  weapons: string[];
+  guards: string[];
+  techniques: string[];
+  weapon_type: string[];
+  strikes: string[];
+  targets: string[];
   
   // Treatise filters
-  master: string;
-  work: string;
-  book: string; // string to handle "all" easily, convert to number when filtering
-  year: string; // string to handle "all" easily
+  master: string[];
+  work: string[];
+  book: string[]; // string to handle "all" easily, convert to number when filtering
+  year: string[]; // string to handle "all" easily
 }
 
 export const initialFilterState: FilterState = {
-  weapons: '',
-  guards: '',
-  techniques: '',
-  weapon_type: '',
-  strikes: '',
-  targets: '',
-  master: '',
-  work: '',
-  book: '',
-  year: ''
+  weapons: [],
+  guards: [],
+  techniques: [],
+  weapon_type: [],
+  strikes: [],
+  targets: [],
+  master: [],
+  work: [],
+  book: [],
+  year: []
 };
 
 interface TagFilterProps {
@@ -56,12 +56,114 @@ interface TagFilterProps {
   className?: string;
 }
 
+interface MultiSelectProps {
+  label: string;
+  value: string[];
+  options: string[];
+  onChange: (value: string[]) => void;
+  placeholder?: string;
+}
+
+function MultiSelect({ label, value, options, onChange, placeholder = "Tous" }: MultiSelectProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleOptionClick = (option: string, event: React.MouseEvent) => {
+    if (event.shiftKey) {
+      // Add/Remove from selection
+      if (value.includes(option)) {
+        onChange(value.filter(v => v !== option));
+      } else {
+        onChange([...value, option]);
+      }
+    } else {
+      // Select only this option (or toggle if it's the only one selected?)
+      if (value.length === 1 && value[0] === option) {
+        // If clicking the only selected item, deselect it (go back to "All")
+        onChange([]);
+      } else {
+        onChange([option]);
+      }
+      setIsOpen(false);
+    }
+  };
+
+  const displayValue = value.length === 0 
+    ? placeholder 
+    : value.length === 1 
+      ? value[0] 
+      : `${value.length} sélectionnés`;
+
+  return (
+    <div className="relative" ref={containerRef}>
+      <label className="block text-xs font-medium text-slate-500 mb-1">{label}</label>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full text-left text-sm border border-gray-300 rounded-md shadow-sm px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 flex justify-between items-center"
+      >
+        <span className="block truncate">{displayValue}</span>
+        <ChevronDown size={16} className="text-gray-400" />
+      </button>
+
+      {isOpen && (
+        <div className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+          <div 
+            className={`cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-blue-50 ${value.length === 0 ? 'text-blue-600 font-semibold' : 'text-gray-900'}`}
+            onClick={() => {
+              onChange([]);
+              setIsOpen(false);
+            }}
+          >
+            <span className="block truncate">{placeholder}</span>
+            {value.length === 0 && (
+              <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600">
+                <Check size={16} />
+              </span>
+            )}
+          </div>
+          {options.map((option) => {
+            const isSelected = value.includes(option);
+            return (
+              <div
+                key={option}
+                className={`cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-blue-50 ${isSelected ? 'text-blue-600 font-semibold' : 'text-gray-900'}`}
+                onClick={(e) => handleOptionClick(option, e)}
+              >
+                <span className="block truncate">{option}</span>
+                {isSelected && (
+                  <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600">
+                    <Check size={16} />
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function TagFilter({ options, filters, onFilterChange, className = '' }: TagFilterProps) {
   const [isOpen, setIsOpen] = useState(true);
   const [isTreatiseOpen, setIsTreatiseOpen] = useState(true);
   const [isAnnotationOpen, setIsAnnotationOpen] = useState(true);
 
-  const handleChange = (category: keyof FilterState, value: string) => {
+  const handleChange = (category: keyof FilterState, value: string[]) => {
     onFilterChange({
       ...filters,
       [category]: value
@@ -72,7 +174,7 @@ export default function TagFilter({ options, filters, onFilterChange, className 
     onFilterChange(initialFilterState);
   };
 
-  const activeFilterCount = Object.values(filters).filter(v => v !== '').length;
+  const activeFilterCount = Object.values(filters).filter(v => v.length > 0).length;
 
   return (
     <div className={`bg-white border rounded-lg shadow-sm ${className}`}>
@@ -123,63 +225,27 @@ export default function TagFilter({ options, filters, onFilterChange, className 
               
               {isTreatiseOpen && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Maître</label>
-                    <select
-                      value={filters.master}
-                      onChange={(e) => handleChange('master', e.target.value)}
-                      className="w-full text-sm border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    >
-                      <option value="">Tous</option>
-                      {options.master.map(opt => (
-                        <option key={opt} value={opt}>{opt}</option>
-                      ))}
-                    </select>
-                  </div>
+                  <MultiSelect
+                    label="Maître"
+                    value={filters.master}
+                    options={options.master}
+                    onChange={(val) => handleChange('master', val)}
+                  />
 
-                  <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Œuvre</label>
-                    <select
-                      value={filters.work}
-                      onChange={(e) => handleChange('work', e.target.value)}
-                      className="w-full text-sm border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    >
-                      <option value="">Toutes</option>
-                      {options.work.map(opt => (
-                        <option key={opt} value={opt}>{opt}</option>
-                      ))}
-                    </select>
-                  </div>
+                  <MultiSelect
+                    label="Œuvre"
+                    value={filters.work}
+                    options={options.work}
+                    onChange={(val) => handleChange('work', val)}
+                    placeholder="Toutes"
+                  />
 
-                  <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Livre</label>
-                    <select
-                      value={filters.book}
-                      onChange={(e) => handleChange('book', e.target.value)}
-                      className="w-full text-sm border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    >
-                      <option value="">Tous</option>
-                      {options.book.map(opt => (
-                        <option key={opt} value={opt}>{opt}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* 
-                  <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Année</label>
-                    <select
-                      value={filters.year}
-                      onChange={(e) => handleChange('year', e.target.value)}
-                      className="w-full text-sm border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    >
-                      <option value="">Toutes</option>
-                      {options.year.map(opt => (
-                        <option key={opt} value={opt}>{opt}</option>
-                      ))}
-                    </select>
-                  </div>
-                  */}
+                  <MultiSelect
+                    label="Livre"
+                    value={filters.book}
+                    options={options.book.map(b => b.toString())}
+                    onChange={(val) => handleChange('book', val)}
+                  />
                 </div>
               )}
             </div>
@@ -199,89 +265,51 @@ export default function TagFilter({ options, filters, onFilterChange, className 
               
               {isAnnotationOpen && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Armes</label>
-                    <select
-                      value={filters.weapons}
-                      onChange={(e) => handleChange('weapons', e.target.value)}
-                      className="w-full text-sm border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    >
-                      <option value="">Toutes</option>
-                      {options.weapons.map(opt => (
-                        <option key={opt} value={opt}>{opt}</option>
-                      ))}
-                    </select>
-                  </div>
+                  <MultiSelect
+                    label="Armes"
+                    value={filters.weapons}
+                    options={options.weapons}
+                    onChange={(val) => handleChange('weapons', val)}
+                    placeholder="Toutes"
+                  />
 
-                  <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">État de l'arme</label>
-                    <select
-                      value={filters.weapon_type}
-                      onChange={(e) => handleChange('weapon_type', e.target.value)}
-                      className="w-full text-sm border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    >
-                      <option value="">Tous</option>
-                      {options.weapon_type.map(opt => (
-                        <option key={opt} value={opt}>{opt}</option>
-                      ))}
-                    </select>
-                  </div>
+                  <MultiSelect
+                    label="État de l'arme"
+                    value={filters.weapon_type}
+                    options={options.weapon_type}
+                    onChange={(val) => handleChange('weapon_type', val)}
+                  />
 
-                  <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Gardes</label>
-                    <select
-                      value={filters.guards}
-                      onChange={(e) => handleChange('guards', e.target.value)}
-                      className="w-full text-sm border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    >
-                      <option value="">Toutes</option>
-                      {options.guards.map(opt => (
-                        <option key={opt} value={opt}>{opt}</option>
-                      ))}
-                    </select>
-                  </div>
+                  <MultiSelect
+                    label="Gardes"
+                    value={filters.guards}
+                    options={options.guards}
+                    onChange={(val) => handleChange('guards', val)}
+                    placeholder="Toutes"
+                  />
 
-                  <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Techniques</label>
-                    <select
-                      value={filters.techniques}
-                      onChange={(e) => handleChange('techniques', e.target.value)}
-                      className="w-full text-sm border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    >
-                      <option value="">Toutes</option>
-                      {options.techniques.map(opt => (
-                        <option key={opt} value={opt}>{opt}</option>
-                      ))}
-                    </select>
-                  </div>
+                  <MultiSelect
+                    label="Techniques"
+                    value={filters.techniques}
+                    options={options.techniques}
+                    onChange={(val) => handleChange('techniques', val)}
+                    placeholder="Toutes"
+                  />
 
-                  <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Coups</label>
-                    <select
-                      value={filters.strikes}
-                      onChange={(e) => handleChange('strikes', e.target.value)}
-                      className="w-full text-sm border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    >
-                      <option value="">Tous</option>
-                      {options.strikes.map(opt => (
-                        <option key={opt} value={opt}>{opt}</option>
-                      ))}
-                    </select>
-                  </div>
+                  <MultiSelect
+                    label="Coups"
+                    value={filters.strikes}
+                    options={options.strikes}
+                    onChange={(val) => handleChange('strikes', val)}
+                  />
 
-                  <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Cibles</label>
-                    <select
-                      value={filters.targets}
-                      onChange={(e) => handleChange('targets', e.target.value)}
-                      className="w-full text-sm border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    >
-                      <option value="">Toutes</option>
-                      {options.targets.map(opt => (
-                        <option key={opt} value={opt}>{opt}</option>
-                      ))}
-                    </select>
-                  </div>
+                  <MultiSelect
+                    label="Cibles"
+                    value={filters.targets}
+                    options={options.targets}
+                    onChange={(val) => handleChange('targets', val)}
+                    placeholder="Toutes"
+                  />
                 </div>
               )}
             </div>

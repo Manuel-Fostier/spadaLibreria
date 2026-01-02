@@ -130,22 +130,22 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
     }
 
     // 2. Apply Treatise Metadata Filters
-    if (filters.master) content = content.filter(t => t.metadata.master === filters.master);
-    if (filters.work) content = content.filter(t => t.metadata.work === filters.work);
-    if (filters.book) content = content.filter(t => t.metadata.book.toString() === filters.book);
-    if (filters.year) content = content.filter(t => t.metadata.year.toString() === filters.year);
+    if (filters.master.length > 0) content = content.filter(t => filters.master.includes(t.metadata.master));
+    if (filters.work.length > 0) content = content.filter(t => filters.work.includes(t.metadata.work));
+    if (filters.book.length > 0) content = content.filter(t => filters.book.includes(t.metadata.book.toString()));
+    if (filters.year.length > 0) content = content.filter(t => filters.year.includes(t.metadata.year.toString()));
 
     // 3. Apply Annotation Filters
-    const hasAnnotationFilters = filters.weapons || filters.guards || filters.techniques || filters.weapon_type || filters.strikes || filters.targets;
+    const hasAnnotationFilters = filters.weapons.length > 0 || filters.guards.length > 0 || filters.techniques.length > 0 || filters.weapon_type.length > 0 || filters.strikes.length > 0 || filters.targets.length > 0;
     
     if (hasAnnotationFilters) {
       const matchingAnnotationIds = getMatchingSectionIds({
-        weapons: filters.weapons || undefined,
-        guards: filters.guards || undefined,
-        techniques: filters.techniques || undefined,
-        weapon_type: filters.weapon_type || undefined,
-        strikes: filters.strikes || undefined,
-        targets: filters.targets || undefined
+        weapons: filters.weapons.length > 0 ? filters.weapons : undefined,
+        guards: filters.guards.length > 0 ? filters.guards : undefined,
+        techniques: filters.techniques.length > 0 ? filters.techniques : undefined,
+        weapon_type: filters.weapon_type.length > 0 ? filters.weapon_type : undefined,
+        strikes: filters.strikes.length > 0 ? filters.strikes : undefined,
+        targets: filters.targets.length > 0 ? filters.targets : undefined
       });
       
       content = content.filter(item => matchingAnnotationIds.has(item.id));
