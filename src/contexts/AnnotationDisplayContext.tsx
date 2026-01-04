@@ -2,29 +2,29 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useState, ReactNode } from 'react';
 import { AnnotationDisplay, AnnotationColors } from '@/types/annotationDisplay';
+import { AnnotationRegistry, type AnnotationKey } from '../lib/annotation/AnnotationRegistry';
 
 const STORAGE_KEY = 'annotationDisplay';
 const STORAGE_VERSION = '1.0';
 
-const DEFAULT_COLORS: AnnotationColors = {
-  note: '#6366f1',         // indigo-500
-  weapons: '#8b5cf6',      // violet-500
-  weapon_type: '#ec4899',  // pink-500
-  guards: '#f59e0b',       // amber-500
-  techniques: '#10b981',   // emerald-500
-  measures: '#3b82f6',     // blue-500
-  strategy: '#ef4444',     // red-500
+// Create default colors from annotation instances (called at runtime to get current state)
+const getDefaultColors = (): AnnotationColors => {
+  return AnnotationRegistry.getColors() as AnnotationColors;
 };
 
-const DEFAULT_DISPLAY_CONFIG: AnnotationDisplay = {
-  note: false,
-  weapons: true,
-  weapon_type: true,
-  guards: false,
-  techniques: false,
-  measures: false,
-  strategy: false,
-  colors: DEFAULT_COLORS,
+const createDefaultDisplayConfig = (): AnnotationDisplay => {
+  return {
+    note: false,
+    weapons: true,
+    weapon_type: true,
+    guards: false,
+    techniques: false,
+    measures: false,
+    strategy: false,
+    strikes: false,
+    targets: false,
+    colors: getDefaultColors(),
+  };
 };
 
 interface AnnotationDisplayContextValue {
@@ -32,6 +32,7 @@ interface AnnotationDisplayContextValue {
   updateDisplayConfig: (updates: Partial<AnnotationDisplay>) => void;
   resetDisplayConfig: () => void;
   isHydrated: boolean;
+  getAnnotation: (key: AnnotationKey) => ReturnType<typeof AnnotationRegistry.getAnnotation>;
 }
 
 const AnnotationDisplayContext = createContext<AnnotationDisplayContextValue | undefined>(undefined);
@@ -43,28 +44,63 @@ type StoragePayload = {
 };
 
 const sanitizeConfig = (config?: Partial<AnnotationDisplay>): AnnotationDisplay => {
+  const defaultConfig = createDefaultDisplayConfig();
   return {
-    note: Boolean(config?.note ?? DEFAULT_DISPLAY_CONFIG.note),
-    weapons: Boolean(config?.weapons ?? DEFAULT_DISPLAY_CONFIG.weapons),
-    weapon_type: Boolean(config?.weapon_type ?? DEFAULT_DISPLAY_CONFIG.weapon_type),
-    guards: Boolean(config?.guards ?? DEFAULT_DISPLAY_CONFIG.guards),
-    techniques: Boolean(config?.techniques ?? DEFAULT_DISPLAY_CONFIG.techniques),
-    measures: Boolean(config?.measures ?? DEFAULT_DISPLAY_CONFIG.measures),
-    strategy: Boolean(config?.strategy ?? DEFAULT_DISPLAY_CONFIG.strategy),
+    note: Boolean(config?.note ?? defaultConfig.note),
+    weapons: Boolean(config?.weapons ?? defaultConfig.weapons),
+    weapon_type: Boolean(config?.weapon_type ?? defaultConfig.weapon_type),
+    guards: Boolean(config?.guards ?? defaultConfig.guards),
+    techniques: Boolean(config?.techniques ?? defaultConfig.techniques),
+    measures: Boolean(config?.measures ?? defaultConfig.measures),
+    strategy: Boolean(config?.strategy ?? defaultConfig.strategy),
+    strikes: Boolean(config?.strikes ?? defaultConfig.strikes),
+    targets: Boolean(config?.targets ?? defaultConfig.targets),
     colors: {
-      note: config?.colors?.note ?? DEFAULT_COLORS.note,
-      weapons: config?.colors?.weapons ?? DEFAULT_COLORS.weapons,
-      weapon_type: config?.colors?.weapon_type ?? DEFAULT_COLORS.weapon_type,
-      guards: config?.colors?.guards ?? DEFAULT_COLORS.guards,
-      techniques: config?.colors?.techniques ?? DEFAULT_COLORS.techniques,
-      measures: config?.colors?.measures ?? DEFAULT_COLORS.measures,
-      strategy: config?.colors?.strategy ?? DEFAULT_COLORS.strategy,
+      note: config?.colors?.note ?? defaultConfig.colors.note,
+      weapons: config?.colors?.weapons ?? defaultConfig.colors.weapons,
+      weapon_type: config?.colors?.weapon_type ?? defaultConfig.colors.weapon_type,
+      guards: config?.colors?.guards ?? defaultConfig.colors.guards,
+      techniques: config?.colors?.techniques ?? defaultConfig.colors.techniques,
+      measures: config?.colors?.measures ?? defaultConfig.colors.measures,
+      strategy: config?.colors?.strategy ?? defaultConfig.colors.strategy,
+      strikes: config?.colors?.strikes ?? defaultConfig.colors.strikes,
+      targets: config?.colors?.targets ?? defaultConfig.colors.targets,
     },
   };
 };
 
+/**
+ * Synchronizes AnnotationDisplay config with annotation class instances
+ * Updates annotation visibility and colors when config changes
+ */
+const syncConfigToAnnotations = (config: AnnotationDisplay) => {
+  const keys: AnnotationKey[] = [
+    'weapons',
+    'weapon_type',
+    'guards',
+    'techniques',
+    'measures',
+    'strategy',
+    'strikes',
+    'targets',
+    'note',
+  ];
+
+  keys.forEach(key => {
+    // Update visibility
+    AnnotationRegistry.updateAnnotationVisibility(key, config[key as keyof AnnotationDisplay] as boolean);
+    
+    // Update color
+    if (config.colors && config.colors[key as keyof AnnotationColors]) {
+      const colorValue = config.colors[key as keyof AnnotationColors];
+      AnnotationRegistry.updateAnnotationColor(key, colorValue);
+    }
+  });
+};
+
 export function AnnotationDisplayProvider({ children }: { children: ReactNode }) {
-  const [displayConfig, setDisplayConfig] = useState<AnnotationDisplay>(DEFAULT_DISPLAY_CONFIG);
+  const defaultConfig = createDefaultDisplayConfig();
+  const [displayConfig, setDisplayConfig] = useState<AnnotationDisplay>(defaultConfig);
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
@@ -75,11 +111,19 @@ export function AnnotationDisplayProvider({ children }: { children: ReactNode })
       try {
         const parsed = JSON.parse(stored);
         const parsedConfig = (parsed && 'config' in parsed) ? parsed.config : parsed;
-        setDisplayConfig(sanitizeConfig(parsedConfig));
+        const sanitized = sanitizeConfig(parsedConfig);
+        setDisplayConfig(sanitized);
+        // Sync to annotations
+        syncConfigToAnnotations(sanitized);
       } catch (error) {
         console.error('Failed to parse annotation display config from localStorage', error);
-        setDisplayConfig(DEFAULT_DISPLAY_CONFIG);
+        const fallback = createDefaultDisplayConfig();
+        setDisplayConfig(fallback);
+        syncConfigToAnnotations(fallback);
       }
+    } else {
+      const fallback = createDefaultDisplayConfig();
+      syncConfigToAnnotations(fallback);
     }
 
     setIsHydrated(true);
@@ -88,21 +132,33 @@ export function AnnotationDisplayProvider({ children }: { children: ReactNode })
   useEffect(() => {
     if (!isHydrated || typeof window === 'undefined') return;
 
+
+    // Persist to localStorage
     const payload: StoragePayload = {
       version: STORAGE_VERSION,
       config: displayConfig,
       savedAt: new Date().toISOString(),
     };
-
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+
+    // Sync to annotations
+    syncConfigToAnnotations(displayConfig);
   }, [displayConfig, isHydrated]);
 
   const updateDisplayConfig = useCallback((updates: Partial<AnnotationDisplay>) => {
-    setDisplayConfig(prev => sanitizeConfig({ ...prev, ...updates }));
+    setDisplayConfig(prev => {
+      const next = sanitizeConfig({ ...prev, ...updates });
+      return next;
+    });
   }, []);
 
   const resetDisplayConfig = useCallback(() => {
-    setDisplayConfig(DEFAULT_DISPLAY_CONFIG);
+    const freshDefaults = createDefaultDisplayConfig();
+    setDisplayConfig(freshDefaults);
+  }, []);
+
+  const getAnnotation = useCallback((key: AnnotationKey) => {
+    return AnnotationRegistry.getAnnotation(key);
   }, []);
 
   return (
@@ -112,6 +168,7 @@ export function AnnotationDisplayProvider({ children }: { children: ReactNode })
         updateDisplayConfig,
         resetDisplayConfig,
         isHydrated,
+        getAnnotation,
       }}
     >
       {children}

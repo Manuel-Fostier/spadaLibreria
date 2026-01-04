@@ -10,6 +10,8 @@ export interface AnnotationDisplay {
   techniques: boolean;
   measures: boolean;
   strategy: boolean;
+  strikes: boolean;
+  targets: boolean;
   colors: AnnotationColors;
 }
 
@@ -24,4 +26,6 @@ export interface AnnotationColors {
   techniques: string;
   measures: string;
   strategy: string;
+  strikes: string;
+  targets: string;
 }

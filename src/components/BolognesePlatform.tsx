@@ -21,8 +21,6 @@ interface BolognesePlatformProps {
   treatiseData: TreatiseSection[];
 }
 
-
-
 const buildAnnotationSummary = (
   displayConfig: AnnotationDisplay,
   annotation: Annotation | undefined,
@@ -53,6 +51,14 @@ const buildAnnotationSummary = (
 
   if (displayConfig.strategy && annotation.strategy && annotation.strategy.length) {
     summary.push({ label: 'Stratégie', value: annotation.strategy.join(', ') });
+  }
+
+  if (displayConfig.strikes && annotation.strikes && annotation.strikes.length) {
+    summary.push({ label: 'Coups', value: annotation.strikes.join(', ') });
+  }
+
+  if (displayConfig.targets && annotation.targets && annotation.targets.length) {
+    summary.push({ label: 'Cibles', value: annotation.targets.join(', ') });
   }
 
   if (displayConfig.note && annotation.note) {

@@ -13,50 +13,13 @@ import {
   Measure 
 } from '@/lib/annotation';
 import { useAnnotations } from '@/contexts/AnnotationContext';
+import { useAnnotationDisplay } from '@/contexts/AnnotationDisplayContext';
+import { AnnotationRegistry, type AnnotationKey } from '@/lib/annotation/AnnotationRegistry';
 import MeasureProgressBar from './MeasureProgressBar';
 
+
 type TabType = 'armes' | 'gardes' | 'techniques';
-type ToggleVariant = 'armes' | 'gardes' | 'techniques' | 'strategies' | 'weaponTypes';
-
-const CHIP_PALETTE: Record<string, string> = {
-  weapon: 'bg-sky-50 text-sky-600 border-sky-100',
-  weaponType: 'bg-amber-50 text-amber-700 border-amber-200',
-  strategy: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-  guard: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  technique: 'bg-purple-50 text-purple-700 border-purple-200',
-  default: 'bg-gray-100 text-gray-500 border-gray-200',
-};
-
-const INTERACTIVE_STYLES: Record<ToggleVariant, { active: string; inactive: string }> = {
-  armes: {
-    active: 'bg-sky-600 text-white border-sky-600 shadow',
-    inactive: 'bg-white text-gray-700 border-gray-300 hover:bg-slate-50',
-  },
-  gardes: {
-    active: 'bg-emerald-600 text-white border-emerald-600 shadow',
-    inactive: 'bg-white text-gray-700 border-gray-300 hover:bg-slate-50',
-  },
-  techniques: {
-    active: 'bg-purple-600 text-white border-purple-600 shadow',
-    inactive: 'bg-white text-gray-700 border-gray-300 hover:bg-slate-50',
-  },
-  strategies: {
-    active: 'bg-indigo-600 text-white border-indigo-600 shadow',
-    inactive: 'bg-white text-gray-700 border-gray-300 hover:bg-slate-50',
-  },
-  weaponTypes: {
-    active: 'bg-amber-600 text-white border-amber-600 shadow',
-    inactive: 'bg-white text-gray-700 border-gray-300 hover:bg-slate-50',
-  },
-};
-
-const chipClass = (variant: keyof typeof CHIP_PALETTE) =>
-  `text-xs px-3 py-1.5 rounded-full border ${CHIP_PALETTE[variant] ?? CHIP_PALETTE.default}`;
-
-const getToggleClasses = (variant: ToggleVariant, active: boolean) => {
-  const pattern = INTERACTIVE_STYLES[variant];
-  return `text-xs px-3 py-1.5 rounded-full border transition-colors font-semibold ${active ? pattern.active : pattern.inactive}`;
-};
+type ToggleVariant = 'armes' | 'gardes' | 'techniques' | 'strategies' | 'weaponTypes' | 'strikes' | 'targets';
 
 interface AnnotationPanelProps {
   sectionId: string;
@@ -67,6 +30,7 @@ interface AnnotationPanelProps {
 
 export default function AnnotationPanel({ sectionId, onClose, availableLanguages: _availableLanguages, sectionMeta: _sectionMeta }: AnnotationPanelProps) {
   const { getAnnotation, setAnnotation, updateAnnotation, saveToServer } = useAnnotations();
+  const { displayConfig } = useAnnotationDisplay();
   const annotation = getAnnotation(sectionId);
   
   const [activeTab, setActiveTab] = useState<TabType>('armes');
@@ -357,7 +321,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                 {annotation.weapons && annotation.weapons.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {annotation.weapons.map(w => (
-                      <span key={w} className={chipClass('weapon')}>
+                      <span key={w} className="text-xs px-3 py-1.5 rounded-full border" style={AnnotationRegistry.getChipStyle('weapons')}>
                         {w}
                       </span>
                     ))}
@@ -371,7 +335,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Type d'arme</h4>
                 {annotation.weapon_type ? (
                   <div className="flex flex-wrap gap-2">
-                    <span className={chipClass('weaponType')}>
+                    <span className="text-xs px-3 py-1.5 rounded-full border" style={AnnotationRegistry.getChipStyle('weapon_type')}>
                       {annotation.weapon_type}
                     </span>
                   </div>
@@ -396,7 +360,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                 {annotation.strategy && annotation.strategy.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {annotation.strategy.map(s => (
-                      <span key={s} className={chipClass('strategy')}>
+                      <span key={s} className="text-xs px-3 py-1.5 rounded-full border" style={AnnotationRegistry.getChipStyle('strategy')}>
                         {s}
                       </span>
                     ))}
@@ -412,7 +376,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                 {annotation.guards_mentioned && annotation.guards_mentioned.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {annotation.guards_mentioned.map(g => (
-                      <span key={g} className={chipClass('guard')}>
+                      <span key={g} className="text-xs px-3 py-1.5 rounded-full border" style={AnnotationRegistry.getChipStyle('guards')}>
                         {g}
                       </span>
                     ))}
@@ -428,7 +392,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                 {annotation.techniques && annotation.techniques.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {annotation.techniques.map(t => (
-                      <span key={t} className={chipClass('technique')}>
+                      <span key={t} className="text-xs px-3 py-1.5 rounded-full border" style={AnnotationRegistry.getChipStyle('techniques')}>
                         {t}
                       </span>
                     ))}
@@ -444,7 +408,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                 {annotation.strikes && annotation.strikes.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {annotation.strikes.map(s => (
-                      <span key={s} className={chipClass('technique')}>
+                      <span key={s} className="text-xs px-3 py-1.5 rounded-full border" style={AnnotationRegistry.getChipStyle('strikes')}>
                         {s}
                       </span>
                     ))}
@@ -460,7 +424,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                 {annotation.targets && annotation.targets.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {annotation.targets.map(t => (
-                      <span key={t} className={chipClass('technique')}>
+                      <span key={t} className="text-xs px-3 py-1.5 rounded-full border" style={AnnotationRegistry.getChipStyle('targets')}>
                         {t}
                       </span>
                     ))}
@@ -511,7 +475,8 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                               ? prev.weapons?.filter(x => x !== w) || null
                               : [...(prev.weapons || []), w]
                           }))}
-                          className={getToggleClasses('armes', Boolean(active))}
+                          className="text-xs px-3 py-1.5 rounded-full border transition-colors font-semibold"
+                          style={active ? AnnotationRegistry.getActiveToggleStyle('weapons') : { backgroundColor: 'white', color: '#374151', borderColor: '#d1d5db' }}
                         >
                           {w}
                         </button>
@@ -535,7 +500,8 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                           ...prev,
                           weapon_type: active ? null : wt,
                         }))}
-                        className={getToggleClasses('weaponTypes', Boolean(active))}
+                        className="text-xs px-3 py-1.5 rounded-full border transition-colors font-semibold"
+                        style={active ? AnnotationRegistry.getActiveToggleStyle('weapon_type') : { backgroundColor: 'white', color: '#374151', borderColor: '#d1d5db' }}
                       >
                         {wt}
                       </button>
@@ -576,7 +542,8 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                             ? prev.strategy?.filter(x => x !== s) || null
                             : [...(prev.strategy || []), s]
                         }))}
-                        className={getToggleClasses('strategies', Boolean(active))}
+                        className="text-xs px-3 py-1.5 rounded-full border transition-colors font-semibold"
+                        style={active ? AnnotationRegistry.getActiveToggleStyle('strategy') : { backgroundColor: 'white', color: '#374151', borderColor: '#d1d5db' }}
                       >
                         {s}
                       </button>
@@ -603,7 +570,8 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                             ? prev.guards_mentioned?.filter(x => x !== g) || null
                             : [...(prev.guards_mentioned || []), g]
                         }))}
-                        className={getToggleClasses('gardes', Boolean(active))}
+                        className="text-xs px-3 py-1.5 rounded-full border transition-colors font-semibold"
+                        style={active ? AnnotationRegistry.getActiveToggleStyle('guards') : { backgroundColor: 'white', color: '#374151', borderColor: '#d1d5db' }}
                       >
                         {g}
                       </button>
@@ -624,11 +592,13 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                     onChange={(e) => setTechniqueInput(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTechnique())}
                     placeholder="Nom de la technique"
-                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+                    style={{ outlineColor: AnnotationRegistry.getChipStyle('techniques').color }}
                   />
                   <button
                     onClick={handleAddTechnique}
-                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm"
+                    className="px-4 py-2 text-white rounded-lg hover:opacity-90 transition-colors text-sm"
+                    style={{ backgroundColor: AnnotationRegistry.getChipStyle('techniques').color }}
                   >
                     +
                   </button>
@@ -638,12 +608,13 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                     {formData.techniques.map(tech => (
                       <span
                         key={tech}
-                        className="text-xs px-2 py-1 bg-purple-600 text-white rounded-full flex items-center gap-1"
+                        className="text-xs px-2 py-1 text-white rounded-full flex items-center gap-1"
+                        style={{ backgroundColor: AnnotationRegistry.getChipStyle('techniques').color }}
                       >
                         {tech}
                         <button
                           onClick={() => handleRemoveTechnique(tech)}
-                          className="hover:bg-purple-700 rounded-full p-0.5"
+                          className="hover:opacity-70 rounded-full p-0.5"
                         >
                           <X size={12} />
                         </button>
@@ -671,7 +642,8 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                             ? prev.strikes?.filter(x => x !== s) || null
                             : [...(prev.strikes || []), s]
                         }))}
-                        className={getToggleClasses('techniques', Boolean(active))}
+                        className="text-xs px-3 py-1.5 rounded-full border transition-colors font-semibold"
+                        style={active ? AnnotationRegistry.getActiveToggleStyle('strikes') : { backgroundColor: 'white', color: '#374151', borderColor: '#d1d5db' }}
                       >
                         {s}
                       </button>
@@ -698,7 +670,8 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                             ? prev.targets?.filter(x => x !== t) || null
                             : [...(prev.targets || []), t]
                         }))}
-                        className={getToggleClasses('techniques', Boolean(active))}
+                        className="text-xs px-3 py-1.5 rounded-full border transition-colors font-semibold"
+                        style={active ? AnnotationRegistry.getActiveToggleStyle('targets') : { backgroundColor: 'white', color: '#374151', borderColor: '#d1d5db' }}
                       >
                         {t}
                       </button>

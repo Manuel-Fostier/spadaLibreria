@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAnnotationDisplay } from '@/contexts/AnnotationDisplayContext';
 import { AnnotationDisplay } from '@/types/annotationDisplay';
 import ColorPicker from './ColorPicker';
+import { type AnnotationKey } from '@/lib/annotation/AnnotationRegistry';
 
 interface AnnotationDisplaySettingsProps {
   onClose?: () => void;
@@ -18,11 +19,13 @@ const OPTION_META: Array<{ key: ConfigKey; label: string }> = [
   { key: 'techniques', label: 'Techniques' },
   { key: 'measures', label: 'Mesures / Distance' },
   { key: 'strategy', label: 'Stratégie / Contexte' },
+  { key: 'strikes', label: 'Coups' },
+  { key: 'targets', label: 'Cibles' },
   { key: 'note', label: 'Aperçu de note' },
 ];
 
 export default function AnnotationDisplaySettings({ onClose }: AnnotationDisplaySettingsProps) {
-  const { displayConfig, updateDisplayConfig, resetDisplayConfig, isHydrated } = useAnnotationDisplay();
+  const { displayConfig, updateDisplayConfig, resetDisplayConfig, isHydrated, getAnnotation } = useAnnotationDisplay();
   const [draft, setDraft] = useState<AnnotationDisplay>(displayConfig);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -32,16 +35,6 @@ export default function AnnotationDisplaySettings({ onClose }: AnnotationDisplay
 
   const toggle = (key: ConfigKey) => {
     setDraft(prev => ({ ...prev, [key]: !prev[key] }));
-  };
-
-  const updateColor = (key: ConfigKey, color: string) => {
-    setDraft(prev => ({
-      ...prev,
-      colors: {
-        ...prev.colors,
-        [key]: color,
-      },
-    }));
   };
 
   const handleReset = () => {
@@ -80,36 +73,37 @@ export default function AnnotationDisplaySettings({ onClose }: AnnotationDisplay
         </button>
       </div>
 
-      <div className="space-y-4 max-h-[600px] overflow-y-auto pr-1">
-        {OPTION_META.map(option => (
-          <div
-            key={option.key}
-            className="rounded-md border border-gray-100 p-3 hover:bg-gray-50 space-y-3"
-          >
-            <label className="flex items-start gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                className="mt-1 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                checked={draft[option.key]}
-                onChange={() => toggle(option.key)}
-                disabled={!isHydrated}
-              />
-              <div className="flex-1">
-                <div className="text-sm font-medium text-gray-900">{option.label}</div>
+      <div className="space-y-2 max-h-[600px] overflow-y-auto pr-1">
+        {OPTION_META.map(option => {
+          const annotation = getAnnotation(option.key as AnnotationKey);
+          return (
+            <div
+              key={option.key}
+              className="flex items-center gap-3 rounded-md border border-gray-100 px-3 py-2 hover:bg-gray-50"
+            >
+              <div className="flex-1 text-sm font-medium text-gray-900">
+                {annotation?.getLabel() || option.label}
               </div>
-            </label>
-            
-            {draft[option.key] && (
-              <div className="ml-7 pt-2 border-t border-gray-100">
-                <ColorPicker
-                  color={draft.colors[option.key]}
-                  onChange={(color) => updateColor(option.key, color)}
-                  label="Couleur dans le texte"
+              
+              <div className="flex items-center gap-3">
+                {annotation && (
+                  <ColorPicker
+                    annotation={annotation}
+                    label=""
+                  />
+                )}
+                
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                  checked={draft[option.key]}
+                  onChange={() => toggle(option.key)}
+                  disabled={!isHydrated}
                 />
               </div>
-            )}
-          </div>
-        ))}
+            </div>
+          );
+        })}
       </div>
 
       <div className="flex justify-end gap-2">

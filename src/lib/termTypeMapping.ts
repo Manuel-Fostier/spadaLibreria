@@ -2,7 +2,7 @@
  * Maps glossary term types to annotation display categories
  */
 
-export type AnnotationType = 'note' | 'weapons' | 'weapon_type' | 'guards' | 'techniques' | 'measures' | 'strategy';
+export type AnnotationType = 'note' | 'weapons' | 'weapon_type' | 'guards' | 'techniques' | 'measures' | 'strategy' | 'strikes' | 'targets';
 
 /**
  * Maps a glossary term type to an annotation category
@@ -29,6 +29,16 @@ export function mapTermTypeToAnnotation(termType: string): AnnotationType {
   // Strategy mapping
   if (type.includes('stratégie') || type.includes('strategy') || type.includes('tactique') || type.includes('contexte')) {
     return 'strategy';
+  }
+  
+  // Strikes mapping
+  if (type.includes('coup') || type.includes('strike') || type.includes('attaque') || type.includes('attack')) {
+    return 'strikes';
+  }
+  
+  // Targets mapping
+  if (type.includes('cible') || type.includes('target') || type.includes('partie du corps')) {
+    return 'targets';
   }
   
   // Techniques (attacks, defenses, movements, etc.) - default

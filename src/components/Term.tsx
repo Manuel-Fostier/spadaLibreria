@@ -24,13 +24,14 @@ export default function Term({ termKey, children, glossaryData }: TermProps) {
   const [tooltipPosition, setTooltipPosition] = useState<'top' | 'bottom'>('top');
   const [tooltipAlignment, setTooltipAlignment] = useState<'left' | 'center' | 'right'>('center');
   const spanRef = useRef<HTMLSpanElement>(null);
-  const { displayConfig } = useAnnotationDisplay();
+  const { getAnnotation } = useAnnotationDisplay();
   
   const data = glossaryData[termKey];
 
-  // Get the color for this term based on its type
+  // Get the annotation instance for this term based on its type
   const annotationType = data ? mapTermTypeToAnnotation(data.type) : 'techniques';
-  const termColor = displayConfig.colors[annotationType];
+  const annotation = getAnnotation(annotationType);
+  const termColor = annotation?.getTextStyle().color as string || '#6366f1';
 
   useEffect(() => {
     console.log('🔄 useEffect triggered - showTooltip:', showTooltip, 'termKey:', termKey);
