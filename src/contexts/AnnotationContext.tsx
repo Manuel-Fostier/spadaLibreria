@@ -7,16 +7,10 @@ import {
   STRATEGIES, 
   WEAPONS, 
   WEAPON_TYPES, 
-  GUARDS, 
-  STRIKES,
-  TARGETS,
   Measure, 
   Strategy, 
   Weapon, 
-  WeaponType, 
-  Guard,
-  Strike,
-  Target
+  WeaponType
 } from '@/lib/annotation';
 
 interface AnnotationContextType {
@@ -39,131 +33,51 @@ interface AnnotationContextType {
 
 const AnnotationContext = createContext<AnnotationContextType | undefined>(undefined);
 
-// Extended type to handle legacy 'measure' field during migration
-interface LegacyAnnotation extends Omit<Annotation, 'measures'> {
-  measure?: Measure | null;
-  measures?: Measure[] | null;
-}
-
 export function AnnotationProvider({ children, initialAnnotations }: { children: ReactNode, initialAnnotations: Map<string, Annotation> }) {
-  const normalizeAnnotation = (ann: LegacyAnnotation): Annotation => {
-    // Handle migration from single 'measure' to 'measures' array
-    let validMeasures: Measure[] = [];
-    if (Array.isArray(ann.measures)) {
-      validMeasures = Array.from(new Set(
-        ann.measures.filter((m): m is Measure => MEASURES.includes(m as Measure))
-      ));
-    } else if (ann.measure && MEASURES.includes(ann.measure as Measure)) {
-      // Migrate single measure to array
-      validMeasures = [ann.measure as Measure];
-    }
+  const normalizeAnnotation = (ann: Annotation): Annotation => {
+    // Validate measures
+    const validMeasures = Array.isArray(ann.measures)
+      ? Array.from(new Set(
+          ann.measures.filter((m): m is Measure => MEASURES.includes(m as Measure))
+        ))
+      : [];
     
+    // Validate strategies
     const validStrategies = Array.isArray(ann.strategy)
       ? Array.from(new Set(
           ann.strategy.filter((s): s is Strategy => STRATEGIES.includes(s as Strategy))
         ))
       : [];
+    
+    // Validate weapons
     const validWeapons = Array.isArray(ann.weapons)
       ? Array.from(new Set(
           ann.weapons.filter((w): w is Weapon => WEAPONS.includes(w as Weapon))
         ))
       : [];
+    
+    // Validate weapon_type
     const validWeaponTypes = ann.weapon_type && WEAPON_TYPES.includes(ann.weapon_type as WeaponType)
       ? ann.weapon_type as WeaponType
       : null;
     
-    // Handle guards_mentioned: can be array (legacy) or Record<string, number> (new)
-    let validGuards: Record<string, number> | null = null;
-    if (ann.guards_mentioned) {
-      if (Array.isArray(ann.guards_mentioned)) {
-        // Legacy format: convert array to dictionary with count=1
-        validGuards = {};
-        ann.guards_mentioned
-          .filter((g): g is Guard => GUARDS.includes(g as Guard))
-          .forEach(g => { validGuards![g] = 1; });
-      } else if (typeof ann.guards_mentioned === 'object') {
-        // New format: already a dictionary
-        validGuards = ann.guards_mentioned as Record<string, number>;
-      }
-    }
-    
-    // Handle techniques: can be array (legacy) or Record<string, number> (new)
-    let validTechniques: Record<string, number> | null = null;
-    if (ann.techniques) {
-      if (Array.isArray(ann.techniques)) {
-        // Legacy format: convert array to dictionary with count=1
-        validTechniques = {};
-        ann.techniques
-          .filter((t): t is string => typeof t === 'string')
-          .forEach(t => { validTechniques![t] = 1; });
-      } else if (typeof ann.techniques === 'object') {
-        // New format: already a dictionary
-        validTechniques = ann.techniques as Record<string, number>;
-      }
-    }
-    
-    // Handle strikes: can be array (legacy) or Record<string, number> (new)
-    let validStrikes: Record<string, number> | null = null;
-    if (ann.strikes) {
-      if (Array.isArray(ann.strikes)) {
-        // Legacy format: convert array to dictionary with count=1
-        validStrikes = {};
-        ann.strikes
-          .filter((s): s is Strike => STRIKES.includes(s as Strike))
-          .forEach(s => { validStrikes![s] = 1; });
-      } else if (typeof ann.strikes === 'object') {
-        // New format: already a dictionary
-        validStrikes = ann.strikes as Record<string, number>;
-      }
-    }
-    
-    // Handle targets: can be array (legacy) or Record<string, number> (new)
-    let validTargets: Record<string, number> | null = null;
-    if (ann.targets) {
-      if (Array.isArray(ann.targets)) {
-        // Legacy format: convert array to dictionary with count=1
-        validTargets = {};
-        ann.targets
-          .filter((t): t is Target => TARGETS.includes(t as Target))
-          .forEach(t => { validTargets![t] = 1; });
-      } else if (typeof ann.targets === 'object') {
-        // New format: already a dictionary
-        validTargets = ann.targets as Record<string, number>;
-      }
-    }
-    
-    // Create new annotation without the legacy 'measure' field
-    const { measure: _measure, ...rest } = ann as LegacyAnnotation & { measure?: Measure | null };
-    
     return { 
-      ...rest, 
+      ...ann, 
       measures: validMeasures,
       strategy: validStrategies,
       weapons: validWeapons,
       weapon_type: validWeaponTypes,
-      guards_mentioned: validGuards,
-      techniques: validTechniques,
-      strikes: validStrikes,
-      targets: validTargets
-    } as Annotation;
+      guards_mentioned: ann.guards_mentioned || null,
+      techniques: ann.techniques || null,
+      strikes: ann.strikes || null,
+      targets: ann.targets || null
+    };
   };
 
   const normalizeMap = (map: Map<string, Annotation>): Map<string, Annotation> => {
     const newMap = new Map<string, Annotation>();
     map.forEach((ann, key) => {
-      const normalized = normalizeAnnotation({
-        // provide defaults for legacy annotations
-        ...ann,
-        measures: (ann as LegacyAnnotation).measures ?? null,
-        strategy: ann.strategy ?? [],
-        weapons: ann.weapons ?? [],
-        weapon_type: ann.weapon_type ?? null,
-        guards_mentioned: ann.guards_mentioned ?? null,
-        techniques: ann.techniques ?? null,
-        strikes: ann.strikes ?? null,
-        targets: ann.targets ?? null,
-      } as LegacyAnnotation);
-      newMap.set(key, normalized);
+      newMap.set(key, normalizeAnnotation(ann));
     });
     return newMap;
   };
