@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { BookOpen, ChevronRight, ChevronDown, MessageSquare, Settings, BarChart3, Edit2 } from 'lucide-react';
 import TextParser from './TextParser';
+import TextEditor from './TextEditor';
 import AnnotationPanel from './AnnotationPanel';
 import AnnotationBadge from './AnnotationBadge';
 import { GlossaryEntry, TreatiseSection } from '@/lib/dataLoader';
@@ -85,6 +86,10 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   const { displayConfig } = useAnnotationDisplay();
   const { results, lastQuery } = useSearch();
   const [filters, setFilters] = useState<FilterState>(initialFilterState);
+  
+  // --- TEXT EDITING STATE ---
+  const [editingSection, setEditingSection] = useState<{ sectionId: string; field: 'fr' | 'notes' } | null>(null);
+  const [editedContent, setEditedContent] = useState<{ [key: string]: { fr?: string; notes?: string } }>({});
 
   // --- VIRTUALIZATION / PAGINATION STATE ---
   // We only render a subset of chapters to keep the page fast (like lazy loading images)
@@ -96,6 +101,61 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
       ...prev,
       [sectionId]: translatorName
     }));
+  };
+
+  // Handle text editing
+  const handleStartEdit = (sectionId: string, field: 'fr' | 'notes') => {
+    setEditingSection({ sectionId, field });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingSection(null);
+  };
+
+  const handleSaveEdit = async (sectionId: string, field: 'fr' | 'notes', value: string) => {
+    try {
+      // Save to server
+      const response = await fetch('/api/content', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ sectionId, field, value }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save content');
+      }
+
+      // Update local state
+      setEditedContent(prev => ({
+        ...prev,
+        [sectionId]: {
+          ...prev[sectionId],
+          [field]: value,
+        },
+      }));
+
+      setEditingSection(null);
+      
+      // Reload the page to get fresh data
+      window.location.reload();
+    } catch (error) {
+      console.error('Error saving content:', error);
+      throw error;
+    }
+  };
+
+  const getContentValue = (section: TreatiseSection, field: 'fr' | 'notes'): string => {
+    // Check if we have edited content in local state
+    if (editedContent[section.id]?.[field] !== undefined) {
+      return editedContent[section.id][field]!;
+    }
+    // Otherwise return original content
+    if (field === 'notes') {
+      return section.content.notes || '';
+    }
+    return section.content[field];
   };
 
   const filterOptions = useMemo(() => {
@@ -458,20 +518,32 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                         <h4 className="text-xs font-bold text-gray-400 flex items-center gap-2">
                           Français
                         </h4>
-                        <button 
-                          className="p-1 hover:bg-gray-100 rounded transition-colors"
-                          title="Éditer le contenu français"
-                        >
-                          <Edit2 size={14} className="text-gray-400 hover:text-gray-600" />
-                        </button>
+                        {editingSection?.sectionId !== section.id || editingSection?.field !== 'fr' ? (
+                          <button 
+                            onClick={() => handleStartEdit(section.id, 'fr')}
+                            className="p-1 hover:bg-gray-100 rounded transition-colors"
+                            title="Éditer le contenu français"
+                          >
+                            <Edit2 size={14} className="text-gray-400 hover:text-gray-600" />
+                          </button>
+                        ) : null}
                       </div>
-                      <div className="text-gray-600 leading-relaxed whitespace-pre-line text-justify">
-                        <TextParser 
-                          text={section.content.fr} 
-                          glossaryData={glossaryData} 
-                          highlightQuery={lastQuery}
+                      {editingSection?.sectionId === section.id && editingSection?.field === 'fr' ? (
+                        <TextEditor
+                          initialValue={getContentValue(section, 'fr')}
+                          onSave={(value) => handleSaveEdit(section.id, 'fr', value)}
+                          onCancel={handleCancelEdit}
+                          placeholder="Texte français..."
                         />
-                      </div>
+                      ) : (
+                        <div className="text-gray-600 leading-relaxed whitespace-pre-line text-justify">
+                          <TextParser 
+                            text={getContentValue(section, 'fr')} 
+                            glossaryData={glossaryData} 
+                            highlightQuery={lastQuery}
+                          />
+                        </div>
+                      )}
                     </div>
 
                     {/* 3. English (Multi-source) - Optionnel */}
@@ -532,20 +604,32 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                           <h4 className="text-xs font-bold text-gray-400 flex items-center gap-2">
                             Notes
                           </h4>
-                          <button 
-                            className="p-1 hover:bg-gray-100 rounded transition-colors"
-                            title="Éditer les notes"
-                          >
-                            <Edit2 size={14} className="text-gray-400 hover:text-gray-600" />
-                          </button>
+                          {editingSection?.sectionId !== section.id || editingSection?.field !== 'notes' ? (
+                            <button 
+                              onClick={() => handleStartEdit(section.id, 'notes')}
+                              className="p-1 hover:bg-gray-100 rounded transition-colors"
+                              title="Éditer les notes"
+                            >
+                              <Edit2 size={14} className="text-gray-400 hover:text-gray-600" />
+                            </button>
+                          ) : null}
                         </div>
-                        <div className="text-gray-600 leading-relaxed whitespace-pre-line">
-                          {section.content.notes ? (
-                            <p>{section.content.notes}</p>
-                          ) : (
-                            <p className="text-gray-400 italic">Aucune note disponible</p>
-                          )}
-                        </div>
+                        {editingSection?.sectionId === section.id && editingSection?.field === 'notes' ? (
+                          <TextEditor
+                            initialValue={getContentValue(section, 'notes')}
+                            onSave={(value) => handleSaveEdit(section.id, 'notes', value)}
+                            onCancel={handleCancelEdit}
+                            placeholder="Notes..."
+                          />
+                        ) : (
+                          <div className="text-gray-600 leading-relaxed whitespace-pre-line">
+                            {getContentValue(section, 'notes') ? (
+                              <p>{getContentValue(section, 'notes')}</p>
+                            ) : (
+                              <p className="text-gray-400 italic">Aucune note disponible</p>
+                            )}
+                          </div>
+                        )}
                       </div>
                     )}
 
