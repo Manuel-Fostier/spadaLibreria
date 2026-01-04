@@ -36,13 +36,8 @@ export default function StatisticsModal({ onClose }: StatisticsModalProps) {
         });
       }
 
-      // Count measures (engagement distances) - use occurrence counts if available
-      if (ann.measures_count) {
-        Object.entries(ann.measures_count).forEach(([measure, count]) => {
-          measuresCount.set(measure, (measuresCount.get(measure) || 0) + count);
-        });
-      } else if (ann.measures) {
-        // Fallback for old annotations without counts
+      // Count measures (engagement distances) - simple count from list
+      if (ann.measures) {
         ann.measures.forEach((measure) => {
           measuresCount.set(measure, (measuresCount.get(measure) || 0) + 1);
         });
