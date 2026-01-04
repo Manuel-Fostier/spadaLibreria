@@ -67,7 +67,7 @@ Build a cross-treatise search tool with advanced search options (Match Case, Mat
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-✅ **Content lives in `data/` YAML**: ⚠️ **PARTIAL CONFLICT** - Current annotation system saves to YAML files via API route (`/api/annotations`), NOT localStorage as initially planned. This violates the original plan but ALIGNS with constitution (YAML = authoritative). Need to clarify: saved searches in localStorage (user preference), but annotations follow existing pattern (YAML persistence).  
+✅ **Content lives in `data/` YAML**: ✅ **CONFIRMED ALIGNMENT** - Current annotation system persists to YAML files via API route (`/api/annotations`), perfectly aligning with Constitution Principle I (Content Fidelity). This is the CORRECT approach, not a compromise. Saved searches use localStorage (user preference, not content).  
 ✅ **Local-only**: No external services; LLM via local API (LM Studio/Ollama); no telemetry  
 ✅ **Tooling**: Continue using `npm` for JS/TS deps; `uv` for Python (extraction scripts exist)  
 ✅ **Quality/format**: Preserve existing glossary `{term}` links; respect server/client boundaries (search runs client-side)  
@@ -81,7 +81,9 @@ Build a cross-treatise search tool with advanced search options (Match Case, Mat
 - ⚠️ Plan's "new annotation system with tags" CONFLICTS with existing annotation system
 - ⚠️ Need to EXTEND existing system, not replace it
 
-**PASS WITH CLARIFICATIONS**: Feature aligns with constitution but must integrate with existing annotation infrastructure.
+**PASS WITH CLARIFICATIONS**: Feature aligns with constitution and must integrate with existing annotation infrastructure (spec 002 prerequisite).
+
+✅ **Beginner-friendly architecture**: Search index built using simple JavaScript loops over YAML data on app load, stored in React context. No external search library (Lunr.js, etc.) required. See `src/lib/searchEngine.ts` for transparent regex-based matching implementation suitable for beginners transitioning from C/systems programming.
 
 **GITHUB ISSUES CONTEXT**:
 - Issue #1 (OPEN): Refonte panneau filtres - DIRECTLY addressed by P1 search implementation
@@ -167,6 +169,16 @@ tests/                              # [NEW] Test structure (when tests added)
 
 **Structure Decision**: Extending existing Next.js App Router structure with new components, contexts, and lib modules for search/annotation features. No backend required; all processing client-side or server-rendered. Follows existing `@/` absolute import pattern.
 
+## Implementation Prerequisites
+
+⚠️ **CRITICAL DEPENDENCY**: Spec 002 (Annotation Class Refactor) MUST be completed FIRST before this spec's Phase 1 begins.
+
+**Reason**: This feature (spec 001) integrates annotation filtering (FR-011, FR-011a) which depends on the refactored annotation class architecture from spec 002. The AnnotationRegistry and class-based structure enable clean, maintainable filtering logic.
+
+**Recommendation**: Execute in this order:
+1. ✅ Spec 002 Phase 1-4: Create annotation classes and refactor components (estimated 2-3 days)
+2. → Spec 001 Phase 0-3: Implement search with filtering (estimated 3-4 days)
+
 ## Complexity Tracking
 
 > **No constitution violations to justify.**
@@ -208,9 +220,9 @@ All complexity is inherent to feature requirements (search variants, cross-langu
 
 **Output**: research.md documenting all decisions with rationale
 
-### Phase 0 Deliverable
+### Phase 0 Deliverables
 
-`specs/001-treatise-search-annotations/research.md` containing:
+**Primary**: `specs/001-treatise-search-annotations/research.md` containing:
 - Search approach: in-memory index with regex-based matching
 - LocalStorage strategy: JSON serialization with size monitoring
 - LLM integration: REST API calls to LM Studio/Ollama with configurable endpoint

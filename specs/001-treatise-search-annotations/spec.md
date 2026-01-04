@@ -98,7 +98,7 @@ A researcher studying a complex technique wants contextual help. After selecting
 - **FR-005**: System MUST highlight search terms in displayed chapter text
 - **FR-009**: Users MUST be able to add annotations (text notes + tags) to any chapter, including sword condition enum (sharp/blunt)
 - **FR-010**: System MUST persist annotations across sessions locally (YAML)
-- **FR-011**: Users MUST be able to filter search results by annotation tags (weapons, guards, techniques, sword condition)
+- **FR-011**: Users MUST be able to filter search results by annotation tags. Multi-select tags (weapons, guards, techniques) use OR logic within category and AND across categories (e.g., "weapons: spada_sola OR brocchiero" AND "techniques: falso"). Single-value enum fields (sword_condition: sharp|blunt) filter by exact match (e.g., "show only sharp-sword sections")
 - **FR-011a**: Users MUST be able to filter search results by treatise metadata (master, work, book, year)
 - **FR-012**: System MUST display all annotations for a chapter when viewing that chapter, with annotation panel open by default
 - **FR-012a**: Annotation button MUST be highlighted when its panel is open
@@ -107,8 +107,8 @@ A researcher studying a complex technique wants contextual help. After selecting
 - **FR-014**: System MUST integrate a local LLM (model runs on user's machine)
 - **FR-015**: LLM assistant MUST have access to treatise content and user annotations for context-aware responses
 - **FR-016**: System MUST NOT send any data to external services (privacy constraint)
-- **FR-017**: Search results MUST indicate which language version(s) contain matches (IT/FR/EN badges)
-- **FR-018**: System MUST support multi-word phrase searches (e.g., "coda longa e alta")
+- **FR-017**: Search results MUST indicate which language version(s) contain matches (IT/FR/EN badges with language codes)
+- **FR-018**: System MUST support multi-word phrase searches. Phrase search matches exact sequence of consecutive {glossary_term} links OR literal multi-word sequences in text (e.g., searching "coda longa e alta" finds only sections with this exact phrase, not separated word instances)
 - [REMOVED] FR-019: Users MUST be able to view a list of all their annotations across all chapters
 - **FR-020**: System MUST maintain referential integrity between annotations and treatise chapters by chapter ID
 - **FR-021**: System MUST provide a configuration menu allowing users to define which annotation fields to display under chapter titles
@@ -135,11 +135,14 @@ A researcher studying a complex technique wants contextual help. After selecting
 - **SC-003**: BolognesePlatform displays first matching chapter within 1 second of search execution
 - **SC-004**: Annotations persist across sessions without data loss (100% reliability for local storage)
 - **SC-005**: Users can filter 50+ search results by annotation tags in under 3 seconds
-- **SC-005a**: Smooth chapter-to-chapter navigation in BolognesePlatform between search results matches PDF reading fluidity (no stuttering/lag)
+- **SC-005a**: Smooth chapter-to-chapter navigation in BolognesePlatform between search results defines fluidity as <500ms transition time between chapters and <100ms re-render latency (measured via React DevTools Profiler). Should match or exceed PDF reader scrolling experience with no stuttering, lag, or layout shifts
 - **SC-006**: LLM assistant responds to contextual questions within 10 seconds on typical hardware (local execution)
 - **SC-007**: System supports at least 500 annotations without performance degradation
 - **SC-009**: Users can annotate a chapter and apply 3 tags (including sword condition) in under 30 seconds
 - **SC-012**: Annotation panel tracks viewport center with <100ms latency as user scrolls
+- **SC-013**: Phrase search (FR-018) correctly identifies exact phrase sequences and displays results with phrase highlighted as single unit
+- **SC-014**: Language badges (FR-017) display correctly on all search results, indicating which language versions contain matches (IT/FR/EN)
+- **SC-015**: LLM assistant context (FR-015) includes current chapter, search results visible on screen, and user annotations without sending data to external services
 
 ## Assumptions
 
@@ -153,19 +156,24 @@ A researcher studying a complex technique wants contextual help. After selecting
 
 ## Configuration & Settings
 
-### Annotation Display Configuration
+### Annotation Display Configuration (FR-021)
 
-Users can configure which annotation fields appear as metadata under chapter titles. Available fields include:
-- Weapons (comma-separated list)
-- Guards mentioned
-- Techniques
-- Sword condition (sharp/blunt)
+Users can configure which annotation fields appear as metadata under chapter titles in BolognesePlatform. 
+
+**Searchable tag fields** (used for filtering):
+- Weapons (multi-select)
+- Guards mentioned (multi-select)
+- Techniques (multi-select)
+
+**Metadata fields** (for reference, not filtered):
+- Sword condition (sharp/blunt enum)
 - Measures
-- Strategy
+- Strategy  
+- Note
 
 **Default display**: Weapons + Sword condition (if set)
 
-Configuration menu accessible from settings panel. Changes apply immediately across all chapters.
+**Configuration behavior**: Toggling a field checkbox on = display under chapter titles; off = hidden from display (but remains in annotation and available for filtering if tag field). Configuration menu accessible from settings panel. Changes apply immediately across all chapters.
 
 ### Import Script File Conflict Handling
 
@@ -190,3 +198,5 @@ This applies to all import operations including `extract-book.py` and similar da
 - Automatic translation of treatise content
 - Speech-to-text for search queries or annotations
 - Advanced LLM fine-tuning on treatise corpus (use pre-trained models)
+
+**Note**: Annotation class refactoring (spec 002) is a **prerequisite** to this feature, not out of scope. See spec 002 for annotation system architecture.
