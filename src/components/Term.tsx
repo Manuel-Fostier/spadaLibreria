@@ -2,6 +2,8 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { GlossaryEntry } from '@/lib/dataLoader';
+import { useAnnotationDisplay } from '@/contexts/AnnotationDisplayContext';
+import { mapTermTypeToAnnotation } from '@/lib/termTypeMapping';
 
 interface TermProps {
   termKey: string;
@@ -22,8 +24,13 @@ export default function Term({ termKey, children, glossaryData }: TermProps) {
   const [tooltipPosition, setTooltipPosition] = useState<'top' | 'bottom'>('top');
   const [tooltipAlignment, setTooltipAlignment] = useState<'left' | 'center' | 'right'>('center');
   const spanRef = useRef<HTMLSpanElement>(null);
+  const { displayConfig } = useAnnotationDisplay();
   
   const data = glossaryData[termKey];
+
+  // Get the color for this term based on its type
+  const annotationType = data ? mapTermTypeToAnnotation(data.type) : 'techniques';
+  const termColor = displayConfig.colors[annotationType];
 
   useEffect(() => {
     console.log('🔄 useEffect triggered - showTooltip:', showTooltip, 'termKey:', termKey);
@@ -196,7 +203,13 @@ export default function Term({ termKey, children, glossaryData }: TermProps) {
         // On ne masque plus immédiatement (persistance jusqu'au clic extérieur)
       }}
     >
-      <span className="text-indigo-600 font-medium border-b border-indigo-200 hover:border-indigo-600 transition-colors">
+      <span 
+        className="font-medium border-b transition-colors"
+        style={{ 
+          color: termColor,
+          borderBottomColor: `${termColor}33`, // 20% opacity for border
+        }}
+      >
         {children}
       </span>
       

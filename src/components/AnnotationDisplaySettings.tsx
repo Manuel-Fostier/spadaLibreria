@@ -3,12 +3,13 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAnnotationDisplay } from '@/contexts/AnnotationDisplayContext';
 import { AnnotationDisplay } from '@/types/annotationDisplay';
+import ColorPicker from './ColorPicker';
 
 interface AnnotationDisplaySettingsProps {
   onClose?: () => void;
 }
 
-type ConfigKey = keyof AnnotationDisplay;
+type ConfigKey = keyof Omit<AnnotationDisplay, 'colors'>;
 
 const OPTION_META: Array<{ key: ConfigKey; label: string }> = [
   { key: 'weapons', label: 'Armes' },
@@ -33,6 +34,16 @@ export default function AnnotationDisplaySettings({ onClose }: AnnotationDisplay
     setDraft(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
+  const updateColor = (key: ConfigKey, color: string) => {
+    setDraft(prev => ({
+      ...prev,
+      colors: {
+        ...prev.colors,
+        [key]: color,
+      },
+    }));
+  };
+
   const handleReset = () => {
     resetDisplayConfig();
   };
@@ -54,11 +65,11 @@ export default function AnnotationDisplaySettings({ onClose }: AnnotationDisplay
   }, [handleApply]);
 
   return (
-    <div ref={containerRef} className="bg-white border border-gray-200 shadow-lg rounded-lg p-4 space-y-4">
+    <div ref={containerRef} className="bg-white border border-gray-200 shadow-lg rounded-lg p-4 space-y-4 max-w-4xl">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-sm font-semibold text-gray-900">Configuration des annotations</h3>
-          <p className="text-xs text-gray-500">Choisissez les champs visibles sous les titres de chapitre.</p>
+          <p className="text-xs text-gray-500">Choisissez les champs visibles et leurs couleurs.</p>
         </div>
         <button
           type="button"
@@ -69,23 +80,35 @@ export default function AnnotationDisplaySettings({ onClose }: AnnotationDisplay
         </button>
       </div>
 
-      <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
+      <div className="space-y-4 max-h-[600px] overflow-y-auto pr-1">
         {OPTION_META.map(option => (
-          <label
+          <div
             key={option.key}
-            className="flex items-start gap-3 rounded-md border border-gray-100 px-3 py-2 hover:bg-gray-50"
+            className="rounded-md border border-gray-100 p-3 hover:bg-gray-50 space-y-3"
           >
-            <input
-              type="checkbox"
-              className="mt-1 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-              checked={draft[option.key]}
-              onChange={() => toggle(option.key)}
-              disabled={!isHydrated}
-            />
-            <div className="flex-1">
-              <div className="text-sm font-medium text-gray-900">{option.label}</div>
-            </div>
-          </label>
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                className="mt-1 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                checked={draft[option.key]}
+                onChange={() => toggle(option.key)}
+                disabled={!isHydrated}
+              />
+              <div className="flex-1">
+                <div className="text-sm font-medium text-gray-900">{option.label}</div>
+              </div>
+            </label>
+            
+            {draft[option.key] && (
+              <div className="ml-7 pt-2 border-t border-gray-100">
+                <ColorPicker
+                  color={draft.colors[option.key]}
+                  onChange={(color) => updateColor(option.key, color)}
+                  label="Couleur dans le texte"
+                />
+              </div>
+            )}
+          </div>
         ))}
       </div>
 

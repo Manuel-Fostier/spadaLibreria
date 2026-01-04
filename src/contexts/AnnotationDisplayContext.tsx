@@ -1,10 +1,20 @@
 'use client';
 
 import React, { createContext, useCallback, useContext, useEffect, useState, ReactNode } from 'react';
-import { AnnotationDisplay } from '@/types/annotationDisplay';
+import { AnnotationDisplay, AnnotationColors } from '@/types/annotationDisplay';
 
 const STORAGE_KEY = 'annotationDisplay';
 const STORAGE_VERSION = '1.0';
+
+const DEFAULT_COLORS: AnnotationColors = {
+  note: '#6366f1',         // indigo-500
+  weapons: '#8b5cf6',      // violet-500
+  weapon_type: '#ec4899',  // pink-500
+  guards: '#f59e0b',       // amber-500
+  techniques: '#10b981',   // emerald-500
+  measures: '#3b82f6',     // blue-500
+  strategy: '#ef4444',     // red-500
+};
 
 const DEFAULT_DISPLAY_CONFIG: AnnotationDisplay = {
   note: false,
@@ -14,6 +24,7 @@ const DEFAULT_DISPLAY_CONFIG: AnnotationDisplay = {
   techniques: false,
   measures: false,
   strategy: false,
+  colors: DEFAULT_COLORS,
 };
 
 interface AnnotationDisplayContextValue {
@@ -40,6 +51,15 @@ const sanitizeConfig = (config?: Partial<AnnotationDisplay>): AnnotationDisplay 
     techniques: Boolean(config?.techniques ?? DEFAULT_DISPLAY_CONFIG.techniques),
     measures: Boolean(config?.measures ?? DEFAULT_DISPLAY_CONFIG.measures),
     strategy: Boolean(config?.strategy ?? DEFAULT_DISPLAY_CONFIG.strategy),
+    colors: {
+      note: config?.colors?.note ?? DEFAULT_COLORS.note,
+      weapons: config?.colors?.weapons ?? DEFAULT_COLORS.weapons,
+      weapon_type: config?.colors?.weapon_type ?? DEFAULT_COLORS.weapon_type,
+      guards: config?.colors?.guards ?? DEFAULT_COLORS.guards,
+      techniques: config?.colors?.techniques ?? DEFAULT_COLORS.techniques,
+      measures: config?.colors?.measures ?? DEFAULT_COLORS.measures,
+      strategy: config?.colors?.strategy ?? DEFAULT_COLORS.strategy,
+    },
   };
 };
 

@@ -10,4 +10,18 @@ export interface AnnotationDisplay {
   techniques: boolean;
   measures: boolean;
   strategy: boolean;
+  colors: AnnotationColors;
+}
+
+/**
+ * Color configuration for each annotation type
+ */
+export interface AnnotationColors {
+  note: string;
+  weapons: string;
+  weapon_type: string;
+  guards: string;
+  techniques: string;
+  measures: string;
+  strategy: string;
 }
