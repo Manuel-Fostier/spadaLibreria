@@ -18,9 +18,46 @@ Spada Libreria is a platform for studying Bolognese fencing treatises. The appli
 ```
 src/
 ├── app/           # Next.js App Router pages and API routes
-├── components/    # React components (Term, TextParser, BolognesePlatform, etc.)
+│   ├── api/
+│   │   ├── annotations/  # Annotation persistence endpoints
+│   │   └── content/      # Content loading endpoints
+├── components/    # React components
+│   ├── Term.tsx                      # Glossary tooltip component
+│   ├── TextParser.tsx                # Text parsing with glossary links
+│   ├── BolognesePlatform.tsx         # Main platform component
+│   ├── SearchBar.tsx                 # Search interface with options
+│   ├── AnnotationPanel.tsx           # Annotation editing panel
+│   ├── AnnotationBadge.tsx           # Annotation tag display
+│   ├── AnnotationDisplaySettings.tsx # Annotation config UI
+│   ├── TagFilter.tsx                 # Tag-based filtering
+│   ├── ColorPicker.tsx               # Color selection for annotations
+│   ├── StatisticsModal.tsx           # Statistics display modal
+│   ├── ComparisonModal.tsx           # Translation comparison modal
+│   ├── MeasureProgressBar.tsx        # Visual measure progression
+│   └── TextEditor.tsx                # Rich text editor
 ├── contexts/      # React contexts for state management
+│   ├── AnnotationContext.tsx         # Annotation state and persistence
+│   ├── AnnotationDisplayContext.tsx  # Annotation display configuration
+│   └── SearchContext.tsx             # Search state and index
 └── lib/           # Utilities and data loading functions
+    ├── dataLoader.ts                 # YAML data loading
+    ├── searchEngine.ts               # Search logic
+    ├── searchIndex.ts                # Search index construction
+    ├── highlighter.ts                # Search term highlighting
+    ├── termTypeMapping.ts            # Term type utilities
+    ├── localStorage.ts               # Local storage utilities
+    └── annotation/                   # Annotation class architecture
+        ├── Annotation.ts             # Abstract base class
+        ├── AnnotationRegistry.ts     # Factory/registry pattern
+        ├── Weapons.ts                # Weapons annotation class
+        ├── WeaponType.ts             # Weapon type annotation class
+        ├── Guards.ts                 # Guards annotation class
+        ├── Techniques.ts             # Techniques annotation class
+        ├── Measures.ts               # Measures annotation class
+        ├── Strategy.ts               # Strategy annotation class
+        ├── Strikes.ts                # Strikes annotation class
+        ├── Targets.ts                # Targets annotation class
+        └── index.ts                  # Public exports
 data/
 ├── glossary.yaml  # Glossary terms with FR/EN definitions
 └── treatises/     # YAML files containing treatise sections
@@ -36,6 +73,19 @@ scripts/
 2. **Glossary Terms**: Terms in treatise text are marked with `{term_name}` syntax and are automatically linked to glossary entries.
 
 3. **Multi-language Support**: The application supports Italian (original), French, and English translations. English supports multiple translator versions.
+
+4. **Search System**: The application includes a cross-treatise search system with:
+   - **SearchIndex**: Built at application load from all treatise sections
+   - **SearchEngine**: Supports Match Case, Match Whole Word, and Regex options
+   - **Highlighter**: Real-time highlighting of search terms in text
+   - **SearchContext**: Manages search state and results across the application
+
+5. **Annotation Class Architecture**: Annotations use an object-oriented architecture:
+   - **Annotation (abstract)**: Base class defining common interface
+   - **AnnotationRegistry**: Factory/registry pattern providing singleton instances
+   - **9 Concrete Classes**: Weapons, WeaponType, Guards, Techniques, Measures, Strategy, Strikes, Targets, Note
+   - Each class encapsulates its own styling (`getChipStyle()`, `getTextStyle()`) and validation logic
+   - Used by `ColorPicker`, `AnnotationPanel`, and `AnnotationDisplaySettings` components
 
 ## Commands
 
@@ -126,9 +176,23 @@ term_key:
     en_versions:
       - translator: "Translator Name"
         text: English translation with {glossary_terms}
+  annotation:
+    id: anno_1234567890_unique
+    weapons: [Spada sola]
+    weapon_type: "Épée aiguisée"  # or "Épée émoussée"
+    guards_mentioned: [Coda Longa e Stretta]
+    techniques: [Stringere]
+    measures: [Largo, Mezzo]
+    strategy: [provocation]
+    strikes: [Mandritto, Fendente]
+    targets: [Tête, Bras]
+    guards_count: {"Coda Longa e Stretta": 2}
+    techniques_count: {"Stringere": 1}
+    strikes_count: {"Mandritto": 3}
+    targets_count: {"Tête": 2}
 ```
 
-**Note**: The `annotation` field should NOT be included in generated YAML files from extraction scripts.
+**Important**: The annotation fields (weapons, guards_mentioned, techniques, measures, strategy, strikes, targets, weapon_type, *_count) are in the `annotation` section, NOT in `metadata`. The `metadata` section contains only bibliographic information.
 
 ## Python Scripts Guidelines
 
