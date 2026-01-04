@@ -58,6 +58,17 @@ const buildAnnotationSummary = (
   return summary;
 };
 
+const getGridColumnsClass = (showItalian: boolean, showEnglish: boolean, showNotes: boolean): string => {
+  const activeColumns = [showItalian, showEnglish, showNotes].filter(Boolean).length + 1; // +1 for French (always visible)
+  const columnClasses = {
+    1: 'grid-cols-1',
+    2: 'grid-cols-1 lg:grid-cols-2',
+    3: 'grid-cols-1 lg:grid-cols-3',
+    4: 'grid-cols-1 lg:grid-cols-4',
+  };
+  return columnClasses[activeColumns as keyof typeof columnClasses] || 'grid-cols-1';
+};
+
 export default function BolognesePlatform({ glossaryData, treatiseData }: BolognesePlatformProps) {
 
   const [translatorPreferences, setTranslatorPreferences] = useState<{ [key: string]: string }>({});
@@ -423,15 +434,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                   })()}
 
                   {/* Columns dynamiques */}
-                  <div className={`grid gap-8 lg:gap-12 text-sm leading-relaxed ${
-                    (() => {
-                      const activeColumns = [showItalian, showEnglish, showNotes].filter(Boolean).length + 1; // +1 for French (always visible)
-                      if (activeColumns === 1) return 'grid-cols-1';
-                      if (activeColumns === 2) return 'grid-cols-1 lg:grid-cols-2';
-                      if (activeColumns === 3) return 'grid-cols-1 lg:grid-cols-3';
-                      return 'grid-cols-1 lg:grid-cols-4';
-                    })()
-                  }`}>
+                  <div className={`grid gap-8 lg:gap-12 text-sm leading-relaxed ${getGridColumnsClass(showItalian, showEnglish, showNotes)}`}>
                     
                     {/* 1. Italian (Original) - Optionnel */}
                     {showItalian && section.content.it && (
