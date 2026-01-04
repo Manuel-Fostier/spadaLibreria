@@ -17,7 +17,6 @@ const OPTION_META: Array<{ key: ConfigKey; label: string }> = [
   { key: 'techniques', label: 'Techniques' },
   { key: 'measures', label: 'Mesures / Distance' },
   { key: 'strategy', label: 'Stratégie / Contexte' },
-  { key: 'note', label: 'Aperçu de note' },
 ];
 
 export default function AnnotationDisplaySettings({ onClose }: AnnotationDisplaySettingsProps) {

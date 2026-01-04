@@ -107,7 +107,8 @@ export type Target = typeof TARGETS[number];
 
 export interface Annotation {
   id: string;  
-  note: string | null;
+  /** @deprecated Note field is deprecated. Use content.notes in TreatiseSection instead. */
+  note?: string | null;
   weapons: Weapon[] | null;
   weapon_type: WeaponType | null;
   guards_mentioned: Guard[] | null;
