@@ -101,7 +101,6 @@ export class AnnotationRegistry {
       colors[key] = chipStyle.color as string;
     });
     
-    console.log('🎨 AnnotationRegistry.getColors():', colors);
     return colors;
   }
 
