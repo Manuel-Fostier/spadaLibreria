@@ -7,7 +7,6 @@ const STORAGE_KEY = 'annotationDisplay';
 const STORAGE_VERSION = '1.0';
 
 const DEFAULT_DISPLAY_CONFIG: AnnotationDisplay = {
-  note: false,
   weapons: true,
   weapon_type: true,
   guards: false,
@@ -33,7 +32,6 @@ type StoragePayload = {
 
 const sanitizeConfig = (config?: Partial<AnnotationDisplay>): AnnotationDisplay => {
   return {
-    note: Boolean(config?.note ?? DEFAULT_DISPLAY_CONFIG.note),
     weapons: Boolean(config?.weapons ?? DEFAULT_DISPLAY_CONFIG.weapons),
     weapon_type: Boolean(config?.weapon_type ?? DEFAULT_DISPLAY_CONFIG.weapon_type),
     guards: Boolean(config?.guards ?? DEFAULT_DISPLAY_CONFIG.guards),

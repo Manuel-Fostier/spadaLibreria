@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { BookOpen, ChevronRight, ChevronDown, MessageSquare, Settings, BarChart3 } from 'lucide-react';
+import { BookOpen, ChevronRight, ChevronDown, MessageSquare, Settings, BarChart3, Edit2 } from 'lucide-react';
 import TextParser from './TextParser';
 import AnnotationPanel from './AnnotationPanel';
 import AnnotationBadge from './AnnotationBadge';
@@ -55,12 +55,18 @@ const buildAnnotationSummary = (
     summary.push({ label: 'Stratégie', value: annotation.strategy.join(', ') });
   }
 
-  if (displayConfig.note && annotation.note) {
-    const preview = annotation.note.length > 80 ? `${annotation.note.slice(0, 77)}...` : annotation.note;
-    summary.push({ label: 'Note', value: preview });
-  }
-
   return summary;
+};
+
+const getGridColumnsClass = (showItalian: boolean, showEnglish: boolean, showNotes: boolean): string => {
+  const activeColumns = [showItalian, showEnglish, showNotes].filter(Boolean).length + 1; // +1 for French (always visible)
+  const columnClasses = {
+    1: 'grid-cols-1',
+    2: 'grid-cols-1 lg:grid-cols-2',
+    3: 'grid-cols-1 lg:grid-cols-3',
+    4: 'grid-cols-1 lg:grid-cols-4',
+  };
+  return columnClasses[activeColumns as keyof typeof columnClasses] || 'grid-cols-1';
 };
 
 export default function BolognesePlatform({ glossaryData, treatiseData }: BolognesePlatformProps) {
@@ -73,6 +79,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   const { getAnnotation, getUniqueValues, getMatchingSectionIds } = useAnnotations();
   const [showItalian, setShowItalian] = useState(false);
   const [showEnglish, setShowEnglish] = useState(false);
+  const [showNotes, setShowNotes] = useState(false);
   const [showDisplaySettings, setShowDisplaySettings] = useState(false);
   const [showStatistics, setShowStatistics] = useState(false);
   const { displayConfig } = useAnnotationDisplay();
@@ -315,6 +322,16 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
             >
               Anglais {showEnglish ? '✓' : ''}
             </button>
+            <button
+              onClick={() => setShowNotes(!showNotes)}
+              className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                showNotes 
+                  ? 'bg-gray-900 text-white' 
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              Notes {showNotes ? '✓' : ''}
+            </button>
 
             <button
               onClick={() => setShowDisplaySettings(prev => !prev)}
@@ -417,11 +434,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                   })()}
 
                   {/* Columns dynamiques */}
-                  <div className={`grid gap-8 lg:gap-12 text-sm leading-relaxed ${
-                    showItalian && showEnglish ? 'grid-cols-1 lg:grid-cols-3' :
-                    showItalian || showEnglish ? 'grid-cols-1 lg:grid-cols-2' :
-                    'grid-cols-1'
-                  }`}>
+                  <div className={`grid gap-8 lg:gap-12 text-sm leading-relaxed ${getGridColumnsClass(showItalian, showEnglish, showNotes)}`}>
                     
                     {/* 1. Italian (Original) - Optionnel */}
                     {showItalian && section.content.it && (
@@ -441,9 +454,17 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
 
                     {/* 2. French - Toujours affiché */}
                     <div>
-                      <h4 className="text-xs font-bold text-gray-400 mb-4 flex items-center gap-2 pb-2 border-b border-gray-100">
-                        Français
-                      </h4>
+                      <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-100">
+                        <h4 className="text-xs font-bold text-gray-400 flex items-center gap-2">
+                          Français
+                        </h4>
+                        <button 
+                          className="p-1 hover:bg-gray-100 rounded transition-colors"
+                          title="Éditer le contenu français"
+                        >
+                          <Edit2 size={14} className="text-gray-400 hover:text-gray-600" />
+                        </button>
+                      </div>
                       <div className="text-gray-600 leading-relaxed whitespace-pre-line text-justify">
                         <TextParser 
                           text={section.content.fr} 
@@ -499,6 +520,30 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                             />
                           ) : (
                             <p className="text-gray-400 italic">Traduction non disponible</p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 4. Notes - Optionnel */}
+                    {showNotes && (
+                      <div>
+                        <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-100">
+                          <h4 className="text-xs font-bold text-gray-400 flex items-center gap-2">
+                            Notes
+                          </h4>
+                          <button 
+                            className="p-1 hover:bg-gray-100 rounded transition-colors"
+                            title="Éditer les notes"
+                          >
+                            <Edit2 size={14} className="text-gray-400 hover:text-gray-600" />
+                          </button>
+                        </div>
+                        <div className="text-gray-600 leading-relaxed whitespace-pre-line">
+                          {section.content.notes ? (
+                            <p>{section.content.notes}</p>
+                          ) : (
+                            <p className="text-gray-400 italic">Aucune note disponible</p>
                           )}
                         </div>
                       </div>
