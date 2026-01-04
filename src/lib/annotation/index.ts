@@ -12,5 +12,4 @@ export { Measures } from './Measures';
 export { Strategy } from './Strategy';
 export { Strikes } from './Strikes';
 export { Targets } from './Targets';
-export { Note } from './Note';
 export { AnnotationRegistry, type AnnotationKey } from './AnnotationRegistry';

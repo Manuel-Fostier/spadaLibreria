@@ -21,7 +21,6 @@ const OPTION_META: Array<{ key: ConfigKey; label: string }> = [
   { key: 'strategy', label: 'Stratégie / Contexte' },
   { key: 'strikes', label: 'Coups' },
   { key: 'targets', label: 'Cibles' },
-  { key: 'note', label: 'Aperçu de note' },
 ];
 
 export default function AnnotationDisplaySettings({ onClose }: AnnotationDisplaySettingsProps) {

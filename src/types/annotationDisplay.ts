@@ -1,9 +1,8 @@
 /**
- * Annotation display configuration (7 fields per FR-021)
+ * Annotation display configuration
  * Controls which annotation sections are visible in UI components.
  */
 export interface AnnotationDisplay {
-  note: boolean;
   weapons: boolean;
   weapon_type: boolean;
   guards: boolean;
@@ -19,7 +18,6 @@ export interface AnnotationDisplay {
  * Color configuration for each annotation type
  */
 export interface AnnotationColors {
-  note: string;
   weapons: string;
   weapon_type: string;
   guards: string;

@@ -12,7 +12,6 @@ const getDefaultColors = (): AnnotationColors => {
 
 const createDefaultDisplayConfig = (): AnnotationDisplay => {
   return {
-    note: false,
     weapons: true,
     weapon_type: true,
     guards: false,
@@ -45,7 +44,6 @@ const syncConfigToAnnotations = (config: AnnotationDisplay) => {
     'strategy',
     'strikes',
     'targets',
-    'note',
   ];
 
   keys.forEach(key => {

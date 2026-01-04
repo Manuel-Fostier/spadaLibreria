@@ -7,7 +7,6 @@ import { Measures } from './Measures';
 import { Strategy } from './Strategy';
 import { Strikes } from './Strikes';
 import { Targets } from './Targets';
-import { Note } from './Note';
 
 export type AnnotationKey = 
   | 'weapons'
@@ -17,8 +16,7 @@ export type AnnotationKey =
   | 'measures'
   | 'strategy'
   | 'strikes'
-  | 'targets'
-  | 'note';
+  | 'targets';
 
 /**
  * Registry/factory for annotation instances
@@ -38,7 +36,6 @@ export class AnnotationRegistry {
     AnnotationRegistry.instances.set('strategy', new Strategy());
     AnnotationRegistry.instances.set('strikes', new Strikes());
     AnnotationRegistry.instances.set('targets', new Targets());
-    AnnotationRegistry.instances.set('note', new Note());
   }
 
   /**

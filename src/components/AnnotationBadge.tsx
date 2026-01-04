@@ -23,9 +23,7 @@ export default function AnnotationBadge({ annotation, onClick, isActive = false 
     (annotation.weapon_type ? 1 : 0)
   );
 
-  // Aperçu de l'annotation unique
-  const note = annotation.note || '';
-  const hasContent = tagCount > 0 || note.length > 0;
+  const hasContent = tagCount > 0;
 
   if (!hasContent) return null;
 

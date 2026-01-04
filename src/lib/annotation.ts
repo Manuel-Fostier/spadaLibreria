@@ -107,13 +107,18 @@ export type Target = typeof TARGETS[number];
 
 export interface Annotation {
   id: string;  
-  note: string | null;
   weapons: Weapon[] | null;
   weapon_type: WeaponType | null;
   guards_mentioned: Guard[] | null;
+  guards_count?: Record<string, number> | null;
   techniques: string[] | null;
+  techniques_count?: Record<string, number> | null;
   measures: Measure[] | null;
+  measures_count?: Record<string, number> | null;
   strategy: Strategy[] | null;
+  strategy_count?: Record<string, number> | null;
   strikes: Strike[] | null;
+  strikes_count?: Record<string, number> | null;
   targets: Target[] | null;
+  targets_count?: Record<string, number> | null;
 }

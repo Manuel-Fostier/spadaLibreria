@@ -37,6 +37,7 @@ export interface TreatiseSection {
     it?: string;
     fr: string;
     en_versions?: EnglishVersion[];
+    notes?: string;
   };
   annotation?: Annotation;
 }

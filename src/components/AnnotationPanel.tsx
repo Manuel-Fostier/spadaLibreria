@@ -42,7 +42,6 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
   
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    note: '',
     weapons: null as (typeof WEAPONS[number])[] | null,
     weapon_type: null as (typeof WEAPON_TYPES[number]) | null,
     guards_mentioned: null as (typeof GUARDS[number])[] | null,
@@ -111,7 +110,6 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
     if (annotation) {
       setIsEditing(true);
       setFormData({
-        note: annotation.note || '',
         weapons: annotation.weapons || null,
         weapon_type: annotation.weapon_type || null,
         guards_mentioned: annotation.guards_mentioned || null,
@@ -124,7 +122,6 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
     } else {
       setIsEditing(true);
       setFormData({
-        note: '',
         weapons: null,
         weapon_type: null,
         guards_mentioned: null,
@@ -433,16 +430,6 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                   <p className="text-sm text-gray-400 italic">Aucune cible indiquée</p>
                 )}
               </div>
-
-              {/* Note */}
-              <div>
-                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Note</h4>
-                {annotation.note ? (
-                  <p className="text-sm text-gray-700 whitespace-pre-wrap">{annotation.note}</p>
-                ) : (
-                  <p className="text-sm text-gray-400 italic">Aucune note</p>
-                )}
-              </div>
             </div>
           )}
 
@@ -678,20 +665,6 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                     );
                   })}
                 </div>
-              </div>
-
-              {/* Note */}
-              <div>
-                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                  Note
-                </h4>
-                <textarea
-                  value={formData.note}
-                  onChange={(e) => setFormData(prev => ({ ...prev, note: e.target.value }))}
-                  placeholder="Écrivez votre annotation..."
-                  rows={4}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
-                />
               </div>
 
               {/* Action buttons */}
