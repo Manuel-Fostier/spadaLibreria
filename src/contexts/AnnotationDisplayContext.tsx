@@ -5,9 +5,7 @@ import { AnnotationDisplay, AnnotationColors } from '@/types/annotationDisplay';
 import { AnnotationRegistry, type AnnotationKey } from '../lib/annotation/AnnotationRegistry';
 
 const STORAGE_KEY = 'annotationDisplay';
-const STORAGE_VERSION = '1.0';
 
-// Create default colors from annotation instances (called at runtime to get current state)
 const getDefaultColors = (): AnnotationColors => {
   return AnnotationRegistry.getColors() as AnnotationColors;
 };
@@ -37,42 +35,6 @@ interface AnnotationDisplayContextValue {
 
 const AnnotationDisplayContext = createContext<AnnotationDisplayContextValue | undefined>(undefined);
 
-type StoragePayload = {
-  version: string;
-  config: AnnotationDisplay;
-  savedAt: string;
-};
-
-const sanitizeConfig = (config?: Partial<AnnotationDisplay>): AnnotationDisplay => {
-  const defaultConfig = createDefaultDisplayConfig();
-  return {
-    note: Boolean(config?.note ?? defaultConfig.note),
-    weapons: Boolean(config?.weapons ?? defaultConfig.weapons),
-    weapon_type: Boolean(config?.weapon_type ?? defaultConfig.weapon_type),
-    guards: Boolean(config?.guards ?? defaultConfig.guards),
-    techniques: Boolean(config?.techniques ?? defaultConfig.techniques),
-    measures: Boolean(config?.measures ?? defaultConfig.measures),
-    strategy: Boolean(config?.strategy ?? defaultConfig.strategy),
-    strikes: Boolean(config?.strikes ?? defaultConfig.strikes),
-    targets: Boolean(config?.targets ?? defaultConfig.targets),
-    colors: {
-      note: config?.colors?.note ?? defaultConfig.colors.note,
-      weapons: config?.colors?.weapons ?? defaultConfig.colors.weapons,
-      weapon_type: config?.colors?.weapon_type ?? defaultConfig.colors.weapon_type,
-      guards: config?.colors?.guards ?? defaultConfig.colors.guards,
-      techniques: config?.colors?.techniques ?? defaultConfig.colors.techniques,
-      measures: config?.colors?.measures ?? defaultConfig.colors.measures,
-      strategy: config?.colors?.strategy ?? defaultConfig.colors.strategy,
-      strikes: config?.colors?.strikes ?? defaultConfig.colors.strikes,
-      targets: config?.colors?.targets ?? defaultConfig.colors.targets,
-    },
-  };
-};
-
-/**
- * Synchronizes AnnotationDisplay config with annotation class instances
- * Updates annotation visibility and colors when config changes
- */
 const syncConfigToAnnotations = (config: AnnotationDisplay) => {
   const keys: AnnotationKey[] = [
     'weapons',
@@ -87,10 +49,8 @@ const syncConfigToAnnotations = (config: AnnotationDisplay) => {
   ];
 
   keys.forEach(key => {
-    // Update visibility
     AnnotationRegistry.updateAnnotationVisibility(key, config[key as keyof AnnotationDisplay] as boolean);
     
-    // Update color
     if (config.colors && config.colors[key as keyof AnnotationColors]) {
       const colorValue = config.colors[key as keyof AnnotationColors];
       AnnotationRegistry.updateAnnotationColor(key, colorValue);
@@ -109,21 +69,12 @@ export function AnnotationDisplayProvider({ children }: { children: ReactNode })
 
     if (stored) {
       try {
-        const parsed = JSON.parse(stored);
-        const parsedConfig = (parsed && 'config' in parsed) ? parsed.config : parsed;
-        const sanitized = sanitizeConfig(parsedConfig);
-        setDisplayConfig(sanitized);
-        // Sync to annotations
-        syncConfigToAnnotations(sanitized);
+        const config: AnnotationDisplay = JSON.parse(stored);
+        setDisplayConfig(config);
+        syncConfigToAnnotations(config);
       } catch (error) {
         console.error('Failed to parse annotation display config from localStorage', error);
-        const fallback = createDefaultDisplayConfig();
-        setDisplayConfig(fallback);
-        syncConfigToAnnotations(fallback);
       }
-    } else {
-      const fallback = createDefaultDisplayConfig();
-      syncConfigToAnnotations(fallback);
     }
 
     setIsHydrated(true);
@@ -132,24 +83,12 @@ export function AnnotationDisplayProvider({ children }: { children: ReactNode })
   useEffect(() => {
     if (!isHydrated || typeof window === 'undefined') return;
 
-
-    // Persist to localStorage
-    const payload: StoragePayload = {
-      version: STORAGE_VERSION,
-      config: displayConfig,
-      savedAt: new Date().toISOString(),
-    };
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-
-    // Sync to annotations
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(displayConfig));
     syncConfigToAnnotations(displayConfig);
   }, [displayConfig, isHydrated]);
 
   const updateDisplayConfig = useCallback((updates: Partial<AnnotationDisplay>) => {
-    setDisplayConfig(prev => {
-      const next = sanitizeConfig({ ...prev, ...updates });
-      return next;
-    });
+    setDisplayConfig(prev => ({ ...prev, ...updates }));
   }, []);
 
   const resetDisplayConfig = useCallback(() => {
