@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { BookOpen, ChevronRight, ChevronDown, MessageSquare, Settings, BarChart3 } from 'lucide-react';
+import { BookOpen, ChevronRight, ChevronDown, MessageSquare, Settings, BarChart3, Edit2 } from 'lucide-react';
 import TextParser from './TextParser';
 import AnnotationPanel from './AnnotationPanel';
 import AnnotationBadge from './AnnotationBadge';
@@ -454,9 +454,17 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
 
                     {/* 2. French - Toujours affiché */}
                     <div>
-                      <h4 className="text-xs font-bold text-gray-400 mb-4 flex items-center gap-2 pb-2 border-b border-gray-100">
-                        Français
-                      </h4>
+                      <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-100">
+                        <h4 className="text-xs font-bold text-gray-400 flex items-center gap-2">
+                          Français
+                        </h4>
+                        <button 
+                          className="p-1 hover:bg-gray-100 rounded transition-colors"
+                          title="Éditer le contenu français"
+                        >
+                          <Edit2 size={14} className="text-gray-400 hover:text-gray-600" />
+                        </button>
+                      </div>
                       <div className="text-gray-600 leading-relaxed whitespace-pre-line text-justify">
                         <TextParser 
                           text={section.content.fr} 
@@ -520,9 +528,17 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                     {/* 4. Notes - Optionnel */}
                     {showNotes && (
                       <div>
-                        <h4 className="text-xs font-bold text-gray-400 mb-4 flex items-center gap-2 pb-2 border-b border-gray-100">
-                          Notes
-                        </h4>
+                        <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-100">
+                          <h4 className="text-xs font-bold text-gray-400 flex items-center gap-2">
+                            Notes
+                          </h4>
+                          <button 
+                            className="p-1 hover:bg-gray-100 rounded transition-colors"
+                            title="Éditer les notes"
+                          >
+                            <Edit2 size={14} className="text-gray-400 hover:text-gray-600" />
+                          </button>
+                        </div>
                         <div className="text-gray-600 leading-relaxed whitespace-pre-line">
                           {section.content.notes ? (
                             <p>{section.content.notes}</p>
