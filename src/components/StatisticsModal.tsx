@@ -29,29 +29,49 @@ export default function StatisticsModal({ onClose }: StatisticsModalProps) {
     const targetsCount = new Map<string, number>();
 
     annotations.forEach((ann) => {
-      // Count guards
-      if (ann.guards_mentioned) {
+      // Count guards - use occurrence counts if available
+      if (ann.guards_count) {
+        Object.entries(ann.guards_count).forEach(([guard, count]) => {
+          guardsCount.set(guard, (guardsCount.get(guard) || 0) + count);
+        });
+      } else if (ann.guards_mentioned) {
+        // Fallback for old annotations without counts
         ann.guards_mentioned.forEach((guard) => {
           guardsCount.set(guard, (guardsCount.get(guard) || 0) + 1);
         });
       }
 
-      // Count measures (engagement distances)
-      if (ann.measures) {
+      // Count measures (engagement distances) - use occurrence counts if available
+      if (ann.measures_count) {
+        Object.entries(ann.measures_count).forEach(([measure, count]) => {
+          measuresCount.set(measure, (measuresCount.get(measure) || 0) + count);
+        });
+      } else if (ann.measures) {
+        // Fallback for old annotations without counts
         ann.measures.forEach((measure) => {
           measuresCount.set(measure, (measuresCount.get(measure) || 0) + 1);
         });
       }
 
-      // Count strikes
-      if (ann.strikes) {
+      // Count strikes - use occurrence counts if available
+      if (ann.strikes_count) {
+        Object.entries(ann.strikes_count).forEach(([strike, count]) => {
+          strikesCount.set(strike, (strikesCount.get(strike) || 0) + count);
+        });
+      } else if (ann.strikes) {
+        // Fallback for old annotations without counts
         ann.strikes.forEach((strike) => {
           strikesCount.set(strike, (strikesCount.get(strike) || 0) + 1);
         });
       }
 
-      // Count targets
-      if (ann.targets) {
+      // Count targets - use occurrence counts if available
+      if (ann.targets_count) {
+        Object.entries(ann.targets_count).forEach(([target, count]) => {
+          targetsCount.set(target, (targetsCount.get(target) || 0) + count);
+        });
+      } else if (ann.targets) {
+        // Fallback for old annotations without counts
         ann.targets.forEach((target) => {
           targetsCount.set(target, (targetsCount.get(target) || 0) + 1);
         });
