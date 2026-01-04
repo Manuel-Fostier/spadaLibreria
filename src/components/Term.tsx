@@ -34,7 +34,6 @@ export default function Term({ termKey, children, glossaryData }: TermProps) {
   const termColor = annotation?.getTextStyle().color as string || '#6366f1';
 
   useEffect(() => {
-    console.log('🔄 useEffect triggered - showTooltip:', showTooltip, 'termKey:', termKey);
     if (showTooltip && spanRef.current) {
       const rect = spanRef.current.getBoundingClientRect();
       const spaceAbove = rect.top;
@@ -43,7 +42,6 @@ export default function Term({ termKey, children, glossaryData }: TermProps) {
       // Position verticale
       const nextVertical = spaceAbove < 400 ? 'bottom' : 'top';
       setTooltipPosition(nextVertical);
-      console.log('🔍 Position Debug:', { termKey, spaceAbove, spaceBelow, nextVertical });
 
       const tooltipWidth = 800; // largeur prévue
       const viewportWidth = window.innerWidth;
@@ -92,19 +90,6 @@ export default function Term({ termKey, children, glossaryData }: TermProps) {
       const canAlignLeft = spaceRight >= tooltipWidth + margin;
       const canAlignRight = spaceLeft >= tooltipWidth + margin;
 
-      console.log('📐 Alignment Debug (container mode):', {
-        containerWidth: containerRect?.width ?? viewportWidth,
-        containerLeft: containerRect?.left ?? 0,
-        spaceLeft,
-        spaceRight,
-        spaceCenter,
-        tooltipWidth,
-        canCenter,
-        canAlignLeft,
-        canAlignRight,
-        thresholdEdge
-      });
-
       let nextHorizontal: 'left' | 'center' | 'right' = 'center';
       if (canCenter) {
         // Même si on peut centrer, si très proche du bord gauche, on préfère aligner à gauche
@@ -120,7 +105,6 @@ export default function Term({ termKey, children, glossaryData }: TermProps) {
         nextHorizontal = 'left';
       }
 
-      console.log('✅ Chosen horizontal alignment:', nextHorizontal);
       setTooltipAlignment(nextHorizontal);
     }
   }, [showTooltip, termKey]);
@@ -132,14 +116,12 @@ export default function Term({ termKey, children, glossaryData }: TermProps) {
       if (!spanRef.current) return;
       // Si le clic n'est pas à l'intérieur du wrapper du terme -> fermer
       if (!spanRef.current.contains(e.target as Node)) {
-        console.log('🖱️ Outside click -> hide tooltip');
         setShowTooltip(false);
         if (globalActiveTerm === termKey) setGlobalActiveTerm(null);
       }
     };
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        console.log('⎋ Escape key -> hide tooltip');
         setShowTooltip(false);
         if (globalActiveTerm === termKey) setGlobalActiveTerm(null);
       }
