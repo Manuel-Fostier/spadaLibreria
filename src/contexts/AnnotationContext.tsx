@@ -71,24 +71,66 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
     const validWeaponTypes = ann.weapon_type && WEAPON_TYPES.includes(ann.weapon_type as WeaponType)
       ? ann.weapon_type as WeaponType
       : null;
-    const validGuards = Array.isArray(ann.guards_mentioned)
-      ? Array.from(new Set(
-          ann.guards_mentioned.filter((g): g is Guard => GUARDS.includes(g as Guard))
-        ))
-      : [];
-    const validTechniques = Array.isArray(ann.techniques)
-      ? Array.from(new Set(ann.techniques.filter((t): t is string => typeof t === 'string')))
-      : [];
-    const validStrikes = Array.isArray(ann.strikes)
-      ? Array.from(new Set(
-          ann.strikes.filter((s): s is Strike => STRIKES.includes(s as Strike))
-        ))
-      : [];
-    const validTargets = Array.isArray(ann.targets)
-      ? Array.from(new Set(
-          ann.targets.filter((t): t is Target => TARGETS.includes(t as Target))
-        ))
-      : [];
+    
+    // Handle guards_mentioned: can be array (legacy) or Record<string, number> (new)
+    let validGuards: Record<string, number> | null = null;
+    if (ann.guards_mentioned) {
+      if (Array.isArray(ann.guards_mentioned)) {
+        // Legacy format: convert array to dictionary with count=1
+        validGuards = {};
+        ann.guards_mentioned
+          .filter((g): g is Guard => GUARDS.includes(g as Guard))
+          .forEach(g => { validGuards![g] = 1; });
+      } else if (typeof ann.guards_mentioned === 'object') {
+        // New format: already a dictionary
+        validGuards = ann.guards_mentioned as Record<string, number>;
+      }
+    }
+    
+    // Handle techniques: can be array (legacy) or Record<string, number> (new)
+    let validTechniques: Record<string, number> | null = null;
+    if (ann.techniques) {
+      if (Array.isArray(ann.techniques)) {
+        // Legacy format: convert array to dictionary with count=1
+        validTechniques = {};
+        ann.techniques
+          .filter((t): t is string => typeof t === 'string')
+          .forEach(t => { validTechniques![t] = 1; });
+      } else if (typeof ann.techniques === 'object') {
+        // New format: already a dictionary
+        validTechniques = ann.techniques as Record<string, number>;
+      }
+    }
+    
+    // Handle strikes: can be array (legacy) or Record<string, number> (new)
+    let validStrikes: Record<string, number> | null = null;
+    if (ann.strikes) {
+      if (Array.isArray(ann.strikes)) {
+        // Legacy format: convert array to dictionary with count=1
+        validStrikes = {};
+        ann.strikes
+          .filter((s): s is Strike => STRIKES.includes(s as Strike))
+          .forEach(s => { validStrikes![s] = 1; });
+      } else if (typeof ann.strikes === 'object') {
+        // New format: already a dictionary
+        validStrikes = ann.strikes as Record<string, number>;
+      }
+    }
+    
+    // Handle targets: can be array (legacy) or Record<string, number> (new)
+    let validTargets: Record<string, number> | null = null;
+    if (ann.targets) {
+      if (Array.isArray(ann.targets)) {
+        // Legacy format: convert array to dictionary with count=1
+        validTargets = {};
+        ann.targets
+          .filter((t): t is Target => TARGETS.includes(t as Target))
+          .forEach(t => { validTargets![t] = 1; });
+      } else if (typeof ann.targets === 'object') {
+        // New format: already a dictionary
+        validTargets = ann.targets as Record<string, number>;
+      }
+    }
     
     // Create new annotation without the legacy 'measure' field
     const { measure: _measure, ...rest } = ann as LegacyAnnotation & { measure?: Measure | null };
@@ -116,10 +158,10 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
         strategy: ann.strategy ?? [],
         weapons: ann.weapons ?? [],
         weapon_type: ann.weapon_type ?? null,
-        guards_mentioned: ann.guards_mentioned ?? [],
-        techniques: ann.techniques ?? [],
-        strikes: ann.strikes ?? [],
-        targets: ann.targets ?? [],
+        guards_mentioned: ann.guards_mentioned ?? null,
+        techniques: ann.techniques ?? null,
+        strikes: ann.strikes ?? null,
+        targets: ann.targets ?? null,
       } as LegacyAnnotation);
       newMap.set(key, normalized);
     });
@@ -175,22 +217,11 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
       weapon_type: annotation.weapon_type && WEAPON_TYPES.includes(annotation.weapon_type as WeaponType)
         ? annotation.weapon_type as WeaponType
         : null,
-      // normalize guards
-      guards_mentioned: Array.isArray(annotation.guards_mentioned) ? Array.from(new Set(
-        annotation.guards_mentioned.filter((g): g is Guard => GUARDS.includes(g as Guard))
-      )) : [],
-      // normalize techniques
-      techniques: Array.isArray(annotation.techniques) ? Array.from(new Set(
-        annotation.techniques.filter((t): t is string => typeof t === 'string')
-      )) : [],
-      // normalize strikes
-      strikes: Array.isArray(annotation.strikes) ? Array.from(new Set(
-        annotation.strikes.filter((s): s is Strike => STRIKES.includes(s as Strike))
-      )) : [],
-      // normalize targets
-      targets: Array.isArray(annotation.targets) ? Array.from(new Set(
-        annotation.targets.filter((t): t is Target => TARGETS.includes(t as Target))
-      )) : [],
+      // guards_mentioned, techniques, strikes, targets are now Record<string, number>
+      guards_mentioned: annotation.guards_mentioned || null,
+      techniques: annotation.techniques || null,
+      strikes: annotation.strikes || null,
+      targets: annotation.targets || null,
       id: `anno_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     };
 
@@ -222,18 +253,11 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
       const weapon_type = merged.weapon_type && WEAPON_TYPES.includes(merged.weapon_type as WeaponType)
         ? merged.weapon_type as WeaponType
         : null;
-      const guards_mentioned = Array.isArray(merged.guards_mentioned) ? Array.from(new Set(
-        merged.guards_mentioned.filter((g): g is Guard => GUARDS.includes(g as Guard))
-      )) : [];
-      const techniques = Array.isArray(merged.techniques) ? Array.from(new Set(
-        merged.techniques.filter((t): t is string => typeof t === 'string')
-      )) : [];
-      const strikes = Array.isArray(merged.strikes) ? Array.from(new Set(
-        merged.strikes.filter((s): s is Strike => STRIKES.includes(s as Strike))
-      )) : [];
-      const targets = Array.isArray(merged.targets) ? Array.from(new Set(
-        merged.targets.filter((t): t is Target => TARGETS.includes(t as Target))
-      )) : [];
+      // guards_mentioned, techniques, strikes, targets are now Record<string, number>
+      const guards_mentioned = merged.guards_mentioned || null;
+      const techniques = merged.techniques || null;
+      const strikes = merged.strikes || null;
+      const targets = merged.targets || null;
       
       newMap.set(sectionId, { 
         ...merged, 
@@ -265,6 +289,9 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
         });
       } else if (typeof val === 'string') {
         values.add(val);
+      } else if (val && typeof val === 'object' && !Array.isArray(val)) {
+        // Handle Record<string, number> for guards_mentioned, techniques, strikes, targets
+        Object.keys(val).forEach((key) => values.add(key));
       }
     });
     return Array.from(values).sort();
@@ -291,13 +318,13 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
       }
       if (filters.guards) {
         const vals = Array.isArray(filters.guards) ? filters.guards : [filters.guards];
-        if (vals.length > 0 && (!ann.guards_mentioned || !vals.some(v => ann.guards_mentioned!.includes(v as Guard)))) {
+        if (vals.length > 0 && (!ann.guards_mentioned || !vals.some(v => v in ann.guards_mentioned!))) {
           matches = false;
         }
       }
       if (filters.techniques) {
         const vals = Array.isArray(filters.techniques) ? filters.techniques : [filters.techniques];
-        if (vals.length > 0 && (!ann.techniques || !vals.some(v => ann.techniques!.includes(v)))) {
+        if (vals.length > 0 && (!ann.techniques || !vals.some(v => v in ann.techniques!))) {
           matches = false;
         }
       }
@@ -309,13 +336,13 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
       }
       if (filters.strikes) {
         const vals = Array.isArray(filters.strikes) ? filters.strikes : [filters.strikes];
-        if (vals.length > 0 && (!ann.strikes || !vals.some(v => ann.strikes!.includes(v as Strike)))) {
+        if (vals.length > 0 && (!ann.strikes || !vals.some(v => v in ann.strikes!))) {
           matches = false;
         }
       }
       if (filters.targets) {
         const vals = Array.isArray(filters.targets) ? filters.targets : [filters.targets];
-        if (vals.length > 0 && (!ann.targets || !vals.some(v => ann.targets!.includes(v as Target)))) {
+        if (vals.length > 0 && (!ann.targets || !vals.some(v => v in ann.targets!))) {
           matches = false;
         }
       }

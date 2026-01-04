@@ -125,12 +125,12 @@ def process_file(file_path, enricher):
                 'note': None,
                 'weapons': [],
                 'weapon_type': None,
-                'guards_mentioned': [],
-                'techniques': [],
+                'guards_mentioned': {},
+                'techniques': {},
                 'measures': [],
                 'strategy': [],
-                'strikes': [],
-                'targets': []
+                'strikes': {},
+                'targets': {}
             }
             modified_count += 1
 
@@ -172,14 +172,10 @@ def process_file(file_path, enricher):
 
         # Populate annotation fields based on found keys
         if 'annotation' in section:
-            guards = []
-            guards_count = {}
-            techniques = []
-            techniques_count = {}
-            strikes = []
-            strikes_count = {}
-            targets = []
-            targets_count = {}
+            guards_mentioned = {}
+            techniques = {}
+            strikes = {}
+            targets = {}
             
             for key in found_keys:
                 cat = enricher.get_category(key)
@@ -187,31 +183,18 @@ def process_file(file_path, enricher):
                 count = key_counts.get(key, 0)
                 
                 if cat == 'guard':
-                    guards.append(term)
-                    guards_count[term] = count
+                    guards_mentioned[term] = count
                 elif cat == 'technique':
-                    techniques.append(term)
-                    techniques_count[term] = count
+                    techniques[term] = count
                 elif cat == 'strike':
-                    strikes.append(term)
-                    strikes_count[term] = count
+                    strikes[term] = count
                 elif cat == 'target':
-                    targets.append(term)
-                    targets_count[term] = count
+                    targets[term] = count
             
-            guards.sort()
-            techniques.sort()
-            strikes.sort()
-            targets.sort()
-            
-            section['annotation']['guards_mentioned'] = guards
-            section['annotation']['guards_count'] = guards_count or None
-            section['annotation']['techniques'] = techniques
-            section['annotation']['techniques_count'] = techniques_count or None
-            section['annotation']['strikes'] = strikes
-            section['annotation']['strikes_count'] = strikes_count or None
-            section['annotation']['targets'] = targets
-            section['annotation']['targets_count'] = targets_count or None
+            section['annotation']['guards_mentioned'] = guards_mentioned or None
+            section['annotation']['techniques'] = techniques or None
+            section['annotation']['strikes'] = strikes or None
+            section['annotation']['targets'] = targets or None
 
     # Save back
     with open(file_path, 'w', encoding='utf-8') as f:

@@ -25,7 +25,7 @@ interface AnnotationPanelProps {
   sectionId: string;
   onClose: () => void;
   availableLanguages?: Array<{ code: 'it' | 'fr' | 'en'; label: string; translator?: string }>;
-  sectionMeta?: { weapons: string[]; guards_mentioned?: string[]; techniques?: string[] };
+  sectionMeta?: { weapons: string[]; guards_mentioned?: Record<string, number>; techniques?: Record<string, number> };
 }
 
 export default function AnnotationPanel({ sectionId, onClose, availableLanguages: _availableLanguages, sectionMeta: _sectionMeta }: AnnotationPanelProps) {
@@ -44,12 +44,12 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
   const [formData, setFormData] = useState({
     weapons: null as (typeof WEAPONS[number])[] | null,
     weapon_type: null as (typeof WEAPON_TYPES[number]) | null,
-    guards_mentioned: null as (typeof GUARDS[number])[] | null,
-    techniques: null as string[] | null,
+    guards_mentioned: null as Record<string, number> | null,
+    techniques: null as Record<string, number> | null,
     measures: null as (typeof MEASURES[number])[] | null,
     strategy: null as (typeof STRATEGIES[number])[] | null,
-    strikes: null as (typeof STRIKES[number])[] | null,
-    targets: null as (typeof TARGETS[number])[] | null,
+    strikes: null as Record<string, number> | null,
+    targets: null as Record<string, number> | null,
   });
   const [techniqueInput, setTechniqueInput] = useState('');
   
@@ -149,20 +149,24 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
   };
 
   const handleAddTechnique = () => {
-    if (techniqueInput.trim() && !formData.techniques?.includes(techniqueInput.trim())) {
+    if (techniqueInput.trim() && !formData.techniques?.[techniqueInput.trim()]) {
       setFormData(prev => ({
         ...prev,
-        techniques: [...(prev.techniques || []), techniqueInput.trim()]
+        techniques: { ...(prev.techniques || {}), [techniqueInput.trim()]: 1 }
       }));
       setTechniqueInput('');
     }
   };
 
   const handleRemoveTechnique = (tech: string) => {
-    setFormData(prev => ({
-      ...prev,
-      techniques: prev.techniques?.filter(t => t !== tech) || null
-    }));
+    setFormData(prev => {
+      const newTechniques = { ...(prev.techniques || {}) };
+      delete newTechniques[tech];
+      return {
+        ...prev,
+        techniques: Object.keys(newTechniques).length > 0 ? newTechniques : null
+      };
+    });
   };
 
   const handleToggleMeasure = (measure: Measure) => {
@@ -186,9 +190,9 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
       case 'armes':
         return (data.weapons || []).map(w => ({ key: w, label: w, type: 'weapon' as const }));
       case 'gardes':
-        return (data.guards_mentioned || []).map(g => ({ key: g, label: g, type: 'guard' as const }));
+        return Object.keys(data.guards_mentioned || {}).map(g => ({ key: g, label: g, type: 'guard' as const }));
       case 'techniques':
-        return (data.techniques || []).map(t => ({ key: t, label: t, type: 'technique' as const }));
+        return Object.keys(data.techniques || {}).map(t => ({ key: t, label: t, type: 'technique' as const }));
       default:
         return [];
     }
@@ -370,9 +374,9 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
               {/* Gardes */}
               <div>
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Gardes mentionnées</h4>
-                {annotation.guards_mentioned && annotation.guards_mentioned.length > 0 ? (
+                {annotation.guards_mentioned && Object.keys(annotation.guards_mentioned).length > 0 ? (
                   <div className="flex flex-wrap gap-2">
-                    {annotation.guards_mentioned.map(g => (
+                    {Object.keys(annotation.guards_mentioned).map(g => (
                       <span key={g} className="text-xs px-3 py-1.5 rounded-full border" style={AnnotationRegistry.getChipStyle('guards')}>
                         {g}
                       </span>
@@ -386,9 +390,9 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
               {/* Techniques */}
               <div>
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Techniques</h4>
-                {annotation.techniques && annotation.techniques.length > 0 ? (
+                {annotation.techniques && Object.keys(annotation.techniques).length > 0 ? (
                   <div className="flex flex-wrap gap-2">
-                    {annotation.techniques.map(t => (
+                    {Object.keys(annotation.techniques).map(t => (
                       <span key={t} className="text-xs px-3 py-1.5 rounded-full border" style={AnnotationRegistry.getChipStyle('techniques')}>
                         {t}
                       </span>
@@ -402,9 +406,9 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
               {/* Coups */}
               <div>
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Coups</h4>
-                {annotation.strikes && annotation.strikes.length > 0 ? (
+                {annotation.strikes && Object.keys(annotation.strikes).length > 0 ? (
                   <div className="flex flex-wrap gap-2">
-                    {annotation.strikes.map(s => (
+                    {Object.keys(annotation.strikes).map(s => (
                       <span key={s} className="text-xs px-3 py-1.5 rounded-full border" style={AnnotationRegistry.getChipStyle('strikes')}>
                         {s}
                       </span>
@@ -418,9 +422,9 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
               {/* Cibles */}
               <div>
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Cibles</h4>
-                {annotation.targets && annotation.targets.length > 0 ? (
+                {annotation.targets && Object.keys(annotation.targets).length > 0 ? (
                   <div className="flex flex-wrap gap-2">
-                    {annotation.targets.map(t => (
+                    {Object.keys(annotation.targets).map(t => (
                       <span key={t} className="text-xs px-3 py-1.5 rounded-full border" style={AnnotationRegistry.getChipStyle('targets')}>
                         {t}
                       </span>
@@ -546,17 +550,26 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {GUARDS.map(g => {
-                    const active = formData.guards_mentioned?.includes(g);
+                    const active = formData.guards_mentioned?.[g] !== undefined;
                     return (
                       <button
                         type="button"
                         key={g}
-                        onClick={() => setFormData(prev => ({
-                          ...prev,
-                          guards_mentioned: active
-                            ? prev.guards_mentioned?.filter(x => x !== g) || null
-                            : [...(prev.guards_mentioned || []), g]
-                        }))}
+                        onClick={() => setFormData(prev => {
+                          if (active) {
+                            const newGuards = { ...(prev.guards_mentioned || {}) };
+                            delete newGuards[g];
+                            return {
+                              ...prev,
+                              guards_mentioned: Object.keys(newGuards).length > 0 ? newGuards : null
+                            };
+                          } else {
+                            return {
+                              ...prev,
+                              guards_mentioned: { ...(prev.guards_mentioned || {}), [g]: 1 }
+                            };
+                          }
+                        })}
                         className="text-xs px-3 py-1.5 rounded-full border transition-colors font-semibold"
                         style={active ? AnnotationRegistry.getActiveToggleStyle('guards') : { backgroundColor: 'white', color: '#374151', borderColor: '#d1d5db' }}
                       >
@@ -590,9 +603,9 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                     +
                   </button>
                 </div>
-                {formData.techniques && formData.techniques.length > 0 && (
+                {formData.techniques && Object.keys(formData.techniques).length > 0 && (
                   <div className="flex flex-wrap gap-1.5">
-                    {formData.techniques.map(tech => (
+                    {Object.keys(formData.techniques).map(tech => (
                       <span
                         key={tech}
                         className="text-xs px-2 py-1 text-white rounded-full flex items-center gap-1"
@@ -618,17 +631,26 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {STRIKES.map(s => {
-                    const active = formData.strikes?.includes(s);
+                    const active = formData.strikes?.[s] !== undefined;
                     return (
                       <button
                         type="button"
                         key={s}
-                        onClick={() => setFormData(prev => ({
-                          ...prev,
-                          strikes: active
-                            ? prev.strikes?.filter(x => x !== s) || null
-                            : [...(prev.strikes || []), s]
-                        }))}
+                        onClick={() => setFormData(prev => {
+                          if (active) {
+                            const newStrikes = { ...(prev.strikes || {}) };
+                            delete newStrikes[s];
+                            return {
+                              ...prev,
+                              strikes: Object.keys(newStrikes).length > 0 ? newStrikes : null
+                            };
+                          } else {
+                            return {
+                              ...prev,
+                              strikes: { ...(prev.strikes || {}), [s]: 1 }
+                            };
+                          }
+                        })}
                         className="text-xs px-3 py-1.5 rounded-full border transition-colors font-semibold"
                         style={active ? AnnotationRegistry.getActiveToggleStyle('strikes') : { backgroundColor: 'white', color: '#374151', borderColor: '#d1d5db' }}
                       >
@@ -646,17 +668,26 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {TARGETS.map(t => {
-                    const active = formData.targets?.includes(t);
+                    const active = formData.targets?.[t] !== undefined;
                     return (
                       <button
                         type="button"
                         key={t}
-                        onClick={() => setFormData(prev => ({
-                          ...prev,
-                          targets: active
-                            ? prev.targets?.filter(x => x !== t) || null
-                            : [...(prev.targets || []), t]
-                        }))}
+                        onClick={() => setFormData(prev => {
+                          if (active) {
+                            const newTargets = { ...(prev.targets || {}) };
+                            delete newTargets[t];
+                            return {
+                              ...prev,
+                              targets: Object.keys(newTargets).length > 0 ? newTargets : null
+                            };
+                          } else {
+                            return {
+                              ...prev,
+                              targets: { ...(prev.targets || {}), [t]: 1 }
+                            };
+                          }
+                        })}
                         className="text-xs px-3 py-1.5 rounded-full border transition-colors font-semibold"
                         style={active ? AnnotationRegistry.getActiveToggleStyle('targets') : { backgroundColor: 'white', color: '#374151', borderColor: '#d1d5db' }}
                       >
