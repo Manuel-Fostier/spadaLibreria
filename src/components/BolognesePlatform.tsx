@@ -78,9 +78,30 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   // Track when user manually selects a section to prevent auto-scrolling until panel is closed
   const [isManualSelection, setIsManualSelection] = useState(false);
   const { getAnnotation, getUniqueValues, getMatchingSectionIds } = useAnnotations();
-  const [showItalian, setShowItalian] = useState(false);
-  const [showEnglish, setShowEnglish] = useState(false);
-  const [showNotes, setShowNotes] = useState(false);
+  
+  // Initialize column visibility from localStorage
+  const [showItalian, setShowItalian] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('showItalian');
+      return stored ? JSON.parse(stored) : false;
+    }
+    return false;
+  });
+  const [showEnglish, setShowEnglish] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('showEnglish');
+      return stored ? JSON.parse(stored) : false;
+    }
+    return false;
+  });
+  const [showNotes, setShowNotes] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('showNotes');
+      return stored ? JSON.parse(stored) : false;
+    }
+    return false;
+  });
+  
   const [showDisplaySettings, setShowDisplaySettings] = useState(false);
   const [showStatistics, setShowStatistics] = useState(false);
   const { displayConfig } = useAnnotationDisplay();
@@ -95,6 +116,19 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   // We only render a subset of chapters to keep the page fast (like lazy loading images)
   const [visibleCount, setVisibleCount] = useState(10); // Start with 10 chapters
   const observerTarget = useRef<HTMLDivElement>(null); // The invisible line at the bottom
+
+  // Persist column visibility to localStorage
+  useEffect(() => {
+    localStorage.setItem('showItalian', JSON.stringify(showItalian));
+  }, [showItalian]);
+
+  useEffect(() => {
+    localStorage.setItem('showEnglish', JSON.stringify(showEnglish));
+  }, [showEnglish]);
+
+  useEffect(() => {
+    localStorage.setItem('showNotes', JSON.stringify(showNotes));
+  }, [showNotes]);
 
   const handleTranslatorChange = (sectionId: string, translatorName: string) => {
     setTranslatorPreferences(prev => ({

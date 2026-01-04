@@ -9,10 +9,11 @@
   content:
     fr: |
       Ici il s’agit du combat à l’épée seule qui est une chose excellente pour enseigner à celui qui doit faire un duel avec l’épée affûtée en {main}. De sorte que je t’exhorte d’enseigner à tous ceux qui doivent combattre de cette épée seule, les choses ici décrites à la suite dans ce livre dont tu te souviendras.
+    notes: Test note pour vérifier la visibilité
   annotation:
     note: ""
     weapons:
-    - Spada sola
+      - Spada sola
     guards_mentioned: []
     techniques: []
     measures: []
@@ -21,10 +22,10 @@
     id: anno_1765406321139_xj06ullw1
     strikes: []
     targets:
-    - Main
-    guards_count:
-    techniques_count:
-    strikes_count:
+      - Main
+    guards_count: null
+    techniques_count: null
+    strikes_count: null
     targets_count:
       Main: 1
 - id: achille_marozzo_l2_c95
@@ -38,38 +39,38 @@
   annotation:
     note: ""
     weapons:
-    - Spada sola
+      - Spada sola
     guards_mentioned:
-    - Coda Longa e Stretta
-    - Porta di Ferro Larga
-    - Porta di Ferro Stretta
+      - Coda Longa e Stretta
+      - Porta di Ferro Larga
+      - Porta di Ferro Stretta
     techniques: []
     measures:
-    - Stretta di Mezza Spada
-    - Gioco Stretto
+      - Stretta di Mezza Spada
+      - Gioco Stretto
     strategy:
-    - provocation
-    - invitation
+      - provocation
+      - invitation
     weapon_type: Epée aiguisée
     id: anno_1765318780408_nh2pvt18n
     strikes:
-    - Falso
-    - Fendente
-    - Mandritto
-    - Roverso
-    - Tondo
+      - Falso
+      - Fendente
+      - Mandritto
+      - Roverso
+      - Tondo
     targets:
-    - Bras
-    - Face
-    - Jambe
-    - Main
-    - Pied
-    - Tête
+      - Bras
+      - Face
+      - Jambe
+      - Main
+      - Pied
+      - Tête
     guards_count:
       Porta di Ferro Stretta: 1
       Porta di Ferro Larga: 3
       Coda Longa e Stretta: 2
-    techniques_count:
+    techniques_count: null
     strikes_count:
       Fendente: 2
       Falso: 3
@@ -100,26 +101,26 @@
   annotation:
     note: ""
     weapons:
-    - Spada sola
+      - Spada sola
     guards_mentioned:
-    - Coda Longa e Alta
-    - Coda Longa e Stretta
+      - Coda Longa e Alta
+      - Coda Longa e Stretta
     techniques: []
     strikes:
-    - Falso
-    - Roverso
-    - Tondo
+      - Falso
+      - Roverso
+      - Tondo
     measures: []
     strategy: []
     weapon_type: Epée aiguisée
     id: anno_1765406379294_8nx4rhigc
     targets:
-    - Face
-    - Pied
+      - Face
+      - Pied
     guards_count:
       Coda Longa e Alta: 2
       Coda Longa e Stretta: 1
-    techniques_count:
+    techniques_count: null
     strikes_count:
       Falso: 1
       Tondo: 2
@@ -150,29 +151,29 @@
   annotation:
     note: ""
     weapons:
-    - Spada sola
+      - Spada sola
     guards_mentioned:
-    - Coda Longa e Alta
+      - Coda Longa e Alta
     techniques: []
     strikes:
-    - Falso
-    - Fendente
-    - Mandritto
-    - Punta
-    - Roverso
-    - Tondo
+      - Falso
+      - Fendente
+      - Mandritto
+      - Punta
+      - Roverso
+      - Tondo
     measures: []
     strategy: []
     weapon_type: Epée aiguisée
     id: anno_1765406289574_i3608fp29
     targets:
-    - Bras
-    - Face
-    - Jambe
-    - Pied
+      - Bras
+      - Face
+      - Jambe
+      - Pied
     guards_count:
       Coda Longa e Alta: 3
-    techniques_count:
+    techniques_count: null
     strikes_count:
       Punta: 3
       Fendente: 2
@@ -196,24 +197,24 @@
   annotation:
     note: ""
     weapons:
-    - Spada sola
+      - Spada sola
     guards_mentioned:
-    - Cinghiara Porta di Ferro
-    - Coda Longa e Alta
+      - Cinghiara Porta di Ferro
+      - Coda Longa e Alta
     techniques: []
     strikes:
-    - Mandritto
-    - Roverso
+      - Mandritto
+      - Roverso
     measures: []
     strategy: []
     weapon_type: Epée aiguisée
     targets:
-    - Bras
-    - Pied
+      - Bras
+      - Pied
     guards_count:
       Coda Longa e Alta: 2
       Cinghiara Porta di Ferro: 1
-    techniques_count:
+    techniques_count: null
     strikes_count:
       Mandritto: 2
       Roverso: 1
@@ -234,24 +235,24 @@
   annotation:
     note: ""
     weapons:
-    - Spada sola
+      - Spada sola
     guards_mentioned:
-    - Coda Longa e Alta
-    - Coda Longa e Stretta
+      - Coda Longa e Alta
+      - Coda Longa e Stretta
     techniques: []
     strikes:
-    - Punta
+      - Punta
     measures: []
     strategy: []
     weapon_type: Epée aiguisée
     targets:
-    - Bras
-    - Flanc
-    - Pied
+      - Bras
+      - Flanc
+      - Pied
     guards_count:
       Coda Longa e Alta: 1
       Coda Longa e Stretta: 1
-    techniques_count:
+    techniques_count: null
     strikes_count:
       Punta: 1
     targets_count:
@@ -272,29 +273,29 @@
   annotation:
     note: ""
     weapons:
-    - Spada sola
+      - Spada sola
     guards_mentioned:
-    - Cinghiara Porta di Ferro
-    - Coda Longa e Alta
-    - Coda Longa e Stretta
-    - Porta di Ferro Stretta
+      - Cinghiara Porta di Ferro
+      - Coda Longa e Alta
+      - Coda Longa e Stretta
+      - Porta di Ferro Stretta
     techniques: []
     strikes:
-    - Mandritto
-    - Roverso
+      - Mandritto
+      - Roverso
     measures: []
     strategy: []
     weapon_type: Epée aiguisée
     targets:
-    - Jambe
-    - Main
-    - Pied
+      - Jambe
+      - Main
+      - Pied
     guards_count:
       Coda Longa e Alta: 2
       Porta di Ferro Stretta: 1
       Cinghiara Porta di Ferro: 1
       Coda Longa e Stretta: 1
-    techniques_count:
+    techniques_count: null
     strikes_count:
       Roverso: 2
       Mandritto: 1
@@ -316,32 +317,32 @@
   annotation:
     note: ""
     weapons:
-    - Spada sola
+      - Spada sola
     guards_mentioned:
-    - Coda Longa e Stretta
-    - Porta di Ferro Larga
-    - Porta di Ferro Stretta
+      - Coda Longa e Stretta
+      - Porta di Ferro Larga
+      - Porta di Ferro Stretta
     techniques: []
     strikes:
-    - Falso
-    - Mandritto
-    - Punta
-    - Roverso
+      - Falso
+      - Mandritto
+      - Punta
+      - Roverso
     measures: []
     strategy: []
     weapon_type: Epée aiguisée
     targets:
-    - Bras
-    - Face
-    - Jambe
-    - Main
-    - Pied
-    - Tête
+      - Bras
+      - Face
+      - Jambe
+      - Main
+      - Pied
+      - Tête
     guards_count:
       Coda Longa e Stretta: 1
       Porta di Ferro Stretta: 1
       Porta di Ferro Larga: 1
-    techniques_count:
+    techniques_count: null
     strikes_count:
       Punta: 2
       Falso: 4
