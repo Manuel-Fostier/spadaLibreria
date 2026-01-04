@@ -195,6 +195,12 @@ def process_file(file_path, enricher):
             section['annotation']['techniques'] = techniques or None
             section['annotation']['strikes'] = strikes or None
             section['annotation']['targets'] = targets or None
+            
+            # Remove legacy count fields
+            section['annotation'].pop('guards_count', None)
+            section['annotation'].pop('techniques_count', None)
+            section['annotation'].pop('strikes_count', None)
+            section['annotation'].pop('targets_count', None)
 
     # Save back
     with open(file_path, 'w', encoding='utf-8') as f:

@@ -53,7 +53,7 @@ mandritto:
 
 #### Traités (`data/treatises/*.yaml`)
 
-Format de sections avec support multi-traductions :
+Format de sections avec support multi-traductions et annotations :
 
 ```yaml
 - id: identifiant_unique
@@ -64,9 +64,6 @@ Format de sections avec support multi-traductions :
     book: 1
     chapter: 1
     year: 1536
-    weapons: [spada_brocchiero, spada_sola]
-    guards_mentioned: [coda_longa, porta_di_ferro]
-    techniques: [mandritto, fendente]
   content:
     it: |
       Texte italien original avec {references_glossaire}
@@ -79,12 +76,37 @@ Format de sections avec support multi-traductions :
       - translator: "Autre Traducteur"
         text: |
           Alternative translation
+  annotation:
+    id: anno_unique_id
+    note: ""
+    weapons: [Spada sola, Spada brocchiero]
+    weapon_type: Epée aiguisée
+    guards_mentioned:
+      Coda Longa e Stretta: 2
+      Porta di Ferro Larga: 3
+    techniques:
+      Technique personnalisée: 1
+    measures: [Gioco Largo, Gioco Stretto]
+    strategy: [provocation, invitation]
+    strikes:
+      Mandritto: 3
+      Falso: 2
+    targets:
+      Tête: 2
+      Main: 1
 ```
 
 **Usage des références** :
 - Dans le texte, entourer les termes du glossaire avec `{terme_italien}`
 - Exemple : `{mandritto}`, `{coda_longa}`
 - Le parser automatique créera les liens interactifs
+
+**Structure des annotations** :
+- `guards_mentioned`, `techniques`, `strikes`, `targets` : Dictionnaires avec les noms comme clés et le nombre d'occurrences comme valeurs
+- `measures`, `strategy` : Listes simples (pas de comptage)
+- `weapons` : Liste des armes utilisées
+- `weapon_type` : Type d'arme (aiguisée ou émoussée)
+- Les annotations sont automatiquement générées par le script `yaml_annotate.py` en analysant les termes du glossaire dans le texte
 
 ### 3. Pipeline de Traitement
 
