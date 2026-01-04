@@ -67,12 +67,12 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
         setShowSectionChangeNotice(false);
       }, 3000);
       
-      // Cleanup timer
+      // Cleanup timer on unmount or when section changes again
       return () => clearTimeout(timer);
     }
     setIsEditing(false);
     setSaveStatus('idle');
-  }, [sectionId, isEditing]);
+  }, [sectionId]); // Only depend on sectionId, not isEditing
 
   // Handle auto-save on close
   const handleClose = useCallback(async () => {
