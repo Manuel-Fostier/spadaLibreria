@@ -3,33 +3,6 @@
 Plateforme d'étude des traités d'escrime bolonaise.
 [Github](https://github.com/Manuel-Fostier/spadaLibreria)
 
-## Caractéristiques
-
-### Contenu et Interface
-- **Données externalisées** : Tous les contenus (glossaire, traités) sont stockés en YAML
-- **Multi-traductions** : Support de plusieurs traductions anglaises pour un même texte
-- **Glossaire interactif** : Tooltips riches avec définitions FR/EN
-- **Interface trilingue** : Italien (original), Français, Anglais
-
-### Recherche
-- **Recherche cross-treatise** : Recherche dans tous les traités simultanément
-- **Options avancées** : Match Case (casse), Match Whole Word (mots entiers), Regex (expressions régulières)
-- **Surbrillance en temps réel** : Mise en évidence des termes recherchés dans le texte
-- **Navigation intelligente** : Parcours des résultats avec compteur
-
-### Annotations Enrichies
-- **9 types d'annotations** : Armes, Type d'arme, Gardes, Techniques, Mesures, Stratégies, Coups, Cibles, Notes
-- **Filtrage par tags** : Filtrage dynamique des sections par annotations
-- **Configuration de l'affichage** : Activation/désactivation des champs, personnalisation des couleurs
-- **Statistiques** : Analyse des annotations avec graphiques et compteurs
-- **Comparaison de traductions** : Affichage côte à côte des différentes versions
-
-### Fonctionnalités Avancées
-- **Filtrage dynamique** : Par type d'armes, maître d'escrime, et tags d'annotation
-- **Panneau d'annotations redimensionnable** : Interface adaptable aux besoins
-- **Persistance des données** : Sauvegarde automatique dans YAML et localStorage
-- **Architecture moderne** : Next.js 15, React 18, TypeScript, Tailwind CSS
-
 ## Utilisation
 
 ### Prérequis
@@ -55,7 +28,7 @@ chmod +x start.sh
 ./start.sh
 ```
 
-Sur linux il faut surment convertir les fins de ligne :
+Sur Linux il faut sûrement convertir les fins de ligne :
 ```bash
 dos2unix start.sh
 ```
@@ -83,7 +56,7 @@ npm install
 npm run dev
 ```
 
-### Commandes disponibles
+#### Commandes disponibles
 
 ```bash
 npm run dev      # Démarre le serveur de développement (http://localhost:3000)
@@ -92,42 +65,7 @@ npm run start    # Lance l'application en mode production
 npm run lint     # Vérifie la qualité du code
 ```
 
-## Format des Données
-
-### Glossaire (`data/glossary.yaml`)
-
-```yaml
-mandritto:
-  term: Mandritto
-  type: Attaque / Frappe de taille
-  definition:
-    fr: |
-      Coup porté de la droite vers la gauche...  
-```
-
-### Traités (`data/treatises/*.yaml`)
-
-```yaml
-- id: marozzo_l1_c1
-  title: Capitolo 1 - Della guardia di Coda Longa
-  metadata:
-    master: achille_marozzo
-    work: Opera Nova
-    weapons: [spada_brocchiero]
-  content:
-    it: |
-      Texte italien avec {termes_glossaire}...
-    fr: |
-      Traduction française...
-    en_versions:
-      - translator: "Jherek Swanger"
-        text: |
-          English translation...
-```
-
-## Personnalisation
-
-### Ajouter un nouveau traité
+## Ajouter un nouveau traité
 
 1. **Extraction du texte** : Utilisez le script `extract_book.py` pour extraire le texte depuis les PDF.
    ```bash
@@ -141,4 +79,4 @@ mandritto:
 
 ### Ajouter des termes au glossaire
 
-Éditer `data/glossary.yaml` et ajouter de nouvelles entrées selon le format.
+Éditer `data/glossary.yaml` et ajouter de nouvelles entrées en respectant le format.
