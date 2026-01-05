@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { BookOpen, ChevronRight, ChevronDown, MessageSquare, Settings, BarChart3, Edit2 } from 'lucide-react';
+import { ChevronDown, MessageSquare, Settings, BarChart3, Edit2 } from 'lucide-react';
 import TextParser from './TextParser';
 import TextEditor from './TextEditor';
 import AnnotationPanel from './AnnotationPanel';
@@ -63,17 +63,6 @@ const buildAnnotationSummary = (
   }
 
   return summary;
-};
-
-const getGridColumnsClass = (showItalian: boolean, showEnglish: boolean, showNotes: boolean): string => {
-  const activeColumns = [showItalian, showEnglish, showNotes].filter(Boolean).length + 1; // +1 for French (always visible)
-  const columnClasses = {
-    1: 'grid-cols-1',
-    2: 'grid-cols-1 lg:grid-cols-2',
-    3: 'grid-cols-1 lg:grid-cols-3',
-    4: 'grid-cols-1 lg:grid-cols-4',
-  };
-  return columnClasses[activeColumns as keyof typeof columnClasses] || 'grid-cols-1';
 };
 
 export default function BolognesePlatform({ glossaryData, treatiseData }: BolognesePlatformProps) {
@@ -389,14 +378,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
 
       {/* MAIN CONTENT */}
       <main className="flex-1 min-w-0 flex flex-col h-screen overflow-hidden bg-white">
-        <header className="relative h-20 bg-white flex items-center px-8 justify-between border-b border-gray-100 z-10">
-          <div className="flex items-center text-sm text-gray-400 font-medium">
-            <BookOpen size={16} className="mr-2" />
-            <span>Bibliothèque</span>
-            <ChevronRight size={14} className="mx-2 text-gray-300"/>
-            <span className="text-gray-900">Marozzo - Opera Nova</span>
-          </div>
-          
+        <header className="relative h-20 bg-white flex items-center px-8 justify-end border-b border-gray-100 z-10">
           {/* Boutons pour afficher/masquer les colonnes */}
           <div className="flex items-center gap-2">
             <button
@@ -528,12 +510,12 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                     );
                   })()}
 
-                  {/* Columns dynamiques */}
-                  <div className={`grid gap-8 lg:gap-12 text-sm leading-relaxed ${getGridColumnsClass(showItalian, showEnglish, showNotes)}`}>
+                  {/* Columns dynamiques - Using flexbox for better space utilization */}
+                  <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 text-sm leading-relaxed">
                     
                     {/* 1. Italian (Original) - Optionnel */}
                     {showItalian && section.content.it && (
-                      <div>
+                      <div className="flex-1 min-w-0">
                         <h4 className="text-xs font-bold text-gray-900 mb-4 flex items-center gap-2 pb-2 border-b border-gray-100">
                           Italien (original)
                         </h4>
@@ -548,7 +530,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                     )}
 
                     {/* 2. French - Toujours affiché */}
-                    <div>
+                    <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-100">
                         <h4 className="text-xs font-bold text-gray-400 flex items-center gap-2">
                           Français
@@ -583,7 +565,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
 
                     {/* 3. English (Multi-source) - Optionnel */}
                     {showEnglish && (
-                      <div>
+                      <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-100">
                         <h4 className="text-xs font-bold text-gray-400 flex items-center gap-2">
                           Anglais
@@ -634,7 +616,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
 
                     {/* 4. Notes - Optionnel */}
                     {showNotes && (
-                      <div>
+                      <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-100">
                           <h4 className="text-xs font-bold text-gray-400 flex items-center gap-2">
                             Notes
