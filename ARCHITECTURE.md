@@ -77,36 +77,35 @@ Format de sections avec support multi-traductions et annotations :
         text: |
           Alternative translation
   annotation:
-    id: anno_1234567890_unique    
-    weapons: [Spada sola, Spada e brocchiero]
-    weapon_type: Épée aiguisée  # ou "Épée émoussée"
-    guards_mentioned: [Coda Longa e Stretta, Porta di Ferro Larga]
-    techniques: [Stringere, Ligare di Spada]
-    measures: [Largo, Mezzo, Stretto di Mezza Spada]
-    strategy: [provocation, invitation, tempo]
-    strikes: [Mandritto, Fendente, Falso]
-    targets: [Tête, Bras, Jambe, Main]
-    # Compteurs de fréquence (générés automatiquement)
-    guards_count:
-      "Coda Longa e Stretta": 3
-      "Porta di Ferro Larga": 1
-    techniques_count:
-      "Stringere": 2
-      "Ligare di Spada": 1
-    strikes_count:
-      "Mandritto": 5
-      "Fendente": 2
-    targets_count:
-      "Tête": 3
-      "Bras": 2
+    id: anno_unique_id    
+    weapons: [Spada sola, Spada brocchiero]
+    weapon_type: Epée aiguisée
+    guards_mentioned:
+      Coda Longa e Stretta: 2
+      Porta di Ferro Larga: 3
+    techniques:
+      Technique personnalisée: 1
+    measures: [Gioco Largo, Gioco Stretto]
+    strategy: [provocation, invitation]
+    strikes:
+      Mandritto: 3
+      Falso: 2
+    targets:
+      Tête: 2
+      Main: 1
 ```
-
-**Note Importante** : Les champs `weapons`, `guards_mentioned`, `techniques`, `measures`, `strategy`, `strikes`, `targets` sont dans la section `annotation`, **PAS dans `metadata`**. La section `metadata` contient uniquement les informations bibliographiques (master, work, book, chapter, year).
 
 **Usage des références** :
 - Dans le texte, entourer les termes du glossaire avec `{terme_italien}`
 - Exemple : `{mandritto}`, `{coda_longa}`
 - Le parser automatique créera les liens interactifs
+
+**Structure des annotations** :
+- `guards_mentioned`, `techniques`, `strikes`, `targets` : Dictionnaires avec les noms comme clés et le nombre d'occurrences comme valeurs
+- `measures`, `strategy` : Listes simples (pas de comptage)
+- `weapons` : Liste des armes utilisées
+- `weapon_type` : Type d'arme (aiguisée ou émoussée)
+- Les annotations sont automatiquement générées par le script `yaml_annotate.py` en analysant les termes du glossaire dans le texte
 
 ### 3. Pipeline de Traitement
 

@@ -38,12 +38,12 @@ const buildAnnotationSummary = (
     summary.push({ label: 'État de l\'arme', value: annotation.weapon_type });
   }
 
-  if (displayConfig.guards && annotation.guards_mentioned && annotation.guards_mentioned.length) {
-    summary.push({ label: 'Gardes', value: annotation.guards_mentioned.join(', ') });
+  if (displayConfig.guards && annotation.guards_mentioned && Object.keys(annotation.guards_mentioned).length) {
+    summary.push({ label: 'Gardes', value: Object.keys(annotation.guards_mentioned).join(', ') });
   }
 
-  if (displayConfig.techniques && annotation.techniques && annotation.techniques.length) {
-    summary.push({ label: 'Techniques', value: annotation.techniques.join(', ') });
+  if (displayConfig.techniques && annotation.techniques && Object.keys(annotation.techniques).length) {
+    summary.push({ label: 'Techniques', value: Object.keys(annotation.techniques).join(', ') });
   }
 
   if (displayConfig.measures && annotation.measures && annotation.measures.length) {
@@ -54,12 +54,12 @@ const buildAnnotationSummary = (
     summary.push({ label: 'Stratégie', value: annotation.strategy.join(', ') });
   }
 
-  if (displayConfig.strikes && annotation.strikes && annotation.strikes.length) {
-    summary.push({ label: 'Coups', value: annotation.strikes.join(', ') });
+  if (displayConfig.strikes && annotation.strikes && Object.keys(annotation.strikes).length) {
+    summary.push({ label: 'Coups', value: Object.keys(annotation.strikes).join(', ') });
   }
 
-  if (displayConfig.targets && annotation.targets && annotation.targets.length) {
-    summary.push({ label: 'Cibles', value: annotation.targets.join(', ') });
+  if (displayConfig.targets && annotation.targets && Object.keys(annotation.targets).length) {
+    summary.push({ label: 'Cibles', value: Object.keys(annotation.targets).join(', ') });
   }
 
   return summary;

@@ -29,51 +29,31 @@ export default function StatisticsModal({ onClose }: StatisticsModalProps) {
     const targetsCount = new Map<string, number>();
 
     annotations.forEach((ann) => {
-      // Count guards - use occurrence counts if available
-      if (ann.guards_count) {
-        Object.entries(ann.guards_count).forEach(([guard, count]) => {
+      // Count guards - directly use the dictionary
+      if (ann.guards_mentioned) {
+        Object.entries(ann.guards_mentioned).forEach(([guard, count]) => {
           guardsCount.set(guard, (guardsCount.get(guard) || 0) + count);
-        });
-      } else if (ann.guards_mentioned) {
-        // Fallback for old annotations without counts
-        ann.guards_mentioned.forEach((guard) => {
-          guardsCount.set(guard, (guardsCount.get(guard) || 0) + 1);
         });
       }
 
-      // Count measures (engagement distances) - use occurrence counts if available
-      if (ann.measures_count) {
-        Object.entries(ann.measures_count).forEach(([measure, count]) => {
-          measuresCount.set(measure, (measuresCount.get(measure) || 0) + count);
-        });
-      } else if (ann.measures) {
-        // Fallback for old annotations without counts
+      // Count measures (engagement distances) - simple count from list
+      if (ann.measures) {
         ann.measures.forEach((measure) => {
           measuresCount.set(measure, (measuresCount.get(measure) || 0) + 1);
         });
       }
 
-      // Count strikes - use occurrence counts if available
-      if (ann.strikes_count) {
-        Object.entries(ann.strikes_count).forEach(([strike, count]) => {
+      // Count strikes - directly use the dictionary
+      if (ann.strikes) {
+        Object.entries(ann.strikes).forEach(([strike, count]) => {
           strikesCount.set(strike, (strikesCount.get(strike) || 0) + count);
-        });
-      } else if (ann.strikes) {
-        // Fallback for old annotations without counts
-        ann.strikes.forEach((strike) => {
-          strikesCount.set(strike, (strikesCount.get(strike) || 0) + 1);
         });
       }
 
-      // Count targets - use occurrence counts if available
-      if (ann.targets_count) {
-        Object.entries(ann.targets_count).forEach(([target, count]) => {
+      // Count targets - directly use the dictionary
+      if (ann.targets) {
+        Object.entries(ann.targets).forEach(([target, count]) => {
           targetsCount.set(target, (targetsCount.get(target) || 0) + count);
-        });
-      } else if (ann.targets) {
-        // Fallback for old annotations without counts
-        ann.targets.forEach((target) => {
-          targetsCount.set(target, (targetsCount.get(target) || 0) + 1);
         });
       }
     });
