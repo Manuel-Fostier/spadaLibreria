@@ -9,18 +9,18 @@
   content:
     fr: |
       Ici il s’agit du combat à l’épée seule qui est une chose excellente pour enseigner à celui qui doit faire un duel avec l’épée affûtée en {main}. De sorte que je t’exhorte d’enseigner à tous ceux qui doivent combattre de cette épée seule, les choses ici décrites à la suite dans ce livre dont tu te souviendras.
-    notes:
+    notes: null
   annotation:
     note: ""
     weapons:
-    - Spada sola
-    guards_mentioned:
-    techniques:
+      - Spada sola
+    guards_mentioned: null
+    techniques: null
     measures: []
     strategy: []
     weapon_type: Epée aiguisée
     id: anno_1765406321139_xj06ullw1
-    strikes:
+    strikes: null
     targets:
       Main: 1
 - id: achille_marozzo_l2_c95
@@ -34,18 +34,18 @@
   annotation:
     note: ""
     weapons:
-    - Spada sola
+      - Spada sola
     guards_mentioned:
       Porta di Ferro Stretta: 1
       Porta di Ferro Larga: 3
       Coda Longa e Stretta: 2
-    techniques:
+    techniques: null
     measures:
-    - Stretta di Mezza Spada
-    - Gioco Stretto
+      - Stretta di Mezza Spada
+      - Gioco Stretto
     strategy:
-    - provocation
-    - invitation
+      - provocation
+      - invitation
     weapon_type: Epée aiguisée
     id: anno_1765318780408_nh2pvt18n
     strikes:
@@ -79,11 +79,11 @@
   annotation:
     note: ""
     weapons:
-    - Spada sola
+      - Spada sola
     guards_mentioned:
       Coda Longa e Stretta: 1
       Coda Longa e Alta: 2
-    techniques:
+    techniques: null
     strikes:
       Roverso: 2
       Falso: 1
@@ -118,10 +118,10 @@
   annotation:
     note: ""
     weapons:
-    - Spada sola
+      - Spada sola
     guards_mentioned:
       Coda Longa e Alta: 3
-    techniques:
+    techniques: null
     strikes:
       Roverso: 7
       Falso: 3
@@ -149,11 +149,11 @@
   annotation:
     note: ""
     weapons:
-    - Spada sola
+      - Spada sola
     guards_mentioned:
       Cinghiara Porta di Ferro: 1
       Coda Longa e Alta: 2
-    techniques:
+    techniques: null
     strikes:
       Roverso: 1
       Mandritto: 2
@@ -177,11 +177,11 @@
   annotation:
     note: ""
     weapons:
-    - Spada sola
+      - Spada sola
     guards_mentioned:
       Coda Longa e Stretta: 1
       Coda Longa e Alta: 1
-    techniques:
+    techniques: null
     strikes:
       Punta: 1
     measures: []
@@ -205,13 +205,13 @@
   annotation:
     note: ""
     weapons:
-    - Spada sola
+      - Spada sola
     guards_mentioned:
       Porta di Ferro Stretta: 1
       Cinghiara Porta di Ferro: 1
       Coda Longa e Stretta: 1
       Coda Longa e Alta: 2
-    techniques:
+    techniques: null
     strikes:
       Roverso: 2
       Mandritto: 1
@@ -236,12 +236,12 @@
   annotation:
     note: ""
     weapons:
-    - Spada sola
+      - Spada sola
     guards_mentioned:
       Porta di Ferro Stretta: 1
       Porta di Ferro Larga: 1
       Coda Longa e Stretta: 1
-    techniques:
+    techniques: null
     strikes:
       Roverso: 1
       Falso: 4
