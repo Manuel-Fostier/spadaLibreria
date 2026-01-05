@@ -77,8 +77,7 @@ Format de sections avec support multi-traductions et annotations :
         text: |
           Alternative translation
   annotation:
-    id: anno_unique_id
-    note: ""
+    id: anno_unique_id    
     weapons: [Spada sola, Spada brocchiero]
     weapon_type: Epée aiguisée
     guards_mentioned:
@@ -120,25 +119,279 @@ YAML Files → Parser (js-yaml) → TypeScript Interfaces → React Components �
 3. **Enrichissement** : `TextParser` détecte les `{termes}` et crée les liens
 4. **Affichage** : Les composants React affichent avec tooltips interactifs
 
-### 4. Composants Clés
+### 4. Contextes React
 
-#### `Term.tsx` - Tooltip de Glossaire
+L'application utilise plusieurs contextes React pour gérer l'état global :
+
+#### `AnnotationContext.tsx` - Gestion des Annotations
+- Chargement des annotations depuis les fichiers YAML
+- Sauvegarde des annotations (localStorage + API)
+- Filtrage des annotations par critères multiples
+- État des annotations de toutes les sections
+
+#### `AnnotationDisplayContext.tsx` - Configuration de l'Affichage
+- Gestion de la visibilité des champs d'annotation
+- Configuration des couleurs et styles
+- Architecture basée sur les classes d'annotation
+- Persistance des préférences utilisateur
+
+#### `SearchContext.tsx` - Gestion de la Recherche
+- Construction et maintenance de l'index de recherche
+- État de la recherche (query, options, résultats)
+- Gestion des options (Match Case, Match Whole Word, Regex)
+- Navigation dans les résultats de recherche
+
+### 5. Composants Clés
+
+#### Composants de Contenu
+
+**`Term.tsx`** - Tooltip de Glossaire
 - Affiche les termes avec survol interactif
 - Tooltip riche : terme, type, définitions FR/EN, traductions
 - Gestion des termes manquants (affichage en rouge)
 
-#### `TextParser.tsx` - Parser de Texte
+**`TextParser.tsx`** - Parser de Texte
 - Détecte les patterns `{terme}` dans le texte
 - Remplace par des composants `<Term>` interactifs
 - Préserve le texte normal entre les termes
+- Support de la surbrillance des résultats de recherche
 
-#### `BolognesePlatform.tsx` - Composant Principal
+**`BolognesePlatform.tsx`** - Composant Principal
 - Interface à 3 colonnes (Italien, Français, Anglais)
-- Filtrage par arme
+- Filtrage par arme et maître d'escrime
 - Sélecteur de traducteur (dropdown) pour traductions multiples
-- Navigation sidebar
+- Navigation sidebar avec sections
+- Intégration de la recherche et des annotations
 
-### 5. Fonctionnalités Avancées
+#### Composants de Recherche
+
+**`SearchBar.tsx`** - Barre de Recherche
+- Interface de recherche avec champ de texte
+- Options avancées : Match Case, Match Whole Word, Regex
+- Navigation dans les résultats (précédent/suivant)
+- Affichage du compteur de résultats
+- Bouton d'effacement de la recherche
+
+#### Composants d'Annotation
+
+**`AnnotationPanel.tsx`** - Panneau d'Annotations
+- Panneau latéral redimensionnable
+- Affichage des annotations de la section courante
+- Édition des annotations (9 types de champs)
+- Sauvegarde automatique des modifications
+- Architecture basée sur les classes d'annotation
+
+**`AnnotationBadge.tsx`** - Badge d'Annotation
+- Affichage visuel des tags d'annotation
+- Styles cohérents avec AnnotationRegistry
+- Gestion des couleurs par type d'annotation
+
+**`AnnotationDisplaySettings.tsx`** - Configuration de l'Affichage
+- Panneau de configuration des annotations
+- Activation/désactivation des champs d'annotation
+- Configuration des couleurs et styles
+- Utilisation des classes d'annotation
+
+**`TagFilter.tsx`** - Filtrage par Tags
+- Filtrage dynamique des sections par annotations
+- Sélection multiple de tags
+- Compteurs de sections par tag
+- Filtres combinables (ET/OU)
+
+**`ColorPicker.tsx`** - Sélecteur de Couleur
+- Interface de sélection de couleur
+- Utilisé pour personnaliser les styles d'annotation
+- Intégration avec AnnotationRegistry
+
+#### Composants Utilitaires
+
+**`MeasureProgressBar.tsx`** - Barre de Progression des Mesures
+- Visualisation graphique de la progression des mesures
+- Affichage de Largo, Mezzo, Stretto
+- Indicateur visuel de l'évolution tactique
+
+**`TextEditor.tsx`** - Éditeur de Texte
+- Composant d'édition de texte enrichi
+- Utilisé pour les notes et commentaires
+- Support du formatage de base
+
+**`StatisticsModal.tsx`** - Modal de Statistiques
+- Affichage des statistiques sur les annotations
+- Graphiques et compteurs
+- Analyse par type d'annotation
+- Export des données statistiques
+
+**`ComparisonModal.tsx`** - Modal de Comparaison
+- Comparaison côte à côte des traductions
+- Affichage des différences entre traducteurs
+- Navigation synchronisée entre versions
+
+### 6. Architecture du Système de Recherche
+
+Le système de recherche permet une recherche cross-treatise avec options avancées.
+
+#### Construction de l'Index (`searchIndex.ts`)
+
+```typescript
+// Index construit au chargement de l'application
+interface SearchIndex {
+  sectionId: string;
+  master: string;
+  work: string;
+  language: 'it' | 'fr' | 'en';
+  text: string;
+  translatorId?: string;
+}
+```
+
+- Index construit depuis toutes les sections de tous les traités
+- Inclut les textes italien, français, et toutes les versions anglaises
+- Métadonnées conservées pour le filtrage
+
+#### Moteur de Recherche (`searchEngine.ts`)
+
+**Options de Recherche** :
+- **Match Case** : Recherche sensible à la casse
+- **Match Whole Word** : Recherche de mots entiers uniquement
+- **Regex** : Recherche par expression régulière
+
+**Fonctionnalités** :
+- Recherche dans tous les traités simultanément
+- Filtrage par langue et traducteur
+- Retour des résultats avec contexte
+- Navigation résultat par résultat
+
+#### Surbrillance (`highlighter.ts`)
+
+- Surbrillance en temps réel des termes recherchés
+- Gestion des patterns regex et mots entiers
+- Préservation de la casse originale du texte
+- Intégration avec TextParser
+
+#### Flux de Recherche
+
+```
+Utilisateur → SearchBar → SearchContext → SearchEngine
+                                ↓
+                          SearchIndex
+                                ↓
+                    Résultats + Métadonnées
+                                ↓
+                    TextParser (surbrillance)
+                                ↓
+                        Affichage UI
+```
+
+### 7. Architecture des Annotations (Classes)
+
+Le système d'annotation utilise une architecture orientée objet avec classes.
+
+#### Classe de Base Abstraite (`Annotation.ts`)
+
+```typescript
+abstract class Annotation {
+  abstract getChipStyle(): ChipStyle;
+  abstract getTextStyle(): TextStyle;
+  abstract validate(value: any): boolean;
+  // Méthodes communes pour toutes les annotations
+}
+```
+
+#### Registry Pattern (`AnnotationRegistry.ts`)
+
+**Factory/Registry centralisé** :
+```typescript
+class AnnotationRegistry {
+  private static instances = new Map<AnnotationType, Annotation>();
+  
+  static get(type: AnnotationType): Annotation {
+    // Singleton pattern pour chaque type
+  }
+  
+  static getAll(): Annotation[] {
+    // Retourne toutes les instances
+  }
+}
+```
+
+#### Classes Concrètes (9 types)
+
+1. **`Weapons.ts`** - Armes utilisées (Spada sola, Spada e brocchiero, etc.)
+2. **`WeaponType.ts`** - Condition de l'arme (Épée aiguisée / émoussée)
+3. **`Guards.ts`** - Gardes mentionnées (Coda Longa, Porta di Ferro, etc.)
+4. **`Techniques.ts`** - Techniques utilisées (Stringere, Ligare, etc.)
+5. **`Measures.ts`** - Mesures (Largo, Mezzo, Stretto)
+6. **`Strategy.ts`** - Stratégies (Provocation, Invitation, etc.)
+7. **`Strikes.ts`** - Coups portés (Mandritto, Fendente, etc.)
+8. **`Targets.ts`** - Cibles visées (Tête, Bras, Jambe, etc.)
+9. **Note** - Notes textuelles libres
+
+#### Avantages de l'Architecture Classes
+
+- ✅ **Extensibilité** : Ajouter un nouveau type = créer une nouvelle classe
+- ✅ **Encapsulation** : Chaque type gère son style et validation
+- ✅ **Réutilisabilité** : Méthodes communes héritées de la classe de base
+- ✅ **Type Safety** : TypeScript garantit la cohérence
+- ✅ **Maintenabilité** : Logique centralisée dans AnnotationRegistry
+
+#### Intégration avec les Composants
+
+```typescript
+// Dans ColorPicker.tsx et AnnotationPanel.tsx
+const annotation = AnnotationRegistry.get('weapons');
+const chipStyle = annotation.getChipStyle();
+const textStyle = annotation.getTextStyle();
+```
+
+### 8. Routes API
+
+L'application expose des routes API pour la persistance des données.
+
+#### `/api/annotations` (GET)
+
+**Fonctionnalité** : Charger toutes les annotations depuis les fichiers YAML
+
+**Réponse** :
+```typescript
+{
+  sectionId: {
+    id: string;    
+    weapons: string[];
+    weapon_type: string;
+    guards_mentioned: string[];
+    techniques: string[];
+    measures: string[];
+    strategy: string[];
+    strikes: string[];
+    targets: string[];
+    // Compteurs de fréquence
+    guards_count: Record<string, number>;
+    techniques_count: Record<string, number>;
+    strikes_count: Record<string, number>;
+    targets_count: Record<string, number>;
+  }
+}
+```
+
+#### `/api/annotations` (POST)
+
+**Fonctionnalité** : Sauvegarder les annotations dans les fichiers YAML
+
+**Corps de la Requête** :
+```typescript
+{
+  treatiseFile: string; // Nom du fichier YAML
+  annotations: AnnotationData[]; // Annotations à sauvegarder
+}
+```
+
+**Comportement** :
+1. Lit le fichier YAML existant
+2. Fusionne les annotations (conservation des autres métadonnées)
+3. Écrit le fichier YAML mis à jour
+4. Retourne le statut de succès
+
+### 9. Fonctionnalités Avancées
 
 #### Multi-Traductions Anglaises
 L'application supporte plusieurs traductions d'un même texte :

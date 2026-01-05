@@ -57,7 +57,12 @@ As a developer, I want to add a test annotation type (e.g., "TestAnnotation") by
 ### Edge Cases
 
 - **Long labels**: System must handle labels up to 25 characters (current max is "Stratégie / Contexte" at 20 chars). Labels exceeding 25 characters should be truncated with ellipsis.
-- **Visibility behavior**: When an annotation is marked as visible=false, it only affects the annotation list display under chapter titles in BolognesePlatform. Terms in text content and annotation panel chips are not affected by visibility.
+- **Visibility behavior**: When an annotation is marked as visible=false via the configuration menu (FR-021), it hides that field from the display under chapter titles in BolognesePlatform ONLY. The field remains:
+  - Queryable/filterable (terms with hidden fields can still be filtered)
+  - Visible in the annotation panel when editing
+  - Visible when highlighting terms in text content
+  
+  Example: If "measures" is set to invisible, measure values won't display under chapter titles, but chapters with measures can still be filtered and measures still display in the annotation panel.
 - **Duplicate colors**: Two different annotation types can have identical colors. The system must handle this gracefully without errors or confusion.
 
 **Note**: Invalid color values are not possible as colors are only set through default values (validated at compile time) or the ColorPicker component (which only provides valid hex colors).
@@ -70,7 +75,14 @@ As a developer, I want to add a test annotation type (e.g., "TestAnnotation") by
 - **FR-002**: System MUST provide concrete annotation classes for all current types: weapons, weapon_type, guards, techniques, measures, strategy, strikes, targets, note (9 types total)
 - **FR-003**: Each annotation class MUST provide a `getChipStyle()` method that returns React CSS properties for chip display in the annotation panel
 - **FR-004**: Each annotation class MUST provide a `getTextStyle()` method that returns React CSS properties for highlighted terms in text content
-- **FR-005**: System MUST provide a `setStyle(colorValue: string)` method that updates both chipStyle and textStyle consistently when called from the configuration menu. This method MUST ensure that textStyle.color and chipStyle.color are identical, and automatically calculate chipStyle.backgroundColor, chipStyle.borderColor, and chipStyle.borderBottomColor using opacity variations of the provided color (e.g., rgba with 0.1 opacity for background, 0.2 for borders)
+- **FR-005**: System MUST provide a `setStyle(colorValue: string)` method that updates both chipStyle and textStyle consistently when called from the configuration menu. This method MUST ensure that textStyle.color and chipStyle.color are identical, and automatically calculate chipStyle.backgroundColor, chipStyle.borderColor, and chipStyle.borderBottomColor using opacity variations:
+  - **Formula**: Convert hex color to RGB, then:
+    - `backgroundColor`: `rgba(r, g, b, 0.1)`
+    - `borderColor`: `rgba(r, g, b, 0.2)`
+    - `borderBottomColor`: original hex value (full opacity)
+    - `textStyle.color`: original hex value
+    - `chipStyle.color`: original hex value
+  - **Example**: Input `#3b82f6` (blue) → backgroundColor `rgba(59, 130, 246, 0.1)`, borderColor `rgba(59, 130, 246, 0.2)`, both colors `#3b82f6`
 - **FR-006**: All components (ColorPicker, AnnotationPanel, Term, AnnotationDisplaySettings) MUST use annotation class instances instead of reading from the displayConfig object directly
 - **FR-007**: System MUST maintain backward compatibility with existing localStorage data format during the transition
 - **FR-008**: Annotation classes MUST use default colors matching the current palette (sky-600, amber-600, emerald-600, purple-600, indigo-600, red-600, pink-600, blue-600)
@@ -93,6 +105,8 @@ As a developer, I want to add a test annotation type (e.g., "TestAnnotation") by
 - **SC-004**: All existing functionality (color configuration, visibility toggling, term highlighting, chip display) continues to work identically to current implementation
 - **SC-005**: Code duplication for annotation styling is reduced by at least 70% (measured by lines of code containing color/style definitions)
 - **SC-006**: Time to add a new annotation type is reduced from ~30 minutes (current) to ~5 minutes (estimated)
+- **SC-007**: Backward compatibility verified: Existing localStorage data from prior implementation loads without errors and displays with identical styling
+- **SC-008**: AnnotationRegistry provides access to all 9 annotation type instances via `getAnnotation(key)` and `getAllAnnotations()` methods; no annotation type is missing or inaccessible
 
 ## Scope & Boundaries
 

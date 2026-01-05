@@ -19,6 +19,8 @@
 
 **Context**: This feature extends an existing mature Next.js application with annotation system already implemented. Focus on adding SEARCH capabilities and leveraging existing annotation infrastructure.
 
+⚠️ **PREREQUISITE**: Spec 002 (Annotation Class Refactor) must be COMPLETE before Phase 1 of this spec begins. Filtering logic (FR-011, Phase 4) depends on refactored annotation classes.
+
 ## Format: `- [ ] [ID] [P?] [Story?] Description with file path`
 
 - **[P]**: Can run in parallel (different files, no dependencies)

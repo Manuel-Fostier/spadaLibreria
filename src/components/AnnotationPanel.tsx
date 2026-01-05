@@ -41,6 +41,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
   const [isSaving, setIsSaving] = useState(false);
   
   const [isEditing, setIsEditing] = useState(false);
+  const [showSectionChangeNotice, setShowSectionChangeNotice] = useState(false);
   const [formData, setFormData] = useState({
     weapons: null as (typeof WEAPONS[number])[] | null,
     weapon_type: null as (typeof WEAPON_TYPES[number]) | null,
@@ -58,9 +59,20 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
 
   // Reset editing state when section changes (Smart Scrolling safety)
   useEffect(() => {
+    if (isEditing) {
+      // Show notification if user was editing when section changed
+      setShowSectionChangeNotice(true);
+      // Auto-hide notification after 3 seconds
+      const timer = setTimeout(() => {
+        setShowSectionChangeNotice(false);
+      }, 3000);
+      
+      // Cleanup timer on unmount or when section changes again
+      return () => clearTimeout(timer);
+    }
     setIsEditing(false);
     setSaveStatus('idle');
-  }, [sectionId]);
+  }, [sectionId]); // Only depend on sectionId, not isEditing
 
   // Handle auto-save on close
   const handleClose = useCallback(async () => {
@@ -273,6 +285,26 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
       </button>
 
       <div className="flex-1 flex flex-col min-w-0">
+        {/* Section change notification */}
+        {showSectionChangeNotice && (
+          <div className="bg-amber-50 border-l-4 border-amber-500 p-3 text-sm text-amber-800 flex items-start gap-2">
+            <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd"/>
+            </svg>
+            <div className="flex-1">
+              <p className="font-medium">Section changée</p>
+              <p className="text-xs mt-0.5">Les modifications non enregistrées ont été annulées.</p>
+            </div>
+            <button 
+              onClick={() => setShowSectionChangeNotice(false)}
+              className="text-amber-600 hover:text-amber-800 p-1"
+              aria-label="Fermer la notification"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        )}
+        
         {/* Header with edit button and save status */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50">
           <h3 className="text-lg font-bold text-gray-900">

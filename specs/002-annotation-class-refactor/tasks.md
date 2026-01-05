@@ -41,9 +41,13 @@
 
 ### Task 1.5: Unit Tests for Annotation Classes
 - **File**: `src/lib/annotation/__tests__/Annotation.test.ts`
-- **Description**: Test base class properties, abstract method enforcement, setStyle() color calculations, getChipStyle()/getTextStyle() returns
+- **Description**: Test base class properties, abstract method enforcement, setStyle() color calculations (verify rgba formula per FR-005), getChipStyle()/getTextStyle() returns
 - **Status**: [ ]
 - **Dependencies**: Task 1.2
+- **Test Cases**: 
+  - `setStyle('#3b82f6')` produces correct rgba values for background/borders per formula
+  - All 9 concrete classes have required properties
+  - TypeScript compilation fails for incomplete subclass
 
 ## Phase 2: Integration
 

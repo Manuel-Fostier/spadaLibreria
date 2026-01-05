@@ -81,8 +81,6 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   const [translatorPreferences, setTranslatorPreferences] = useState<{ [key: string]: string }>({});
   const [annotationSection, setAnnotationSection] = useState<string | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(true); // FR-012: Default open
-  // Track when user manually selects a section to prevent auto-scrolling until panel is closed
-  const [isManualSelection, setIsManualSelection] = useState(false);
   const { getAnnotation, getUniqueValues, getMatchingSectionIds } = useAnnotations();
   
   // Initialize column visibility from localStorage
@@ -269,12 +267,11 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   }, [filteredContent, annotationSection]);
 
   // FR-012b / SC-012: Smart scrolling behavior
-  // Auto-updates annotation section based on scroll position when:
-  // 1. Panel is closed (isPanelOpen is false), OR
-  // 2. Panel is open but user hasn't manually selected a section (isManualSelection is false)
+  // Auto-updates annotation section based on scroll position
+  // The panel will always track the visible section, even when open
   useEffect(() => {
-    // Don't auto-update if panel is open AND user has manually selected a section
-    if (isPanelOpen && isManualSelection) return;
+    // Always allow scroll-based updates for better UX
+    // The AnnotationPanel will handle unsaved changes internally
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -314,7 +311,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
     sections.forEach(section => observer.observe(section));
 
     return () => observer.disconnect();
-  }, [filteredContent, isPanelOpen, isManualSelection]);
+  }, [filteredContent]);
 
 
 
@@ -495,7 +492,6 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                         onClick={() => {
                           setAnnotationSection(section.id);
                           setIsPanelOpen(true);
-                          setIsManualSelection(true); // Mark as manual selection
                         }}
                       />
                     ) : (
@@ -503,7 +499,6 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                         onClick={() => {
                           setAnnotationSection(section.id);
                           setIsPanelOpen(true);
-                          setIsManualSelection(true); // Mark as manual selection
                         }}
                         className={`px-3 py-1.5 rounded-lg transition-colors text-xs font-medium flex items-center gap-1.5 ${
                           isPanelOpen && annotationSection === section.id
@@ -692,7 +687,6 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
           sectionId={annotationSection}
           onClose={() => {
             setIsPanelOpen(false);
-            setIsManualSelection(false); // Reset manual selection when panel is closed
           }}
         />
       )}
