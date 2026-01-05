@@ -2,7 +2,7 @@
  * Maps glossary term types to annotation display categories
  */
 
-export type AnnotationType = 'note' | 'weapons' | 'weapon_type' | 'guards' | 'techniques' | 'measures' | 'strategy' | 'strikes' | 'targets';
+export type AnnotationType = 'weapons' | 'weapon_type' | 'guards' | 'techniques' | 'measures' | 'strategy' | 'strikes' | 'targets';
 
 /**
  * Maps a glossary term type to an annotation category
