@@ -57,7 +57,7 @@ export default function TextParser({ text, glossaryData, highlightQuery }: TextP
   };
   
   return (
-    <p className="leading-relaxed">
+    <p className="leading-relaxed text-justify">
       {parts.map((part, index) => {
         if (part.startsWith('{') && part.endsWith('}')) {
           const key = part.slice(1, -1);

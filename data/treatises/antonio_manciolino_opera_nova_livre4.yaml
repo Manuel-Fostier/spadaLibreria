@@ -39,7 +39,8 @@
   annotation:
     id: antonio_manciolino_l4_c12_ann
     note: null
-    weapons: []
+    weapons:
+      - Spada sola
     weapon_type: null
     guards_mentioned:
       Guardia di Testa: 1
@@ -52,8 +53,12 @@
       Mandritto: 8
       Punta: 5
       Fendente: 1
-    measures: []
-    strategy: []
+    measures:
+      - Gioco Stretto
+      - Stretta di Mezza Spada
+    strategy:
+      - provocation
+      - invitation
     targets:
       Pied: 8
       Jambe: 6

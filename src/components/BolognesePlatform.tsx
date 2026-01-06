@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { BookOpen, ChevronRight, ChevronDown, MessageSquare, Settings, BarChart3, Edit2 } from 'lucide-react';
+import { ChevronDown, Settings, BarChart3, Edit2 } from 'lucide-react';
 import TextParser from './TextParser';
 import TextEditor from './TextEditor';
 import AnnotationPanel from './AnnotationPanel';
@@ -65,22 +65,12 @@ const buildAnnotationSummary = (
   return summary;
 };
 
-const getGridColumnsClass = (showItalian: boolean, showEnglish: boolean, showNotes: boolean): string => {
-  const activeColumns = [showItalian, showEnglish, showNotes].filter(Boolean).length + 1; // +1 for French (always visible)
-  const columnClasses = {
-    1: 'grid-cols-1',
-    2: 'grid-cols-1 lg:grid-cols-2',
-    3: 'grid-cols-1 lg:grid-cols-3',
-    4: 'grid-cols-1 lg:grid-cols-4',
-  };
-  return columnClasses[activeColumns as keyof typeof columnClasses] || 'grid-cols-1';
-};
-
 export default function BolognesePlatform({ glossaryData, treatiseData }: BolognesePlatformProps) {
 
   const [translatorPreferences, setTranslatorPreferences] = useState<{ [key: string]: string }>({});
   const [annotationSection, setAnnotationSection] = useState<string | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(true); // FR-012: Default open
+  const [topSectionId, setTopSectionId] = useState<string | null>(null); // Track section at top of viewport for sticky header
   const { getAnnotation, getUniqueValues, getMatchingSectionIds } = useAnnotations();
   
   // Initialize column visibility from localStorage
@@ -131,6 +121,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   // We only render a subset of chapters to keep the page fast (like lazy loading images)
   const [visibleCount, setVisibleCount] = useState(10); // Start with 10 chapters
   const observerTarget = useRef<HTMLDivElement>(null); // The invisible line at the bottom
+  const scrollContainerRef = useRef<HTMLDivElement>(null); // Scrollable content wrapper
 
   // Persist column visibility to localStorage
   useEffect(() => {
@@ -317,6 +308,67 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
     }
   }, [filteredContent, annotationSection]);
 
+  // Initialize top section for sticky header
+  useEffect(() => {
+    if (!topSectionId && filteredContent.length > 0) {
+      setTopSectionId(filteredContent[0].id);
+    }
+  }, [filteredContent, topSectionId]);
+
+  // Track section at top of viewport for sticky header
+  useEffect(() => {
+    const root = scrollContainerRef.current;
+    if (!root) return;
+
+    const stickyOffset = 110;
+    let ticking = false;
+
+    const updateTopSectionFromScroll = () => {
+      ticking = false;
+      const sections = Array.from(root.querySelectorAll('[data-section-id]'));
+      if (sections.length === 0) {
+        return;
+      }
+
+      const rootTop = root.getBoundingClientRect().top;
+      let candidateId: string | null = null;
+      let fallbackId: string | null = null;
+
+      for (const section of sections) {
+        const rect = section.getBoundingClientRect();
+        const relativeTop = rect.top - rootTop;
+        const currentId = section.getAttribute('data-section-id');
+        if (!currentId) continue;
+
+        if (relativeTop <= stickyOffset) {
+          candidateId = currentId;
+        } else {
+          fallbackId = currentId;
+          break;
+        }
+      }
+
+      const nextId = candidateId ?? fallbackId ?? sections[0].getAttribute('data-section-id');
+      if (nextId) {
+        setTopSectionId(prev => (prev === nextId ? prev : nextId));
+      }
+    };
+
+    const handleScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateTopSectionFromScroll);
+      }
+    };
+
+    updateTopSectionFromScroll();
+    root.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      root.removeEventListener('scroll', handleScroll);
+    };
+  }, [filteredContent, visibleCount]);
+
   // FR-012b / SC-012: Smart scrolling behavior
   // Auto-updates annotation section based on scroll position
   // The panel will always track the visible section, even when open
@@ -324,17 +376,22 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
     // Always allow scroll-based updates for better UX
     // The AnnotationPanel will handle unsaved changes internally
 
+    const root = scrollContainerRef.current;
+    if (!root) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         // Find the entry closest to the center of the viewport
-        const center = window.innerHeight / 2;
+        const center = root.clientHeight / 2;
         let closestEntry: IntersectionObserverEntry | null = null;
         let minDistance = Infinity;
 
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const rect = entry.boundingClientRect;
-            const entryCenter = rect.top + rect.height / 2;
+            const rootTop = root.getBoundingClientRect().top;
+            const relativeTop = rect.top - rootTop;
+            const entryCenter = relativeTop + rect.height / 2;
             const distance = Math.abs(center - entryCenter);
             
             if (distance < minDistance) {
@@ -352,17 +409,18 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
         }
       },
       { 
+        root,
         threshold: [0, 0.25, 0.5, 0.75, 1],
-        rootMargin: '-40% 0px -40% 0px' // Focus on the center band
+        rootMargin: '0px' // Measurements already relative to container
       }
     );
 
     // Observe all section elements
-    const sections = document.querySelectorAll('[data-section-id]');
+    const sections = root.querySelectorAll('[data-section-id]');
     sections.forEach(section => observer.observe(section));
 
     return () => observer.disconnect();
-  }, [filteredContent]);
+  }, [filteredContent, visibleCount]);
 
 
 
@@ -440,14 +498,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
 
       {/* MAIN CONTENT */}
       <main className="flex-1 min-w-0 flex flex-col h-screen overflow-hidden bg-white">
-        <header className="relative h-20 bg-white flex items-center px-8 justify-between border-b border-gray-100 z-10">
-          <div className="flex items-center text-sm text-gray-400 font-medium">
-            <BookOpen size={16} className="mr-2" />
-            <span>Bibliothèque</span>
-            <ChevronRight size={14} className="mx-2 text-gray-300"/>
-            <span className="text-gray-900">Marozzo - Opera Nova</span>
-          </div>
-          
+        <header className="relative h-20 bg-white flex items-center px-8 justify-end border-b border-gray-100 z-10">
           {/* Boutons pour afficher/masquer les colonnes */}
           <div className="flex items-center gap-2">
             <button
@@ -502,8 +553,21 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
           )}
         </header>
 
-        <div className="flex-1 overflow-y-auto bg-white">
-          <div className="max-w-7xl mx-auto p-8 lg:p-12 space-y-12">
+        {/* Sticky Section Metadata Header */}
+        {topSectionId && (() => {
+          const topSection = filteredContent.find(s => s.id === topSectionId);
+          if (!topSection) return null;
+          return (
+            <div className="sticky top-20 z-10 bg-white border-b border-gray-200 px-8 py-3 shadow-sm">
+              <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                {topSection.metadata.master} - {topSection.metadata.work} - Livre {topSection.metadata.book} ({topSection.metadata.year})
+              </span>
+            </div>
+          );
+        })()}
+
+        <div className="flex-1 overflow-y-auto bg-white" ref={scrollContainerRef}>
+          <div className="max-w-full mx-auto p-8 lg:p-12 space-y-12">
             
             {filteredContent.length === 0 && results && (
               <div className="text-center py-12 text-gray-500">
@@ -523,52 +587,46 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
               
               const annotation = getAnnotation(section.id);
 
+              const isSingleColumn = !showItalian && !showEnglish && !showNotes;
+
+              // Check if section metadata is different from top section
+              const topSection = topSectionId ? filteredContent.find(s => s.id === topSectionId) : null;
+              const isDifferentFromTop = !topSection || 
+                section.metadata.master !== topSection.metadata.master ||
+                section.metadata.work !== topSection.metadata.work ||
+                section.metadata.book !== topSection.metadata.book ||
+                section.metadata.year !== topSection.metadata.year;
+
               return (
                 <div key={section.id} className="group" data-section-id={section.id}>
                   
                   {/* Section Header */}
-                  <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 pb-4 border-b border-gray-100 gap-4">
+                  <div className="flex flex-col md:flex-row md:items-end justify-between pb-2 gap-4">
                     <div className="flex-1">
-                      <span className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 block">
-                        {section.metadata.master} - {section.metadata.work} ({section.metadata.year})
-                      </span>
+                      {isDifferentFromTop && (
+                        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest block">
+                          {section.metadata.master} - {section.metadata.work} - Livre {section.metadata.book} ({section.metadata.year})
+                        </span>
+                      )}
                       <h2 className="text-2xl font-bold text-gray-900 leading-tight">{section.title}</h2>
                     </div>
                     
                     {/* Bouton d'annotation */}
-                    {annotation ? (
-                      <AnnotationBadge 
-                        annotation={annotation}
-                        isActive={isPanelOpen && annotationSection === section.id}
-                        onClick={() => {
-                          setAnnotationSection(section.id);
-                          setIsPanelOpen(true);
-                        }}
-                      />
-                    ) : (
-                      <button
-                        onClick={() => {
-                          setAnnotationSection(section.id);
-                          setIsPanelOpen(true);
-                        }}
-                        className={`px-3 py-1.5 rounded-lg transition-colors text-xs font-medium flex items-center gap-1.5 ${
-                          isPanelOpen && annotationSection === section.id
-                            ? 'bg-sky-600 text-white font-semibold'
-                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                        }`}
-                        title="Gérer les annotations"
-                      >
-                        <MessageSquare size={14} />
-                        Annotation
-                      </button>
-                    )}
+                    <AnnotationBadge 
+                      annotation={annotation}
+                      isActive={isPanelOpen && annotationSection === section.id}
+                      onClick={() => {
+                        setAnnotationSection(section.id);
+                        setIsPanelOpen(true);
+                      }}
+                    />
                   </div>
 
                   {(() => {
                     const summary = buildAnnotationSummary(displayConfig, annotation);
                     if (!summary.length) return null;
                     return (
-                      <div className="text-xs text-gray-700 bg-gray-50 border border-gray-100 rounded-lg p-3 space-y-1 mb-6">
+                      <div className="text-xs text-gray-700 space-y-1">
                         {summary.map(item => (
                           <div key={item.label} className="flex gap-2">
                             <span className="font-semibold text-gray-900">{item.label} :</span>
@@ -579,8 +637,8 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                     );
                   })()}
 
-                  {/* Columns dynamiques */}
-                  <div className={`grid gap-8 lg:gap-12 text-sm leading-relaxed ${getGridColumnsClass(showItalian, showEnglish, showNotes)}`}>
+                  {/* Columns dynamiques - Using flexbox for better space utilization */}
+                  <div className={`flex flex-col lg:flex-row gap-8 lg:gap-12 text-sm leading-relaxed ${isSingleColumn ? 'lg:justify-center' : ''}`}>
                     
                     {/* 1. Italian (Original) - Optionnel */}
                     {showItalian && (
@@ -623,7 +681,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                     )}
 
                     {/* 2. French - Toujours affiché */}
-                    <div>
+                    <div className="flex-1 min-w-0 max-w-7xl">
                       <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-100">
                         <h4 className="text-xs font-bold text-gray-400 flex items-center gap-2">
                           Français
@@ -646,7 +704,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                           placeholder="Texte français..."
                         />
                       ) : (
-                        <div className="text-gray-600 leading-relaxed whitespace-pre-line text-justify">
+                        <div className="text-gray-600 leading-relaxed whitespace-pre-line">
                           <TextParser 
                             text={getContentValue(section, 'fr')} 
                             glossaryData={glossaryData} 
@@ -658,7 +716,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
 
                     {/* 3. English (Multi-source) - Optionnel */}
                     {showEnglish && (
-                      <div>
+                      <div className="flex-1 min-w-0 max-w-7xl">
                       <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-100">
                         <h4 className="text-xs font-bold text-gray-400 flex items-center gap-2">
                           Anglais
@@ -733,7 +791,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
 
                     {/* 4. Notes - Optionnel */}
                     {showNotes && (
-                      <div>
+                      <div className="flex-1 min-w-0 max-w-7xl">
                         <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-100">
                           <h4 className="text-xs font-bold text-gray-400 flex items-center gap-2">
                             Notes
@@ -756,7 +814,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                             placeholder="Notes..."
                           />
                         ) : (
-                          <div className="text-gray-600 leading-relaxed whitespace-pre-line">
+                          <div className="text-gray-600 leading-relaxed whitespace-pre-line text-justify">
                             {getContentValue(section, 'notes') ? (
                               <p>{getContentValue(section, 'notes')}</p>
                             ) : (

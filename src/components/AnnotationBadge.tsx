@@ -11,23 +11,19 @@ interface AnnotationBadgeProps {
 }
 
 export default function AnnotationBadge({ annotation, onClick, isActive = false }: AnnotationBadgeProps) {
-  if (!annotation) return null;
-
-  // Calculate total tags count
-  const tagCount = (
-    (annotation.weapons?.length || 0) +
-    (annotation.guards_mentioned ? Object.keys(annotation.guards_mentioned).length : 0) +
-    (annotation.techniques ? Object.keys(annotation.techniques).length : 0) +
-    (annotation.measures?.length || 0) +
-    (annotation.strategy?.length || 0) +
-    (annotation.strikes ? Object.keys(annotation.strikes).length : 0) +
-    (annotation.targets ? Object.keys(annotation.targets).length : 0) +
-    (annotation.weapon_type ? 1 : 0)
-  );
-
-  const hasContent = tagCount > 0;
-
-  if (!hasContent) return null;
+  
+  const tagCount = annotation
+    ? (
+        (annotation.weapons?.length ?? 0) +
+        (annotation.guards_mentioned ? Object.keys(annotation.guards_mentioned).length : 0) +
+        (annotation.techniques ? Object.keys(annotation.techniques).length : 0) +
+        (annotation.measures?.length ?? 0) +
+        (annotation.strategy?.length ?? 0) +
+        (annotation.strikes ? Object.keys(annotation.strikes).length : 0) +
+        (annotation.targets ? Object.keys(annotation.targets).length : 0) +
+        (annotation.weapon_type ? 1 : 0)
+      )
+    : 0;
 
   return (
     <button
