@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { ChevronDown, MessageSquare, Settings, BarChart3, Edit2 } from 'lucide-react';
+import { ChevronDown, Settings, BarChart3, Edit2 } from 'lucide-react';
 import TextParser from './TextParser';
 import TextEditor from './TextEditor';
 import AnnotationPanel from './AnnotationPanel';
