@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { ChevronDown, Settings, BarChart3, Edit2 } from 'lucide-react';
 import TextParser from './TextParser';
+import MarkdownRenderer from './MarkdownRenderer';
 import TextEditor from './TextEditor';
 import AnnotationPanel from './AnnotationPanel';
 import AnnotationBadge from './AnnotationBadge';
@@ -816,7 +817,11 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                         ) : (
                           <div className="text-gray-600 leading-relaxed whitespace-pre-line text-justify">
                             {getContentValue(section, 'notes') ? (
-                              <p>{getContentValue(section, 'notes')}</p>
+                              <MarkdownRenderer 
+                                text={getContentValue(section, 'notes')} 
+                                glossaryData={glossaryData} 
+                                highlightQuery={lastQuery}
+                              />
                             ) : (
                               <p className="text-gray-400 italic">Aucune note disponible</p>
                             )}
