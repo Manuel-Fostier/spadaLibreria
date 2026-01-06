@@ -70,6 +70,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   const [translatorPreferences, setTranslatorPreferences] = useState<{ [key: string]: string }>({});
   const [annotationSection, setAnnotationSection] = useState<string | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(true); // FR-012: Default open
+  const [topSectionId, setTopSectionId] = useState<string | null>(null); // Track section at top of viewport for sticky header
   const { getAnnotation, getUniqueValues, getMatchingSectionIds } = useAnnotations();
   
   // Initialize column visibility from localStorage
@@ -255,6 +256,51 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
     }
   }, [filteredContent, annotationSection]);
 
+  // Initialize top section for sticky header
+  useEffect(() => {
+    if (!topSectionId && filteredContent.length > 0) {
+      setTopSectionId(filteredContent[0].id);
+    }
+  }, [filteredContent, topSectionId]);
+
+  // Track section at top of viewport for sticky header
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Find the topmost visible section
+        let topmostEntry: IntersectionObserverEntry | null = null;
+        let minTop = Infinity;
+
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const rect = entry.boundingClientRect;
+            if (rect.top < minTop) {
+              minTop = rect.top;
+              topmostEntry = entry;
+            }
+          }
+        });
+
+        if (topmostEntry) {
+          const sectionId = topmostEntry.target.getAttribute('data-section-id');
+          if (sectionId) {
+            setTopSectionId(sectionId);
+          }
+        }
+      },
+      { 
+        threshold: [0, 0.1, 0.5],
+        rootMargin: '-80px 0px 0px 0px' // Account for header height
+      }
+    );
+
+    // Observe all section elements
+    const sections = document.querySelectorAll('[data-section-id]');
+    sections.forEach(section => observer.observe(section));
+
+    return () => observer.disconnect();
+  }, [filteredContent]);
+
   // FR-012b / SC-012: Smart scrolling behavior
   // Auto-updates annotation section based on scroll position
   // The panel will always track the visible section, even when open
@@ -433,6 +479,19 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
           )}
         </header>
 
+        {/* Sticky Section Metadata Header */}
+        {topSectionId && (() => {
+          const topSection = filteredContent.find(s => s.id === topSectionId);
+          if (!topSection) return null;
+          return (
+            <div className="sticky top-20 z-10 bg-white border-b border-gray-200 px-8 py-3 shadow-sm">
+              <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                {topSection.metadata.master} - {topSection.metadata.work} - Livre {topSection.metadata.book} ({topSection.metadata.year})
+              </span>
+            </div>
+          );
+        })()}
+
         <div className="flex-1 overflow-y-auto bg-white">
           <div className="max-w-full mx-auto p-8 lg:p-12 space-y-12">
             
@@ -456,15 +515,25 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
 
               const isSingleColumn = !showItalian && !showEnglish && !showNotes;
 
+              // Check if section metadata is different from top section
+              const topSection = topSectionId ? filteredContent.find(s => s.id === topSectionId) : null;
+              const isDifferentFromTop = !topSection || 
+                section.metadata.master !== topSection.metadata.master ||
+                section.metadata.work !== topSection.metadata.work ||
+                section.metadata.book !== topSection.metadata.book ||
+                section.metadata.year !== topSection.metadata.year;
+
               return (
                 <div key={section.id} className="group" data-section-id={section.id}>
                   
                   {/* Section Header */}
                   <div className="flex flex-col md:flex-row md:items-end justify-between pb-2 gap-4">
                     <div className="flex-1">
-                      <span className="text-xs font-bold text-gray-400 uppercase tracking-widest block">
-                        {section.metadata.master} - {section.metadata.work} - Livre {section.metadata.book} ({section.metadata.year})
-                      </span>
+                      {isDifferentFromTop && (
+                        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest block">
+                          {section.metadata.master} - {section.metadata.work} - Livre {section.metadata.book} ({section.metadata.year})
+                        </span>
+                      )}
                       <h2 className="text-2xl font-bold text-gray-900 leading-tight">{section.title}</h2>
                     </div>
                     
