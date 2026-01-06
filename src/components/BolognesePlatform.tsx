@@ -103,8 +103,19 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   const [filters, setFilters] = useState<FilterState>(initialFilterState);
   
   // --- TEXT EDITING STATE ---
-  const [editingSection, setEditingSection] = useState<{ sectionId: string; field: 'fr' | 'notes' } | null>(null);
-  const [editedContent, setEditedContent] = useState<{ [key: string]: { fr?: string; notes?: string } }>({});
+  const [editingSection, setEditingSection] = useState<{ 
+    sectionId: string; 
+    field: 'fr' | 'notes' | 'it' | 'en'; 
+    translator?: string; // For English editing
+  } | null>(null);
+  const [editedContent, setEditedContent] = useState<{ 
+    [key: string]: { 
+      fr?: string; 
+      notes?: string; 
+      it?: string; 
+      en?: { [translator: string]: string } 
+    } 
+  }>({});
 
   // --- VIRTUALIZATION / PAGINATION STATE ---
   // We only render a subset of chapters to keep the page fast (like lazy loading images)
@@ -133,23 +144,35 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   };
 
   // Handle text editing
-  const handleStartEdit = (sectionId: string, field: 'fr' | 'notes') => {
-    setEditingSection({ sectionId, field });
+  const handleStartEdit = (sectionId: string, field: 'fr' | 'notes' | 'it' | 'en', translator?: string) => {
+    setEditingSection({ sectionId, field, translator });
   };
 
   const handleCancelEdit = () => {
     setEditingSection(null);
   };
 
-  const handleSaveEdit = async (sectionId: string, field: 'fr' | 'notes', value: string) => {
+  const handleSaveEdit = async (sectionId: string, field: 'fr' | 'notes' | 'it' | 'en', value: string, translator?: string) => {
     try {
+      // Prepare request body
+      const requestBody: { sectionId: string; field: string; value: string; translator?: string } = {
+        sectionId,
+        field,
+        value
+      };
+      
+      // Add translator for English edits
+      if (field === 'en' && translator) {
+        requestBody.translator = translator;
+      }
+      
       // Save to server
       const response = await fetch('/api/content', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ sectionId, field, value }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
@@ -157,13 +180,26 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
       }
 
       // Update local state
-      setEditedContent(prev => ({
-        ...prev,
-        [sectionId]: {
-          ...prev[sectionId],
-          [field]: value,
-        },
-      }));
+      if (field === 'en' && translator) {
+        setEditedContent(prev => ({
+          ...prev,
+          [sectionId]: {
+            ...prev[sectionId],
+            en: {
+              ...prev[sectionId]?.en,
+              [translator]: value,
+            },
+          },
+        }));
+      } else {
+        setEditedContent(prev => ({
+          ...prev,
+          [sectionId]: {
+            ...prev[sectionId],
+            [field]: value,
+          },
+        }));
+      }
 
       setEditingSection(null);
       
@@ -175,14 +211,29 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
     }
   };
 
-  const getContentValue = (section: TreatiseSection, field: 'fr' | 'notes'): string => {
+  const getContentValue = (section: TreatiseSection, field: 'fr' | 'notes' | 'it' | 'en', translator?: string): string => {
     // Check if we have edited content in local state
-    if (editedContent[section.id]?.[field] !== undefined) {
-      return editedContent[section.id][field]!;
+    if (field === 'en' && translator) {
+      if (editedContent[section.id]?.en?.[translator] !== undefined) {
+        return editedContent[section.id].en![translator];
+      }
+      // Otherwise return original content
+      const version = section.content.en_versions?.find(v => v.translator === translator);
+      return version?.text || '';
+    } else if (editedContent[section.id]?.[field] !== undefined) {
+      return editedContent[section.id][field] as string;
     }
+    
     // Otherwise return original content
     if (field === 'notes') {
       return section.content.notes || '';
+    }
+    if (field === 'it') {
+      return section.content.it || '';
+    }
+    if (field === 'en') {
+      // Should not reach here as translator should be provided
+      return '';
     }
     return section.content[field];
   };
@@ -590,18 +641,42 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                   <div className={`flex flex-col lg:flex-row gap-8 lg:gap-12 text-sm leading-relaxed ${isSingleColumn ? 'lg:justify-center' : ''}`}>
                     
                     {/* 1. Italian (Original) - Optionnel */}
-                    {showItalian && section.content.it && (
-                      <div className="flex-1 min-w-0 max-w-7xl">
-                        <h4 className="text-xs font-bold text-gray-900 mb-4 flex items-center gap-2 pb-2 border-b border-gray-100">
-                          Italien (original)
-                        </h4>
-                        <div className="text-gray-800 font-medium font-serif text-base">
-                          <TextParser 
-                            text={section.content.it} 
-                            glossaryData={glossaryData} 
-                            highlightQuery={lastQuery}
-                          />
+                    {showItalian && (
+                      <div>
+                        <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-100">
+                          <h4 className="text-xs font-bold text-gray-900 flex items-center gap-2">
+                            Italien (original)
+                          </h4>
+                          {editingSection?.sectionId !== section.id || editingSection?.field !== 'it' ? (
+                            <button 
+                              onClick={() => handleStartEdit(section.id, 'it')}
+                              className="p-1 hover:bg-gray-100 rounded transition-colors"
+                              title="Éditer le contenu italien"
+                            >
+                              <Edit2 size={14} className="text-gray-400 hover:text-gray-600" />
+                            </button>
+                          ) : null}
                         </div>
+                        {editingSection?.sectionId === section.id && editingSection?.field === 'it' ? (
+                          <TextEditor
+                            initialValue={getContentValue(section, 'it')}
+                            onSave={(value) => handleSaveEdit(section.id, 'it', value)}
+                            onCancel={handleCancelEdit}
+                            placeholder="Texte italien..."
+                          />
+                        ) : (
+                          <div className="text-gray-800 font-medium font-serif text-base">
+                            {section.content.it ? (
+                              <TextParser 
+                                text={section.content.it} 
+                                glossaryData={glossaryData} 
+                                highlightQuery={lastQuery}
+                              />
+                            ) : (
+                              <p className="text-gray-400 italic">Texte italien non disponible</p>
+                            )}
+                          </div>
+                        )}
                       </div>
                     )}
 
@@ -647,35 +722,58 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                           Anglais
                         </h4>
                         
-                        {/* Translator Selector */}
-                        {englishVersions.length > 1 && (
-                          <div className="relative group/dropdown">
-                            <button className="flex items-center gap-1 text-xs font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded hover:bg-indigo-100 transition-colors">
-                              {selectedTransName}
-                              <ChevronDown size={12}/>
+                        <div className="flex items-center gap-2">
+                          {/* Edit Button */}
+                          {editingSection?.sectionId !== section.id || editingSection?.field !== 'en' || editingSection?.translator !== selectedTransName ? (
+                            <button 
+                              onClick={() => handleStartEdit(section.id, 'en', selectedTransName)}
+                              className="p-1 hover:bg-gray-100 rounded transition-colors"
+                              title="Éditer la traduction anglaise"
+                            >
+                              <Edit2 size={14} className="text-gray-400 hover:text-gray-600" />
                             </button>
-                            <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-gray-200 shadow-lg rounded-md overflow-hidden hidden group-hover/dropdown:block z-50">
-                              {englishVersions.map(v => (
-                                <button
-                                  key={v.translator}
-                                  onClick={() => handleTranslatorChange(section.id, v.translator)}
-                                  className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-50 ${
-                                    v.translator === selectedTransName 
-                                      ? 'font-bold text-indigo-600' 
-                                      : 'text-gray-600'
-                                  }`}
-                                >
-                                  {v.translator}
-                                </button>
-                              ))}
+                          ) : null}
+                          
+                          {/* Translator Selector */}
+                          {englishVersions.length > 1 && (
+                            <div className="relative group/dropdown">
+                              <button className="flex items-center gap-1 text-xs font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded hover:bg-indigo-100 transition-colors">
+                                {selectedTransName}
+                                <ChevronDown size={12}/>
+                              </button>
+                              <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-gray-200 shadow-lg rounded-md overflow-hidden hidden group-hover/dropdown:block z-50">
+                                {englishVersions.map(v => (
+                                  <button
+                                    key={v.translator}
+                                    onClick={() => handleTranslatorChange(section.id, v.translator)}
+                                    className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-50 ${
+                                      v.translator === selectedTransName 
+                                        ? 'font-bold text-indigo-600' 
+                                        : 'text-gray-600'
+                                    }`}
+                                  >
+                                    {v.translator}
+                                  </button>
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                        )}
-                        {englishVersions.length === 1 && (
-                          <span className="text-xs text-gray-400 italic">{selectedTransName}</span>
-                        )}
+                          )}
+                          {englishVersions.length === 1 && (
+                            <span className="text-xs text-gray-400 italic">{selectedTransName}</span>
+                          )}
+                        </div>
                       </div>
                       
+                      {editingSection?.sectionId === section.id && editingSection?.field === 'en' && editingSection?.translator === selectedTransName ? (
+                        <TextEditor
+                          initialValue={getContentValue(section, 'en', selectedTransName)}
+                          onSave={(value, translator) => handleSaveEdit(section.id, 'en', value, translator || selectedTransName)}
+                          onCancel={handleCancelEdit}
+                          placeholder="English text..."
+                          translator={selectedTransName}
+                          showTranslatorField={true}
+                        />
+                      ) : (
                         <div className="text-gray-600">
                           {activeTranslation ? (
                             <TextParser 
@@ -687,6 +785,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                             <p className="text-gray-400 italic">Traduction non disponible</p>
                           )}
                         </div>
+                      )}
                       </div>
                     )}
 

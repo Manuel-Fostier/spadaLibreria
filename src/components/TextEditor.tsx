@@ -5,10 +5,12 @@ import { Save, X } from 'lucide-react';
 
 interface TextEditorProps {
   initialValue: string;
-  onSave: (value: string) => Promise<void>;
+  onSave: (value: string, translator?: string) => Promise<void>;
   onCancel: () => void;
   placeholder?: string;
   className?: string;
+  translator?: string; // Optional: translator name for English editing
+  showTranslatorField?: boolean; // Whether to show translator input field
 }
 
 interface HistoryState {
@@ -22,9 +24,12 @@ export default function TextEditor({
   onSave, 
   onCancel, 
   placeholder,
-  className = '' 
+  className = '',
+  translator: initialTranslator = '',
+  showTranslatorField = false
 }: TextEditorProps) {
   const [value, setValue] = useState(initialValue);
+  const [translator, setTranslator] = useState(initialTranslator);
   const [isSaving, setIsSaving] = useState(false);
   const [history, setHistory] = useState<HistoryState[]>([{ 
     value: initialValue, 
@@ -119,9 +124,15 @@ export default function TextEditor({
   };
 
   const handleSave = async () => {
+    // Validate translator if needed
+    if (showTranslatorField && !translator.trim()) {
+      alert('Veuillez entrer le nom du traducteur');
+      return;
+    }
+    
     setIsSaving(true);
     try {
-      await onSave(value);
+      await onSave(value, translator.trim() || undefined);
     } catch (error) {
       console.error('Error saving:', error);
       alert('Erreur lors de la sauvegarde');
@@ -132,6 +143,22 @@ export default function TextEditor({
 
   return (
     <div className={`space-y-2 ${className}`}>
+      {showTranslatorField && (
+        <div className="mb-2">
+          <label htmlFor="translator" className="block text-xs font-medium text-gray-700 mb-1">
+            Traducteur / Translator
+          </label>
+          <input
+            id="translator"
+            type="text"
+            value={translator}
+            onChange={(e) => setTranslator(e.target.value)}
+            placeholder="Nom du traducteur..."
+            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+      )}
+      
       <textarea
         ref={textareaRef}
         value={value}
