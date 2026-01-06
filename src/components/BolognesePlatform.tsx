@@ -454,6 +454,8 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
               
               const annotation = getAnnotation(section.id);
 
+              const isSingleColumn = !showItalian && !showEnglish && !showNotes;
+
               return (
                 <div key={section.id} className="group" data-section-id={section.id}>
                   
@@ -511,7 +513,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                   })()}
 
                   {/* Columns dynamiques - Using flexbox for better space utilization */}
-                  <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 text-sm leading-relaxed">
+                  <div className={`flex flex-col lg:flex-row gap-8 lg:gap-12 text-sm leading-relaxed ${isSingleColumn ? 'lg:justify-center' : ''}`}>
                     
                     {/* 1. Italian (Original) - Optionnel */}
                     {showItalian && section.content.it && (
