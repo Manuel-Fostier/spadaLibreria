@@ -460,9 +460,9 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                 <div key={section.id} className="group" data-section-id={section.id}>
                   
                   {/* Section Header */}
-                  <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 pb-4 border-b border-gray-100 gap-4">
+                  <div className="flex flex-col md:flex-row md:items-end justify-between pb-2 gap-4">
                     <div className="flex-1">
-                      <span className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 block">
+                      <span className="text-xs font-bold text-gray-400 uppercase tracking-widest block">
                         {section.metadata.master} - {section.metadata.work} ({section.metadata.year})
                       </span>
                       <h2 className="text-2xl font-bold text-gray-900 leading-tight">{section.title}</h2>
@@ -483,7 +483,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                     const summary = buildAnnotationSummary(displayConfig, annotation);
                     if (!summary.length) return null;
                     return (
-                      <div className="text-xs text-gray-700 bg-gray-50 border border-gray-100 rounded-lg p-3 space-y-1 mb-6">
+                      <div className="text-xs text-gray-700 space-y-1">
                         {summary.map(item => (
                           <div key={item.label} className="flex gap-2">
                             <span className="font-semibold text-gray-900">{item.label} :</span>
