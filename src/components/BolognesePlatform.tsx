@@ -110,6 +110,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   // We only render a subset of chapters to keep the page fast (like lazy loading images)
   const [visibleCount, setVisibleCount] = useState(10); // Start with 10 chapters
   const observerTarget = useRef<HTMLDivElement>(null); // The invisible line at the bottom
+  const scrollContainerRef = useRef<HTMLDivElement>(null); // Scrollable content wrapper
 
   // Persist column visibility to localStorage
   useEffect(() => {
@@ -265,41 +266,57 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
 
   // Track section at top of viewport for sticky header
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        // Find the topmost visible section
-        let topmostEntry: IntersectionObserverEntry | null = null;
-        let minTop = Infinity;
+    const root = scrollContainerRef.current;
+    if (!root) return;
 
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const rect = entry.boundingClientRect;
-            if (rect.top < minTop) {
-              minTop = rect.top;
-              topmostEntry = entry;
-            }
-          }
-        });
+    const stickyOffset = 110;
+    let ticking = false;
 
-        if (topmostEntry) {
-          const sectionId = topmostEntry.target.getAttribute('data-section-id');
-          if (sectionId) {
-            setTopSectionId(sectionId);
-          }
-        }
-      },
-      { 
-        threshold: [0, 0.1, 0.5],
-        rootMargin: '-80px 0px 0px 0px' // Account for header height
+    const updateTopSectionFromScroll = () => {
+      ticking = false;
+      const sections = Array.from(root.querySelectorAll('[data-section-id]'));
+      if (sections.length === 0) {
+        return;
       }
-    );
 
-    // Observe all section elements
-    const sections = document.querySelectorAll('[data-section-id]');
-    sections.forEach(section => observer.observe(section));
+      const rootTop = root.getBoundingClientRect().top;
+      let candidateId: string | null = null;
+      let fallbackId: string | null = null;
 
-    return () => observer.disconnect();
-  }, [filteredContent]);
+      for (const section of sections) {
+        const rect = section.getBoundingClientRect();
+        const relativeTop = rect.top - rootTop;
+        const currentId = section.getAttribute('data-section-id');
+        if (!currentId) continue;
+
+        if (relativeTop <= stickyOffset) {
+          candidateId = currentId;
+        } else {
+          fallbackId = currentId;
+          break;
+        }
+      }
+
+      const nextId = candidateId ?? fallbackId ?? sections[0].getAttribute('data-section-id');
+      if (nextId) {
+        setTopSectionId(prev => (prev === nextId ? prev : nextId));
+      }
+    };
+
+    const handleScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateTopSectionFromScroll);
+      }
+    };
+
+    updateTopSectionFromScroll();
+    root.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      root.removeEventListener('scroll', handleScroll);
+    };
+  }, [filteredContent, visibleCount]);
 
   // FR-012b / SC-012: Smart scrolling behavior
   // Auto-updates annotation section based on scroll position
@@ -308,17 +325,22 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
     // Always allow scroll-based updates for better UX
     // The AnnotationPanel will handle unsaved changes internally
 
+    const root = scrollContainerRef.current;
+    if (!root) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         // Find the entry closest to the center of the viewport
-        const center = window.innerHeight / 2;
+        const center = root.clientHeight / 2;
         let closestEntry: IntersectionObserverEntry | null = null;
         let minDistance = Infinity;
 
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const rect = entry.boundingClientRect;
-            const entryCenter = rect.top + rect.height / 2;
+            const rootTop = root.getBoundingClientRect().top;
+            const relativeTop = rect.top - rootTop;
+            const entryCenter = relativeTop + rect.height / 2;
             const distance = Math.abs(center - entryCenter);
             
             if (distance < minDistance) {
@@ -336,17 +358,18 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
         }
       },
       { 
+        root,
         threshold: [0, 0.25, 0.5, 0.75, 1],
-        rootMargin: '-40% 0px -40% 0px' // Focus on the center band
+        rootMargin: '0px' // Measurements already relative to container
       }
     );
 
     // Observe all section elements
-    const sections = document.querySelectorAll('[data-section-id]');
+    const sections = root.querySelectorAll('[data-section-id]');
     sections.forEach(section => observer.observe(section));
 
     return () => observer.disconnect();
-  }, [filteredContent]);
+  }, [filteredContent, visibleCount]);
 
 
 
@@ -492,7 +515,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
           );
         })()}
 
-        <div className="flex-1 overflow-y-auto bg-white">
+        <div className="flex-1 overflow-y-auto bg-white" ref={scrollContainerRef}>
           <div className="max-w-full mx-auto p-8 lg:p-12 space-y-12">
             
             {filteredContent.length === 0 && results && (
