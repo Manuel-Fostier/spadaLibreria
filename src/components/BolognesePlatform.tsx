@@ -434,7 +434,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
         </header>
 
         <div className="flex-1 overflow-y-auto bg-white">
-          <div className="max-w-7xl mx-auto p-8 lg:p-12 space-y-12">
+          <div className="max-w-full mx-auto p-8 lg:p-12 space-y-12">
             
             {filteredContent.length === 0 && results && (
               <div className="text-center py-12 text-gray-500">
@@ -515,7 +515,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                     
                     {/* 1. Italian (Original) - Optionnel */}
                     {showItalian && section.content.it && (
-                      <div className="flex-1 min-w-0">
+                      <div className="flex-1 min-w-0 max-w-7xl">
                         <h4 className="text-xs font-bold text-gray-900 mb-4 flex items-center gap-2 pb-2 border-b border-gray-100">
                           Italien (original)
                         </h4>
@@ -530,7 +530,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                     )}
 
                     {/* 2. French - Toujours affiché */}
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 max-w-7xl">
                       <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-100">
                         <h4 className="text-xs font-bold text-gray-400 flex items-center gap-2">
                           Français
@@ -553,7 +553,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                           placeholder="Texte français..."
                         />
                       ) : (
-                        <div className="text-gray-600 leading-relaxed whitespace-pre-line text-justify">
+                        <div className="text-gray-600 leading-relaxed whitespace-pre-line">
                           <TextParser 
                             text={getContentValue(section, 'fr')} 
                             glossaryData={glossaryData} 
@@ -565,7 +565,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
 
                     {/* 3. English (Multi-source) - Optionnel */}
                     {showEnglish && (
-                      <div className="flex-1 min-w-0">
+                      <div className="flex-1 min-w-0 max-w-7xl">
                       <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-100">
                         <h4 className="text-xs font-bold text-gray-400 flex items-center gap-2">
                           Anglais
@@ -616,7 +616,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
 
                     {/* 4. Notes - Optionnel */}
                     {showNotes && (
-                      <div className="flex-1 min-w-0">
+                      <div className="flex-1 min-w-0 max-w-7xl">
                         <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-100">
                           <h4 className="text-xs font-bold text-gray-400 flex items-center gap-2">
                             Notes
@@ -639,7 +639,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                             placeholder="Notes..."
                           />
                         ) : (
-                          <div className="text-gray-600 leading-relaxed whitespace-pre-line">
+                          <div className="text-gray-600 leading-relaxed whitespace-pre-line text-justify">
                             {getContentValue(section, 'notes') ? (
                               <p>{getContentValue(section, 'notes')}</p>
                             ) : (
