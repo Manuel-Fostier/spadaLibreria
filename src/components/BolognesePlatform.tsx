@@ -463,7 +463,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                   <div className="flex flex-col md:flex-row md:items-end justify-between pb-2 gap-4">
                     <div className="flex-1">
                       <span className="text-xs font-bold text-gray-400 uppercase tracking-widest block">
-                        {section.metadata.master} - {section.metadata.work} ({section.metadata.year})
+                        {section.metadata.master} - {section.metadata.work} - Livre {section.metadata.book} ({section.metadata.year})
                       </span>
                       <h2 className="text-2xl font-bold text-gray-900 leading-tight">{section.title}</h2>
                     </div>
