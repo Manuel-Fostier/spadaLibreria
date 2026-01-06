@@ -469,32 +469,14 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                     </div>
                     
                     {/* Bouton d'annotation */}
-                    {annotation ? (
-                      <AnnotationBadge 
-                        annotation={annotation}
-                        isActive={isPanelOpen && annotationSection === section.id}
-                        onClick={() => {
-                          setAnnotationSection(section.id);
-                          setIsPanelOpen(true);
-                        }}
-                      />
-                    ) : (
-                      <button
-                        onClick={() => {
-                          setAnnotationSection(section.id);
-                          setIsPanelOpen(true);
-                        }}
-                        className={`px-3 py-1.5 rounded-lg transition-colors text-xs font-medium flex items-center gap-1.5 ${
-                          isPanelOpen && annotationSection === section.id
-                            ? 'bg-sky-600 text-white font-semibold'
-                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                        }`}
-                        title="Gérer les annotations"
-                      >
-                        <MessageSquare size={14} />
-                        Annotation
-                      </button>
-                    )}
+                    <AnnotationBadge 
+                      annotation={annotation}
+                      isActive={isPanelOpen && annotationSection === section.id}
+                      onClick={() => {
+                        setAnnotationSection(section.id);
+                        setIsPanelOpen(true);
+                      }}
+                    />
                   </div>
 
                   {(() => {
