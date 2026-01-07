@@ -5,7 +5,7 @@ import { MessageSquare } from 'lucide-react';
 import { Annotation } from '@/lib/annotation';
 
 interface AnnotationBadgeProps {
-  annotation: Annotation;
+  annotation: Annotation | undefined;
   onClick: () => void;
   isActive?: boolean;
 }
