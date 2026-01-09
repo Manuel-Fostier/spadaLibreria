@@ -25,12 +25,19 @@ fi
 echo "✅ Node.js version: $(node --version)"
 echo "✅ npm version: $(npm --version)"
 
-# Installer les dépendances si node_modules n'existe pas
+# Installer/synchroniser les dépendances
 if [ ! -d "node_modules" ]; then
-    echo "📦 Installation des dépendances..."
-    npm install
+    echo "📦 Installation des dépendances (première installation)..."
+    if [ -f "package-lock.json" ]; then
+        # Installation propre et reproductible si un lockfile existe
+        npm ci || npm install
+    else
+        npm install
+    fi
 else
-    echo "✅ Dépendances déjà installées"
+    echo "🔄 Synchronisation des dépendances (npm install)..."
+    # Assure l'installation des nouvelles dépendances ajoutées à package.json
+    npm install
 fi
 
 echo ""
