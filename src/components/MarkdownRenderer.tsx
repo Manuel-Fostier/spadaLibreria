@@ -81,22 +81,26 @@ export default function MarkdownRenderer({ text, glossaryData, highlightQuery }:
   const components = {
     // Override text rendering to handle glossary terms and highlighting
     p: ({ children }: { children?: React.ReactNode }) => {
-      return <p className="leading-relaxed mb-2 last:mb-0">{processChildren(children)}</p>;
+      // Filter out empty paragraphs (caused by blank lines in source)
+      if (!children || (typeof children === 'string' && !children.trim())) {
+        return null;
+      }
+      return <p className="leading-relaxed mb-1 last:mb-0">{processChildren(children)}</p>;
     },
     h1: ({ children }: { children?: React.ReactNode }) => (
-      <h1 className="text-2xl font-bold mb-2 mt-3 first:mt-0">{processChildren(children)}</h1>
+      <h1 className="text-2xl font-bold mb-1 mt-2 first:mt-0">{processChildren(children)}</h1>
     ),
     h2: ({ children }: { children?: React.ReactNode }) => (
-      <h2 className="text-xl font-bold mb-2 mt-3 first:mt-0">{processChildren(children)}</h2>
+      <h2 className="text-xl font-bold mb-1 mt-2 first:mt-0">{processChildren(children)}</h2>
     ),
     h3: ({ children }: { children?: React.ReactNode }) => (
-      <h3 className="text-lg font-bold mb-2 mt-2 first:mt-0">{processChildren(children)}</h3>
+      <h3 className="text-lg font-bold mb-1 mt-1 first:mt-0">{processChildren(children)}</h3>
     ),
     h4: ({ children }: { children?: React.ReactNode }) => (
-      <h4 className="text-base font-bold mb-1 mt-2 first:mt-0">{processChildren(children)}</h4>
+      <h4 className="text-base font-bold mb-1 mt-1 first:mt-0">{processChildren(children)}</h4>
     ),
     h5: ({ children }: { children?: React.ReactNode }) => (
-      <h5 className="text-sm font-bold mb-1 mt-2 first:mt-0">{processChildren(children)}</h5>
+      <h5 className="text-sm font-bold mb-1 mt-1 first:mt-0">{processChildren(children)}</h5>
     ),
     h6: ({ children }: { children?: React.ReactNode }) => (
       <h6 className="text-xs font-bold mb-1 mt-1 first:mt-0">{processChildren(children)}</h6>
@@ -108,10 +112,10 @@ export default function MarkdownRenderer({ text, glossaryData, highlightQuery }:
       <em className="italic">{processChildren(children)}</em>
     ),
     ul: ({ children }: { children?: React.ReactNode }) => (
-      <ul className="list-disc list-inside mb-2 last:mb-0">{children}</ul>
+      <ul className="list-disc list-inside mb-1 last:mb-0">{children}</ul>
     ),
     ol: ({ children }: { children?: React.ReactNode }) => (
-      <ol className="list-decimal list-inside mb-2 last:mb-0">{children}</ol>
+      <ol className="list-decimal list-inside mb-1 last:mb-0">{children}</ol>
     ),
     li: ({ children }: { children?: React.ReactNode }) => (
       <li className="leading-relaxed mb-0">{processChildren(children)}</li>
