@@ -1,0 +1,71 @@
+- id: antonio_manciolino_l4_c12
+  title: Chapitre douze. Du jeu à l’épée seule
+  metadata:
+    master: Antonio Manciolino
+    work: Opera Nova
+    book: 4
+    chapter: 12
+    year: 1531
+  content:
+    fr: |
+      Voulant combattre contre ton ennemi avec l’épée seule, en premier tu t’arrangeras avec le {pied} droit devant et l’épée en {porta_di_ferro_stretta}. Et sans tirer aucun coup, tu le serreras de cette façon, c’est-à-dire que tu amèneras le {pied} gauche auprès du droit et tu marcheras ensuite du droit devant.
+
+      L’ennemi se trouvant ainsi serré, il devra soit frapper, soit fuir en arrière.
+
+      - Et s’il pousse une {punta}, tu la frapperas avec le {falso} en lui tournant un mezzo {roverso} à la {cuisse}.
+      Et pour te défendre tu lui tireras un {falso} de bas en haut à la {main} d’épée en ne dépassant pas la {guardia_di_faccia}.
+      Et au final, tu tailleras en garde de {porta_di_ferro_stretta}. 
+
+      - Mais s’il te tire une {punta} à la {face} pour te frapper d’un {mandritto} ou d’un {roverso}, tu t’en couvriras avec le {falso}.
+      Quand il tirera le {mandritto} à la {tete}, tu t’en défendras avec l’épée en {guardia_di_testa}.
+      Et avec un tel coup tu le frapperas à la {jambe} ou à la {tete} comme tu veux.
+
+      - Si à cette occasion il veut t’atteindre la {jambe} de {roverso} ou de {mandritto}.
+      En opposition du {mandritto}, tu ramèneras le {pied} droit en arrière en lui donnant un mezzo {mandritto} à la {main} d’épée.
+      Mais s’il veut te donner le {roverso}, tu fuiras en arrière bien avec ce même {pied} en lui frappant le {bras} d’épée d’un mezzo {roverso}.
+      Et tu t’arrangeras finalement dans la {porta_di_ferro_stretta}.
+
+      - S’il te pousse une {punta} pour te donner un {roverso} à la {tete} ou à la {jambe}. 
+        * Si c’est à la {tete}, tu t’en défendras avec le {falso} de l’épée sans bouger des pieds. 
+      Et pour contrer le {roverso} arrivant, tu passeras avec le {pied} gauche devant en faisant une demi-volte du poing et ainsi tu te seras défendu de cela. Ensuite, en marchant aussitôt avec le {pied} droit devant vers son côté gauche, tu lui donneras un {mandritto} à la {tete} ou à la {jambe}, là où tu veux. Cela fait, la {jambe} gauche doit suivre la droite. 
+        * S’il te tire le {roverso} à la {jambe}, toi en passant devant avec le {pied} gauche, tu tourneras la pointe vers le sol en lui poussant une stoccata au {flanc}.
+      Et à présent, en te levant en arrière avec un saut, tu iras au final dans la garde de {porta_di_ferro_stretta}. 
+
+      - Et si tu vois venir à ton côté supérieur un {mandritto} ou un {roverso} ou un {fendente} ou une {punta}, tu pareras chacune de ces bottes avec un {falso} bien puissant qui ne dépassera pas la {guardia_di_faccia}. 
+        * Là, tu marcheras aussitôt devant en faisant une volte du poing. 
+      Cela fait, tu lui pousseras une {punta} dans la {face} ou dans la {poitrine}, où tu veux. 
+        * Tu peux également suite à cette défense de {falso} lui tirer un {mandritto} à la {face} qui ira par en bas aux {bras} et à la {poitrine}, en avançant un peu devant avec le {pied} droit autant que tu peux le faire dans ce coup. 
+      Et cela est une défense singulière qui peut se faire dans ce jeu. 
+  annotation:
+    id: antonio_manciolino_l4_c12_ann
+    note: null
+    weapons:
+      - Spada sola
+    weapon_type: null
+    guards_mentioned:
+      Guardia di Testa: 1
+      Porta di Ferro Stretta: 4
+      Guardia di Faccia: 2
+    techniques: null
+    strikes:
+      Roverso: 9
+      Falso: 6
+      Mandritto: 8
+      Punta: 5
+      Fendente: 1
+    measures:
+      - Gioco Stretto
+      - Stretta di Mezza Spada
+    strategy:
+      - provocation
+      - invitation
+    targets:
+      Pied: 8
+      Jambe: 6
+      Bras: 2
+      Tête: 5
+      Flanc: 1
+      Poitrine: 2
+      Face: 3
+      Main: 2
+      Cuisse: 1
