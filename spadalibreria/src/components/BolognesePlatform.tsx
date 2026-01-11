@@ -2,7 +2,6 @@
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { ChevronDown, Settings, BarChart3, Edit2 } from 'lucide-react';
-import TextParser from './TextParser';
 import MarkdownRenderer from './MarkdownRenderer';
 import TextEditor from './TextEditor';
 import AnnotationPanel from './AnnotationPanel';
@@ -666,9 +665,9 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                             placeholder="Texte italien..."
                           />
                         ) : (
-                          <div className="text-gray-800 font-medium font-serif text-base">
+                          <div>
                             {section.content.it ? (
-                              <TextParser 
+                              <MarkdownRenderer 
                                 text={section.content.it} 
                                 glossaryData={glossaryData} 
                                 highlightQuery={lastQuery}
@@ -705,8 +704,8 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                           placeholder="Texte français..."
                         />
                       ) : (
-                        <div className="text-gray-600 leading-relaxed whitespace-pre-line">
-                          <TextParser 
+                        <div>
+                          <MarkdownRenderer 
                             text={getContentValue(section, 'fr')} 
                             glossaryData={glossaryData} 
                             highlightQuery={lastQuery}
@@ -775,9 +774,9 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                           showTranslatorField={true}
                         />
                       ) : (
-                        <div className="text-gray-600">
+                        <div>
                           {activeTranslation ? (
-                            <TextParser 
+                            <MarkdownRenderer 
                               text={activeTranslation.text} 
                               glossaryData={glossaryData} 
                               highlightQuery={lastQuery}
@@ -815,7 +814,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
                             placeholder="Notes..."
                           />
                         ) : (
-                          <div className="text-gray-600 leading-relaxed whitespace-pre-line text-justify">
+                          <div>
                             {getContentValue(section, 'notes') ? (
                               <MarkdownRenderer 
                                 text={getContentValue(section, 'notes')} 
