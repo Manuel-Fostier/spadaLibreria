@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Term from './Term';
 import { GlossaryEntry } from '@/lib/dataLoader';
@@ -20,96 +20,103 @@ interface MarkdownRendererProps {
  * - Search highlighting
  * - Standard Markdown features (headings, bold, italic, lists, links, images)
  */
-export default function MarkdownRenderer({ text, glossaryData, highlightQuery }: MarkdownRendererProps) {
-  if (!text) return null;
+// --- Helpers and config outside the component ---
+const remarkPlugins = [remarkGfm];
 
-  // Pre-process text to handle glossary terms
-  // Replace {term} with a special marker that won't be affected by Markdown parsing
-  const glossaryPattern = /\{([^}]+)\}/g;
-  const matches: Array<{ key: string; index: number; length: number }> = [];
-  let match;
-  
-  while ((match = glossaryPattern.exec(text)) !== null) {
-    matches.push({
-      key: match[1],
-      index: match.index,
-      length: match[0].length
+function renderHighlightedText(content: string, highlightQuery?: SearchQuery | null): React.ReactNode {
+  if (!highlightQuery || !content) return content;
+  const searchMatches = findMatches(
+    content,
+    highlightQuery.queryText,
+    highlightQuery.options,
+    highlightQuery.variants
+  );
+  if (searchMatches.length === 0) return content;
+  const result: React.ReactNode[] = [];
+  let lastIndex = 0;
+  searchMatches.forEach((match, i) => {
+    if (match.start > lastIndex) {
+      result.push(content.slice(lastIndex, match.start));
+    }
+    result.push(
+      <span key={`${i}-match`} className="bg-yellow-200 text-gray-900 font-semibold rounded-sm px-0.5">
+        {content.slice(match.start, match.end)}
+      </span>
+    );
+    lastIndex = match.end;
+  });
+  if (lastIndex < content.length) {
+    result.push(content.slice(lastIndex));
+  }
+  return <>{result}</>;
+}
+
+function processTextWithGlossary(text: string, glossaryData: { [key: string]: GlossaryEntry }, highlightQuery?: SearchQuery | null): React.ReactNode {
+  const parts = text.split(/(\{[^}]+\})/g);
+  return parts.map((part, index) => {
+    if (part.startsWith('{') && part.endsWith('}')) {
+      const key = part.slice(1, -1);
+      const glossaryEntry = glossaryData[key];
+      const displayLabel = glossaryEntry ? glossaryEntry.term : key;
+      return (
+        <Term key={index} termKey={key} glossaryData={glossaryData}>
+          {renderHighlightedText(displayLabel, highlightQuery)}
+        </Term>
+      );
+    }
+    return <span key={index}>{renderHighlightedText(part, highlightQuery)}</span>;
+  });
+}
+
+function processChildren(children: React.ReactNode, glossaryData: { [key: string]: GlossaryEntry }, highlightQuery?: SearchQuery | null): React.ReactNode {
+  if (typeof children === 'string') {
+    return processTextWithGlossary(children, glossaryData, highlightQuery);
+  }
+  if (Array.isArray(children)) {
+    return children.map((child, index) => {
+      if (typeof child === 'string') {
+        return <React.Fragment key={index}>{processTextWithGlossary(child, glossaryData, highlightQuery)}</React.Fragment>;
+      }
+      return child;
     });
   }
+  return children;
+}
 
-  // Function to render highlighted text
-  const renderHighlightedText = (content: string): React.ReactNode => {
-    if (!highlightQuery || !content) return content;
+import { ImgHTMLAttributes } from 'react';
+// ...existing code...
 
-    const searchMatches = findMatches(
-      content,
-      highlightQuery.queryText,
-      highlightQuery.options,
-      highlightQuery.variants
-    );
-
-    if (searchMatches.length === 0) return content;
-
-    const result: React.ReactNode[] = [];
-    let lastIndex = 0;
-
-    searchMatches.forEach((match, i) => {
-      // Add text before match
-      if (match.start > lastIndex) {
-        result.push(content.slice(lastIndex, match.start));
-      }
-
-      // Add highlighted match
-      result.push(
-        <span key={`${i}-match`} className="bg-yellow-200 text-gray-900 font-semibold rounded-sm px-0.5">
-          {content.slice(match.start, match.end)}
-        </span>
-      );
-
-      lastIndex = match.end;
-    });
-
-    // Add remaining text
-    if (lastIndex < content.length) {
-      result.push(content.slice(lastIndex));
-    }
-
-    return <>{result}</>;
-  };
-
-  // Custom components for ReactMarkdown
-  const components = {
-    // Override text rendering to handle glossary terms and highlighting
+function getMarkdownComponents(glossaryData: { [key: string]: GlossaryEntry }, highlightQuery?: SearchQuery | null) {
+  return {
     p: ({ children }: { children?: React.ReactNode }) => {
-      // Filter out empty paragraphs (caused by blank lines in source)
       if (!children || (typeof children === 'string' && !children.trim())) {
         return null;
       }
-      return <p className="leading-relaxed mb-1 last:mb-0">{processChildren(children)}</p>;
+      return <p className="leading-relaxed mb-1 last:mb-0">{processChildren(children, glossaryData, highlightQuery)}</p>;
     },
     h1: ({ children }: { children?: React.ReactNode }) => (
-      <h1 className="text-2xl font-bold mb-1 mt-2 first:mt-0">{processChildren(children)}</h1>
+      <h1 className="text-2xl font-bold mb-1 mt-2 first:mt-0">{processChildren(children, glossaryData, highlightQuery)}</h1>
     ),
     h2: ({ children }: { children?: React.ReactNode }) => (
-      <h2 className="text-xl font-bold mb-1 mt-2 first:mt-0">{processChildren(children)}</h2>
+      <h2 className="text-xl font-bold mb-1 mt-2 first:mt-0">{processChildren(children, glossaryData, highlightQuery)}</h2>
     ),
     h3: ({ children }: { children?: React.ReactNode }) => (
-      <h3 className="text-lg font-bold mb-1 mt-1 first:mt-0">{processChildren(children)}</h3>
+      <h3 className="text-lg font-bold mb-1 mt-1 first:mt-0">{processChildren(children, glossaryData, highlightQuery)}</h3>
     ),
     h4: ({ children }: { children?: React.ReactNode }) => (
-      <h4 className="text-base font-bold mb-1 mt-1 first:mt-0">{processChildren(children)}</h4>
+      <h4 className="text-base font-bold mb-1 mt-1 first:mt-0">{processChildren(children, glossaryData, highlightQuery)}</h4>
     ),
     h5: ({ children }: { children?: React.ReactNode }) => (
-      <h5 className="text-sm font-bold mb-1 mt-1 first:mt-0">{processChildren(children)}</h5>
+      <h5 className="text-sm font-bold mb-1 mt-1 first:mt-0">{processChildren(children, glossaryData, highlightQuery)}</h5>
     ),
     h6: ({ children }: { children?: React.ReactNode }) => (
-      <h6 className="text-xs font-bold mb-1 mt-1 first:mt-0">{processChildren(children)}</h6>
+      <h6 className="text-xs font-bold mb-1 mt-1 first:mt-0">{processChildren(children, glossaryData, highlightQuery)}</h6>
     ),
     strong: ({ children }: { children?: React.ReactNode }) => (
-      <strong className="font-bold">{processChildren(children)}</strong>
+      <strong className="font-bold">{processChildren(children, glossaryData, highlightQuery)}</strong>
     ),
     em: ({ children }: { children?: React.ReactNode }) => (
-      <em className="italic">{processChildren(children)}</em>
+      <em className="italic">{processChildren(children, glossaryData, highlightQuery)}</em>
     ),
     ul: ({ children }: { children?: React.ReactNode }) => (
       <ul className="list-disc list-inside mb-1 last:mb-0">{children}</ul>
@@ -118,7 +125,7 @@ export default function MarkdownRenderer({ text, glossaryData, highlightQuery }:
       <ol className="list-decimal list-inside mb-1 last:mb-0">{children}</ol>
     ),
     li: ({ children }: { children?: React.ReactNode }) => (
-      <li className="leading-relaxed mb-0">{processChildren(children)}</li>
+      <li className="leading-relaxed mb-0">{processChildren(children, glossaryData, highlightQuery)}</li>
     ),
     a: ({ href, children }: { href?: string; children?: React.ReactNode }) => (
       <a 
@@ -127,69 +134,33 @@ export default function MarkdownRenderer({ text, glossaryData, highlightQuery }:
         target="_blank" 
         rel="noopener noreferrer"
       >
-        {processChildren(children)}
+        {processChildren(children, glossaryData, highlightQuery)}
       </a>
     ),
-    img: ({ src, alt }: { src?: string; alt?: string }) => {
-      if (!src) return null;
-      // For external images or local images in markdown
-      // Using standard img for flexibility with markdown image sources
+    img: (props: ImgHTMLAttributes<HTMLImageElement>) => {
+      if (!props.src) return null;
       // eslint-disable-next-line @next/next/no-img-element
       return (
-        <img 
-          src={src} 
-          alt={alt || ''} 
-          className="max-w-full h-auto rounded-lg my-4"
+        <img
+          {...props}
+          className={['max-w-full h-auto rounded-lg my-4', props.className].filter(Boolean).join(' ')}
         />
       );
     },
   };
+}
 
-  // Process children to handle glossary terms and highlighting
-  function processChildren(children: React.ReactNode): React.ReactNode {
-    if (typeof children === 'string') {
-      return processTextWithGlossary(children);
-    }
-    
-    if (Array.isArray(children)) {
-      return children.map((child, index) => {
-        if (typeof child === 'string') {
-          return <React.Fragment key={index}>{processTextWithGlossary(child)}</React.Fragment>;
-        }
-        return child;
-      });
-    }
-    
-    return children;
-  }
-
-  // Process text to extract glossary terms and apply highlighting
-  function processTextWithGlossary(text: string): React.ReactNode {
-    const parts = text.split(/(\{[^}]+\})/g);
-    
-    return parts.map((part, index) => {
-      if (part.startsWith('{') && part.endsWith('}')) {
-        const key = part.slice(1, -1);
-        const glossaryEntry = glossaryData[key];
-        const displayLabel = glossaryEntry ? glossaryEntry.term : key;
-        return (
-          <Term key={index} termKey={key} glossaryData={glossaryData}>
-            {renderHighlightedText(displayLabel)}
-          </Term>
-        );
-      }
-      return <span key={index}>{renderHighlightedText(part)}</span>;
-    });
-  }
-
+// --- Main component ---
+export default function MarkdownRenderer({ text, glossaryData, highlightQuery }: MarkdownRendererProps) {
+  if (!text) return null;
   return (
-    <div className="markdown-content">
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        components={components}
+    <div class = "prose prose-sm 	prose-p:text-justify">
+      <Markdown
+        remarkPlugins={remarkPlugins}
+        components={getMarkdownComponents(glossaryData, highlightQuery)}
       >
         {text}
-      </ReactMarkdown>
+      </Markdown>
     </div>
   );
 }
