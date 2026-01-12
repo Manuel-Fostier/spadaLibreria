@@ -154,7 +154,7 @@ function getMarkdownComponents(glossaryData: { [key: string]: GlossaryEntry }, h
 export default function MarkdownRenderer({ text, glossaryData, highlightQuery }: MarkdownRendererProps) {
   if (!text) return null;
   return (
-    <div class = "prose prose-sm 	prose-p:text-justify">
+    <div className="prose-sm text-justify">
       <Markdown
         remarkPlugins={remarkPlugins}
         components={getMarkdownComponents(glossaryData, highlightQuery)}
@@ -164,10 +164,3 @@ export default function MarkdownRenderer({ text, glossaryData, highlightQuery }:
     </div>
   );
 }
-// TODO supprimer ce qui génére : 
-// @layer utilities {
-//   .prose {
-//     color: var(--tw-prose-body);
-//     max-width: 65ch;
-//   }
-// }
