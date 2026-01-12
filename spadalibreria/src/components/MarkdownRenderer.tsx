@@ -164,3 +164,10 @@ export default function MarkdownRenderer({ text, glossaryData, highlightQuery }:
     </div>
   );
 }
+// TODO supprimer ce qui génére : 
+// @layer utilities {
+//   .prose {
+//     color: var(--tw-prose-body);
+//     max-width: 65ch;
+//   }
+// }
