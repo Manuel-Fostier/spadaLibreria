@@ -88,6 +88,7 @@ export default function AnnotationDisplaySettings({ onClose }: AnnotationDisplay
                 {annotation && (
                   <ColorPicker
                     annotation={annotation}
+                    annotationKey={option.key as AnnotationKey}
                     label=""
                   />
                 )}

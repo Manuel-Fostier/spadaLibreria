@@ -3,11 +3,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Annotation } from '@/lib/annotation/Annotation';
 import { useAnnotationDisplay } from '@/contexts/AnnotationDisplayContext';
-import { AnnotationRegistry } from '@/lib/annotation/AnnotationRegistry';
+import { type AnnotationKey } from '@/lib/annotation/AnnotationRegistry';
 
 interface ColorPickerProps {
   annotation: Annotation;
   label: string;
+  annotationKey: AnnotationKey;
 }
 
 const PRESET_COLORS = [
@@ -25,11 +26,16 @@ const PRESET_COLORS = [
   { name: 'Lime', value: '#84cc16' },
 ];
 
-export default function ColorPicker({ annotation, label }: ColorPickerProps) {
+export default function ColorPicker({ annotation, annotationKey, label }: ColorPickerProps) {
   const { displayConfig, updateDisplayConfig } = useAnnotationDisplay();
   const [showPicker, setShowPicker] = useState(false);
   const pickerRef = useRef<HTMLDivElement>(null);
-  const currentColor = annotation.getChipStyle().color as string;
+  const derivedColor = displayConfig.colors?.[annotationKey] || (annotation.getChipStyle().color as string);
+  const [previewColor, setPreviewColor] = useState(derivedColor);
+
+  useEffect(() => {
+    setPreviewColor(derivedColor);
+  }, [derivedColor]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -49,23 +55,15 @@ export default function ColorPicker({ annotation, label }: ColorPickerProps) {
 
   const handleColorChange = (color: string) => {
     annotation.setStyle(color);
-    
-    // Find which annotation key this is by checking the instance
-    const annotationKey = Array.from(AnnotationRegistry.getAllAnnotations().entries()).find(
-      ([, inst]) => inst === annotation
-    )?.[0];
-    
-    // Update context state to keep it in sync with the instance
-    if (annotationKey) {
-      updateDisplayConfig({
-        ...displayConfig,
-        colors: {
-          ...displayConfig.colors,
-          [annotationKey]: color,
-        },
-      });
-    }
-    
+    setPreviewColor(color);
+
+    updateDisplayConfig({
+      colors: {
+        ...displayConfig.colors,
+        [annotationKey]: color,
+      },
+    });
+
     setShowPicker(false);
   };
 
@@ -78,7 +76,7 @@ export default function ColorPicker({ annotation, label }: ColorPickerProps) {
         type="button"
         onClick={() => setShowPicker(!showPicker)}
         className="w-8 h-8 rounded border-2 border-gray-300 hover:border-gray-400 transition-colors shadow-sm"
-        style={{ backgroundColor: currentColor }}
+        style={{ backgroundColor: previewColor }}
         title="Choisir une couleur"
       />
       
@@ -93,7 +91,7 @@ export default function ColorPicker({ annotation, label }: ColorPickerProps) {
                 type="button"
                 onClick={() => handleColorChange(preset.value)}
                 className={`w-7 h-7 rounded border-2 transition-all hover:scale-110 ${
-                  currentColor === preset.value ? 'border-gray-800 ring-2 ring-offset-1 ring-gray-400' : 'border-gray-200'
+                  previewColor === preset.value ? 'border-gray-800 ring-2 ring-offset-1 ring-gray-400' : 'border-gray-200'
                 }`}
                 style={{ backgroundColor: preset.value }}
                 title={preset.name}
@@ -105,7 +103,7 @@ export default function ColorPicker({ annotation, label }: ColorPickerProps) {
           <div className="flex items-center gap-2 pt-2 border-t border-gray-100">
             <input
               type="color"
-              value={currentColor}
+              value={previewColor}
               onChange={(e) => handleColorChange(e.target.value)}
               className="w-8 h-8 rounded border-2 border-gray-300 cursor-pointer"
               title="Couleur personnalisée"
