@@ -5,7 +5,7 @@
 echo "🎭 Spada Libreria - Setup"
 echo "=========================="
 
-cd spadalibreria || { echo "❌ Le répertoire spadaliibreria n'existe pas."; exit 1; }
+cd spadalibreria || { echo "❌ Le répertoire spadalibreria n'existe pas."; exit 1; }
 
 # Vérifier si Node.js est installé
 if ! command -v node &> /dev/null; then
