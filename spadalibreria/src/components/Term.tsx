@@ -31,7 +31,16 @@ export default function Term({ termKey, children, glossaryData }: TermProps) {
   // Get the annotation instance for this term based on its type
   const annotationType = data ? mapTermTypeToAnnotation(data.type) : 'techniques';
   const annotation = getAnnotation(annotationType);
-  const termColor = annotation?.getTextStyle().color as string || '#6366f1';
+
+  // Track color in state to react to annotation color changes
+  const [termColor, setTermColor] = useState<string>(
+    annotation?.getTextStyle().color as string || '#6366f1'
+  );
+
+  useEffect(() => {
+    setTermColor(annotation?.getTextStyle().color as string || '#6366f1');
+    // Only update when annotation or its style changes
+  }, [annotation, annotation?.getTextStyle().color]);
 
   useEffect(() => {
     if (showTooltip && spanRef.current) {

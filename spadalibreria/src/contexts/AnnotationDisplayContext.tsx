@@ -32,7 +32,7 @@ interface AnnotationDisplayContextValue {
   getAnnotation: (key: AnnotationKey) => ReturnType<typeof AnnotationRegistry.getAnnotation>;
 }
 
-const AnnotationDisplayContext = createContext<AnnotationDisplayContextValue | undefined>(undefined);
+export const AnnotationDisplayContext = createContext<AnnotationDisplayContextValue | undefined>(undefined);
 
 const syncConfigToAnnotations = (config: AnnotationDisplay) => {
   const keys: AnnotationKey[] = [
