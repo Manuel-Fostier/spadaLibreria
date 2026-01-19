@@ -126,7 +126,7 @@ guardia\s+\w+\s+(alta|bassa)
 | `[abc]` | Un caractère parmi a, b, ou c | `[aeiou]` | n'importe quelle voyelle |
 | `[a-z]` | Un caractère dans la plage | `[a-z]` | n'importe quelle lettre minuscule |
 | `[^abc]` | Tout sauf a, b, ou c | `[^aeiou]` | n'importe quelle consonne |
-| `\|` | OU logique | `chat\|chien` | "chat" ou "chien" |
+| `|` | OU logique | `chat|chien` | "chat" ou "chien" |
 | `()` | Groupe | `(ab)+` | "ab", "abab", "ababab" |
 | `\b` | Limite de mot | `\bword\b` | "word" (mot entier) |
 | `\s` | Espace blanc | `\s+` | un ou plusieurs espaces |
@@ -146,7 +146,7 @@ Si vous voulez rechercher un caractère spécial littéralement, utilisez `\` de
 | Astérisque | `\*` | "*" |
 | Plus | `\+` | "+" |
 | Question | `\?` | "?" |
-| Barre verticale | `\|` | "\|" |
+| Barre verticale | `\|` | "|" |
 | Backslash | `\\` | "\" |
 
 Exemple : pour trouver "3.5" littéralement :

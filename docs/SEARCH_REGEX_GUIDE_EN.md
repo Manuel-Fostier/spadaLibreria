@@ -126,7 +126,7 @@ guardia\s+\w+\s+(alta|bassa)
 | `[abc]` | One character among a, b, or c | `[aeiou]` | any vowel |
 | `[a-z]` | One character in range | `[a-z]` | any lowercase letter |
 | `[^abc]` | Anything except a, b, or c | `[^aeiou]` | any consonant |
-| `\|` | Logical OR | `cat\|dog` | "cat" or "dog" |
+| `|` | Logical OR | `cat|dog` | "cat" or "dog" |
 | `()` | Group | `(ab)+` | "ab", "abab", "ababab" |
 | `\b` | Word boundary | `\bword\b` | "word" (whole word) |
 | `\s` | Whitespace | `\s+` | one or more spaces |
@@ -146,7 +146,7 @@ To search for a special character literally, use `\` before it:
 | Asterisk | `\*` | "*" |
 | Plus | `\+` | "+" |
 | Question mark | `\?` | "?" |
-| Pipe | `\|` | "\|" |
+| Pipe | `\|` | "|" |
 | Backslash | `\\` | "\" |
 
 Example: to find "3.5" literally:
