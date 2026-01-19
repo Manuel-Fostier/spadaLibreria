@@ -63,7 +63,25 @@ npm run dev      # Démarre le serveur de développement (http://localhost:3000)
 npm run build    # Compile l'application pour la production
 npm run start    # Lance l'application en mode production
 npm run lint     # Vérifie la qualité du code
+npm run test     # Lance les tests unitaires
 ```
+
+## Fonctionnalités
+
+### Recherche avancée
+
+L'application dispose d'un moteur de recherche avancé supportant :
+- Recherche par mots-clés dans tous les traités
+- Recherche sensible à la casse
+- Recherche de mots entiers
+- **Recherche par expressions régulières (regex)** pour des recherches complexes
+
+📖 **[Guide de recherche avec expressions régulières](docs/SEARCH_REGEX_GUIDE.md)** ([English version](docs/SEARCH_REGEX_GUIDE_EN.md))
+
+Le guide regex explique notamment comment :
+- Rechercher des variantes orthographiques (ex: "coda lunga" ET "coda longa")
+- Utiliser les caractères spéciaux pour des recherches avancées
+- Rechercher avec des patterns complexes
 
 ## Ajouter un nouveau traité
 
