@@ -6,5 +6,5 @@ module.exports = {
       '\\.ya?ml$': '<rootDir>/src/__mocks__/yamlMock.js',
     },
   setupFilesAfterEnv: ['@testing-library/jest-dom'],
-  testPathIgnorePatterns: ['/node_modules/', '/.next/'],
+  testPathIgnorePatterns: ['/node_modules/', '/.next/', '/__mocks__/'],
 };
