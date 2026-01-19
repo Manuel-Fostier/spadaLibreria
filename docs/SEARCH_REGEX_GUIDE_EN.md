@@ -57,9 +57,9 @@ coda\slunga
 
 #### Find "mandritto" and "mandritti"
 ```
-mandritti?
+mandritt[oi]
 ```
-- `?` means "zero or one time"
+- `[oi]` matches one character, either "o" or "i"
 - Will find: "mandritt**o**" and "mandritt**i**"
 
 #### Find "spada", "spade", "spadone"
@@ -164,11 +164,13 @@ Will find: "coda lunga", "coda longa", "coda alta", "coda bassa"
 
 ### Search for all variations of "mandritto"
 ```
-mandritto?|mandritti
-```
-or more simply:
-```
 mandritt[oi]
+```
+- Will find: "mandritto" and "mandritti"
+
+Or with alternation:
+```
+mandritto|mandritti
 ```
 
 ### Search for strikes to the head
