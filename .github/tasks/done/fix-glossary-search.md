@@ -341,14 +341,14 @@ Run the tests again. All tests should now pass.
 - [x] Phase 2, Step 2: Update buildSearchIndex to use expandGlossaryTerms
 - [x] Phase 2, Step 3: Fix test file to use chapterReference.chapterId
 - [x] Phase 2, Step 4: Fix test case sensitivity issues (Ready for final test run)
-- [ ] All existing tests pass
-- [ ] 8 new glossary expansion tests pass
-- [ ] Manual search for "Coda Longa e Stretta" finds results
-- [ ] Manual search for partial term "Coda Longa" finds multiple guards
-- [ ] Search highlighting displays correctly on glossary terms
-- [ ] Case-insensitive search works on expanded terms
-- [ ] Regex search works on expanded terms
-- [ ] Whole word matching works on expanded terms
+- [x] All existing tests pass
+- [x] 8 new glossary expansion tests pass
+- [x] Manual search for "Coda Longa e Stretta" finds results
+- [x] Manual search for partial term "Coda Longa" finds multiple guards
+- [x] Search highlighting displays correctly on glossary terms
+- [x] Case-insensitive search works on expanded terms
+- [x] Regex search works on expanded terms
+- [x] Whole word matching works on expanded terms
 
 ## Implementation Status
 
