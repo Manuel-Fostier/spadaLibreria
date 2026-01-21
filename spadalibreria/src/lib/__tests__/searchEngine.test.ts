@@ -221,6 +221,34 @@ describe('performSearch (executeSearch + createSearchQuery)', () => {
       expect(hasLonga).toBe(true);
     });
 
+    it('should match "coda lunga" OR "coda longa" with "." (any single character)', () => {
+      const options: SearchOptions = {
+        matchCase: false,
+        matchWholeWord: false,
+        useRegex: true,
+        includeVariants: false,
+        includeCrossLanguage: false
+      };
+
+      // Regex using "." to match any character in the position of "u" or "o"
+      const query = createSearchQuery('coda l.nga', options, searchIndex);
+      const results = executeSearch(searchIndex, query);
+
+      expect(results.results.length).toBeGreaterThan(0);
+      
+      // Should match both "coda lunga" and "coda longa" since "." matches any character
+      // Section 1 has "coda lunga", Section 2 has "coda longa"
+      expect(results.results.length).toBeGreaterThanOrEqual(2);
+      
+      const allPreviews = results.results.map(r => r.preview.toLowerCase()).join(' ');
+      const hasLunga = allPreviews.includes('lunga');
+      const hasLonga = allPreviews.includes('longa');
+      
+      // Both variants should be found
+      expect(hasLunga).toBe(true);
+      expect(hasLonga).toBe(true);
+    });
+
     it('should support alternation with | operator', () => {
       const options: SearchOptions = {
         matchCase: false,

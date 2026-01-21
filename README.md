@@ -49,10 +49,13 @@ start http://localhost:3000
 Si vous préférez un contrôle manuel ou si vous êtes sous Windows :
 
 ```bash
-# 1. Installer les dépendances
+# 1. déplacement dans le dossier du projet
+cd spadalibreria 
+
+# 2. Installer les dépendances
 npm install
 
-# 2. Lancer le serveur de développement
+# 3. Lancer le serveur de développement
 npm run dev
 ```
 
