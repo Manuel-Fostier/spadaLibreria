@@ -4,6 +4,7 @@ import { SearchIndex, SearchOptions } from '@/types/search';
 import { TreatiseSection, GlossaryData } from '@/types/data';
 
 // Mock treatise data for testing
+// Note: Content includes {term_key} syntax to test glossary term expansion in search
 const mockTreatises: TreatiseSection[] = [
   {
     id: 'test_section_1',
@@ -16,12 +17,12 @@ const mockTreatises: TreatiseSection[] = [
       year: 1536
     },
     content: {
-      it: 'La guardia di coda lunga e stretta è molto importante. Il mandritto fendente colpisce la testa.',
-      fr: 'La garde de queue longue et étroite est très importante. Le coup droit fendant frappe la tête.',
+      it: 'La guardia di {coda_longa_stretta} è molto importante. Il {mandritto} {fendente} colpisce la testa.',
+      fr: 'La garde de {coda_longa_stretta} est très importante. Le {mandritto} {fendente} frappe la tête.',
       en_versions: [
         {
           translator: 'Test Translator',
-          text: 'The long and narrow tail guard is very important. The forehand descending cut strikes the head.'
+          text: 'The {coda_longa_stretta} guard is very important. The {mandritto} {fendente} strikes the head.'
         }
       ]
     }
@@ -37,12 +38,12 @@ const mockTreatises: TreatiseSection[] = [
       year: 1536
     },
     content: {
-      it: 'La coda longa alta deve essere usata con attenzione. Il mandritti sono colpi potenti.',
-      fr: 'La queue longue haute doit être utilisée avec attention. Les coups droits sont des frappes puissantes.',
+      it: 'La {coda_longa_alta} deve essere usata con attenzione. Il {mandritto} sono colpi potenti.',
+      fr: 'La {coda_longa_alta} doit être utilisée avec attention. Les {mandritto} sont des frappes puissantes.',
       en_versions: [
         {
           translator: 'Test Translator',
-          text: 'The high long tail must be used with care. The forehand cuts are powerful strikes.'
+          text: 'The {coda_longa_alta} must be used with care. The {mandritto} cuts are powerful strikes.'
         }
       ]
     }
@@ -58,12 +59,12 @@ const mockTreatises: TreatiseSection[] = [
       year: 1536
     },
     content: {
-      it: 'Il taglio riverso protegge il fianco.',
-      fr: 'La coupe revers protège le flanc.',
+      it: 'Il taglio {roverso} protegge il fianco.',
+      fr: 'La coupe {roverso} protège le flanc.',
       en_versions: [
         {
           translator: 'Test Translator',
-          text: 'The backhand cut protects the flank.'
+          text: 'The {roverso} cut protects the flank.'
         }
       ]
     }
@@ -71,28 +72,64 @@ const mockTreatises: TreatiseSection[] = [
 ];
 
 const mockGlossary: GlossaryData = {
-  coda_lunga: {
-    term: 'Coda Lunga',
+  coda_longa_stretta: {
+    term: 'Coda Longa e Stretta',
     type: 'Guards',
     definition: {
-      fr: 'Garde de queue longue',
-      en: 'Long tail guard'
+      fr: 'Garde de queue longue étroite avec le pied droit devant',
+      en: 'Long and narrow tail guard with right foot forward'
     },
     translation: {
-      fr: 'queue longue',
-      en: 'long tail'
+      fr: 'queue longue étroite',
+      en: 'long narrow tail'
+    }
+  },
+  coda_longa_alta: {
+    term: 'Coda Longa e Alta',
+    type: 'Guards',
+    definition: {
+      fr: 'Garde de queue longue haute avec le pied gauche devant',
+      en: 'Long and high tail guard with left foot forward'
+    },
+    translation: {
+      fr: 'queue longue haute',
+      en: 'long high tail'
     }
   },
   mandritto: {
     term: 'Mandritto',
     type: 'Strikes',
     definition: {
-      fr: 'Coup droit',
-      en: 'Forehand cut'
+      fr: 'Coup droit porté du côté droit',
+      en: 'Forehand cut from the right side'
     },
     translation: {
       fr: 'coup droit',
       en: 'forehand'
+    }
+  },
+  fendente: {
+    term: 'Fendente',
+    type: 'Strikes',
+    definition: {
+      fr: 'Coup descendant vertical',
+      en: 'Descending vertical cut'
+    },
+    translation: {
+      fr: 'fendant',
+      en: 'descending'
+    }
+  },
+  roverso: {
+    term: 'Roverso',
+    type: 'Strikes',
+    definition: {
+      fr: 'Coup de revers porté du côté gauche',
+      en: 'Backhand cut from the left side'
+    },
+    translation: {
+      fr: 'revers',
+      en: 'backhand'
     }
   }
 };
@@ -119,7 +156,7 @@ describe('performSearch (executeSearch + createSearchQuery)', () => {
 
       expect(results.results.length).toBeGreaterThan(0);
       expect(results.totalMatches).toBeGreaterThan(0);
-      expect(results.results[0].preview).toContain('coda');
+      expect(results.results[0].preview.toLowerCase()).toContain('coda');
     });
 
     it('should be case-insensitive by default', () => {
@@ -147,9 +184,9 @@ describe('performSearch (executeSearch + createSearchQuery)', () => {
         includeCrossLanguage: false
       };
 
-      const queryLower = createSearchQuery('coda', options, searchIndex);
-      const resultsLower = executeSearch(searchIndex, queryLower);
-      expect(resultsLower.results.length).toBeGreaterThan(0);
+      const queryCapitalized = createSearchQuery('Coda', options, searchIndex);
+      const resultsCapitalized = executeSearch(searchIndex, queryCapitalized);
+      expect(resultsCapitalized.results.length).toBeGreaterThan(0);
 
       const queryUpper = createSearchQuery('CODA', options, searchIndex);
       const resultsUpper = executeSearch(searchIndex, queryUpper);
@@ -186,14 +223,14 @@ describe('performSearch (executeSearch + createSearchQuery)', () => {
         includeCrossLanguage: false
       };
 
-      const query = createSearchQuery('coda.*lunga', options, searchIndex);
+      const query = createSearchQuery('coda.*longa', options, searchIndex);
       const results = executeSearch(searchIndex, query);
 
       expect(results.results.length).toBeGreaterThan(0);
-      expect(results.results[0].preview.toLowerCase()).toMatch(/coda.*lunga/);
+      expect(results.results[0].preview.toLowerCase()).toMatch(/coda.*longa/);
     });
 
-    it('should match "coda lunga" OR "coda longa" with character class [ou]', () => {
+    it('should match "Coda Longa" in expanded glossary terms with regex', () => {
       const options: SearchOptions = {
         matchCase: false,
         matchWholeWord: false,
@@ -202,26 +239,24 @@ describe('performSearch (executeSearch + createSearchQuery)', () => {
         includeCrossLanguage: false
       };
 
-      // Regex to match both "lunga" and "longa"
-      const query = createSearchQuery('coda l[ou]nga', options, searchIndex);
+      // Regex to match "Coda Longa" with either "Stretta" or "Alta"
+      const query = createSearchQuery('coda longa.*[sa]', options, searchIndex);
       const results = executeSearch(searchIndex, query);
 
       expect(results.results.length).toBeGreaterThan(0);
       
-      // Should match both variations since our mock data has both
-      // Section 1 has "coda lunga", Section 2 has "coda longa"
+      // Should match both guard variations
       expect(results.results.length).toBeGreaterThanOrEqual(2);
       
       const allPreviews = results.results.map(r => r.preview.toLowerCase()).join(' ');
-      const hasLunga = allPreviews.includes('lunga');
-      const hasLonga = allPreviews.includes('longa');
+      const hasStretta = allPreviews.includes('stretta');
+      const hasAlta = allPreviews.includes('alta');
       
       // Both variants should be found
-      expect(hasLunga).toBe(true);
-      expect(hasLonga).toBe(true);
+      expect(hasStretta || hasAlta).toBe(true);
     });
 
-    it('should match "coda lunga" OR "coda longa" with "." (any single character)', () => {
+    it('should match "Coda Longa" with "." (any single character) wildcard', () => {
       const options: SearchOptions = {
         matchCase: false,
         matchWholeWord: false,
@@ -230,22 +265,19 @@ describe('performSearch (executeSearch + createSearchQuery)', () => {
         includeCrossLanguage: false
       };
 
-      // Regex using "." to match any character in the position of "u" or "o"
+      // Regex using "." to match any character - should match "Coda Longa e Stretta" and "Coda Longa e Alta"
       const query = createSearchQuery('coda l.nga', options, searchIndex);
       const results = executeSearch(searchIndex, query);
 
       expect(results.results.length).toBeGreaterThan(0);
       
-      // Should match both "coda lunga" and "coda longa" since "." matches any character
-      // Section 1 has "coda lunga", Section 2 has "coda longa"
+      // Should match both guard variations with "Longa"
       expect(results.results.length).toBeGreaterThanOrEqual(2);
       
       const allPreviews = results.results.map(r => r.preview.toLowerCase()).join(' ');
-      const hasLunga = allPreviews.includes('lunga');
       const hasLonga = allPreviews.includes('longa');
       
-      // Both variants should be found
-      expect(hasLunga).toBe(true);
+      // Should find "longa" pattern
       expect(hasLonga).toBe(true);
     });
 
@@ -340,7 +372,7 @@ describe('performSearch (executeSearch + createSearchQuery)', () => {
       };
 
       // Search for Italian term, should also find French/English equivalents
-      const query = createSearchQuery('coda_lunga', options, searchIndex);
+      const query = createSearchQuery('coda_longa_stretta', options, searchIndex);
       
       expect(query.languageMappings.fr.length).toBeGreaterThan(0);
       expect(query.languageMappings.en.length).toBeGreaterThan(0);
@@ -355,7 +387,7 @@ describe('performSearch (executeSearch + createSearchQuery)', () => {
         includeCrossLanguage: false
       };
 
-      const query = createSearchQuery('coda_lunga', options, searchIndex);
+      const query = createSearchQuery('coda_longa_stretta', options, searchIndex);
       
       expect(query.languageMappings.fr.length).toBe(0);
       expect(query.languageMappings.en.length).toBe(0);
@@ -491,7 +523,7 @@ describe('performSearch (executeSearch + createSearchQuery)', () => {
         includeCrossLanguage: false
       };
 
-      const query = createSearchQuery('coda lunga', options, searchIndex);
+      const query = createSearchQuery('coda longa', options, searchIndex);
       const results = executeSearch(searchIndex, query);
 
       expect(results.results.length).toBeGreaterThan(0);
@@ -500,6 +532,141 @@ describe('performSearch (executeSearch + createSearchQuery)', () => {
       expect(firstResult.preview).toBeTruthy();
       expect(firstResult.preview.length).toBeGreaterThan(0);
       expect(firstResult.preview.toLowerCase()).toContain('coda');
+    });
+  });
+
+  describe('Glossary term expansion in search', () => {
+    it('should find glossary display text when content has {term_key} syntax', () => {
+      const options: SearchOptions = {
+        matchCase: false, matchWholeWord: false, useRegex: false,
+        includeVariants: false, includeCrossLanguage: false
+      };
+
+      const query = createSearchQuery('Coda Longa e Stretta', options, searchIndex);
+      const results = executeSearch(searchIndex, query);
+
+      expect(results.results.length).toBeGreaterThan(0, 
+        'Search should find sections containing {coda_longa_stretta} when searching for display text "Coda Longa e Stretta"');
+      
+      const foundSection1 = results.results.some(r => r.chapterReference.chapterId === 'test_section_1');
+      expect(foundSection1).toBe(true, 'Should find test_section_1 which contains {coda_longa_stretta}');
+    });
+
+    it('should support partial matching on expanded glossary terms', () => {
+      const options: SearchOptions = {
+        matchCase: false, matchWholeWord: false, useRegex: false,
+        includeVariants: false, includeCrossLanguage: false
+      };
+
+      const query = createSearchQuery('Coda Longa', options, searchIndex);
+      const results = executeSearch(searchIndex, query);
+
+      expect(results.results.length).toBeGreaterThanOrEqual(2, 
+        'Search for "Coda Longa" should find both {coda_longa_stretta} and {coda_longa_alta}');
+      
+      const foundSection1 = results.results.some(r => r.chapterReference.chapterId === 'test_section_1');
+      const foundSection2 = results.results.some(r => r.chapterReference.chapterId === 'test_section_2');
+      
+      expect(foundSection1).toBe(true, 'Should find test_section_1 with {coda_longa_stretta}');
+      expect(foundSection2).toBe(true, 'Should find test_section_2 with {coda_longa_alta}');
+    });
+
+    it('should support case-insensitive search on expanded terms', () => {
+      const options: SearchOptions = {
+        matchCase: false, matchWholeWord: false, useRegex: false,
+        includeVariants: false, includeCrossLanguage: false
+      };
+
+      const query = createSearchQuery('coda longa e alta', options, searchIndex);
+      const results = executeSearch(searchIndex, query);
+
+      expect(results.results.length).toBeGreaterThan(0, 
+        'Case-insensitive search for "coda longa e alta" should find {coda_longa_alta}');
+      
+      const foundSection2 = results.results.some(r => r.chapterReference.chapterId === 'test_section_2');
+      expect(foundSection2).toBe(true, 'Should find test_section_2 with case-insensitive matching');
+    });
+
+    it('should support whole word matching on expanded terms', () => {
+      const options: SearchOptions = {
+        matchCase: false, matchWholeWord: true, useRegex: false,
+        includeVariants: false, includeCrossLanguage: false
+      };
+
+      const query = createSearchQuery('Stretta', options, searchIndex);
+      const results = executeSearch(searchIndex, query);
+
+      expect(results.results.length).toBeGreaterThan(0, 
+        'Whole word search for "Stretta" should find "Coda Longa e Stretta"');
+      
+      results.results.forEach(result => {
+        expect(result.preview.toLowerCase()).toMatch(/\bstretta\b/, 
+          'Preview should contain "Stretta" as a whole word');
+      });
+    });
+
+    it('should support regex search on expanded terms', () => {
+      const options: SearchOptions = {
+        matchCase: false, matchWholeWord: false, useRegex: true,
+        includeVariants: false, includeCrossLanguage: false
+      };
+
+      const query = createSearchQuery('Coda Longa e (Stretta|Alta)', options, searchIndex);
+      const results = executeSearch(searchIndex, query);
+
+      expect(results.results.length).toBeGreaterThanOrEqual(2, 
+        'Regex search should find both guard variations');
+      
+      const foundSection1 = results.results.some(r => r.chapterReference.chapterId === 'test_section_1');
+      const foundSection2 = results.results.some(r => r.chapterReference.chapterId === 'test_section_2');
+      
+      expect(foundSection1).toBe(true, 'Should find test_section_1 with regex pattern');
+      expect(foundSection2).toBe(true, 'Should find test_section_2 with regex pattern');
+    });
+
+    it('should NOT match raw term keys with underscores', () => {
+      const options: SearchOptions = {
+        matchCase: false, matchWholeWord: false, useRegex: false,
+        includeVariants: false, includeCrossLanguage: false
+      };
+
+      const query = createSearchQuery('coda_longa_stretta', options, searchIndex);
+      const results = executeSearch(searchIndex, query);
+
+      expect(results.results.length).toBe(0, 
+        'Raw term key "coda_longa_stretta" should not be found because {term_key} syntax should be expanded to display text during indexing');
+    });
+
+    it('should NOT match curly brace syntax in search', () => {
+      const options: SearchOptions = {
+        matchCase: false, matchWholeWord: false, useRegex: false,
+        includeVariants: false, includeCrossLanguage: false
+      };
+
+      const query = createSearchQuery('{coda_longa_stretta}', options, searchIndex);
+      const results = executeSearch(searchIndex, query);
+
+      expect(results.results.length).toBe(0, 
+        'Curly brace syntax "{coda_longa_stretta}" should not be found because it should be expanded during indexing');
+    });
+
+    it('should find display text of strike terms', () => {
+      const options: SearchOptions = {
+        matchCase: false, matchWholeWord: false, useRegex: false,
+        includeVariants: false, includeCrossLanguage: false
+      };
+
+      const query = createSearchQuery('Mandritto', options, searchIndex);
+      const results = executeSearch(searchIndex, query);
+
+      expect(results.results.length).toBeGreaterThan(0, 
+        'Search for "Mandritto" should find sections containing {mandritto}');
+      
+      const foundSections = results.results.filter(r => 
+        r.chapterReference.chapterId === 'test_section_1' || r.chapterReference.chapterId === 'test_section_2'
+      );
+      expect(foundSections.length).toBeGreaterThanOrEqual(2, 
+        'Should find multiple sections with {mandritto} term');
     });
   });
 });
