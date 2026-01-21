@@ -2,6 +2,20 @@ import { TreatiseSection, GlossaryData } from '@/types/data';
 import { SearchIndex, IndexedChapter, ChapterReference, CrossLanguageTerms, Language } from '@/types/search';
 
 /**
+ * Expands glossary term syntax {term_key} to display text from glossary
+ * Example: "{coda_longa_stretta}" → "Coda Longa e Stretta"
+ * 
+ * This ensures the search index contains the same text that users see in the UI.
+ */
+function expandGlossaryTerms(text: string, glossary: GlossaryData): string {
+  return text.replace(/\{([^}]+)\}/g, (match, key) => {
+    const entry = glossary[key];
+    // If glossary entry exists, replace with display term; otherwise keep original
+    return entry && entry.term ? entry.term : match;
+  });
+}
+
+/**
  * Builds an in-memory search index from treatise data and glossary
  * This is a synchronous operation that should be run once on app load
  * 
@@ -82,10 +96,11 @@ export function buildSearchIndex(treatises: TreatiseSection[], glossary: Glossar
     const chapterId = section.id;
     const refKey = `${treatiseFile}:${chapterId}`; // Internal key for the map
 
+    // Expand glossary terms in content before indexing
     const content: Record<Language, string> = {
-      it: section.content.it || '',
-      fr: section.content.fr || '',
-      en: section.content.en_versions?.map(v => v.text).join(' ') || ''
+      it: expandGlossaryTerms(section.content.it || '', glossary),
+      fr: expandGlossaryTerms(section.content.fr || '', glossary),
+      en: expandGlossaryTerms(section.content.en_versions?.map(v => v.text).join(' ') || '', glossary)
     };
 
     const fullText = [content.it, content.fr, content.en].join(' ').toLowerCase();
