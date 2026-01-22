@@ -4,6 +4,16 @@ Ce dossier contient l'analyse complète et les documents de travail pour résoud
 
 ## 📁 Contenu du Dossier
 
+### 0. `QUICKSTART.md` ⚡
+**Guide de démarrage rapide** - Pour commencer immédiatement.
+
+**Le document le plus important** pour agir rapidement :
+- Résumé en 30 secondes
+- Guide par profil (décideur, développeur, observateur)
+- Implémentation en 5 étapes
+- Checklist rapide
+- Pièges à éviter
+
 ### 1. `RESUME.md` 📋
 **Résumé exécutif** - Vue d'ensemble rapide du problème et de la solution recommandée.
 
@@ -79,6 +89,9 @@ Même nom "annotation" utilisé pour 2 concepts différents.
 4. Supprimer fichiers `.bkp`
 
 ## 📖 Comment Utiliser Ces Documents
+
+### Pour Démarrer Immédiatement
+→ Lire `QUICKSTART.md` (démarrage rapide)
 
 ### Pour une Vue Rapide
 → Lire `RESUME.md` (5 minutes)
