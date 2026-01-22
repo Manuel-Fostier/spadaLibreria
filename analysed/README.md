@@ -31,6 +31,23 @@ Contient :
 - Points de vérification
 - Espace pour noter les problèmes
 
+### 4. `DIAGRAMS.md` 📊
+**Diagrammes visuels** - Visualisation de la structure avant/après.
+
+Contient :
+- Arborescence actuelle vs proposée
+- Mapping des imports
+- Séparation des responsabilités
+- Architecture en couches
+
+### 5. `implementation_reference.sh` 🔧
+**Script de référence** - Script bash pour automatiser l'implémentation.
+
+⚠️ **À UTILISER AVEC PRÉCAUTION** :
+- Fourni uniquement comme référence
+- Vérifier chaque commande avant exécution
+- Suivre plutôt `CHECKLIST.md` pour plus de contrôle
+
 ## 🎯 Contexte
 
 **Issue** : "Clarification architecture"  
@@ -69,8 +86,12 @@ Même nom "annotation" utilisé pour 2 concepts différents.
 ### Pour Comprendre en Détail
 → Lire `ARCHITECTURE_CLARIFICATION.md` (15-20 minutes)
 
+### Pour Visualiser la Structure
+→ Consulter `DIAGRAMS.md` (diagrammes avant/après)
+
 ### Pour Implémenter
 → Suivre `CHECKLIST.md` étape par étape
+→ Référence : `implementation_reference.sh` (script bash)
 
 ## 📊 Statistiques
 
