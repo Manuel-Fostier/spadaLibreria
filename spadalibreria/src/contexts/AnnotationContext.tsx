@@ -12,6 +12,7 @@ import {
   Weapon, 
   WeaponType
 } from '@/lib/annotation';
+import { LocalStorage } from '@/lib/localStorage';
 
 interface AnnotationContextType {
   annotations: Map<string, Annotation>;
@@ -87,29 +88,24 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
 
   // Merge localStorage with initialAnnotations (YAML takes precedence for existing sections)
   useEffect(() => {
-    const stored = localStorage.getItem('treatise_annotations');
+    const stored = LocalStorage.getItem<Record<string, Annotation>>('treatise_annotations');
     if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        const localMap = new Map<string, Annotation>(Object.entries(parsed));
-        
-        // Merge: start with localStorage, then override with YAML annotations
-        const merged = new Map<string, Annotation>(localMap);
-        initialAnnotations.forEach((ann, key) => {
-          merged.set(key, ann);
-        });
-        
-        setAnnotations(normalizeMap(merged));
-      } catch (e) {
-        console.error('Failed to load annotations from localStorage:', e);
-      }
+      const localMap = new Map<string, Annotation>(Object.entries(stored));
+      
+      // Merge: start with localStorage, then override with YAML annotations
+      const merged = new Map<string, Annotation>(localMap);
+      initialAnnotations.forEach((ann, key) => {
+        merged.set(key, ann);
+      });
+      
+      setAnnotations(normalizeMap(merged));
     }
   }, []);
 
   // Sauvegarder dans localStorage à chaque changement
   useEffect(() => {
     const obj = Object.fromEntries(annotations);
-    localStorage.setItem('treatise_annotations', JSON.stringify(obj));
+    LocalStorage.setItem('treatise_annotations', obj);
   }, [annotations]);
 
   const setAnnotation = async (sectionId: string, annotation: Omit<Annotation, 'id'>) => {

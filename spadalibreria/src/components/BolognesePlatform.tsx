@@ -16,6 +16,7 @@ import SearchBar from './SearchBar';
 import { useSearch } from '@/contexts/SearchContext';
 import TagFilter, { FilterState, initialFilterState } from './TagFilter';
 import StatisticsModal from './StatisticsModal';
+import { LocalStorage } from '@/lib/localStorage';
 
 interface BolognesePlatformProps {
   glossaryData: { [key: string]: GlossaryEntry };
@@ -76,22 +77,19 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   // Initialize column visibility from localStorage
   const [showItalian, setShowItalian] = useState(() => {
     if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('showItalian');
-      return stored ? JSON.parse(stored) : false;
+      return LocalStorage.getItem<boolean>('showItalian') ?? false;
     }
     return false;
   });
   const [showEnglish, setShowEnglish] = useState(() => {
     if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('showEnglish');
-      return stored ? JSON.parse(stored) : false;
+      return LocalStorage.getItem<boolean>('showEnglish') ?? false;
     }
     return false;
   });
   const [showNotes, setShowNotes] = useState(() => {
     if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('showNotes');
-      return stored ? JSON.parse(stored) : false;
+      return LocalStorage.getItem<boolean>('showNotes') ?? false;
     }
     return false;
   });
@@ -125,15 +123,15 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
 
   // Persist column visibility to localStorage
   useEffect(() => {
-    localStorage.setItem('showItalian', JSON.stringify(showItalian));
+    LocalStorage.setItem('showItalian', showItalian);
   }, [showItalian]);
 
   useEffect(() => {
-    localStorage.setItem('showEnglish', JSON.stringify(showEnglish));
+    LocalStorage.setItem('showEnglish', showEnglish);
   }, [showEnglish]);
 
   useEffect(() => {
-    localStorage.setItem('showNotes', JSON.stringify(showNotes));
+    LocalStorage.setItem('showNotes', showNotes);
   }, [showNotes]);
 
   const handleTranslatorChange = (sectionId: string, translatorName: string) => {

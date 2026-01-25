@@ -3,6 +3,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useState, ReactNode } from 'react';
 import { AnnotationDisplay, AnnotationColors } from '@/types/annotationDisplay';
 import { AnnotationRegistry, type AnnotationKey } from '../lib/annotation/AnnotationRegistry';
+import { LocalStorage } from '@/lib/localStorage';
 
 const STORAGE_KEY = 'annotationDisplay';
 
@@ -63,16 +64,11 @@ export function AnnotationDisplayProvider({ children }: { children: ReactNode })
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const stored = window.localStorage.getItem(STORAGE_KEY);
+    const stored = LocalStorage.getItem<AnnotationDisplay>(STORAGE_KEY);
 
     if (stored) {
-      try {
-        const config: AnnotationDisplay = JSON.parse(stored);
-        setDisplayConfig(config);
-        syncConfigToAnnotations(config);
-      } catch (error) {
-        console.error('Failed to parse annotation display config from localStorage', error);
-      }
+      setDisplayConfig(stored);
+      syncConfigToAnnotations(stored);
     }
 
     setIsHydrated(true);
@@ -81,7 +77,7 @@ export function AnnotationDisplayProvider({ children }: { children: ReactNode })
   useEffect(() => {
     if (!isHydrated || typeof window === 'undefined') return;
 
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(displayConfig));
+    LocalStorage.setItem(STORAGE_KEY, displayConfig);
     syncConfigToAnnotations(displayConfig);
   }, [displayConfig, isHydrated]);
 

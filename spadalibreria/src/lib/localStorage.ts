@@ -45,8 +45,15 @@ export const LocalStorage = {
       const serialized = localStorage.getItem(key);
       if (!serialized) return null;
       
-      const item = JSON.parse(serialized) as StorageItem<T>;
-      return item.value;
+      const parsed = JSON.parse(serialized);
+      
+      // Check if it's wrapped format (has 'value' and 'timestamp')
+      if (parsed && typeof parsed === 'object' && 'value' in parsed && 'timestamp' in parsed) {
+        return parsed.value as T;
+      }
+      
+      // Legacy format - return as-is
+      return parsed as T;
     } catch (e) {
       console.error(`Error reading ${key} from localStorage`, e);
       return null;
