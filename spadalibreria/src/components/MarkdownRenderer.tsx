@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import React from 'react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -137,13 +138,19 @@ function getMarkdownComponents(glossaryData: { [key: string]: GlossaryEntry }, h
         {processChildren(children, glossaryData, highlightQuery)}
       </a>
     ),
-    img: (props: ImgHTMLAttributes<HTMLImageElement>) => {
-      if (!props.src) return null;
-      // eslint-disable-next-line @next/next/no-img-element
+    img: ({ src, alt, width, height, className }: ImgHTMLAttributes<HTMLImageElement>) => {
+      if (!src || typeof src !== 'string') return null;
+
+      const resolvedWidth = typeof width === 'string' ? Number.parseInt(width, 10) : width;
+      const resolvedHeight = typeof height === 'string' ? Number.parseInt(height, 10) : height;
+
       return (
-        <img
-          {...props}
-          className={['max-w-full h-auto rounded-lg my-4', props.className].filter(Boolean).join(' ')}
+        <Image
+          src={src}
+          alt={alt ?? ''}
+          width={resolvedWidth || 800}
+          height={resolvedHeight || 600}
+          className={['max-w-full h-auto rounded-lg my-4', className].filter(Boolean).join(' ')}
         />
       );
     },

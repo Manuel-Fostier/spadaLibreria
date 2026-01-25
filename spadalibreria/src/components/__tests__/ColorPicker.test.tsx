@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ColorPicker from '../ColorPicker';
@@ -60,7 +60,7 @@ function ContextWrapper({
   initialColor: string;
   children: (annotation: Annotation, setDisplayConfig: React.Dispatch<React.SetStateAction<AnnotationDisplay>>) => React.ReactNode;
 }) {
-  const annotationRef = useRef<Annotation>(new TestAnnotation(initialColor));
+  const annotationInstance = useMemo(() => new TestAnnotation(initialColor), [initialColor]);
   const [displayConfig, setDisplayConfig] = useState<AnnotationDisplay>(createDisplayConfig(annotationKey, initialColor));
 
   const updateDisplayConfig = useCallback((updates: Partial<AnnotationDisplay>) => {
@@ -83,8 +83,8 @@ function ContextWrapper({
   );
 
   return (
-    <AnnotationDisplayContext.Provider value={providerValue as any}>
-      {children(annotationRef.current, setDisplayConfig)}
+    <AnnotationDisplayContext.Provider value={providerValue}>
+      {children(annotationInstance, setDisplayConfig)}
     </AnnotationDisplayContext.Provider>
   );
 }
