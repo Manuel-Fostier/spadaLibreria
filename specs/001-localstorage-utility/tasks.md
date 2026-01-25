@@ -132,16 +132,16 @@
 
 ### Tests for Storage Monitoring (TDD - Write First)
 
-- [ ] T047 [P] [US2] Add test for isFull() method in spadalibreria/src/lib/__tests__/localStorage.test.ts
-- [ ] T048 [P] [US2] Add test for getSize() calculation accuracy in spadalibreria/src/lib/__tests__/localStorage.test.ts
-- [ ] T049 [P] [US2] Add test for warning threshold detection (80% capacity) in spadalibreria/src/lib/__tests__/localStorage.test.ts
+- [x] T047 [P] [US2] Add test for isFull() method in spadalibreria/src/lib/__tests__/localStorage.test.ts
+- [x] T048 [P] [US2] Add test for getSize() calculation accuracy in spadalibreria/src/lib/__tests__/localStorage.test.ts
+- [x] T049 [P] [US2] Add test for warning threshold detection (80% capacity) in spadalibreria/src/lib/__tests__/localStorage.test.ts
 
 ### Implementation for Storage Monitoring
 
-- [ ] T050 [US2] Enhance LocalStorage.setItem() to return warning status in spadalibreria/src/lib/localStorage.ts
-- [ ] T051 [US2] Add size check before write operation in spadalibreria/src/lib/localStorage.ts
-- [ ] T052 [US2] Calculate projected size after write in spadalibreria/src/lib/localStorage.ts
-- [ ] T053 [US2] Return warning object { success: true, warning?: string } from setItem() in spadalibreria/src/lib/localStorage.ts
+- [x] T050 [US2] Enhance LocalStorage.setItem() to return warning status in spadalibreria/src/lib/localStorage.ts
+- [x] T051 [US2] Add size check before write operation in spadalibreria/src/lib/localStorage.ts
+- [x] T052 [US2] Calculate projected size after write in spadalibreria/src/lib/localStorage.ts
+- [x] T053 [US2] Return warning object { success: true, warning?: string } from setItem() in spadalibreria/src/lib/localStorage.ts
 
 ### UI Integration for Warnings (Optional - If Requested)
 
@@ -151,7 +151,7 @@
 
 ### Verification
 
-- [ ] T057 [US2] Run storage monitoring tests: `npm test -- --testPathPattern=localStorage`
+- [x] T057 [US2] Run storage monitoring tests: `npm test -- --testPathPattern=localStorage`
 - [ ] T058 [US2] Manual test: Fill storage near capacity, verify warning appears
 - [ ] T059 [US2] Manual test: Check getSize() reports accurate storage usage
 
@@ -159,11 +159,11 @@
 
 ---
 
-## Phase 5: User Story 3 - Consistent Data Format (Priority: P3)
+## Phase 5: User Story 3 - Consistent Data Format (Priority: P3) — **Cancelled per user request**
 
 **Goal**: Ensure all storage operations use consistent wrapper with metadata for debugging
 
-**Independent Test**: Inspect localStorage in DevTools, verify all values wrapped with timestamp and version metadata
+**Status**: Skipped (T060-T069 not in scope unless reinstated)
 
 ### Tests for Data Format Consistency (TDD - Write First)
 
@@ -192,15 +192,15 @@
 
 **Purpose**: Final improvements and validation
 
-- [ ] T070 [P] Run full test suite: `npm test`
-- [ ] T071 [P] Run linting: `npm run lint`
-- [ ] T072 [P] Build verification: `npm run build`
-- [ ] T073 Update README.md with localStorage utility usage guidelines
-- [ ] T074 Update .github/copilot-instructions.md with localStorage utility best practices
-- [ ] T075 [P] Add TypeScript strict null checks verification for storage calls
-- [ ] T076 Code cleanup: Remove commented-out old localStorage code
-- [ ] T077 Run quickstart.md validation scenarios
-- [ ] T078 Verify backward compatibility: Test with browser containing old format data
+- [x] T070 [P] Run full test suite: `npm test`
+- [x] T071 [P] Run linting: `npm run lint`
+- [x] T072 [P] Build verification: `npm run build`
+- [x] T073 Update README.md with localStorage utility usage guidelines
+- [x] T074 Update .github/copilot-instructions.md with localStorage utility best practices
+- [x] T075 [P] Add TypeScript strict null checks verification for storage calls
+- [x] T076 Code cleanup: Remove commented-out old localStorage code
+- [x] T077 Run quickstart.md validation scenarios
+- [x] T078 Verify backward compatibility: Test with browser containing old format data
 
 ---
 

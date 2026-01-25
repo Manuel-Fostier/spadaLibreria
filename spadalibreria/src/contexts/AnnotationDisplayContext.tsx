@@ -58,28 +58,19 @@ const syncConfigToAnnotations = (config: AnnotationDisplay) => {
 };
 
 export function AnnotationDisplayProvider({ children }: { children: ReactNode }) {
-  const defaultConfig = createDefaultDisplayConfig();
-  const [displayConfig, setDisplayConfig] = useState<AnnotationDisplay>(defaultConfig);
-  const [isHydrated, setIsHydrated] = useState(false);
+  const [displayConfig, setDisplayConfig] = useState<AnnotationDisplay>(() => {
+    const defaults = createDefaultDisplayConfig();
+    if (typeof window === 'undefined') return defaults;
+
+    const stored = LocalStorage.getItem<AnnotationDisplay>(STORAGE_KEY);
+    return stored ?? defaults;
+  });
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const stored = LocalStorage.getItem<AnnotationDisplay>(STORAGE_KEY);
-
-    if (stored) {
-      setDisplayConfig(stored);
-      syncConfigToAnnotations(stored);
-    }
-
-    setIsHydrated(true);
-  }, []);
-
-  useEffect(() => {
-    if (!isHydrated || typeof window === 'undefined') return;
-
     LocalStorage.setItem(STORAGE_KEY, displayConfig);
     syncConfigToAnnotations(displayConfig);
-  }, [displayConfig, isHydrated]);
+  }, [displayConfig]);
 
   const updateDisplayConfig = useCallback((updates: Partial<AnnotationDisplay>) => {
     setDisplayConfig(prev => ({ ...prev, ...updates }));
@@ -93,6 +84,8 @@ export function AnnotationDisplayProvider({ children }: { children: ReactNode })
   const getAnnotation = useCallback((key: AnnotationKey) => {
     return AnnotationRegistry.getAnnotation(key);
   }, []);
+
+  const isHydrated = typeof window !== 'undefined';
 
   return (
     <AnnotationDisplayContext.Provider

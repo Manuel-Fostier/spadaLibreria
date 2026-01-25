@@ -13,27 +13,19 @@ import {
   Measure 
 } from '@/lib/annotation';
 import { useAnnotations } from '@/contexts/AnnotationContext';
-import { useAnnotationDisplay } from '@/contexts/AnnotationDisplayContext';
-import { AnnotationRegistry, type AnnotationKey } from '@/lib/annotation/AnnotationRegistry';
+import { AnnotationRegistry } from '@/lib/annotation/AnnotationRegistry';
 import MeasureProgressBar from './MeasureProgressBar';
 
-
-type TabType = 'armes' | 'gardes' | 'techniques';
-type ToggleVariant = 'armes' | 'gardes' | 'techniques' | 'strategies' | 'weaponTypes' | 'strikes' | 'targets';
 
 interface AnnotationPanelProps {
   sectionId: string;
   onClose: () => void;
-  availableLanguages?: Array<{ code: 'it' | 'fr' | 'en'; label: string; translator?: string }>;
-  sectionMeta?: { weapons: string[]; guards_mentioned?: Record<string, number>; techniques?: Record<string, number> };
 }
 
-export default function AnnotationPanel({ sectionId, onClose, availableLanguages: _availableLanguages, sectionMeta: _sectionMeta }: AnnotationPanelProps) {
+export default function AnnotationPanel({ sectionId, onClose }: AnnotationPanelProps) {
   const { getAnnotation, setAnnotation, updateAnnotation, saveToServer } = useAnnotations();
-  const { displayConfig } = useAnnotationDisplay();
   const annotation = getAnnotation(sectionId);
   
-  const [activeTab, setActiveTab] = useState<TabType>('armes');
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [panelWidth, setPanelWidth] = useState(384); // 24rem = 384px (md:w-96)
   const [isResizing, setIsResizing] = useState(false);
@@ -57,22 +49,24 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
   const panelRef = useRef<HTMLDivElement>(null);
   const resizeRef = useRef<HTMLDivElement>(null);
 
+  const previousSectionId = useRef(sectionId);
+
   // Reset editing state when section changes (Smart Scrolling safety)
   useEffect(() => {
+    if (previousSectionId.current === sectionId) return;
+    previousSectionId.current = sectionId;
+
     if (isEditing) {
-      // Show notification if user was editing when section changed
       setShowSectionChangeNotice(true);
-      // Auto-hide notification after 3 seconds
       const timer = setTimeout(() => {
         setShowSectionChangeNotice(false);
       }, 3000);
-      
-      // Cleanup timer on unmount or when section changes again
+
       return () => clearTimeout(timer);
     }
     setIsEditing(false);
     setSaveStatus('idle');
-  }, [sectionId]); // Only depend on sectionId, not isEditing
+  }, [sectionId, isEditing]);
 
   // Handle auto-save on close
   const handleClose = useCallback(async () => {
@@ -193,23 +187,6 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
     });
   };
 
-  // Get tags for current tab
-  const getCurrentTags = () => {
-    const data = isEditing ? formData : annotation;
-    if (!data) return [];
-    
-    switch (activeTab) {
-      case 'armes':
-        return (data.weapons || []).map(w => ({ key: w, label: w, type: 'weapon' as const }));
-      case 'gardes':
-        return Object.keys(data.guards_mentioned || {}).map(g => ({ key: g, label: g, type: 'guard' as const }));
-      case 'techniques':
-        return Object.keys(data.techniques || {}).map(t => ({ key: t, label: t, type: 'technique' as const }));
-      default:
-        return [];
-    }
-  };
-
   // Handle collapse with auto-save
   const handleCollapse = useCallback(async () => {
     setSaveStatus('saving');
@@ -252,15 +229,6 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
       </div>
     );
   }
-
-  const tabs: { id: TabType; label: string }[] = [
-    { id: 'armes', label: 'Armes' },
-    { id: 'gardes', label: 'Gardes' },
-    { id: 'techniques', label: 'Techniques' },
-  ];
-
-  const currentTags = getCurrentTags();
-
   return (
     <div 
       ref={panelRef}
@@ -365,7 +333,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
               </div>
               {/* Type d'arme */}
               <div>
-                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Type d'arme</h4>
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Type d&apos;arme</h4>
                 {annotation.weapon_type ? (
                   <div className="flex flex-wrap gap-2">
                     <span className="text-xs px-3 py-1.5 rounded-full border" style={AnnotationRegistry.getChipStyle('weapon_type')}>
@@ -373,7 +341,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
                     </span>
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-400 italic">Type d'arme non défini</p>
+                  <p className="text-sm text-gray-400 italic">Type d&apos;arme non défini</p>
                 )}
               </div>
 
@@ -510,7 +478,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
               {/* Type d'arme */}
               <div>
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                  Type d'arme
+                  Type d&apos;arme
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {WEAPON_TYPES.map(wt => {
@@ -768,7 +736,7 @@ export default function AnnotationPanel({ sectionId, onClose, availableLanguages
             className="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Save size={20} />
-            {isSaving ? 'Sauvegarde...' : 'Sauvegarder l\'annotation'}
+            {isSaving ? 'Sauvegarde...' : 'Sauvegarder l&apos;annotation'}
           </button>
         </div>
       </div>

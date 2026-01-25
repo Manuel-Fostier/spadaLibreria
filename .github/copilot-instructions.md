@@ -87,6 +87,13 @@ scripts/
    - Each class encapsulates its own styling (`getChipStyle()`, `getTextStyle()`) and validation logic
    - Used by `ColorPicker`, `AnnotationPanel`, and `AnnotationDisplaySettings` components
 
+6. **LocalStorage Utility**: All browser storage operations must use the centralized `@/lib/localStorage` utility:
+   - **NEVER** use `localStorage` or `window.localStorage` directly
+   - **ALWAYS** use `LocalStorage.getItem<T>()` and `LocalStorage.setItem()` from the utility
+   - The utility provides automatic error handling, type safety, and backward compatibility
+   - All stored data is wrapped in a `StorageItem<T>` structure with timestamp metadata
+   - Storage operations gracefully handle quota exceeded, parse errors, and unavailability
+
 ## Commands
 
 ### Node.js / Next.js
@@ -113,6 +120,8 @@ uv run scripts/yaml_annotate.py  # Run the annotation script
 - Use Tailwind CSS for styling (no CSS modules)
 - Follow React functional component patterns with hooks
 - Use absolute imports with `@/` prefix (e.g., `@/lib/dataLoader`)
+- **Storage**: Use `LocalStorage` utility from `@/lib/localStorage` (never direct `localStorage` access)
+- **Null Safety**: Always provide default values with nullish coalescing (`??`) for storage reads
 
 ### Python
 - Use Python 3.13+ features
@@ -213,7 +222,20 @@ uv run extract-book marozzo --pages "34-102"
 
 ## Testing
 
-No test framework is currently set up. When adding tests, prefer using Jest with React Testing Library for JavaScript/TypeScript, and pytest for Python.
+Jest with React Testing Library is configured for JavaScript/TypeScript. Use pytest for Python scripts.
+
+### Running Tests
+```bash
+npm test                  # Run all tests
+npm test -- --watch       # Watch mode for development
+npm test -- --testPathPattern=fileName  # Run specific test file
+```
+
+### LocalStorage Testing
+- Tests use `jest-localstorage-mock` for localStorage mocking
+- `setupTests.js` automatically clears localStorage before each test
+- Always test both success and error scenarios (quota exceeded, corrupted data)
+- Verify backward compatibility with legacy data formats
 
 ## Important Notes
 

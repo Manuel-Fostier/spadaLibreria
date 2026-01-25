@@ -7,36 +7,41 @@ describe('LocalStorage', () => {
 
   describe('setItem and getItem', () => {
     it('stores and retrieves a value', () => {
-      LocalStorage.setItem('test', { foo: 'bar' });
+      const status = LocalStorage.setItem('test', { foo: 'bar' });
       const result = LocalStorage.getItem<{ foo: string }>('test');
+      expect(status).toEqual({ success: true });
       expect(result).toEqual({ foo: 'bar' });
     });
 
     it('wraps value with timestamp', () => {
-      LocalStorage.setItem('test', 'value');
+      const status = LocalStorage.setItem('test', 'value');
       const raw = localStorage.getItem('test');
       const parsed = JSON.parse(raw!);
+      expect(status).toEqual({ success: true });
       expect(parsed).toHaveProperty('value', 'value');
       expect(parsed).toHaveProperty('timestamp');
       expect(typeof parsed.timestamp).toBe('number');
     });
 
     it('stores boolean values correctly', () => {
-      LocalStorage.setItem('bool', true);
+      const status = LocalStorage.setItem('bool', true);
       const result = LocalStorage.getItem<boolean>('bool');
+      expect(status).toEqual({ success: true });
       expect(result).toBe(true);
     });
 
     it('stores null values correctly', () => {
-      LocalStorage.setItem('null', null);
+      const status = LocalStorage.setItem('null', null);
       const result = LocalStorage.getItem<null>('null');
+      expect(status).toEqual({ success: true });
       expect(result).toBeNull();
     });
 
     it('stores arrays correctly', () => {
       const arr = [1, 2, 3];
-      LocalStorage.setItem('array', arr);
+      const status = LocalStorage.setItem('array', arr);
       const result = LocalStorage.getItem<number[]>('array');
+      expect(status).toEqual({ success: true });
       expect(result).toEqual([1, 2, 3]);
     });
   });
@@ -89,9 +94,7 @@ describe('LocalStorage', () => {
 
     it('throws QuotaExceededError when storage full', () => {
       jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
-        const error: any = new Error('QuotaExceededError');
-        error.name = 'QuotaExceededError';
-        throw error;
+        throw new DOMException('QuotaExceededError', 'QuotaExceededError');
       });
 
       expect(() => LocalStorage.setItem('test', 'data')).toThrow();
@@ -102,14 +105,12 @@ describe('LocalStorage', () => {
     it('logs error when quota exceeded', () => {
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
       jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
-        const error: any = new Error('QuotaExceededError');
-        error.name = 'QuotaExceededError';
-        throw error;
+        throw new DOMException('QuotaExceededError', 'QuotaExceededError');
       });
 
       try {
         LocalStorage.setItem('test', 'data');
-      } catch (e) {
+      } catch {
         // Expected
       }
 
@@ -169,6 +170,31 @@ describe('LocalStorage', () => {
     it('returns false for small storage', () => {
       LocalStorage.setItem('test', 'small value');
       expect(LocalStorage.isFull()).toBe(false);
+    });
+
+    it('returns true when above warning threshold', () => {
+      const spy = jest.spyOn(LocalStorage, 'getSize').mockReturnValue(4 * 1024 * 1024 * 0.81);
+      expect(LocalStorage.isFull()).toBe(true);
+      spy.mockRestore();
+    });
+  });
+
+  describe('size accuracy and warnings', () => {
+    it('calculates deterministic size based on serialized value', () => {
+      const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(1234567890);
+      LocalStorage.setItem('sizeKey', 'abc');
+      const expectedSerialized = JSON.stringify({ value: 'abc', timestamp: 1234567890 });
+      const expectedSize = (expectedSerialized.length + 'sizeKey'.length) * 2;
+      expect(LocalStorage.getSize()).toBe(expectedSize);
+      nowSpy.mockRestore();
+    });
+
+    it('returns warning when projected size exceeds threshold but below cap', () => {
+      const sizeSpy = jest.spyOn(LocalStorage, 'getSize').mockReturnValue(4 * 1024 * 1024 * 0.8);
+      const status = LocalStorage.setItem('warnKey', 'value');
+      expect(status.success).toBe(true);
+      expect(status.warning).toBeDefined();
+      sizeSpy.mockRestore();
     });
   });
 });

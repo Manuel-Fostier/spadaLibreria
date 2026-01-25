@@ -570,7 +570,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
             {filteredContent.length === 0 && results && (
               <div className="text-center py-12 text-gray-500">
                 <p className="text-lg font-medium">Aucun résultat trouvé</p>
-                <p className="text-sm">Essayez d'autres termes de recherche.</p>
+                <p className="text-sm">Essayez d&apos;autres termes de recherche.</p>
               </div>
             )}
 

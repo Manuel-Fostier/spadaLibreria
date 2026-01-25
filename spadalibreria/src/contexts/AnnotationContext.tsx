@@ -32,57 +32,47 @@ interface AnnotationContextType {
   isDirty: boolean;
 }
 
+const normalizeAnnotation = (ann: Annotation): Annotation => {
+  const validMeasures = Array.isArray(ann.measures)
+    ? Array.from(new Set(ann.measures.filter((m): m is Measure => MEASURES.includes(m as Measure))))
+    : [];
+
+  const validStrategies = Array.isArray(ann.strategy)
+    ? Array.from(new Set(ann.strategy.filter((s): s is Strategy => STRATEGIES.includes(s as Strategy))))
+    : [];
+
+  const validWeapons = Array.isArray(ann.weapons)
+    ? Array.from(new Set(ann.weapons.filter((w): w is Weapon => WEAPONS.includes(w as Weapon))))
+    : [];
+
+  const validWeaponTypes = ann.weapon_type && WEAPON_TYPES.includes(ann.weapon_type as WeaponType)
+    ? ann.weapon_type as WeaponType
+    : null;
+
+  return {
+    ...ann,
+    measures: validMeasures,
+    strategy: validStrategies,
+    weapons: validWeapons,
+    weapon_type: validWeaponTypes,
+    guards_mentioned: ann.guards_mentioned || null,
+    techniques: ann.techniques || null,
+    strikes: ann.strikes || null,
+    targets: ann.targets || null,
+  };
+};
+
+const normalizeMap = (map: Map<string, Annotation>): Map<string, Annotation> => {
+  const newMap = new Map<string, Annotation>();
+  map.forEach((ann, key) => {
+    newMap.set(key, normalizeAnnotation(ann));
+  });
+  return newMap;
+};
+
 const AnnotationContext = createContext<AnnotationContextType | undefined>(undefined);
 
 export function AnnotationProvider({ children, initialAnnotations }: { children: ReactNode, initialAnnotations: Map<string, Annotation> }) {
-  const normalizeAnnotation = (ann: Annotation): Annotation => {
-    // Validate measures
-    const validMeasures = Array.isArray(ann.measures)
-      ? Array.from(new Set(
-          ann.measures.filter((m): m is Measure => MEASURES.includes(m as Measure))
-        ))
-      : [];
-    
-    // Validate strategies
-    const validStrategies = Array.isArray(ann.strategy)
-      ? Array.from(new Set(
-          ann.strategy.filter((s): s is Strategy => STRATEGIES.includes(s as Strategy))
-        ))
-      : [];
-    
-    // Validate weapons
-    const validWeapons = Array.isArray(ann.weapons)
-      ? Array.from(new Set(
-          ann.weapons.filter((w): w is Weapon => WEAPONS.includes(w as Weapon))
-        ))
-      : [];
-    
-    // Validate weapon_type
-    const validWeaponTypes = ann.weapon_type && WEAPON_TYPES.includes(ann.weapon_type as WeaponType)
-      ? ann.weapon_type as WeaponType
-      : null;
-    
-    return { 
-      ...ann, 
-      measures: validMeasures,
-      strategy: validStrategies,
-      weapons: validWeapons,
-      weapon_type: validWeaponTypes,
-      guards_mentioned: ann.guards_mentioned || null,
-      techniques: ann.techniques || null,
-      strikes: ann.strikes || null,
-      targets: ann.targets || null
-    };
-  };
-
-  const normalizeMap = (map: Map<string, Annotation>): Map<string, Annotation> => {
-    const newMap = new Map<string, Annotation>();
-    map.forEach((ann, key) => {
-      newMap.set(key, normalizeAnnotation(ann));
-    });
-    return newMap;
-  };
-
   const [annotations, setAnnotations] = useState<Map<string, Annotation>>(normalizeMap(initialAnnotations));
   const [isDirty, setIsDirty] = useState(false);
 
@@ -100,7 +90,7 @@ export function AnnotationProvider({ children, initialAnnotations }: { children:
       
       setAnnotations(normalizeMap(merged));
     }
-  }, []);
+  }, [initialAnnotations]);
 
   // Sauvegarder dans localStorage à chaque changement
   useEffect(() => {

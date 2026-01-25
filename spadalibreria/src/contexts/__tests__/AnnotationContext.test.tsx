@@ -76,7 +76,6 @@ describe('AnnotationContext localStorage integration', () => {
       const { LocalStorage: ActualLocalStorage } = jest.requireActual('@/lib/localStorage');
       
       const localAnnotation = { ...mockAnnotation, id: 'local_annotation' };
-      const yamlAnnotation = { ...mockAnnotation, id: 'yaml_annotation' };
       
       // Store local annotations
       ActualLocalStorage.setItem('treatise_annotations', { 'section_1': localAnnotation });

@@ -1,5 +1,5 @@
 import { TreatiseSection, GlossaryData } from '@/types/data';
-import { SearchIndex, IndexedChapter, ChapterReference, CrossLanguageTerms, Language } from '@/types/search';
+import { SearchIndex, IndexedChapter, CrossLanguageTerms, Language } from '@/types/search';
 
 /**
  * Expands glossary term syntax {term_key} to display text from glossary

@@ -74,7 +74,7 @@ export function findMatches(
           variant: term
         });
       }
-    } catch (e) {
+    } catch {
       // Invalid regex, ignore
       console.warn('Invalid regex in search:', pattern);
     }

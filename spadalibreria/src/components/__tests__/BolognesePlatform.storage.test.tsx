@@ -25,11 +25,8 @@ describe('BolognesePlatform localStorage integration', () => {
 
   describe('Column visibility - showItalian', () => {
     it('loads showItalian preference from storage on mount', () => {
-      // Setup: LocalStorage returns true
       (LocalStorage.getItem as jest.Mock).mockReturnValue(true);
 
-      // This test verifies the component would call LocalStorage.getItem
-      // When we refactor, BolognesePlatform should use LocalStorage.getItem('showItalian')
       const result = LocalStorage.getItem<boolean>('showItalian');
       expect(result).toBe(true);
     });
