@@ -81,7 +81,7 @@ Même nom "annotation" utilisé pour 2 concepts différents.
 
 ## ✅ Solution Recommandée
 
-**Option A : Renommage Minimal**
+** **
 
 1. `annotation.ts` → `annotationTypes.ts`
 2. `annotation/` → `annotationClasses/`

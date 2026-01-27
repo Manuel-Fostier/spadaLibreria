@@ -12,32 +12,32 @@
 
 ### 2.1 Renommer le Fichier de Types
 
-- [ ] Vérifier que le fichier existe : `src/lib/annotation.ts`
-- [ ] Renommer : `git mv spadalibreria/src/lib/annotation.ts spadalibreria/src/lib/annotationTypes.ts`
-- [ ] Vérifier le renommage : `git status`
+- [x] Vérifier que le fichier existe : `src/lib/annotation.ts`
+- [x] Renommer : `git mv spadalibreria/src/lib/annotation.ts spadalibreria/src/lib/annotationTypes.ts`
+- [x] Vérifier le renommage : `git status`
 
 ### 2.2 Renommer le Dossier de Classes
 
-- [ ] Vérifier que le dossier existe : `src/lib/annotation/`
-- [ ] Renommer : `git mv spadalibreria/src/lib/annotation spadalibreria/src/lib/annotationClasses`
-- [ ] Vérifier le renommage : `git status`
+- [x] Vérifier que le dossier existe : `src/lib/annotation/`
+- [x] Renommer : `git mv spadalibreria/src/lib/annotation spadalibreria/src/lib/annotationClasses`
+- [x] Vérifier le renommage : `git status`
 
 ### 2.3 Mettre à Jour les Imports
 
 #### Imports depuis `@/lib/annotation` → `@/lib/annotationTypes`
 
-- [ ] `src/types/data.ts`
-- [ ] `src/components/StatisticsModal.tsx`
-- [ ] `src/components/BolognesePlatform.tsx`
-- [ ] `src/components/AnnotationBadge.tsx`
-- [ ] `src/components/MeasureProgressBar.tsx`
-- [ ] `src/lib/dataLoader.ts`
-- [ ] `src/app/api/annotations/route.ts`
+- [x] `src/types/data.ts`
+- [x] `src/components/StatisticsModal.tsx`
+- [x] `src/components/BolognesePlatform.tsx`
+- [x] `src/components/AnnotationBadge.tsx`
+- [x] `src/components/MeasureProgressBar.tsx`
+- [x] `src/lib/dataLoader.ts`
+- [x] `src/app/api/annotations/route.ts`
 
 #### Imports depuis `@/lib/annotation/` → `@/lib/annotationClasses/`
 
-- [ ] `src/components/ColorPicker.tsx`
-- [ ] `src/components/AnnotationDisplaySettings.tsx`
+- [x] `src/components/ColorPicker.tsx`
+- [x] `src/components/AnnotationDisplaySettings.tsx`
 - [ ] `src/components/AnnotationPanel.tsx`
 - [ ] `src/components/__tests__/ColorPicker.test.tsx`
 
