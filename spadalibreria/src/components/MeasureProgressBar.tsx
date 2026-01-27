@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { MEASURES, Measure } from '@/lib/annotation';
+import { MEASURES, Measure } from '@/lib/annotationTypes';
 
 interface MeasureProgressBarProps {
   measures: Measure[] | null;

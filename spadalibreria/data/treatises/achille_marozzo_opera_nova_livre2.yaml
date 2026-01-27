@@ -8,7 +8,7 @@
     year: 1536
   content:
     fr: |
-      Ici il s’agit du combat à l’épée seule qui est une chose excellente pour enseigner à celui qui doit faire un duel avec l’épée affûtée en {main}. De sorte que je t’exhorte d’enseigner à tous ceux qui doivent combattre de cette épée seule, les choses ici décrites à la suite dans ce livre dont tu te souviendras.
+      Ici il s’agit du combat à l’épée seule qui est une chose excellente pour enseigner à celui qui doit faire un duel avec l’épée affûtée en main. De sorte que je t’exhorte d’enseigner à tous ceux qui doivent combattre de cette épée seule, les choses ici décrites à la suite dans ce livre dont tu te souviendras.
     notes: |-
       ## Test du Support Markdown
       Cette note démontre les fonctionnalités Markdown dans Spada Libreria.
@@ -52,8 +52,7 @@
     weapon_type: Epée aiguisée
     id: anno_1765406321139_xj06ullw1
     strikes: null
-    targets:
-      Main: 1
+    targets: null
 - id: achille_marozzo_l2_c95
   title: Chap. 95. Lequel traite du combat de l’épée seule.
   metadata:

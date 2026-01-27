@@ -1,4 +1,4 @@
-import { Annotation } from '@/lib/annotation';
+import { Annotation } from '@/lib/annotationTypes';
 
 export interface GlossaryEntry {
   term: string;

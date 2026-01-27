@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAnnotationDisplay } from '@/contexts/AnnotationDisplayContext';
 import { AnnotationDisplay } from '@/types/annotationDisplay';
 import ColorPicker from './ColorPicker';
-import { type AnnotationKey } from '@/lib/annotation/AnnotationRegistry';
+import { type AnnotationKey } from '@/lib/annotationClasses/AnnotationRegistry';
 
 interface AnnotationDisplaySettingsProps {
   onClose?: () => void;

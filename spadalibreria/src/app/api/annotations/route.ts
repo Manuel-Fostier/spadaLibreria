@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
-import { Annotation } from '@/lib/annotation';
+import { Annotation } from '@/lib/annotationTypes';
 
 const TREATISES_DIR = path.join(process.cwd(), 'data', 'treatises');
 

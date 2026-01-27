@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { MessageSquare } from 'lucide-react';
-import { Annotation } from '@/lib/annotation';
+import { Annotation } from '@/lib/annotationTypes';
 
 interface AnnotationBadgeProps {
   annotation: Annotation | undefined;
