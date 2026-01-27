@@ -4,8 +4,8 @@ import userEvent from '@testing-library/user-event';
 import ColorPicker from '../ColorPicker';
 import { AnnotationDisplayContext } from '@/contexts/AnnotationDisplayContext';
 import type { AnnotationDisplay } from '@/types/annotationDisplay';
-import { Annotation } from '@/lib/annotation/Annotation';
-import type { AnnotationKey } from '@/lib/annotation/AnnotationRegistry';
+import { Annotation } from '@/lib/annotationClasses/Annotation';
+import type { AnnotationKey } from '@/lib/annotationClasses/AnnotationRegistry';
 
 class TestAnnotation extends Annotation {
   constructor(initialColor: string) {

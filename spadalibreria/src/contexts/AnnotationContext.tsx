@@ -11,7 +11,7 @@ import {
   Strategy, 
   Weapon, 
   WeaponType
-} from '@/lib/annotation';
+} from '@/lib/annotationTypes';
 
 interface AnnotationContextType {
   annotations: Map<string, Annotation>;
