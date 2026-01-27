@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Annotation } from '@/lib/annotation/Annotation';
+import { Annotation } from '@/lib/annotationClasses/Annotation';
 import { useAnnotationDisplay } from '@/contexts/AnnotationDisplayContext';
-import { type AnnotationKey } from '@/lib/annotation/AnnotationRegistry';
+import { type AnnotationKey } from '@/lib/annotationClasses/AnnotationRegistry';
 
 interface ColorPickerProps {
   annotation: Annotation;

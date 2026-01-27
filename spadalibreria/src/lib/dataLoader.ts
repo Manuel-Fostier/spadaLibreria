@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
-import { Annotation, MEASURES, STRATEGIES } from '@/lib/annotation';
+import { Annotation, MEASURES, STRATEGIES } from '@/lib/annotationTypes';
 import { GlossaryData, TreatiseSection, GlossaryEntry, EnglishVersion } from '@/types/data';
 
 export type { GlossaryData, TreatiseSection, GlossaryEntry, EnglishVersion };

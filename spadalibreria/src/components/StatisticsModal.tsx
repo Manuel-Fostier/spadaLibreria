@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { X, BarChart3 } from 'lucide-react';
 import { useAnnotations } from '@/contexts/AnnotationContext';
-import { HIGH_GUARDS, LOW_GUARDS } from '@/lib/annotation';
+import { HIGH_GUARDS, LOW_GUARDS } from '@/lib/annotationTypes';
 
 type StatisticsCategory = 'guards' | 'distances' | 'strikes' | 'targets';
 

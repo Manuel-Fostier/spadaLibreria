@@ -8,7 +8,7 @@ import AnnotationPanel from './AnnotationPanel';
 import AnnotationBadge from './AnnotationBadge';
 import { GlossaryEntry, TreatiseSection } from '@/lib/dataLoader';
 import { useAnnotations } from '@/contexts/AnnotationContext';
-import { Annotation } from '@/lib/annotation';
+import { Annotation } from '@/lib/annotationTypes';
 import { useAnnotationDisplay } from '@/contexts/AnnotationDisplayContext';
 import { AnnotationDisplay } from '@/types/annotationDisplay';
 import AnnotationDisplaySettings from './AnnotationDisplaySettings';
