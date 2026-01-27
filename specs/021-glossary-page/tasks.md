@@ -37,13 +37,13 @@
 **Goal**: Create reusable types and utility functions  
 **Independent Test**: All utility functions load glossary data and perform search correctly
 
-- [ ] T020 Create glossary type definitions in `src/types/glossary.ts` (GlossaryTerm, GlossaryCategory, GroupedGlossary)
-- [ ] T021 [P] Write test for `loadGlossaryTerms()` in `src/lib/__tests__/glossaryLoader.test.ts`
-- [ ] T022 [P] Write test for `groupGlossaryByCategory()` in `src/lib/__tests__/glossaryLoader.test.ts`
-- [ ] T023 Implement glossary loader utility in `src/lib/glossaryLoader.ts` (loadGlossaryTerms, groupGlossaryByCategory)
-- [ ] T024 [P] Write comprehensive test for `searchGlossaryTerms()` in `src/lib/__tests__/glossarySearch.test.ts` (term names, categories, definitions, multilingual)
-- [ ] T025 Implement glossary search function in `src/lib/glossaryLoader.ts` (searchGlossaryTerms)
-- [ ] T026 All Phase 1.0 unit tests pass with >90% coverage
+- [X] T020 Create glossary type definitions in `src/types/glossary.ts` (GlossaryTerm, GlossaryCategory, GroupedGlossary)
+- [X] T021 [P] Write test for `loadGlossaryTerms()` in `src/lib/__tests__/glossaryLoader.test.ts`
+- [X] T022 [P] Write test for `groupGlossaryByCategory()` in `src/lib/__tests__/glossaryLoader.test.ts`
+- [X] T023 Implement glossary loader utility in `src/lib/glossaryLoader.ts` (loadGlossaryTerms, groupGlossaryByCategory)
+- [X] T024 [P] Write comprehensive test for `searchGlossaryTerms()` in `src/lib/__tests__/glossarySearch.test.ts` (term names, categories, definitions, multilingual)
+- [X] T025 Implement glossary search function in `src/lib/glossaryLoader.ts` (searchGlossaryTerms)
+- [X] T026 All Phase 1.0 unit tests pass with >90% coverage
 
 ---
 
