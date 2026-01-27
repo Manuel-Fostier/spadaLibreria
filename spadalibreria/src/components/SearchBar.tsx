@@ -10,7 +10,6 @@ export default function SearchBar() {
   const [matchCase, setMatchCase] = useState(false);
   const [wholeWord, setWholeWord] = useState(false);
   const [useRegex, setUseRegex] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSearch = () => {
@@ -103,21 +102,19 @@ export default function SearchBar() {
   return (
     <div className="w-full">
       <div className="relative flex items-start">
-        {!isFocused && (
+        {/* {!isFocused && (
           <div className="absolute left-3 top-2 text-gray-400 pointer-events-none">
             <Search size={16} />
           </div>
-        )}
+        )} */}
         
         <textarea
           ref={textareaRef}
           value={searchText}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          placeholder="Rechercher (ex: mandritto)..."
-          className={`w-full ${isFocused ? 'pl-3' : 'pl-10'} pr-36 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all font-mono resize-none overflow-y-auto min-h-[2.5rem] max-h-[10.5rem]`}
+          placeholder="Rechercher"
+          className={`w-full pl-3 pr-36 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all font-mono resize-none overflow-hidden min-h-[2.5rem] max-h-[15rem]`}
           rows={1}
         />
 
