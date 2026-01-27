@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, KeyboardEvent } from 'react';
+import React, { useState, KeyboardEvent, useRef, useEffect } from 'react';
 import { Search, X } from 'lucide-react';
 import { useSearch } from '@/contexts/SearchContext';
 
@@ -10,6 +10,7 @@ export default function SearchBar() {
   const [matchCase, setMatchCase] = useState(false);
   const [wholeWord, setWholeWord] = useState(false);
   const [useRegex, setUseRegex] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSearch = () => {
     if (searchText.trim()) {
@@ -26,20 +27,30 @@ export default function SearchBar() {
     clearSearch();
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
     setSearchText(newValue);
-    if (newValue === '') {
+    
+    // Trigger search automatically on each change
+    if (newValue.trim()) {
+      performSearch(newValue, {
+        matchCase,
+        matchWholeWord: wholeWord,
+        useRegex
+      });
+    } else {
       clearSearch();
     }
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault(); // Prevent newline on Enter
       handleSearch();
     } else if (e.key === 'Escape') {
       handleClear();
     }
+    // Allow Shift+Enter to add newline (default behavior)
   };
 
   const toggleMatchCase = () => {
@@ -78,23 +89,36 @@ export default function SearchBar() {
     }
   };
 
+  // Auto-grow textarea based on content
+  useEffect(() => {
+    if (textareaRef.current) {
+      // Reset height to recalculate
+      textareaRef.current.style.height = 'auto';
+      // Set height based on scrollHeight
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [searchText]);
+
   return (
     <div className="w-full">
-      <div className="relative flex items-center">
-        <div className="absolute left-3 text-gray-400 pointer-events-none">
-          <Search size={16} />
-        </div>
+      <div className="relative flex items-start">
+        {/* {!isFocused && (
+          <div className="absolute left-3 top-2 text-gray-400 pointer-events-none">
+            <Search size={16} />
+          </div>
+        )} */}
         
-        <input
-          type="text"
+        <textarea
+          ref={textareaRef}
           value={searchText}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          placeholder="Rechercher (ex: mandritto)..."
-          className="w-full pl-10 pr-36 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all font-mono"
+          placeholder="Rechercher"
+          className={`w-full pl-3 pr-36 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all font-mono resize-none overflow-hidden min-h-[2.5rem] max-h-[15rem]`}
+          rows={1}
         />
 
-        <div className="absolute right-2 flex items-center gap-1">
+        <div className="absolute right-2 top-2 flex items-center gap-1">
           {searchText && (
             <button 
               onClick={handleClear}
