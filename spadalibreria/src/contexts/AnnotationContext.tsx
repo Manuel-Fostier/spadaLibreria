@@ -12,6 +12,7 @@ import {
   Weapon, 
   WeaponType
 } from '@/lib/annotationTypes';
+import { LocalStorage } from '@/lib/localStorage';
 
 interface AnnotationContextType {
   annotations: Map<string, Annotation>;

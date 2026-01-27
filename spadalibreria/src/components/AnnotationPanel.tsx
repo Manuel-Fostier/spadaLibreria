@@ -13,7 +13,6 @@ import {
   Measure 
 } from '@/lib/annotationTypes';
 import { useAnnotations } from '@/contexts/AnnotationContext';
-import { useAnnotationDisplay } from '@/contexts/AnnotationDisplayContext';
 import { AnnotationRegistry, type AnnotationKey } from '@/lib/annotationClasses/AnnotationRegistry';
 import MeasureProgressBar from './MeasureProgressBar';
 

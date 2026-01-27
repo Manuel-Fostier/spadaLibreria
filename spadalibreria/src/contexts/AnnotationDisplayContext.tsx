@@ -3,6 +3,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useState, ReactNode } from 'react';
 import { AnnotationDisplay, AnnotationColors } from '@/types/annotationDisplay';
 import { AnnotationRegistry, type AnnotationKey } from '../lib/annotationClasses/AnnotationRegistry';
+import { LocalStorage } from '@/lib/localStorage';
 
 const STORAGE_KEY = 'annotationDisplay';
 
