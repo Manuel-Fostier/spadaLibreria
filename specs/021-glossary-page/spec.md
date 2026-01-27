@@ -13,15 +13,15 @@ The Spada Libreria platform contains a comprehensive glossary of fencing termino
 
 ### User Story 1 - Browse Complete Glossary (Priority: P1)
 
-A user wants to explore all fencing terminology available in the system to understand the vocabulary before or during their study of treatises. They visit the glossary page and can see all terms organized in a structured way.
+A user wants to explore all fencing terminology available in the system to understand the vocabulary before or during their study of treatises. They visit the glossary page and all terms are immediately visible, organized hierarchically by category and type.
 
 **Why this priority**: Essential for introducing new users to the terminology and supporting independent learning. The glossary is a core asset of the platform.
 
-**Independent Test**: Can be fully tested by navigating to the glossary page and verifying that all glossary terms are displayed with their definitions in the user's selected language, delivering complete vocabulary reference capability.
+**Independent Test**: Can be fully tested by navigating to the glossary page and verifying that all glossary terms are displayed with their definitions in the user's selected language, organized by Category → Type → Term, delivering complete vocabulary reference capability.
 
 **Acceptance Scenarios**:
 
-1. **Given** a user is on the glossary page, **When** they load the page, **Then** all glossary terms are displayed with their definitions visible in the default or previously selected language
+1. **Given** a user is on the glossary page, **When** they load the page, **Then** all glossary terms are displayed immediately in hierarchical organization (Category → Type → Term) with their full definitions visible in the selected language
 2. **Given** a user views the glossary, **When** they switch between Italian, French, and English, **Then** the definitions and translations update to the selected language
 3. **Given** a user views a term in the glossary, **When** the term has multiple translations (e.g., English has multiple translator versions), **Then** all available translations are shown
 
@@ -29,37 +29,23 @@ A user wants to explore all fencing terminology available in the system to under
 
 ### User Story 2 - Search and Filter Glossary Terms (Priority: P1)
 
-A user wants to quickly find specific terminology without scrolling through the entire glossary. They use search functionality to locate terms by name or filter by category.
+A user wants to quickly find specific terminology by using a search function that works like a browser's Find-in-Page feature. They type a search term and matching terms are highlighted and visible on the page.
 
-**Why this priority**: Critical for usability - users need efficient access to specific terms when studying or reference. Especially important given the glossary can be large.
+**Why this priority**: Critical for usability - users need efficient access to specific terms when studying. Browser-like search is familiar and intuitive.
 
-**Independent Test**: Can be fully tested by typing a search term and verifying that filtered results appear instantly, delivering efficient term lookup capability.
-
-**Acceptance Scenarios**:
-
-1. **Given** a search field in the glossary, **When** a user types a term name, **Then** results filter in real-time to show matching terms
-2. **Given** a user searches for a term, **When** no matches exist, **Then** a clear "no results" message is displayed
-3. **Given** a user views the glossary, **When** they filter by category (Attaque, Mouvement, etc.), **Then** only terms in that category are shown
-4. **Given** a user performs a search, **When** they clear the search field, **Then** the full glossary is restored
-
----
-
-### User Story 3 - Access Glossary from Treatise (Priority: P2)
-
-A user is reading a treatise and encounters glossary-linked terms. They want to optionally access the full glossary page while reading to see more context about a term.
-
-**Why this priority**: Enhances workflow continuity but can work without it initially. Useful for deep-dive exploration during study sessions.
-
-**Independent Test**: Can be fully tested by clicking a glossary term link within a treatise and being navigated to the glossary page with that term highlighted, delivering seamless cross-content navigation.
+**Independent Test**: Can be fully tested by typing a search term in the search field and verifying that matching terms are highlighted inline throughout the glossary, delivering efficient term lookup capability.
 
 **Acceptance Scenarios**:
 
-1. **Given** a user is reading a treatise with glossary links, **When** they click a term link, **Then** they are navigated to the glossary page with that term highlighted or auto-scrolled into view
-2. **Given** a user navigates from a treatise to the glossary, **When** they use browser back, **Then** they return to their previous position in the treatise
+1. **Given** a search field in the glossary, **When** a user types a term name, **Then** all matching terms are highlighted in the displayed glossary and scroll focus moves to the first match
+2. **Given** a user searches, **When** they type a category name (e.g., "Garde"), **Then** all matching categories and terms are highlighted throughout the glossary
+3. **Given** a user searches, **When** they type a word from a definition (e.g., "thrust"), **Then** terms containing that word in their definition are highlighted
+4. **Given** a user searches for a term, **When** no matches exist, **Then** a clear "no results" message is displayed above the glossary
+5. **Given** a user has active search highlighting, **When** they clear the search field, **Then** all highlighting is removed and the full glossary remains visible
 
 ---
 
-### User Story 4 - View Detailed Term Information (Priority: P2)
+### User Story 3 - View Detailed Term Information (Priority: P2)
 
 A user wants to understand a term deeply, seeing its Italian name, category, complete definitions, translations, and how it relates to fencing practice.
 
@@ -74,13 +60,32 @@ A user wants to understand a term deeply, seeing its Italian name, category, com
 
 ---
 
+### User Story 4 - Access Glossary from Treatise (Priority: P2 - Phase 2)
+
+A user is reading a treatise and encounters glossary-linked terms. They want to navigate to the full glossary page to explore the term and related content in context.
+
+**Why this priority**: Enhances workflow continuity by enabling cross-content navigation. Deferred to Phase 2 to allow MVP completion of standalone glossary first.
+
+**Independent Test**: Can be fully tested by clicking a glossary term link within a treatise and being navigated to the glossary page, delivering basic cross-content navigation capability.
+
+**Acceptance Scenarios**:
+
+1. **Given** a user is reading a treatise with glossary links, **When** they click a term link, **Then** they are navigated to the glossary page with that term's category and type pre-selected or displayed
+2. **Given** a user navigates from a treatise to the glossary, **When** they use browser back, **Then** they return to their previous position in the treatise
+
+**Phase 3 Enhancement**: Support URL hash fragments (e.g., `/glossary#falso_dritto`) to auto-scroll directly to a specific term when navigating from treatises.
+
+---
+
 ### Edge Cases
 
 - What happens when glossary data fails to load?
 - How does the system handle missing translations or definitions for certain languages?
 - What if a term has no category assigned?
-- How does the glossary perform when displaying several hundred terms?
-- How should the glossary page behave on mobile devices with limited screen space?
+- How does the glossary page perform when displaying hundreds of terms without pagination?
+- How should search highlighting work on mobile devices with limited screen space?
+- What happens when search returns no results - is the glossary still fully visible?
+- How should the glossary handle very long definitions that might affect readability?
 
 ## Requirements
 
@@ -88,15 +93,15 @@ A user wants to understand a term deeply, seeing its Italian name, category, com
 
 - **FR-001**: System MUST load and display all glossary terms from `data/glossary.yaml` on the glossary page
 - **FR-002**: System MUST support language selection (Italian, French, English) and display definitions in the selected language
-- **FR-003**: System MUST provide a search function that filters glossary terms by name in real-time
-- **FR-004**: System MUST provide filtering by term category (e.g., "Attaque", "Mouvement", "Tactique")
-- **FR-005**: System MUST display glossary terms with their definitions, translations, and type/category
-- **FR-006**: System MUST implement category grouping to organize terms by type for better navigation
+- **FR-003**: System MUST provide a search function that filters glossary terms by term name, category/type, and definition content in real-time across all supported languages
+- **FR-004**: System MUST NOT include category filtering controls - all terms are always displayed at once
+- **FR-005**: System MUST display glossary terms organized hierarchically: Category (e.g., "Coups et Techniques") → Type (e.g., "Attaque / Frappe de taille") → Term with full definitions and translations in all supported languages, always visible (no collapsing)
+- **FR-006**: System MUST implement a browser-like search function that highlights all matching terms inline without filtering/hiding non-matching terms
 - **FR-007**: System MUST provide a dedicated route/URL for the glossary page (e.g., `/glossary`)
 - **FR-008**: System MUST handle missing or incomplete glossary data gracefully without crashing
 - **FR-009**: System MUST maintain responsive design that works on desktop, tablet, and mobile devices
-- **FR-010**: System MUST integrate with the existing search highlighting system to highlight search terms in glossary results
-- **FR-011**: System MUST provide clear UI indication of which terms match the current search/filter criteria
+- **FR-010**: System MUST integrate with the existing search highlighting system to highlight search terms inline in glossary results
+- **FR-011**: System MUST provide clear visual indication (e.g., color highlight, bold text) of which terms match the current search query
 
 ### Key Entities
 
@@ -117,6 +122,16 @@ A user wants to understand a term deeply, seeing its Italian name, category, com
 - **SC-007**: Search functionality returns results for partial term matches (e.g., typing "man" finds "Mandritto")
 - **SC-008**: Users rate the glossary page as intuitive and useful (if user feedback is collected)
 
+## Clarifications
+
+### Session 2025-01-27
+
+- Q: How should category filtering work? → A: No filtering/collapsing - all terms always displayed. Category structure is for organization only.
+- Q: How should search work? → A: Browser-like Find behavior - highlights matches inline without hiding content
+- Q: Should categories be expandable? → A: No - all content always visible, hierarchical structure is visual only
+- Q: What about initial expansion state? → A: Not applicable - all content always expanded and visible
+- Q: How should category display work in the UI? → A: As visual section headers/dividers, not interactive controls
+
 ## Assumptions
 
 1. **Glossary Data Structure**: The glossary YAML structure will remain consistent with its current format (term, type, definition, translation)
@@ -126,6 +141,14 @@ A user wants to understand a term deeply, seeing its Italian name, category, com
 5. **Accessibility**: The glossary page should follow the same accessibility standards as the rest of the platform
 6. **No Backend Changes**: The feature uses existing data files and doesn't require new API endpoints or database modifications
 7. **Reuse Existing Components**: The page can leverage existing React components like `TextParser`, `SearchBar`, and language switching infrastructure
+
+## Phased Delivery Plan
+
+This feature follows a three-phase rollout approach:
+
+- **Phase 1 (MVP - This Release)**: Standalone glossary page with browsing, search, filtering, and categorization. User Stories 1-3. This delivers complete independent glossary functionality.
+- **Phase 2 (Release +1)**: Integration with treatise pages. Add clickable glossary term links in treatises that navigate to the glossary page (User Story 4, simplified). No auto-scroll or URL parameters yet.
+- **Phase 3 (Release +2)**: Advanced integration. Support URL hash fragments (e.g., `/glossary#falso_dritto`) to auto-scroll to specific terms when navigating from treatises.
 
 ## Out of Scope
 
