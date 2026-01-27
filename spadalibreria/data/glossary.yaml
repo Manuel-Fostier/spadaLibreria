@@ -53,18 +53,6 @@ stoccatta:
     fr: Estocade
     en: Thrust
 
-legare:
-  term: Legare
-  category: Coups et Techniques
-  type: Tactique / Technique
-  definition:
-    fr: |
-      Action de contrôler la lame adverse par contact et pression, permettant de dominer le fer.
-    en: |
-      Action of controlling the opponent's blade through contact and pressure, allowing to dominate the steel.
-  translation:
-    fr: Lier
-    en: To bind
 
 passare:
   term: Passare
@@ -467,18 +455,6 @@ gioco_stretto:
 # Actions et Mouvements Additionnels
 ###########################################################################################
 
-scanso:
-  term: Scanso
-  category: Actions et Mouvements Additionnels
-  definition:
-    fr: |
-      Esquive; mouvement du corps pour éviter une attaque adverse tout en restant en mesure de contre-attaquer.
-    en: |
-      Dodge; body movement to avoid an opponent's attack while remaining in position to counter-attack.
-  translation:
-    fr: Esquive
-    en: Dodge / Void
-
 volta:
   term: Volta
   category: Actions et Mouvements Additionnels
@@ -502,30 +478,6 @@ mezza_volta:
   translation:
     fr: Demi-volte
     en: Half turn
-
-accrescere:
-  term: Accrescere
-  category: Actions et Mouvements Additionnels
-  definition:
-    fr: |
-      Avancer; faire un pas en avant, augmentant la mesure vers l'adversaire.
-    en: |
-      To advance; to take a step forward, increasing the measure toward the opponent.
-  translation:
-    fr: Avancer
-    en: To advance
-
-discrescere:
-  term: Discrescere
-  category: Actions et Mouvements Additionnels
-  definition:
-    fr: |
-      Reculer; faire un pas en arrière, diminuant la mesure vers l'adversaire.
-    en: |
-      To retreat; to take a step backward, decreasing the measure toward the opponent.
-  translation:
-    fr: Reculer
-    en: To retreat
 
 ###########################################################################################
 # Armes et Équipement
@@ -619,18 +571,6 @@ filo:
     fr: Fil
     en: Edge
 
-misura:
-  term: Misura
-  category: Termes Techniques Additionnels
-  definition:
-    fr: |
-      Mesure; distance entre les deux escrimeurs. Concept fondamental déterminant les actions possibles.
-    en: |
-      Measure; distance between the two fencers. Fundamental concept determining possible actions.
-  translation:
-    fr: Mesure
-    en: Measure / Distance
-
 tempo:
   term: Tempo
   category: Termes Techniques Additionnels
@@ -643,18 +583,6 @@ tempo:
     fr: Temps
     en: Time / Tempo
 
-stringere:
-  term: Stringere
-  category: Termes Techniques Additionnels
-  definition:
-    fr: |
-      Resserrer; action de contraindre la lame adverse, fermant la ligne et gagnant le contrôle.
-    en: |
-      To constrain; action of constraining the opponent's blade, closing the line and gaining control.
-  translation:
-    fr: Resserrer
-    en: To constrain
-
 cavare:
   term: Cavare
   category: Termes Techniques Additionnels
@@ -666,18 +594,6 @@ cavare:
   translation:
     fr: Dégager
     en: To disengage
-
-battere:
-  term: Battere
-  category: Termes Techniques Additionnels
-  definition:
-    fr: |
-      Battre; frapper la lame adverse pour la déplacer et créer une ouverture.
-    en: |
-      To beat; to strike the opponent's blade to displace it and create an opening.
-  translation:
-    fr: Battre
-    en: To beat
 
 ###########################################################################################
 # Les Cibles
