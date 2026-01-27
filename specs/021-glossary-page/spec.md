@@ -112,25 +112,45 @@ A user is reading a treatise and encounters glossary-linked terms. They want to 
 
 ## Technical Dependencies & Blockers
 
-### Data Model Enhancement Required
+### Data Model Enhancement - REFACTORING IN PROGRESS
 
 **Current State**: Categories exist only as YAML comments in `data/glossary.yaml`, not as structured data fields within term records.
 
-**Impact**: The hierarchical display requirement (Category → Type → Term) cannot be implemented without explicit category data in the YAML structure.
+**Status**: 🔄 **REFACTORING ASSIGNED** - Will be completed as top-priority pre-implementation task before glossary page development begins.
 
-**Resolution Required (Pre-Implementation)**:
+**Refactoring Approach**: Extract categories from existing YAML comment headers and add explicit `category` field to each term.
 
-Choose one approach:
-1. **Add `category` field to glossary.yaml**: Add a `category` key to each term (e.g., `category: "Coups et Techniques"`). Requires data file modification but provides clean, explicit structure.
-2. **Parse YAML comments programmatically**: Extract categories from YAML comments at load time. Fragile and maintainability risk, but no data changes needed.
-3. **Infer categories from type patterns**: Analyze `type` field values to extract category prefixes. May not work well for all terms.
+**Example Transformation**:
 
-**Recommendation**: Option 1 (add explicit `category` field) - provides maintainability and clarity for future glossary extensions.
+```yaml
+# BEFORE:
+###########################################################################################
+# Les Coups et Techniques
+###########################################################################################
+mandritto:
+  term: Mandritto
+  type: Attaque / Frappe de taille
+
+# AFTER:
+mandritto:
+  term: Mandritto
+  category: "Coups et Techniques"
+  type: Attaque / Frappe de taille
+```
+
+**Refactoring Scope**:
+- Category sections to map: "Coups et Techniques", "Les Guardes", "Coups et Techniques Additionnels", "Concepts Tactiques", "Actions et Mouvements Additionnels", "Armes et Équipement", "Termes Techniques Additionnels", "Les Cibles"
+- All terms in `data/glossary.yaml` must receive the `category` field
+- YAML comments can remain for documentation purposes
+- No changes to `type`, `definition`, or `translation` fields
 
 **Acceptance Criteria**: 
-- All terms in `data/glossary.yaml` have a `category` field
-- Categories map to current YAML section headers (e.g., "Les Coups et Techniques" → "Coups et Techniques")
-- Data model supports both category and type hierarchies for UI organization
+- ✅ All terms have explicit `category` field
+- ✅ Categories match current YAML section headers
+- ✅ Data structure supports Category → Type hierarchy for UI
+- ✅ Glossary page can properly load and display hierarchical data
+
+**Dependency**: Glossary page implementation BLOCKED until this refactoring is complete and merged to main branch.
 
 ## Success Criteria
 
@@ -176,7 +196,8 @@ This feature follows a three-phase rollout approach:
 
 ## Out of Scope
 
-- Modifying the glossary data structure or adding new data fields
+- **Glossary data refactoring** (category field addition) - Handled as separate top-priority pre-implementation task
+- Modifying glossary content (definitions, translations, types)
 - Creating an admin interface to edit glossary terms
 - Implementing term usage statistics or popularity metrics
 - Exporting glossary to other formats (PDF, spreadsheet, etc.)
