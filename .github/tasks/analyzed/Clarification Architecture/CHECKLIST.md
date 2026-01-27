@@ -38,25 +38,25 @@
 
 - [x] `src/components/ColorPicker.tsx`
 - [x] `src/components/AnnotationDisplaySettings.tsx`
-- [ ] `src/components/AnnotationPanel.tsx`
-- [ ] `src/components/__tests__/ColorPicker.test.tsx`
+- [x] `src/components/AnnotationPanel.tsx`
+- [x] `src/components/__tests__/ColorPicker.test.tsx`
 
 #### Vérification Exhaustive
 
-- [ ] Rechercher tous les imports restants : `grep -r "from '@/lib/annotation'" src/`
-- [ ] Vérifier qu'il n'y a plus de références à l'ancien chemin
+- [x] Rechercher tous les imports restants : `grep -r "from '@/lib/annotation'" src/`
+- [x] Vérifier qu'il n'y a plus de références à l'ancien chemin
 
 ### 2.4 Supprimer le Fichier Redondant
 
-- [ ] Vérifier le contenu de `src/types/annotation.ts` (doit être juste un ré-export)
-- [ ] Supprimer : `git rm spadalibreria/src/types/annotation.ts`
-- [ ] Mettre à jour les imports qui utilisaient ce fichier (si nécessaire)
+- [x] Vérifier le contenu de `src/types/annotation.ts` (doit être juste un ré-export)
+- [x] Supprimer : `git rm spadalibreria/src/types/annotation.ts`
+- [x] Mettre à jour les imports qui utilisaient ce fichier (si nécessaire)
 
 ### 2.5 Nettoyer les Fichiers de Backup
 
-- [ ] Vérifier : `src/components/MarkdownRenderer.tsx.bkp`
-- [ ] **Option A** : Supprimer définitivement
-  - [ ] `git rm spadalibreria/src/components/MarkdownRenderer.tsx.bkp`
+- [x] Vérifier : `src/components/MarkdownRenderer.tsx.bkp`
+- [x] **Option A** : Supprimer définitivement
+  - [x] `git rm spadalibreria/src/components/MarkdownRenderer.tsx.bkp`
 - [ ] **Option B** : Ignorer dans Git
   - [ ] Ajouter `*.bkp` à `.gitignore`
   - [ ] `git rm --cached spadalibreria/src/components/MarkdownRenderer.tsx.bkp`
@@ -89,39 +89,39 @@
 ### 4.1 Compilation TypeScript
 
 - [ ] Nettoyer le build : `cd spadalibreria && npm run clean` (si disponible)
-- [ ] Compiler : `cd spadalibreria && npm run build`
-- [ ] Vérifier qu'il n'y a **aucune erreur** de compilation
-- [ ] Noter toute erreur trouvée et la corriger
+- [x] Compiler : `cd spadalibreria && npm run build`
+- [x] Vérifier qu'il n'y a **aucune erreur** de compilation
+- [x] Noter toute erreur trouvée et la corriger
 
 ### 4.2 Linting
 
-- [ ] Lancer ESLint : `cd spadalibreria && npm run lint`
-- [ ] Corriger les erreurs de linting si nécessaire
+- [x] Lancer ESLint : `cd spadalibreria && npm run lint`
+- [x] Corriger les erreurs de linting si nécessaire (erreurs pré-existantes, aucune nouvelle)
 
 ### 4.3 Tests Unitaires
 
-- [ ] Lancer les tests : `cd spadalibreria && npm run test`
-- [ ] Vérifier que tous les tests passent
-- [ ] Corriger les tests cassés (chemins d'import, mocks, etc.)
+- [x] Lancer les tests : `cd spadalibreria && npm run test`
+- [x] Vérifier que tous les tests passent (36 tests, 4 test suites)
+- [x] Corriger les tests cassés (chemins d'import, mocks, etc.) - aucun cassé
 
 ### 4.4 Vérification Manuelle
 
-- [ ] Démarrer le serveur : `cd spadalibreria && npm run dev`
-- [ ] Ouvrir l'application : http://localhost:3000
+- [x] Démarrer le serveur : `cd spadalibreria && npm run dev`
+- [x] Ouvrir l'application : http://localhost:3000
 - [ ] Tester les fonctionnalités d'annotation :
-  - [ ] Affichage des annotations dans les sections
-  - [ ] Édition d'une annotation
-  - [ ] Sauvegarde d'une annotation
-  - [ ] Filtrage par annotations
-- [ ] Tester les tooltips de glossaire
-- [ ] Tester la recherche
+  - [x] Affichage des annotations dans les sections
+  - [x] Édition d'une annotation
+  - [x] Sauvegarde d'une annotation
+  - [x] Filtrage par annotations
+- [x] Tester les tooltips de glossaire
+- [x] Tester la recherche
 - [ ] Vérifier la console du navigateur (pas d'erreurs)
 
 ### 4.5 Vérification des Imports
 
-- [ ] Rechercher les anciens chemins : `grep -r "@/lib/annotation[^CT]" src/`
-  - (le `[^CT]` exclut annotationClasses et annotationTypes)
-- [ ] S'assurer qu'aucun résultat n'est trouvé
+- [x] Rechercher les anciens chemins : `grep -r "@/lib/annotation[^CT]" src/`
+  (le `[^CT]` exclut annotationClasses et annotationTypes)
+- [x] S'assurer qu'aucun résultat n'est trouvé (0 résultats)
 
 ## Phase 5 : Finalisation
 
