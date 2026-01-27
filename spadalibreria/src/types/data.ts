@@ -2,12 +2,15 @@ import { Annotation } from '@/lib/annotationTypes';
 
 export interface GlossaryEntry {
   term: string;
+  category: string;
   type: string;
   definition: {
+    it?: string;
     fr: string;
     en: string;
   };
   translation: {
+    it?: string;
     fr: string;
     en: string;
   };
