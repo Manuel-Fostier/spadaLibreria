@@ -106,15 +106,38 @@ A user is reading a treatise and encounters glossary-linked terms. They want to 
 ### Key Entities
 
 - **Glossary Term**: Represents a single fencing term with Italian name, category, French definition, English definition, French translation, and English translation(s)
-  - Key attributes: `term`, `type` (category), `definition` (multilingual), `translation` (multilingual)
+  - Key attributes: `term`, `category` (parent grouping), `type` (subcategory), `definition` (multilingual), `translation` (multilingual)
   - Relationships: None (standalone data)
+  - **Data Model Note**: Current `data/glossary.yaml` uses YAML comments (e.g., `# Les Coups et Techniques`) to mark categories, not structured fields. See Technical Dependencies section.
+
+## Technical Dependencies & Blockers
+
+### Data Model Enhancement Required
+
+**Current State**: Categories exist only as YAML comments in `data/glossary.yaml`, not as structured data fields within term records.
+
+**Impact**: The hierarchical display requirement (Category → Type → Term) cannot be implemented without explicit category data in the YAML structure.
+
+**Resolution Required (Pre-Implementation)**:
+
+Choose one approach:
+1. **Add `category` field to glossary.yaml**: Add a `category` key to each term (e.g., `category: "Coups et Techniques"`). Requires data file modification but provides clean, explicit structure.
+2. **Parse YAML comments programmatically**: Extract categories from YAML comments at load time. Fragile and maintainability risk, but no data changes needed.
+3. **Infer categories from type patterns**: Analyze `type` field values to extract category prefixes. May not work well for all terms.
+
+**Recommendation**: Option 1 (add explicit `category` field) - provides maintainability and clarity for future glossary extensions.
+
+**Acceptance Criteria**: 
+- All terms in `data/glossary.yaml` have a `category` field
+- Categories map to current YAML section headers (e.g., "Les Coups et Techniques" → "Coups et Techniques")
+- Data model supports both category and type hierarchies for UI organization
 
 ## Success Criteria
 
 ### Measurable Outcomes
 
-- **SC-001**: Users can locate any glossary term within 5 seconds using search or category filters
-- **SC-002**: 100% of glossary entries from `data/glossary.yaml` are accessible and displayable on the glossary page
+- **SC-001**: Users can locate any glossary term within 5 seconds using search highlighting
+- **SC-002**: 100% of glossary entries from `data/glossary.yaml` are accessible and displayable on the glossary page with category and type information
 - **SC-003**: Glossary page loads and displays content in under 2 seconds on standard broadband connections
 - **SC-004**: Users can switch between languages (Italian, French, English) and see immediate updates to definitions
 - **SC-005**: All three supported languages have complete definitions for 95%+ of glossary terms
@@ -131,6 +154,7 @@ A user is reading a treatise and encounters glossary-linked terms. They want to 
 - Q: Should categories be expandable? → A: No - all content always visible, hierarchical structure is visual only
 - Q: What about initial expansion state? → A: Not applicable - all content always expanded and visible
 - Q: How should category display work in the UI? → A: As visual section headers/dividers, not interactive controls
+- **Data Model Issue Identified**: Categories currently exist only as YAML comments in `data/glossary.yaml`, not as structured fields. Resolution required before implementation - recommend adding explicit `category` field to all terms.
 
 ## Assumptions
 
