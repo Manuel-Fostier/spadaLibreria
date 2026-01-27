@@ -3,6 +3,7 @@ import { Annotation } from '@/lib/annotationTypes';
 export interface GlossaryEntry {
   term: string;
   type: string;
+  category?: string; // Optional for backward compatibility
   definition: {
     fr: string;
     en: string;
@@ -15,6 +16,22 @@ export interface GlossaryEntry {
 
 export interface GlossaryData {
   [key: string]: GlossaryEntry;
+}
+
+export interface GlossaryCategory {
+  name: string;
+  terms: Array<{
+    key: string;
+    entry: GlossaryEntry;
+  }>;
+}
+
+export interface CategorizedGlossary {
+  categories: GlossaryCategory[];
+  uncategorized: Array<{
+    key: string;
+    entry: GlossaryEntry;
+  }>;
 }
 
 export interface EnglishVersion {

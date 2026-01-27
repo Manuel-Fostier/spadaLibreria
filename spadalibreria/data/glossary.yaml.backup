@@ -3,7 +3,6 @@
 ###########################################################################################
 mandritto:
   term: Mandritto
-  category: Les Coups et Techniques
   type: Attaque / Frappe de taille
   definition:
     fr: |
@@ -16,7 +15,6 @@ mandritto:
 
 fendente:
   term: Fendente
-  category: Les Coups et Techniques
   type: Attaque / Frappe de taille
   definition:
     fr: |
@@ -29,7 +27,6 @@ fendente:
 
 roverso:
   term: Roverso
-  category: Les Coups et Techniques
   type: Attaque / Frappe de taille
   definition:
     fr: |
@@ -42,7 +39,6 @@ roverso:
 
 stoccatta:
   term: Stoccatta
-  category: Les Coups et Techniques
   type: Attaque / Coup d'estoc
   definition:
     fr: |
@@ -55,7 +51,6 @@ stoccatta:
 
 legare:
   term: Legare
-  category: Les Coups et Techniques
   type: Tactique / Technique
   definition:
     fr: |
@@ -68,7 +63,6 @@ legare:
 
 passare:
   term: Passare
-  category: Les Coups et Techniques
   type: Mouvement / Déplacement
   definition:
     fr: |
@@ -85,7 +79,6 @@ passare:
 
 guardia_di_testa:
   term: Guardia di Testa
-  category: Les Guardes
   type: Garde haute
   definition:
     fr: |
@@ -99,7 +92,6 @@ guardia_di_testa:
 
 guardia_di_faccia:
   term: Guardia di Faccia
-  category: Les Guardes
   type: Garde haute
   definition:
     fr: |
@@ -113,7 +105,6 @@ guardia_di_faccia:
 
 guardia_intrare:
   term: Guardia d'Intrare
-  category: Les Guardes
   type: Garde haute
   definition:
     fr: |
@@ -128,7 +119,6 @@ guardia_intrare:
 
 guardia_alicorno:
   term: Guardia di Alicorno
-  category: Les Guardes
   type: Garde haute
   definition:
     fr: |
@@ -141,7 +131,6 @@ guardia_alicorno:
 
 becca_cesa:
   term: Becca Cesa
-  category: Les Guardes
   type: Garde haute
   definition:
     fr: |
@@ -153,7 +142,6 @@ becca_cesa:
 
 becca_possa:
   term: Becca Possa
-  category: Les Guardes
   type: Garde haute
   definition:
     fr: |
@@ -165,7 +153,6 @@ becca_possa:
 
 guardia_alta:
   term: Guardia Alta
-  category: Les Guardes
   type: Garde haute
   definition:
     fr: |
@@ -182,7 +169,6 @@ guardia_alta:
   
 coda_longa_stretta:
   term: Coda Longa e Stretta
-  category: Les Guardes
   type: Garde basse
   definition:
     fr: |
@@ -199,7 +185,6 @@ coda_longa_stretta:
 
 coda_longa_alta:
   term: Coda Longa e Alta
-  category: Les Guardes
   type: Garde basse
   definition:
     fr: |
@@ -215,7 +200,6 @@ coda_longa_alta:
 
 coda_longa_larga:
   term: Coda Longa e Larga
-  category: Les Guardes
   type: Garde basse
   definition:
     fr: |
@@ -227,7 +211,6 @@ coda_longa_larga:
 
 coda_longa_distesa:
   term: Coda Longa e Distesa
-  category: Les Guardes
   type: Garde basse
   definition:
     fr: |
@@ -242,7 +225,6 @@ coda_longa_distesa:
 
 porta_di_ferro_stretta:
   term: Porta di Ferro Stretta
-  category: Les Guardes
   type: Garde basse
   definition:
     fr: |
@@ -257,7 +239,6 @@ porta_di_ferro_stretta:
 
 porta_di_ferro_larga:
   term: Porta di Ferro Larga
-  category: Les Guardes
   type: Garde basse
   definition:
     fr: |
@@ -269,7 +250,6 @@ porta_di_ferro_larga:
 
 porta_di_ferro_alta:
   term: Porta di Ferro Alta
-  category: Les Guardes
   type: Garde basse
   definition:
     fr: |
@@ -281,7 +261,6 @@ porta_di_ferro_alta:
 
 cinghiara_porta_di_ferro:
   term: Cinghiara Porta di Ferro
-  category: Les Guardes
   type: Garde basse
   definition:
     fr: |
@@ -293,7 +272,6 @@ cinghiara_porta_di_ferro:
 
 guardia_di_sopra_braccio:
   term: Guardia di Sopra Braccio
-  category: Les Guardes
   type: Garde basse (bocle / targe)
   definition:
     fr: |
@@ -305,7 +283,6 @@ guardia_di_sopra_braccio:
 
 guardia_di_sotto_braccio:
   term: Guardia di Sotto Braccio
-  category: Les Guardes
   type: Garde basse (bocle / targe)
   definition:
     fr: |
@@ -321,7 +298,6 @@ guardia_di_sotto_braccio:
 
 tondo:
   term: Tondo
-  category: Les Coups et Techniques Additionnels
   type: Attaque / Frappe de taille
   definition:
     fr: |
@@ -334,7 +310,6 @@ tondo:
 
 sgualembro:
   term: Sgualembro
-  category: Les Coups et Techniques Additionnels
   type: Attaque / Frappe de taille
   definition:
     fr: |
@@ -347,7 +322,6 @@ sgualembro:
 
 montante:
   term: Montante
-  category: Les Coups et Techniques Additionnels
   type: Attaque / Frappe de taille
   definition:
     fr: |
@@ -360,7 +334,6 @@ montante:
 
 falso:
   term: Falso
-  category: Les Coups et Techniques Additionnels
   type: Attaque / Frappe de taille
   definition:
     fr: |
@@ -373,7 +346,6 @@ falso:
 
 falso_dritto:
   term: Falso Dritto
-  category: Les Coups et Techniques Additionnels
   type: Attaque / Frappe de taille
   definition:
     fr: |
@@ -386,7 +358,6 @@ falso_dritto:
 
 falso_manco:
   term: Falso Manco
-  category: Les Coups et Techniques Additionnels
   type: Attaque / Frappe de taille
   definition:
     fr: |
@@ -399,7 +370,6 @@ falso_manco:
 
 imbroccata:
   term: Imbroccata
-  category: Les Coups et Techniques Additionnels
   type: Attaque / Coup d'estoc
   definition:
     fr: |
@@ -412,7 +382,6 @@ imbroccata:
 
 punta:
   term: Punta
-  category: Les Coups et Techniques Additionnels
   type: Attaque / Coup d'estoc
   definition:
     fr: |
@@ -425,7 +394,6 @@ punta:
 
 punta_riversa:
   term: Punta Riversa
-  category: Les Coups et Techniques Additionnels
   type: Attaque / Coup d'estoc
   definition:
     fr: |
@@ -438,7 +406,6 @@ punta_riversa:
 
 ridoppio:
   term: Ridoppio
-  category: Les Coups et Techniques Additionnels
   type: Attaque / Frappe de taille
   definition:
     fr: |
@@ -451,7 +418,6 @@ ridoppio:
 
 tramazzone:
   term: Tramazzone
-  category: Les Coups et Techniques Additionnels
   type: Attaque / Frappe de taille
   definition:
     fr: |
@@ -468,7 +434,6 @@ tramazzone:
 
 gioco_largo:
   term: Gioco Largo
-  category: Concepts Tactiques
   type: Tactique / Concept
   definition:
     fr: |
@@ -481,7 +446,6 @@ gioco_largo:
 
 gioco_stretto:
   term: Gioco Stretto
-  category: Concepts Tactiques
   type: Tactique / Concept
   definition:
     fr: |
@@ -498,7 +462,6 @@ gioco_stretto:
 
 scanso:
   term: Scanso
-  category: Actions et Mouvements Additionnels
   type: Mouvement / Déplacement
   definition:
     fr: |
@@ -511,7 +474,6 @@ scanso:
 
 volta:
   term: Volta
-  category: Actions et Mouvements Additionnels
   type: Mouvement / Déplacement
   definition:
     fr: |
@@ -524,7 +486,6 @@ volta:
 
 mezza_volta:
   term: Mezza Volta
-  category: Actions et Mouvements Additionnels
   type: Mouvement / Déplacement
   definition:
     fr: |
@@ -537,7 +498,6 @@ mezza_volta:
 
 accrescere:
   term: Accrescere
-  category: Actions et Mouvements Additionnels
   type: Mouvement / Déplacement
   definition:
     fr: |
@@ -550,7 +510,6 @@ accrescere:
 
 discrescere:
   term: Discrescere
-  category: Actions et Mouvements Additionnels
   type: Mouvement / Déplacement
   definition:
     fr: |
@@ -567,7 +526,6 @@ discrescere:
 
 spada:
   term: Spada
-  category: Armes et Équipement
   type: Arme
   definition:
     fr: |
@@ -580,7 +538,6 @@ spada:
 
 spada_da_lato:
   term: Spada da Lato
-  category: Armes et Équipement
   type: Arme
   definition:
     fr: |
@@ -593,7 +550,6 @@ spada_da_lato:
 
 brocchiero:
   term: Brocchiero
-  category: Armes et Équipement
   type: Arme / Protection
   definition:
     fr: |
@@ -606,7 +562,6 @@ brocchiero:
 
 rotella:
   term: Rotella
-  category: Armes et Équipement
   type: Arme / Protection
   definition:
     fr: |
@@ -619,7 +574,6 @@ rotella:
 
 daga:
   term: Daga
-  category: Armes et Équipement
   type: Arme
   definition:
     fr: |
@@ -632,7 +586,6 @@ daga:
 
 cappa:
   term: Cappa
-  category: Armes et Équipement
   type: Arme / Protection
   definition:
     fr: |
@@ -649,7 +602,6 @@ cappa:
 
 filo:
   term: Filo
-  category: Termes Techniques Additionnels
   type: Technique
   definition:
     fr: |
@@ -662,7 +614,6 @@ filo:
 
 misura:
   term: Misura
-  category: Termes Techniques Additionnels
   type: Tactique / Concept
   definition:
     fr: |
@@ -675,7 +626,6 @@ misura:
 
 tempo:
   term: Tempo
-  category: Termes Techniques Additionnels
   type: Tactique / Concept
   definition:
     fr: |
@@ -688,7 +638,6 @@ tempo:
 
 stringere:
   term: Stringere
-  category: Termes Techniques Additionnels
   type: Tactique / Technique
   definition:
     fr: |
@@ -701,7 +650,6 @@ stringere:
 
 cavare:
   term: Cavare
-  category: Termes Techniques Additionnels
   type: Tactique / Technique
   definition:
     fr: |
@@ -714,7 +662,6 @@ cavare:
 
 battere:
   term: Battere
-  category: Termes Techniques Additionnels
   type: Tactique / Technique
   definition:
     fr: |
@@ -731,7 +678,6 @@ battere:
 
 tete:
   term: Tête
-  category: Les Cibles
   type: Cible
   definition:
     fr: La tête de l'adversaire.
@@ -742,7 +688,6 @@ tete:
 
 jambe:
   term: Jambe
-  category: Les Cibles
   type: Cible
   definition:
     fr: La jambe de l'adversaire, souvent la jambe avancée.
@@ -753,7 +698,6 @@ jambe:
 
 bras:
   term: Bras
-  category: Les Cibles
   type: Cible
   definition:
     fr: Le bras de l'adversaire, souvent le bras armé.
@@ -764,7 +708,6 @@ bras:
 
 main:
   term: Main
-  category: Les Cibles
   type: Cible
   definition:
     fr: La main de l'adversaire, cible privilégiée pour désarmer ou blesser.
@@ -775,7 +718,6 @@ main:
 
 face:
   term: Face
-  category: Les Cibles
   type: Cible
   definition:
     fr: Le visage de l'adversaire.
@@ -786,7 +728,6 @@ face:
 
 flanc:
   term: Flanc
-  category: Les Cibles
   type: Cible
   definition:
     fr: Le flanc ou le côté du corps de l'adversaire.
@@ -797,7 +738,6 @@ flanc:
 
 poitrine:
   term: Poitrine
-  category: Les Cibles
   type: Cible
   definition:
     fr: La poitrine ou le torse de l'adversaire.
@@ -808,7 +748,6 @@ poitrine:
 
 cuisse:
   term: Cuisse
-  category: Les Cibles
   type: Cible
   definition:
     fr: La cuisse de l'adversaire.
@@ -819,7 +758,6 @@ cuisse:
 
 pied:
   term: Pied
-  category: Les Cibles
   type: Cible
   definition:
     fr: Le pied de l'adversaire.
