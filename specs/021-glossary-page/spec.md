@@ -188,16 +188,16 @@ mandritto:
 
 ## Phased Delivery Plan
 
-This feature follows a three-phase rollout approach:
+This feature follows a four-phase rollout approach:
 
 - **Phase 1 (MVP - This Release)**: Standalone glossary page with browsing, search, filtering, and categorization. User Stories 1-3. This delivers complete independent glossary functionality.
 - **Phase 2 (Release +1)**: Integration with treatise pages. Add clickable glossary term links in treatises that navigate to the glossary page (User Story 4, simplified). No auto-scroll or URL parameters yet.
 - **Phase 3 (Release +2)**: Advanced integration. Support URL hash fragments (e.g., `/glossary#falso_dritto`) to auto-scroll to specific terms when navigating from treatises.
+- **Phase 4 (Release +3)**: Glossary content editing interface. Add an "Edit" button next to each term that opens an editing interface (using pattern similar to AnnotationPanel in BolognesePlatform) allowing users to modify definitions, translations, and term types in `data/glossary.yaml`.
 
 ## Out of Scope
 
 - **Glossary data refactoring** (category field addition) - Handled as separate top-priority pre-implementation task
-- Modifying glossary content (definitions, translations, types)
 - Creating an admin interface to edit glossary terms
 - Implementing term usage statistics or popularity metrics
 - Exporting glossary to other formats (PDF, spreadsheet, etc.)
