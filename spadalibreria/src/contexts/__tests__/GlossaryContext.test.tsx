@@ -278,7 +278,7 @@ describe('GlossaryContext', () => {
       expect(grouped['Coups et Techniques']).toHaveProperty('Attaque / Frappe de taille');
     });
 
-    it('should group filtered terms when search is active', async () => {
+    it('should keep grouped terms complete when search is active', async () => {
       const { result } = renderHook(() => useGlossary(), { wrapper });
 
       await waitFor(() => {
@@ -291,8 +291,9 @@ describe('GlossaryContext', () => {
 
       const grouped = result.current.groupedTerms;
 
-      expect(Object.keys(grouped)).toHaveLength(1);
-      expect(grouped['Coups et Techniques']['Attaque / Frappe de taille']).toHaveLength(1);
+      expect(Object.keys(grouped)).toHaveLength(2);
+      expect(grouped['Coups et Techniques']['Attaque / Frappe de taille']).toHaveLength(2);
+      expect(grouped['Les Guardes']['Garde Haute']).toHaveLength(1);
     });
 
     it('should call groupGlossaryByCategory with filtered terms', async () => {

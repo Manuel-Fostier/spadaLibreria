@@ -7,6 +7,35 @@
 
 ---
 
+## Component Reuse Strategy
+
+**Reference Document**: `specs/021-glossary-page/REUSABLE_COMPONENTS.md`
+
+### ✅ Components/Utilities to Reuse or Adapt
+
+| Component | Reuse Strategy | Tasks Affected |
+|-----------|---|---|
+| **SearchBar.tsx** | Adapt pattern to GlossarySearchBar | T050, T052 |
+| **BolognesePlatform.tsx** (language toggles) | Adapt toggle pattern to radio group in LanguageSelector | T044, T045 |
+| **highlighter.ts** | Use directly for search highlighting | T051, T053, T054 |
+| **Term.tsx** | Reference display patterns only (not direct reuse) | T040, T042 |
+
+### Implementation Notes
+
+- **SearchBar Adaptation**: Replace SearchContext with GlossaryContext, simplify options (no Match Case/Whole Word/Regex buttons)
+- **Language Toggle Adaptation**: Convert BolognesePlatform's multi-select checkboxes to single-select radio buttons (IT/FR/EN)
+- **highlighter.ts Direct Reuse**: No changes needed; apply to term names, definitions, and translations in TermDisplay
+- **Term.tsx Reference**: Use as inspiration for styling and display patterns; create new TermDisplay component that shows full content, not tooltip
+
+### Cannot Reuse
+
+- AnnotationPanel/Badge/Settings (treatise-specific)
+- TextParser/MarkdownRenderer (treatise text parsing)
+- TagFilter (annotation tag filtering)
+- MeasureProgressBar/StatisticsModal (treatise-specific features)
+
+---
+
 ## PHASE 0: Pre-Implementation (BLOCKING)
 
 **Goal**: Refactor glossary.yaml to add explicit category field to all terms  
@@ -62,16 +91,17 @@
 ### Phase 1.2: User Story 1 - Browse Complete Glossary (P1)
 
 **Goal**: Display all glossary terms organized hierarchically (Category → Type → Term) with full definitions  
-**Independent Test**: All glossary terms are visible on page load, organized by category and type, with definitions in user's selected language
+**Independent Test**: All glossary terms are visible on page load, organized by category and type, with definitions in user's selected language  
+**Component Reuse Strategy**: Reference `Term.tsx` for display patterns; adapt `BolognesePlatform.tsx` language toggle pattern to radio group
 
-- [ ] T040 [P] [US1] Write test for TermDisplay component in `src/components/__tests__/TermDisplay.test.tsx`
-- [ ] T041 [P] [US1] Write test for CategorySection component in `src/components/__tests__/CategorySection.test.tsx`
-- [ ] T042 [US1] Implement TermDisplay component in `src/components/TermDisplay.tsx` (display term name, definition, translation for selected language)
-- [ ] T043 [US1] Implement CategorySection component in `src/components/CategorySection.tsx` (hierarchy: category → types → terms, all visible)
-- [ ] T044 [P] [US1] Write test for language selector in `src/components/__tests__/LanguageSelector.test.tsx` (switch between IT/FR/EN)
-- [ ] T045 [US1] Implement or adapt LanguageSelector component in `src/components/LanguageSelector.tsx`
-- [ ] T046 [P] [US1] Write test for GlossaryContent component in `src/components/__tests__/GlossaryContent.test.tsx` (render all categories with all terms visible)
-- [ ] T047 [US1] Implement GlossaryContent component in `src/components/GlossaryContent.tsx` (render grouped terms by category)
+- [X] T040 [P] [US1] Write test for TermDisplay component in `src/components/__tests__/TermDisplay.test.tsx`
+- [X] T041 [P] [US1] Write test for CategorySection component in `src/components/__tests__/CategorySection.test.tsx`
+- [X] T042 [US1] Implement TermDisplay component in `src/components/TermDisplay.tsx` (reference Term.tsx patterns; display term name, definition, translation for selected language with search highlighting support)
+- [X] T043 [US1] Implement CategorySection component in `src/components/CategorySection.tsx` (hierarchy: category → types → terms, all visible, no collapsing)
+- [X] T044 [P] [US1] Write test for LanguageSelector component in `src/components/__tests__/LanguageSelector.test.tsx` (radio group: IT/FR/EN, single selection)
+- [X] T045 [US1] Implement LanguageSelector component in `src/components/LanguageSelector.tsx` (adapt BolognesePlatform language toggle pattern to radio button group; integrate with GlossaryContext)
+- [X] T046 [P] [US1] Write test for GlossaryContent component in `src/components/__tests__/GlossaryContent.test.tsx` (render all categories with all terms visible)
+- [X] T047 [US1] Implement GlossaryContent component in `src/components/GlossaryContent.tsx` (render grouped terms by category)
 - [ ] T048 [US1] All US1 component tests pass with >85% coverage
 
 ---
@@ -79,15 +109,16 @@
 ### Phase 1.3: User Story 2 - Search and Filter Glossary Terms (P1)
 
 **Goal**: Real-time search that highlights matching terms inline across term names, categories, and definitions  
-**Independent Test**: Typing a search term highlights all matching terms (names, categories, definitions) in the glossary without hiding non-matching terms; clearing search removes highlights
+**Independent Test**: Typing a search term highlights all matching terms (names, categories, definitions) in the glossary without hiding non-matching terms; clearing search removes highlights  
+**Component Reuse Strategy**: Adapt `SearchBar.tsx` pattern to `GlossarySearchBar.tsx`; use `highlighter.ts` utility directly
 
-- [ ] T050 [P] [US2] Write test for GlossarySearchBar component in `src/components/__tests__/GlossarySearchBar.test.tsx` (search input, highlighting, clear button, "no results" message)
-- [ ] T051 [P] [US2] Write test for search highlighting in `src/components/__tests__/TermDisplay.test.tsx` (highlighted text renders correctly)
-- [ ] T052 [US2] Implement GlossarySearchBar component in `src/components/GlossarySearchBar.tsx` (real-time search, debounced, clear button, "no results" indicator)
-- [ ] T053 [US2] Update TermDisplay component to accept searchQuery prop and apply inline highlighting using `highlighter.ts`
-- [ ] T054 [US2] Integrate search highlighting into GlossaryContent component
-- [ ] T055 [P] [US2] Write integration test for complete search workflow in `src/__tests__/glossary-search-integration.test.tsx`
-- [ ] T056 [US2] All US2 component tests pass with >85% coverage
+- [X] T050 [P] [US2] Write test for GlossarySearchBar component in `src/components/__tests__/GlossarySearchBar.test.tsx` (search input, highlighting, clear button, "no results" message)
+- [X] T051 [P] [US2] Write test for search highlighting in `src/components/__tests__/TermDisplay.test.tsx` (highlighted text renders correctly using highlighter.ts)
+- [X] T052 [US2] Implement GlossarySearchBar component in `src/components/GlossarySearchBar.tsx` (adapt SearchBar.tsx pattern; real-time search with GlossaryContext, debounced, clear button, "no results" indicator; simplified options compared to SearchBar)
+- [X] T053 [US2] Update TermDisplay component to accept searchQuery prop and apply inline highlighting using `src/lib/highlighter.ts`
+- [X] T054 [US2] Integrate search highlighting into GlossaryContent component (pass searchQuery to all TermDisplay instances)
+- [X] T055 [P] [US2] Write integration test for complete search workflow in `src/__tests__/glossary-search-integration.test.tsx`
+- [X] T056 [US2] All US2 component tests pass with >85% coverage
 
 ---
 
@@ -249,13 +280,18 @@
 ```
 Phase 0: Glossary.yaml refactoring (T001-T012)
     ↓ (BLOCKER)
-Phase 1.0: Type definitions & utilities (T020-T026)
+Phase 1.0: Type definitions & utilities (T020-T026) [COMPLETED ✅]
     ↓
-Phase 1.1: State management context (T030-T033)
+Phase 1.1: State management context (T030-T033) [COMPLETED ✅]
     ↓
 ├─→ Phase 1.2: US1 - Browse (T040-T048)
+│   ├─ Reuse: Term.tsx patterns (TermDisplay), BolognesePlatform toggles (LanguageSelector)
+│   └─ New: CategorySection, GlossaryContent
 ├─→ Phase 1.3: US2 - Search (T050-T056)
+│   ├─ Reuse: SearchBar.tsx pattern (GlossarySearchBar), highlighter.ts utility
+│   └─ Updates: TermDisplay search highlighting
 └─→ Phase 1.4: US3 - Detail View (T060-T066)
+    └─ Updates: TermDisplay multilingual support
     ↓
 Phase 1.5: Page route & integration (T070-T075)
     ↓
@@ -276,6 +312,30 @@ Phase 4: Content editing (T140-T150)
 ```
 
 ---
+
+## Task Summary
+
+**Phase 1 Task Count**: 97 tasks total
+- Phase 1.0: 7 tasks [✅ COMPLETED]
+- Phase 1.1: 4 tasks [✅ COMPLETED]
+- Phase 1.2: 9 tasks (US1 - Browse)
+- Phase 1.3: 7 tasks (US2 - Search)
+- Phase 1.4: 7 tasks (US3 - Detail View)
+- Phase 1.5: 6 tasks (Page Route & Integration)
+- Phase 1.6: 7 tasks (Integration Tests)
+- Phase 1.7: 7 tasks (Responsive Design)
+- Phase 1.8: 7 tasks (Performance)
+- Phase 1.9: 7 tasks (Final Validation)
+
+**Progress**: 11/97 tasks complete (11%)
+
+**Component Reuse**: 
+- 4 existing components/utilities analyzed for reuse
+- 3 to be adapted/reused with modifications (SearchBar, Language toggles, highlighter.ts)
+- 1 to be referenced for patterns (Term.tsx)
+- 6 new components to create (TermDisplay, CategorySection, LanguageSelector, GlossaryContent, GlossarySearchBar, GlossaryPage)
+
+````
 
 ## Parallel Execution Opportunities
 

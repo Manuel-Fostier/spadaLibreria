@@ -71,9 +71,10 @@ export function GlossaryProvider({ children }: GlossaryProviderProps) {
   }, [terms, searchQuery, selectedLanguage]);
 
   // Computed: Grouped terms (Category → Type → Terms)
+  // Glossary display should remain complete; search only highlights matches.
   const groupedTerms = useMemo(() => {
-    return groupGlossaryByCategory(filteredTerms);
-  }, [filteredTerms]);
+    return groupGlossaryByCategory(terms);
+  }, [terms]);
 
   const value: GlossaryContextType = {
     terms,
