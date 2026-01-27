@@ -52,10 +52,10 @@
 **Goal**: Centralized glossary state using React Context  
 **Independent Test**: Context loads data, filters by search, and handles language switching
 
-- [ ] T030 [P] Write tests for GlossaryContext in `src/contexts/__tests__/GlossaryContext.test.tsx` (state initialization, search, language switching)
-- [ ] T031 Implement GlossaryContext in `src/contexts/GlossaryContext.tsx` with state: terms, searchQuery, selectedLanguage, isLoading, error
-- [ ] T032 Implement GlossaryContext computed properties: filteredTerms, groupedTerms
-- [ ] T033 All Phase 1.1 context tests pass
+- [X] T030 [P] Write tests for GlossaryContext in `src/contexts/__tests__/GlossaryContext.test.tsx` (state initialization, search, language switching)
+- [X] T031 Implement GlossaryContext in `src/contexts/GlossaryContext.tsx` with state: terms, searchQuery, selectedLanguage, isLoading, error
+- [X] T032 Implement GlossaryContext computed properties: filteredTerms, groupedTerms
+- [X] T033 All Phase 1.1 context tests pass
 
 ---
 
