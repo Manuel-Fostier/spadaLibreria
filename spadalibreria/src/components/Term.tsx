@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { GlossaryEntry } from '@/lib/dataLoader';
 import { useAnnotationDisplay } from '@/contexts/AnnotationDisplayContext';
 import { mapTermTypeToAnnotation } from '@/lib/termTypeMapping';
@@ -32,91 +32,76 @@ export default function Term({ termKey, children, glossaryData }: TermProps) {
   const annotationType = data ? mapTermTypeToAnnotation(data.type) : 'techniques';
   const annotation = getAnnotation(annotationType);
 
-  // Track color in state to react to annotation color changes
-  const [termColor, setTermColor] = useState<string>(
-    annotation?.getTextStyle().color as string || '#6366f1'
+  const termColor = useMemo(
+    () => (annotation?.getTextStyle().color as string) || '#6366f1',
+    [annotation]
   );
 
-  useEffect(() => {
-    setTermColor(annotation?.getTextStyle().color as string || '#6366f1');
-    // Only update when annotation or its style changes
-  }, [annotation, annotation?.getTextStyle().color]);
+  const updateTooltipPosition = () => {
+    if (!spanRef.current) return;
+    const rect = spanRef.current.getBoundingClientRect();
+    const spaceAbove = rect.top;
 
-  useEffect(() => {
-    if (showTooltip && spanRef.current) {
-      const rect = spanRef.current.getBoundingClientRect();
-      const spaceAbove = rect.top;
-      const spaceBelow = window.innerHeight - rect.bottom;
+    const nextVertical = spaceAbove < 400 ? 'bottom' : 'top';
+    setTooltipPosition(nextVertical);
 
-      // Position verticale
-      const nextVertical = spaceAbove < 400 ? 'bottom' : 'top';
-      setTooltipPosition(nextVertical);
+    const tooltipWidth = 800; // largeur prévue
+    const viewportWidth = window.innerWidth;
+    const margin = 16; // marge latérale sécuritaire
 
-      const tooltipWidth = 800; // largeur prévue
-      const viewportWidth = window.innerWidth;
-      const margin = 16; // marge latérale sécuritaire
-
-      // Recherche d'un conteneur de texte plus étroit que le viewport (ex: colonne centrale)
-      let containerRect: DOMRect | null = null;
-      let el: HTMLElement | null = spanRef.current.parentElement;
-      while (el) {
-        const r = el.getBoundingClientRect();
-        // heuristique: largeur inférieure au viewport - 100 et supérieure à 400 (évite petits wrappers)
-        if (r.width < viewportWidth - 100 && r.width > 400) {
-          containerRect = r;
-          break;
-        }
-        el = el.parentElement;
+    let containerRect: DOMRect | null = null;
+    let el: HTMLElement | null = spanRef.current.parentElement;
+    while (el) {
+      const r = el.getBoundingClientRect();
+      if (r.width < viewportWidth - 100 && r.width > 400) {
+        containerRect = r;
+        break;
       }
-      if (!containerRect) {
-        // fallback: tenter main ou article
-        const main = document.querySelector('main');
-        if (main) {
-          const r = main.getBoundingClientRect();
-          if (r.width < viewportWidth - 100 && r.width > 400) containerRect = r as DOMRect;
-        }
-      }
-
-      // Espace calculé relatif au conteneur ou au viewport si pas trouvé
-      let spaceLeft: number;
-      let spaceRight: number;
-      if (containerRect) {
-        spaceLeft = rect.left - containerRect.left;
-        spaceRight = containerRect.right - rect.right;
-      } else {
-        spaceLeft = rect.left;
-        spaceRight = viewportWidth - rect.right;
-      }
-
-      // Largeur utilisable pour centrer (doublée car on prend le min des demi-espaces)
-      const centerHalfLeft = containerRect ? (rect.left + rect.width / 2 - containerRect.left) : (rect.left + rect.width / 2);
-      const centerHalfRight = containerRect ? (containerRect.right - (rect.left + rect.width / 2)) : (viewportWidth - (rect.left + rect.width / 2));
-      const spaceCenter = Math.min(centerHalfLeft, centerHalfRight) * 2;
-
-      const thresholdEdge = 180; // seuil : si proche bord gauche/droite du conteneur
-
-      const canCenter = spaceCenter >= tooltipWidth + margin * 2;
-      const canAlignLeft = spaceRight >= tooltipWidth + margin;
-      const canAlignRight = spaceLeft >= tooltipWidth + margin;
-
-      let nextHorizontal: 'left' | 'center' | 'right' = 'center';
-      if (canCenter) {
-        // Même si on peut centrer, si très proche du bord gauche, on préfère aligner à gauche
-        if (spaceLeft < thresholdEdge) nextHorizontal = 'left';
-        else if (spaceRight < thresholdEdge) nextHorizontal = 'right';
-        else nextHorizontal = 'center';
-      } else if (canAlignLeft) {
-        nextHorizontal = 'left';
-      } else if (canAlignRight) {
-        nextHorizontal = 'right';
-      } else {
-        // Dernier recours: aligner à gauche et laisser le overflow-y gérer la lecture
-        nextHorizontal = 'left';
-      }
-
-      setTooltipAlignment(nextHorizontal);
+      el = el.parentElement;
     }
-  }, [showTooltip, termKey]);
+    if (!containerRect) {
+      const main = document.querySelector('main');
+      if (main) {
+        const r = main.getBoundingClientRect();
+        if (r.width < viewportWidth - 100 && r.width > 400) containerRect = r as DOMRect;
+      }
+    }
+
+    let spaceLeft: number;
+    let spaceRight: number;
+    if (containerRect) {
+      spaceLeft = rect.left - containerRect.left;
+      spaceRight = containerRect.right - rect.right;
+    } else {
+      spaceLeft = rect.left;
+      spaceRight = viewportWidth - rect.right;
+    }
+
+    const centerHalfLeft = containerRect ? (rect.left + rect.width / 2 - containerRect.left) : (rect.left + rect.width / 2);
+    const centerHalfRight = containerRect ? (containerRect.right - (rect.left + rect.width / 2)) : (viewportWidth - (rect.left + rect.width / 2));
+    const spaceCenter = Math.min(centerHalfLeft, centerHalfRight) * 2;
+
+    const thresholdEdge = 180; // seuil : si proche bord gauche/droite du conteneur
+
+    const canCenter = spaceCenter >= tooltipWidth + margin * 2;
+    const canAlignLeft = spaceRight >= tooltipWidth + margin;
+    const canAlignRight = spaceLeft >= tooltipWidth + margin;
+
+    let nextHorizontal: 'left' | 'center' | 'right' = 'center';
+    if (canCenter) {
+      if (spaceLeft < thresholdEdge) nextHorizontal = 'left';
+      else if (spaceRight < thresholdEdge) nextHorizontal = 'right';
+      else nextHorizontal = 'center';
+    } else if (canAlignLeft) {
+      nextHorizontal = 'left';
+    } else if (canAlignRight) {
+      nextHorizontal = 'right';
+    } else {
+      nextHorizontal = 'left';
+    }
+
+    setTooltipAlignment(nextHorizontal);
+  };
 
   // Fermer la tooltip en cliquant n'importe où hors du terme
   useEffect(() => {
@@ -141,7 +126,7 @@ export default function Term({ termKey, children, glossaryData }: TermProps) {
       document.removeEventListener('mousedown', handleDocumentMouseDown);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [showTooltip]);
+  }, [showTooltip, termKey]);
 
   // Synchroniser l'état local avec l'état global pour une seule tooltip visible
   useEffect(() => {
@@ -189,6 +174,7 @@ export default function Term({ termKey, children, glossaryData }: TermProps) {
         }
         // Activer globalement ce terme et afficher localement cette instance
         setGlobalActiveTerm(termKey);
+        updateTooltipPosition();
         setShowTooltip(true);
       }}
       onMouseLeave={() => {

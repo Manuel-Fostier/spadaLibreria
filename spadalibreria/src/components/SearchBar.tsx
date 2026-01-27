@@ -5,7 +5,7 @@ import { Search, X } from 'lucide-react';
 import { useSearch } from '@/contexts/SearchContext';
 
 export default function SearchBar() {
-  const { performSearch, clearSearch, isSearching } = useSearch();
+  const { performSearch, clearSearch } = useSearch();
   const [searchText, setSearchText] = useState('');
   const [matchCase, setMatchCase] = useState(false);
   const [wholeWord, setWholeWord] = useState(false);

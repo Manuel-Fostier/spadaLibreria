@@ -45,7 +45,8 @@
     weapons:
       - Spada sola
     guards_mentioned: null
-    techniques: null
+    techniques:
+      technique bidon: 1
     measures: []
     strategy: []
     weapon_type: Epée aiguisée

@@ -53,16 +53,16 @@ describe('Term component', () => {
       },
     };
 
+    const providerValue: React.ContextType<typeof AnnotationDisplayContext> = {
+      displayConfig: mockDisplayConfig,
+      updateDisplayConfig: jest.fn(),
+      resetDisplayConfig: jest.fn(),
+      isHydrated: true,
+      getAnnotation: jest.fn(),
+    };
+
     render(
-      <AnnotationDisplayContext.Provider
-        value={{
-          displayConfig: mockDisplayConfig,
-          updateDisplayConfig: jest.fn(),
-          resetDisplayConfig: jest.fn(),
-          isHydrated: true,
-          getAnnotation: jest.fn(),
-        } as any}
-      >
+      <AnnotationDisplayContext.Provider value={providerValue}>
         <Term termKey="test" glossaryData={glossaryData}>
           TestTerm
         </Term>
@@ -82,13 +82,13 @@ describe('Term component', () => {
       },
     };
 
-    const providerValue = () => ({
+    const providerValue = (): React.ContextType<typeof AnnotationDisplayContext> => ({
       displayConfig: mockDisplayConfig,
       updateDisplayConfig: jest.fn(),
       resetDisplayConfig: jest.fn(),
       isHydrated: true,
       getAnnotation: jest.fn(),
-    }) as any;
+    });
 
     const { rerender } = render(
       <AnnotationDisplayContext.Provider value={providerValue()}>
