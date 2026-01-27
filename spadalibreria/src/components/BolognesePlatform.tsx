@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { ChevronDown, Settings, BarChart3, Edit2 } from 'lucide-react';
+import { ChevronDown, Settings, BarChart3, Edit2, Book } from 'lucide-react';
+import Link from 'next/link';
 import MarkdownRenderer from './MarkdownRenderer';
 import TextEditor from './TextEditor';
 import AnnotationPanel from './AnnotationPanel';
@@ -489,6 +490,18 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
               <BarChart3 size={16} />
               Statistiques
             </button>
+          </div>
+
+          {/* Glossary link */}
+          <div className="mb-6">
+            <Link
+              href="/glossary"
+              className="w-full px-4 py-3 text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 bg-white text-indigo-600 border-2 border-indigo-600 hover:bg-indigo-50 shadow-sm block text-center"
+              title="Consulter le glossaire"
+            >
+              <Book size={16} />
+              Glossaire
+            </Link>
           </div>
 
         </div>

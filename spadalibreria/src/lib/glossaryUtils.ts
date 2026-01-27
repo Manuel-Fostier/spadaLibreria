@@ -49,8 +49,8 @@ export function filterGlossaryTerms(
 
   Object.entries(glossaryData).forEach(([key, entry]) => {
     const matchesTerm = entry.term.toLowerCase().includes(searchLower);
-    const matchesDefinition = entry.definition[language].toLowerCase().includes(searchLower);
-    const matchesTranslation = entry.translation[language].toLowerCase().includes(searchLower);
+    const matchesDefinition = entry.definition[language]?.toLowerCase().includes(searchLower) ?? false;
+    const matchesTranslation = entry.translation[language]?.toLowerCase().includes(searchLower) ?? false;
     const matchesType = entry.type.toLowerCase().includes(searchLower);
 
     if (matchesTerm || matchesDefinition || matchesTranslation || matchesType) {
