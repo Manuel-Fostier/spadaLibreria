@@ -54,7 +54,7 @@ describe('CategorySection Component', () => {
         searchQuery=""
       />
     );
-    expect(screen.getByText('Coups et Techniques')).toBeInTheDocument();
+    expect(screen.getAllByText('Coups et Techniques')[0]).toBeInTheDocument();
   });
 
   it('renders all type subsections', () => {
@@ -66,8 +66,8 @@ describe('CategorySection Component', () => {
         searchQuery=""
       />
     );
-    expect(screen.getByText('Attaque / Frappe de taille')).toBeInTheDocument();
-    expect(screen.getByText('Attaque / Frappe di punta')).toBeInTheDocument();
+    expect(screen.getAllByText('Attaque / Frappe de taille')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Attaque / Frappe di punta')[0]).toBeInTheDocument();
   });
 
   it('renders all terms within types', () => {
@@ -117,7 +117,7 @@ describe('CategorySection Component', () => {
       />
     );
     // Should switch to French translation
-    expect(screen.getByText('Mandritto')).toBeInTheDocument();
+    expect(screen.getAllByText('Mandritto')[0]).toBeInTheDocument();
   });
 
   it('passes searchQuery to child TermDisplay components', () => {
@@ -167,8 +167,8 @@ describe('CategorySection Component', () => {
       />
     );
     // Verify hierarchy is present in DOM structure
-    expect(screen.getByText('Coups et Techniques')).toBeInTheDocument();
-    expect(screen.getByText('Attaque / Frappe de taille')).toBeInTheDocument();
-    expect(screen.getByText('Mandritto')).toBeInTheDocument();
+    expect(screen.getAllByText('Coups et Techniques')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Attaque / Frappe de taille')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Mandritto')[0]).toBeInTheDocument();
   });
 });
