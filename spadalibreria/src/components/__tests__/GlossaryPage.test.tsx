@@ -16,12 +16,6 @@ jest.mock('../GlossarySearchBar', () => {
   };
 });
 
-jest.mock('../LanguageSelector', () => {
-  return function MockLanguageSelector() {
-    return <div data-testid="language-selector">LanguageSelector</div>;
-  };
-});
-
 jest.mock('../GlossaryContent', () => {
   return function MockGlossaryContent() {
     return <div data-testid="glossary-content">GlossaryContent</div>;
@@ -35,7 +29,7 @@ describe('GlossaryPage Component (T070)', () => {
     jest.clearAllMocks();
   });
 
-  it('renders all sub-components when data is loaded', () => {
+  it('renders all sub-components when data is loaded in French', () => {
     mockUseGlossary.mockReturnValue({
       groupedTerms: {
         'Test Category': {
@@ -49,8 +43,6 @@ describe('GlossaryPage Component (T070)', () => {
           }],
         },
       },
-      selectedLanguage: 'fr',
-      setSelectedLanguage: jest.fn(),
       searchQuery: '',
       setSearchQuery: jest.fn(),
       isLoading: false,
@@ -63,7 +55,8 @@ describe('GlossaryPage Component (T070)', () => {
 
     // Check that all main components are rendered
     expect(screen.getByText(/Glossary.*Glossaire.*Glossario/i)).toBeInTheDocument();
-    expect(screen.getByTestId('language-selector')).toBeInTheDocument();
+    // LanguageSelector should NOT be rendered (French-only display)
+    expect(screen.queryByTestId('language-selector')).not.toBeInTheDocument();
     expect(screen.getByTestId('glossary-search-bar')).toBeInTheDocument();
     expect(screen.getByTestId('glossary-content')).toBeInTheDocument();
   });
@@ -71,8 +64,6 @@ describe('GlossaryPage Component (T070)', () => {
   it('displays loading state', () => {
     mockUseGlossary.mockReturnValue({
       groupedTerms: {},
-      selectedLanguage: 'fr',
-      setSelectedLanguage: jest.fn(),
       searchQuery: '',
       setSearchQuery: jest.fn(),
       isLoading: true,
@@ -91,8 +82,6 @@ describe('GlossaryPage Component (T070)', () => {
     const errorMessage = 'Failed to load glossary data';
     mockUseGlossary.mockReturnValue({
       groupedTerms: {},
-      selectedLanguage: 'fr',
-      setSelectedLanguage: jest.fn(),
       searchQuery: '',
       setSearchQuery: jest.fn(),
       isLoading: false,
@@ -108,8 +97,7 @@ describe('GlossaryPage Component (T070)', () => {
     expect(screen.queryByTestId('glossary-content')).not.toBeInTheDocument();
   });
 
-  it('passes correct props to sub-components', () => {
-    const mockSetLanguage = jest.fn();
+  it('passes correct props to sub-components in French', () => {
     const mockGroupedTerms = {
       'Category 1': {
         'Type 1': [{
@@ -125,8 +113,6 @@ describe('GlossaryPage Component (T070)', () => {
 
     mockUseGlossary.mockReturnValue({
       groupedTerms: mockGroupedTerms,
-      selectedLanguage: 'en',
-      setSelectedLanguage: mockSetLanguage,
       searchQuery: 'test query',
       setSearchQuery: jest.fn(),
       isLoading: false,
@@ -137,17 +123,15 @@ describe('GlossaryPage Component (T070)', () => {
 
     render(<GlossaryPage />);
 
-    // Verify all components are rendered
-    expect(screen.getByTestId('language-selector')).toBeInTheDocument();
+    // Verify components are rendered (no LanguageSelector in French-only mode)
+    expect(screen.queryByTestId('language-selector')).not.toBeInTheDocument();
     expect(screen.getByTestId('glossary-search-bar')).toBeInTheDocument();
     expect(screen.getByTestId('glossary-content')).toBeInTheDocument();
   });
 
-  it('renders page header with multilingual title', () => {
+  it('renders page header with French glossary title', () => {
     mockUseGlossary.mockReturnValue({
       groupedTerms: {},
-      selectedLanguage: 'fr',
-      setSelectedLanguage: jest.fn(),
       searchQuery: '',
       setSearchQuery: jest.fn(),
       isLoading: false,
@@ -158,16 +142,14 @@ describe('GlossaryPage Component (T070)', () => {
 
     render(<GlossaryPage />);
 
-    // Check for multilingual header
+    // Check for French glossary header
     expect(screen.getByText(/Glossary.*Glossaire.*Glossario/i)).toBeInTheDocument();
-    expect(screen.getByText(/Comprehensive glossary/i)).toBeInTheDocument();
+    expect(screen.getByText(/Comprehensive glossary.*Bolognese fencing/i)).toBeInTheDocument();
   });
 
   it('applies correct layout and styling classes', () => {
     mockUseGlossary.mockReturnValue({
       groupedTerms: {},
-      selectedLanguage: 'fr',
-      setSelectedLanguage: jest.fn(),
       searchQuery: '',
       setSearchQuery: jest.fn(),
       isLoading: false,

@@ -26,7 +26,6 @@ describe('TermDisplay Component', () => {
     render(
       <TermDisplay
         term={mockTerm}
-        language="en"
         searchQuery=""
         highlightMatches={false}
       />
@@ -34,57 +33,54 @@ describe('TermDisplay Component', () => {
     expect(screen.getByText('Mandritto', { selector: 'h4' })).toBeInTheDocument();
   });
 
-  it('renders definition in selected language', () => {
+  it('renders French definition only (not Italian or English)', () => {
     render(
       <TermDisplay
         term={mockTerm}
-        language="en"
         searchQuery=""
         highlightMatches={false}
       />
     );
-    expect(screen.getByText(/A sword strike/)).toBeInTheDocument();
+    // French definition should be visible
+    expect(screen.getByText(/Un coup d'épée/)).toBeInTheDocument();
+    // Italian and English definitions should NOT be visible
+    expect(screen.queryByText(/Un colpo di spada/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/A sword strike/)).not.toBeInTheDocument();
   });
 
-  it('renders translation in selected language', () => {
+  it('renders French translation only (not Italian or English)', () => {
     render(
       <TermDisplay
         term={mockTerm}
-        language="en"
         searchQuery=""
         highlightMatches={false}
       />
     );
-    expect(screen.getByText('Right-hand Strike')).toBeInTheDocument();
+    // French translation should be visible (appears twice: as term name and translation)
+    expect(screen.getAllByText('Mandritto').length).toBeGreaterThan(0);
+    // English translation should NOT be visible
+    expect(screen.queryByText('Right-hand Strike')).not.toBeInTheDocument();
   });
 
-  it('switches language when language prop changes', () => {
-    const { rerender } = render(
-      <TermDisplay
-        term={mockTerm}
-        language="en"
-        searchQuery=""
-        highlightMatches={false}
-      />
-    );
-    expect(screen.getByText('Right-hand Strike')).toBeInTheDocument();
-
-    rerender(
-      <TermDisplay
-        term={mockTerm}
-        language="fr"
-        searchQuery=""
-        highlightMatches={false}
-      />
-    );
-    expect(screen.getByText('Mandritto', { selector: 'h4' })).toBeInTheDocument();
-  });
-
-  it('renders term category and type', () => {
+  it('displays all information in unified single view (no interaction needed)', () => {
     render(
       <TermDisplay
         term={mockTerm}
-        language="en"
+        searchQuery=""
+        highlightMatches={false}
+      />
+    );
+    // All French content should be visible at once
+    expect(screen.getAllByText('Mandritto').length).toBeGreaterThan(0);
+    expect(screen.getByText(/Un coup d'épée/)).toBeVisible();
+    expect(screen.getByText('Coups et Techniques')).toBeVisible();
+    expect(screen.getByText('Attaque / Frappe de taille')).toBeVisible();
+  });
+
+  it('renders term category and type with French content', () => {
+    render(
+      <TermDisplay
+        term={mockTerm}
         searchQuery=""
         highlightMatches={false}
       />
@@ -93,27 +89,23 @@ describe('TermDisplay Component', () => {
     expect(screen.getByText('Attaque / Frappe de taille')).toBeInTheDocument();
   });
 
-  it('highlights search matches when searchQuery and highlightMatches are true', () => {
+  it('highlights search matches in French content when highlightMatches is true', () => {
     const { container } = render(
       <TermDisplay
         term={mockTerm}
-        language="en"
-        searchQuery="strike"
+        searchQuery="coup"
         highlightMatches={true}
       />
     );
     const marks = container.querySelectorAll('mark');
     expect(marks.length).toBeGreaterThan(0);
-    const highlighted = screen.getAllByText(/strike/i, { selector: 'mark' });
-    expect(highlighted.length).toBeGreaterThan(0);
   });
 
   it('does not highlight when highlightMatches is false', () => {
     const { container } = render(
       <TermDisplay
         term={mockTerm}
-        language="en"
-        searchQuery="strike"
+        searchQuery="coup"
         highlightMatches={false}
       />
     );
@@ -121,7 +113,7 @@ describe('TermDisplay Component', () => {
     expect(marks.length).toBe(0);
   });
 
-  it('handles missing translation gracefully', () => {
+  it('handles missing French translation gracefully', () => {
     const termWithMissingTranslation: GlossaryTerm = {
       ...mockTerm,
       translation: {
@@ -134,7 +126,6 @@ describe('TermDisplay Component', () => {
     render(
       <TermDisplay
         term={termWithMissingTranslation}
-        language="fr"
         searchQuery=""
         highlightMatches={false}
       />
@@ -143,23 +134,21 @@ describe('TermDisplay Component', () => {
     expect(screen.getByText('Mandritto')).toBeInTheDocument();
   });
 
-  it('handles empty search query gracefully', () => {
+  it('handles empty search query gracefully in French', () => {
     render(
       <TermDisplay
         term={mockTerm}
-        language="en"
         searchQuery=""
         highlightMatches={true}
       />
     );
-    expect(screen.getByText('Mandritto')).toBeInTheDocument();
+    expect(screen.getAllByText('Mandritto').length).toBeGreaterThan(0);
   });
 
   it('applies correct styling classes', () => {
     const { container } = render(
       <TermDisplay
         term={mockTerm}
-        language="en"
         searchQuery=""
         highlightMatches={false}
       />

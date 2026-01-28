@@ -7,14 +7,12 @@ import TermDisplay from './TermDisplay';
 interface CategorySectionProps {
   categoryName: string;
   groupedTerms: { [type: string]: GlossaryTerm[] };
-  language: 'it' | 'fr' | 'en';
   searchQuery: string;
 }
 
 export default function CategorySection({
   categoryName,
   groupedTerms,
-  language,
   searchQuery,
 }: CategorySectionProps) {
   return (
@@ -32,13 +30,12 @@ export default function CategorySection({
             {type}
           </h3>
 
-          {/* Terms */}
+          {/* Terms - French only, all visible */}
           <div className="terms-container space-y-2 ml-4">
             {terms.map((term) => (
               <TermDisplay
                 key={term.id}
                 term={term}
-                language={language}
                 searchQuery={searchQuery}
                 highlightMatches={searchQuery.length > 0}
               />

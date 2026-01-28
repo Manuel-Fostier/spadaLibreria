@@ -49,11 +49,10 @@ describe('GlossaryContent Component', () => {
     },
   };
 
-  it('renders all category sections', () => {
+  it('renders all category sections in French', () => {
     render(
       <GlossaryContent
         groupedTerms={mockGroupedTerms}
-        language="en"
         searchQuery=""
       />
     );
@@ -61,11 +60,10 @@ describe('GlossaryContent Component', () => {
     expect(screen.getAllByText('Les Guardes').length).toBeGreaterThan(0);
   });
 
-  it('renders all terms from all categories', () => {
+  it('renders all terms from all categories in French', () => {
     render(
       <GlossaryContent
         groupedTerms={mockGroupedTerms}
-        language="en"
         searchQuery=""
       />
     );
@@ -77,7 +75,6 @@ describe('GlossaryContent Component', () => {
     render(
       <GlossaryContent
         groupedTerms={mockGroupedTerms}
-        language="en"
         searchQuery=""
       />
     );
@@ -85,76 +82,65 @@ describe('GlossaryContent Component', () => {
     expect(screen.getAllByText('Garde de protection').length).toBeGreaterThan(0);
   });
 
-  it('keeps all content visible without collapsing', () => {
+  it('keeps all content visible without collapsing (unified single view)', () => {
     render(
       <GlossaryContent
         groupedTerms={mockGroupedTerms}
-        language="en"
         searchQuery=""
       />
     );
-    expect(screen.getByText('Mandritto')).toBeVisible();
-    expect(screen.getByText('Coda Longa')).toBeVisible();
+    // All terms should be visible without expand/collapse interaction
+    expect(screen.getAllByText('Mandritto')).toBeTruthy();
+    expect(screen.getAllByText('Coda Longa')).toBeTruthy();
   });
 
-  it('switches language for all terms', () => {
-    const { rerender } = render(
+  it('displays French content only for all terms', () => {
+    render(
       <GlossaryContent
         groupedTerms={mockGroupedTerms}
-        language="en"
         searchQuery=""
       />
     );
-    expect(screen.getAllByText('Right-hand Strike').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Long Tail Guard').length).toBeGreaterThan(0);
-
-    rerender(
-      <GlossaryContent
-        groupedTerms={mockGroupedTerms}
-        language="fr"
-        searchQuery=""
-      />
-    );
+    // French terms should be visible
     expect(screen.getAllByText('Mandritto').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Coda Longa').length).toBeGreaterThan(0);
+    // English translations should NOT be visible (French-only display)
+    expect(screen.queryByText('Right-hand Strike')).not.toBeInTheDocument();
+    expect(screen.queryByText('Long Tail Guard')).not.toBeInTheDocument();
   });
 
-  it('passes searchQuery to all category sections', () => {
+  it('passes searchQuery to all category sections for French search', () => {
     render(
       <GlossaryContent
         groupedTerms={mockGroupedTerms}
-        language="en"
-        searchQuery="strike"
+        searchQuery="garde"
       />
     );
     expect(screen.getAllByText('Mandritto').length).toBeGreaterThan(0);
-    // Should render without crashing with search query
+    // Should render without crashing with search query in French
   });
 
   it('renders empty content gracefully when groupedTerms is empty', () => {
     const { container } = render(
       <GlossaryContent
         groupedTerms={{}}
-        language="en"
         searchQuery=""
       />
     );
     expect(container.firstChild).toBeInTheDocument();
   });
 
-  it('renders correct hierarchical structure: Category → Type → Terms', () => {
+  it('renders correct hierarchical structure: Category → Type → Terms (all visible)', () => {
     render(
       <GlossaryContent
         groupedTerms={mockGroupedTerms}
-        language="en"
         searchQuery=""
       />
     );
-    // Verify all hierarchy levels are present using getAllByText where applicable
+    // Verify all hierarchy levels are present
     const allHeaders2 = screen.getAllByRole('heading', { level: 2 });
     expect(allHeaders2.some(h => h.textContent === 'Coups et Techniques')).toBe(true);
     expect(allHeaders2.some(h => h.textContent === 'Les Guardes')).toBe(true);
-    // Use getAllByText to handle multiple matches if any
     const typeHeaders = screen.getAllByText('Attaque / Frappe de taille');
     expect(typeHeaders.length).toBeGreaterThan(0);
     const termNames = screen.getAllByText('Mandritto');
@@ -165,29 +151,26 @@ describe('GlossaryContent Component', () => {
     const { container } = render(
       <GlossaryContent
         groupedTerms={mockGroupedTerms}
-        language="en"
         searchQuery=""
       />
     );
     expect(container.firstChild).toHaveClass('glossary-content');
   });
 
-  it('maintains order of categories and types', () => {
+  it('maintains order of categories and types without collapsing', () => {
     render(
       <GlossaryContent
         groupedTerms={mockGroupedTerms}
-        language="en"
         searchQuery=""
       />
     );
-    // Use getAllByRole to check all heading level 2s
     const categoryHeaders = screen.getAllByRole('heading', { level: 2 });
     expect(categoryHeaders.length).toBeGreaterThanOrEqual(2);
     expect(categoryHeaders[0]).toHaveTextContent('Coups et Techniques');
     expect(categoryHeaders[1]).toHaveTextContent('Les Guardes');
   });
 
-  it('handles large number of terms efficiently', () => {
+  it('handles large number of terms efficiently in French', () => {
     const manyTerms = Array.from({ length: 100 }, (_, i) => ({
       ...mockTerms[0],
       id: `term-${i}`,
@@ -203,7 +186,6 @@ describe('GlossaryContent Component', () => {
     render(
       <GlossaryContent
         groupedTerms={largeGroupedTerms}
-        language="en"
         searchQuery=""
       />
     );

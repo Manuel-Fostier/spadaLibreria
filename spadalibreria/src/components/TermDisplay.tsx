@@ -1,14 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import React from 'react';
 import { GlossaryTerm } from '@/types/glossary';
 import { findMatches } from '@/lib/highlighter';
 import { SearchOptions } from '@/types/search';
 
 interface TermDisplayProps {
   term: GlossaryTerm;
-  language: 'it' | 'fr' | 'en';
   searchQuery: string;
   highlightMatches: boolean;
 }
@@ -50,18 +48,22 @@ function renderHighlightedText(text: string, query: string): React.ReactNode {
   return <>{result}</>;
 }
 
+/**
+ * TermDisplay - Display a glossary term in French (French-only mode)
+ * 
+ * Displays French definition and translation only.
+ * All information is visible in a unified view (no expand/collapse).
+ * No language switching is available.
+ * 
+ * Search highlighting is supported for finding matches across all text.
+ */
 export default function TermDisplay({
   term,
-  language,
   searchQuery,
   highlightMatches: shouldHighlight,
 }: TermDisplayProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
-  };
-
+  // Always use French definitions and translations (French-only mode)
+  const language = 'fr';
   const definition = term.definition[language] || '';
   const translation = term.translation[language] || '';
 
@@ -82,117 +84,37 @@ export default function TermDisplay({
     ? renderHighlightedText(term.type, searchQuery)
     : term.type;
 
-  // Helper function to get language label and flag
-  const getLanguageInfo = (lang: 'it' | 'fr' | 'en') => {
-    const info = {
-      it: { label: 'Italian (Original)', flag: '🇮🇹' },
-      fr: { label: 'French', flag: '🇫🇷' },
-      en: { label: 'English', flag: '🇬🇧' },
-    };
-    return info[lang];
-  };
+  return (
+    <div className="term-display border-l-4 border-blue-300 bg-blue-50 p-4 mb-3 rounded hover:bg-blue-100 transition-colors">
+      {/* Term Header - Always Visible */}
+      <div className="mb-3">
+        <h4 className="text-lg font-bold text-gray-900">
+          {highlightedTerm}
+        </h4>
+        <p className="text-sm text-gray-600">
+          <span className="font-semibold">{highlightedCategory}</span>
+          {' › '}
+          <span>{highlightedType}</span>
+        </p>
+      </div>
 
-  // Helper function to render language section
-  const renderLanguageSection = (lang: 'it' | 'fr' | 'en', isHighlighted: boolean) => {
-    const langInfo = getLanguageInfo(lang);
-    const def = term.definition[lang] || '';
-    const trans = term.translation[lang] || '';
-
-    const highlightedDef = shouldHighlight && def
-      ? renderHighlightedText(def, searchQuery)
-      : def;
-    const highlightedTrans = shouldHighlight && trans
-      ? renderHighlightedText(trans, searchQuery)
-      : trans;
-
-    return (
-      <div
-        key={lang}
-        className={`p-3 rounded mb-2 ${
-          isHighlighted
-            ? 'border-2 border-blue-400 bg-white'
-            : 'bg-white bg-opacity-50'
-        }`}
-      >
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-lg">{langInfo.flag}</span>
-          <span className="font-semibold text-sm text-gray-700">
-            {langInfo.label}
-          </span>
-        </div>
-        
-        {/* Definition */}
-        {def ? (
-          <p className="text-sm text-gray-700 leading-relaxed mb-2">
-            {highlightedDef}
+      {/* French Definition - Always Visible */}
+      <div className="mb-3">
+        {definition ? (
+          <p className="text-sm text-gray-700 leading-relaxed">
+            {highlightedDefinition}
           </p>
         ) : (
-          <p className="text-sm text-gray-400 italic mb-2">
+          <p className="text-sm text-gray-400 italic">
             No definition available
           </p>
         )}
-
-        {/* Translation */}
-        {trans && (
-          <div className="bg-gray-50 p-2 rounded text-sm text-gray-600 italic">
-            {highlightedTrans}
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  return (
-    <div
-      className="term-display border-l-4 border-blue-300 bg-blue-50 p-4 mb-3 rounded hover:bg-blue-100 transition-colors cursor-pointer"
-      onClick={toggleExpand}
-    >
-      {/* Term Header */}
-      <div className="mb-2 flex items-start justify-between">
-        <div className="flex-1">
-          <h4 className="text-lg font-bold text-gray-900">
-            {highlightedTerm}
-          </h4>
-          <p className="text-sm text-gray-600">
-            <span className="font-semibold">{highlightedCategory}</span>
-            {' › '}
-            <span>{highlightedType}</span>
-          </p>
-        </div>
-        <div className="ml-2 text-gray-500">
-          {isExpanded ? (
-            <ChevronUp size={20} />
-          ) : (
-            <ChevronDown size={20} />
-          )}
-        </div>
       </div>
 
-      {/* Collapsed View: Selected Language Only */}
-      {!isExpanded && (
-        <>
-          {/* Definition */}
-          <div className="mb-2">
-            <p className="text-sm text-gray-700 leading-relaxed">
-              {highlightedDefinition}
-            </p>
-          </div>
-
-          {/* Translation */}
-          {translation && (
-            <div className="bg-white bg-opacity-50 p-2 rounded text-sm text-gray-600 italic">
-              {highlightedTranslation}
-            </div>
-          )}
-        </>
-      )}
-
-      {/* Expanded View: All Languages */}
-      {isExpanded && (
-        <div className="mt-3">
-          {renderLanguageSection('it', language === 'it')}
-          {renderLanguageSection('fr', language === 'fr')}
-          {renderLanguageSection('en', language === 'en')}
+      {/* French Translation - Always Visible */}
+      {translation && (
+        <div className="bg-white bg-opacity-50 p-2 rounded text-sm text-gray-600 italic">
+          {highlightedTranslation}
         </div>
       )}
     </div>
