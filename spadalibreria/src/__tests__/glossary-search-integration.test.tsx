@@ -54,21 +54,20 @@ const groupByCategory = (terms: GlossaryTerm[]) => {
 };
 
 function GlossaryHarness() {
-  const { groupedTerms, selectedLanguage, searchQuery } = useGlossary();
+  const { groupedTerms, searchQuery } = useGlossary();
 
   return (
     <div>
       <GlossarySearchBar />
       <GlossaryContent
         groupedTerms={groupedTerms}
-        language={selectedLanguage}
         searchQuery={searchQuery}
       />
     </div>
   );
 }
 
-describe('Glossary search integration', () => {
+describe('Glossary search integration (French-only)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (glossaryLoader.loadGlossaryTerms as jest.Mock).mockReturnValue(mockTerms);
@@ -97,7 +96,7 @@ describe('Glossary search integration', () => {
     (glossaryLoader.groupGlossaryByCategory as jest.Mock).mockImplementation(groupByCategory);
   });
 
-  it('highlights matches without hiding non-matching terms', async () => {
+  it('T081: User searches term name → highlighting works in French content', async () => {
     jest.useFakeTimers();
     render(
       <GlossaryProvider>
@@ -110,7 +109,8 @@ describe('Glossary search integration', () => {
     });
 
     const input = screen.getByPlaceholderText('Rechercher un terme');
-    fireEvent.change(input, { target: { value: 'coup' } });
+    // Search for French term name
+    fireEvent.change(input, { target: { value: 'Mandritto' } });
 
     act(() => {
       jest.advanceTimersByTime(300);
@@ -123,7 +123,63 @@ describe('Glossary search integration', () => {
     jest.useRealTimers();
   });
 
-  it('clears highlights when search is cleared', async () => {
+  it('T082: User searches category → all terms in category highlighted in French', async () => {
+    jest.useFakeTimers();
+    render(
+      <GlossaryProvider>
+        <GlossaryHarness />
+      </GlossaryProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Mandritto', { selector: 'h4' })).toBeInTheDocument();
+    });
+
+    const input = screen.getByPlaceholderText('Rechercher un terme');
+    // Search for French category name
+    fireEvent.change(input, { target: { value: 'Coups' } });
+
+    act(() => {
+      jest.advanceTimersByTime(300);
+    });
+
+    await waitFor(() => {
+      expect(document.querySelectorAll('mark').length).toBeGreaterThan(0);
+    });
+    // Mandritto should be highlighted as it's in the matching category
+    expect(screen.getByText('Mandritto', { selector: 'h4' })).toBeInTheDocument();
+    jest.useRealTimers();
+  });
+
+  it('T083: User searches definition content → matching terms highlighted in French', async () => {
+    jest.useFakeTimers();
+    render(
+      <GlossaryProvider>
+        <GlossaryHarness />
+      </GlossaryProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Mandritto', { selector: 'h4' })).toBeInTheDocument();
+    });
+
+    const input = screen.getByPlaceholderText('Rechercher un terme');
+    // Search for French definition word (épée = sword)
+    fireEvent.change(input, { target: { value: 'épée' } });
+
+    act(() => {
+      jest.advanceTimersByTime(300);
+    });
+
+    await waitFor(() => {
+      expect(document.querySelectorAll('mark').length).toBeGreaterThan(0);
+    });
+    // Mandritto has 'épée' in its French definition
+    expect(screen.getByText('Mandritto', { selector: 'h4' })).toBeInTheDocument();
+    jest.useRealTimers();
+  });
+
+  it('T085: User clears search → all highlighting removed, glossary remains visible in French', async () => {
     jest.useFakeTimers();
     render(
       <GlossaryProvider>
@@ -150,10 +206,13 @@ describe('Glossary search integration', () => {
     fireEvent.click(clearButton);
 
     expect(document.querySelectorAll('mark').length).toBe(0);
+    // All terms should remain visible (French-only display)
+    expect(screen.getByText('Mandritto', { selector: 'h4' })).toBeInTheDocument();
+    expect(screen.getByText('Coda Longa', { selector: 'h4' })).toBeInTheDocument();
     jest.useRealTimers();
   });
 
-  it('shows a no results message when nothing matches', async () => {
+  it('shows a no results message when nothing matches in French search', async () => {
     jest.useFakeTimers();
     render(
       <GlossaryProvider>
@@ -173,6 +232,7 @@ describe('Glossary search integration', () => {
     });
 
     expect(screen.getByText('Aucun résultat.')).toBeInTheDocument();
+    // All glossary content should remain in the DOM (French-only display, unified view)
     expect(screen.getByText('Mandritto', { selector: 'h4' })).toBeInTheDocument();
     jest.useRealTimers();
   });
