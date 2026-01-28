@@ -90,16 +90,17 @@
 
 ### Phase 1.2: User Story 1 - Browse Complete Glossary (P1)
 
-**Goal**: Display all glossary terms organized hierarchically (Category → Type → Term) with full definitions  
-**Independent Test**: All glossary terms are visible on page load, organized by category and type, with definitions in user's selected language  
-**Component Reuse Strategy**: Reference `Term.tsx` for display patterns; adapt `BolognesePlatform.tsx` language toggle pattern to radio group
+**Goal**: Display all glossary terms organized hierarchically (Category → Type → Term) with French definitions and translations  
+**Independent Test**: All glossary terms are visible on page load, organized by category and type, displaying Italian term names with French definitions and translations only  
+**Constraint Compliance**: French-only display (no language selector), all content visible (no collapsing)  
+**Component Reuse Strategy**: Reference `Term.tsx` for display patterns; NO LanguageSelector needed
 
-- [X] T040 [P] [US1] Write test for TermDisplay component in `src/components/__tests__/TermDisplay.test.tsx`
-- [X] T041 [P] [US1] Write test for CategorySection component in `src/components/__tests__/CategorySection.test.tsx`
-- [X] T042 [US1] Implement TermDisplay component in `src/components/TermDisplay.tsx` (reference Term.tsx patterns; display term name, definition, translation for selected language with search highlighting support)
+- [X] T040 [P] [US1] Write test for TermDisplay component in `src/components/__tests__/TermDisplay.test.tsx` (French-only display)
+- [X] T041 [P] [US1] Write test for CategorySection component in `src/components/__tests__/CategorySection.test.tsx` (all visible, no expand/collapse)
+- [X] T042 [US1] Implement TermDisplay component in `src/components/TermDisplay.tsx` (reference Term.tsx patterns; display Italian term name, French definition, French translation only, with search highlighting support)
 - [X] T043 [US1] Implement CategorySection component in `src/components/CategorySection.tsx` (hierarchy: category → types → terms, all visible, no collapsing)
-- [X] T044 [P] [US1] Write test for LanguageSelector component in `src/components/__tests__/LanguageSelector.test.tsx` (radio group: IT/FR/EN, single selection)
-- [X] T045 [US1] Implement LanguageSelector component in `src/components/LanguageSelector.tsx` (adapt BolognesePlatform language toggle pattern to radio button group; integrate with GlossaryContext)
+- [X] T044 [REMOVED] LanguageSelector component NOT NEEDED (French-only display, no language switching)
+- [X] T045 [REMOVED] LanguageSelector implementation NOT NEEDED (French-only display, no language switching)
 - [X] T046 [P] [US1] Write test for GlossaryContent component in `src/components/__tests__/GlossaryContent.test.tsx` (render all categories with all terms visible)
 - [X] T047 [US1] Implement GlossaryContent component in `src/components/GlossaryContent.tsx` (render grouped terms by category)
 - [X] T048 [US1] All US1 component tests pass with >85% coverage
@@ -122,15 +123,16 @@
 
 ---
 
-### Phase 1.4: User Story 3 - View Detailed Term Information (P2 but in MVP scope)
+### Phase 1.4: User Story 3 - View Complete Glossary Entry (P1)
 
-**Goal**: Display comprehensive term information with all definitions and translations  
-**Independent Test**: Clicking a term displays or expands detailed view showing Italian name, category, definitions in all languages, and translations
+**Goal**: Display comprehensive French glossary information (Italian term name + French definition + French translation) in a unified single view  
+**Independent Test**: Viewing any glossary term displays Italian name, category/type, French definition and French translation in one unified visible view (no expand/collapse interaction needed)  
+**Constraint Compliance**: French-only display (only FR definition and FR translation shown), all information visible in single unified view, no language switching
 
 - [X] T060 [P] [US3] Write test for detailed term view in `src/components/__tests__/TermDetail.test.tsx`
 - [X] T061 [US3] Update TermDisplay component to include detailed information (or create separate TermDetail component if needed)
-- [X] T062 [P] [US3] Write test for multilingual definition display in `src/components/__tests__/TermDisplay.test.tsx`
-- [X] T063 [US3] Ensure TermDisplay handles all three languages and shows translations correctly
+- [X] T062 [P] [US3] Write test to verify only French definition and translation are displayed in `src/components/__tests__/TermDisplay.test.tsx`
+- [X] T063 [US3] Verify Italian and English definitions/translations are NOT displayed or are hidden from UI
 - [X] T064 [P] [US3] Write test for missing translation handling in `src/components/__tests__/TermDisplay.test.tsx`
 - [X] T065 [US3] Implement graceful handling of missing definitions/translations in TermDisplay
 - [X] T066 [US3] All US3 tests pass with >85% coverage
@@ -140,11 +142,11 @@
 ### Phase 1.5: Page Route & Integration
 
 **Goal**: Create `/glossary` route and assemble all components  
-**Independent Test**: Page loads at `/glossary`, displays all terms organized by category, search works, language switching works
+**Independent Test**: Page loads at `/glossary`, displays all terms organized by category in French, search works
 
 - [X] T070 [P] Write test for GlossaryPage component in `src/components/__tests__/GlossaryPage.test.tsx` (renders all sub-components, data loads)
 - [X] T071 Create GlossaryPageWrapper component in `src/components/GlossaryPageWrapper.tsx` (provides GlossaryContext)
-- [X] T072 Implement GlossaryPage component in `src/components/GlossaryPage.tsx` (assembles SearchBar, LanguageSelector, GlossaryContent)
+- [X] T072 Implement GlossaryPage component in `src/components/GlossaryPage.tsx` (assembles SearchBar and GlossaryContent, no LanguageSelector needed)
 - [X] T073 Create glossary page route in `src/app/glossary/page.tsx` (server wrapper + client component)
 - [X] T074 [P] Write integration test for glossary page route in `src/app/glossary/__tests__/page.test.tsx`
 - [X] T075 Glossary page accessible at `/glossary` without errors
@@ -160,7 +162,7 @@
 - [ ] T081 [P] Write integration test: User searches term name → highlighting works in `src/__tests__/glossary-search-integration.test.tsx`
 - [ ] T082 [P] Write integration test: User searches category → all terms in category highlighted in `src/__tests__/glossary-search-integration.test.tsx`
 - [ ] T083 [P] Write integration test: User searches definition content → matching terms highlighted in `src/__tests__/glossary-search-integration.test.tsx`
-- [ ] T084 [P] Write integration test: User switches language → all content updates in `src/__tests__/glossary-language-integration.test.tsx`
+- [ ] T084 [REMOVED] Language switching test NOT APPLICABLE (French-only display, no language selector)
 - [ ] T085 [P] Write integration test: User clears search → all highlighting removed, glossary remains visible in `src/__tests__/glossary-search-integration.test.tsx`
 - [ ] T086 All integration tests pass
 
