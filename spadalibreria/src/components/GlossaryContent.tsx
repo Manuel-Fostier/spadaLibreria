@@ -18,13 +18,11 @@ interface GroupedTerms {
 
 interface GlossaryContentProps {
   groupedTerms: GroupedTerms;
-  language: 'it' | 'fr' | 'en';
   searchQuery: string;
 }
 
 export default function GlossaryContent({
   groupedTerms,
-  language,
   searchQuery,
 }: GlossaryContentProps) {
   return (
@@ -41,7 +39,6 @@ export default function GlossaryContent({
             key={category}
             categoryName={category}
             groupedTerms={typeTerms}
-            language={language}
             searchQuery={searchQuery}
           />
         ))

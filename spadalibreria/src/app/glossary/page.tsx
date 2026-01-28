@@ -8,11 +8,11 @@ import GlossaryPage from '@/components/GlossaryPage';
  * Server component that wraps the client-side GlossaryPage with GlossaryProvider context.
  * This ensures the glossary has access to all necessary state management.
  * 
- * Features:
+ * Features (French-only):
  * - Browse all glossary terms organized by Category → Type → Term
- * - Search across term names, categories, and definitions
- * - Switch between Italian, French, and English
+ * - Search across term names, categories, and definitions (French content only)
  * - Real-time search highlighting
+ * - All information visible in unified single view (no expand/collapse)
  */
 export default function GlossaryRoute() {
   return (
@@ -23,6 +23,6 @@ export default function GlossaryRoute() {
 }
 
 export const metadata = {
-  title: 'Glossary | Spada Libreria',
-  description: 'Comprehensive glossary of Bolognese fencing terminology in Italian, French, and English',
+  title: 'Glossaire | Spada Libreria',
+  description: 'Glossaire complet de la terminologie d\'escrime bolognaise',
 };

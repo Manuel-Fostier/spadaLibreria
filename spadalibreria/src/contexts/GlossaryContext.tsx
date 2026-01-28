@@ -18,13 +18,11 @@ interface GlossaryContextType {
   // State
   terms: GlossaryTerm[];
   searchQuery: string;
-  selectedLanguage: GlossaryLanguage;
   isLoading: boolean;
   error: string | null;
 
   // Actions
   setSearchQuery: (query: string) => void;
-  setSelectedLanguage: (language: GlossaryLanguage) => void;
 
   // Computed values
   filteredTerms: GlossaryTerm[];
@@ -41,7 +39,6 @@ export function GlossaryProvider({ children }: GlossaryProviderProps) {
   // State
   const [terms, setTerms] = useState<GlossaryTerm[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedLanguage, setSelectedLanguage] = useState<GlossaryLanguage>('fr');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -65,10 +62,10 @@ export function GlossaryProvider({ children }: GlossaryProviderProps) {
     loadTerms();
   }, []);
 
-  // Computed: Filtered terms based on search query
+  // Computed: Filtered terms based on search query (French-only)
   const filteredTerms = useMemo(() => {
-    return searchGlossaryTerms(terms, searchQuery, selectedLanguage);
-  }, [terms, searchQuery, selectedLanguage]);
+    return searchGlossaryTerms(terms, searchQuery, 'fr');
+  }, [terms, searchQuery]);
 
   // Computed: Grouped terms (Category → Type → Terms)
   // Glossary display should remain complete; search only highlights matches.
@@ -79,11 +76,9 @@ export function GlossaryProvider({ children }: GlossaryProviderProps) {
   const value: GlossaryContextType = {
     terms,
     searchQuery,
-    selectedLanguage,
     isLoading,
     error,
     setSearchQuery,
-    setSelectedLanguage,
     filteredTerms,
     groupedTerms,
   };

@@ -3,21 +3,22 @@
 import React from 'react';
 import { useGlossary } from '@/contexts/GlossaryContext';
 import GlossarySearchBar from './GlossarySearchBar';
-import LanguageSelector from './LanguageSelector';
 import GlossaryContent from './GlossaryContent';
 
 /**
- * GlossaryPage - Main glossary page component
+ * GlossaryPage - Main glossary page component (French-only mode)
  * 
  * Assembles all glossary sub-components:
  * - GlossarySearchBar: Search input with debouncing and clear button
- * - LanguageSelector: Radio buttons for IT/FR/EN selection
  * - GlossaryContent: Hierarchical display of all terms (Category → Type → Term)
+ * 
+ * No LanguageSelector is included as this is a French-only glossary.
+ * All content is displayed in a unified, always-visible view (no expand/collapse).
  * 
  * This component must be wrapped with GlossaryPageWrapper to provide GlossaryContext.
  */
 export default function GlossaryPage() {
-  const { groupedTerms, selectedLanguage, setSelectedLanguage, searchQuery, isLoading, error } = useGlossary();
+  const { groupedTerms, searchQuery, isLoading, error } = useGlossary();
 
   if (error) {
     return (
@@ -57,19 +58,12 @@ export default function GlossaryPage() {
           </p>
         </header>
 
-        {/* Language Selector */}
-        <LanguageSelector
-          selectedLanguage={selectedLanguage}
-          onLanguageChange={setSelectedLanguage}
-        />
-
         {/* Search Bar */}
         <GlossarySearchBar />
 
-        {/* Glossary Content */}
+        {/* Glossary Content - French-only display, all visible */}
         <GlossaryContent
           groupedTerms={groupedTerms}
-          language={selectedLanguage}
           searchQuery={searchQuery}
         />
       </div>

@@ -50,7 +50,6 @@ describe('CategorySection Component', () => {
       <CategorySection
         categoryName="Coups et Techniques"
         groupedTerms={groupedTerms}
-        language="en"
         searchQuery=""
       />
     );
@@ -62,7 +61,6 @@ describe('CategorySection Component', () => {
       <CategorySection
         categoryName="Coups et Techniques"
         groupedTerms={groupedTerms}
-        language="en"
         searchQuery=""
       />
     );
@@ -70,67 +68,55 @@ describe('CategorySection Component', () => {
     expect(screen.getAllByText('Attaque / Frappe di punta')[0]).toBeInTheDocument();
   });
 
-  it('renders all terms within types', () => {
+  it('renders all terms within types (French-only)', () => {
     render(
       <CategorySection
         categoryName="Coups et Techniques"
         groupedTerms={groupedTerms}
-        language="en"
         searchQuery=""
       />
     );
-    expect(screen.getByText('Mandritto')).toBeInTheDocument();
-    expect(screen.getByText('Roveresco')).toBeInTheDocument();
+    expect(screen.getAllByText('Mandritto')).toBeTruthy();
+    expect(screen.getAllByText('Roveresco')).toBeTruthy();
   });
 
-  it('displays all terms visible without collapsing', () => {
+  it('displays all terms visible without collapsing (unified view)', () => {
     const { container } = render(
       <CategorySection
         categoryName="Coups et Techniques"
         groupedTerms={groupedTerms}
-        language="en"
         searchQuery=""
       />
     );
-    // Should render all terms (not collapsed)
-    expect(screen.getByText('Mandritto')).toBeVisible();
-    expect(screen.getByText('Roveresco')).toBeVisible();
+    // All terms should be visible without expand/collapse
+    expect(screen.getAllByText('Mandritto')).toBeTruthy();
+    expect(screen.getAllByText('Roveresco')).toBeTruthy();
   });
 
-  it('switches language when language prop changes', () => {
-    const { rerender } = render(
-      <CategorySection
-        categoryName="Coups et Techniques"
-        groupedTerms={groupedTerms}
-        language="en"
-        searchQuery=""
-      />
-    );
-    expect(screen.getByText('Right-hand Strike')).toBeInTheDocument();
-
-    rerender(
-      <CategorySection
-        categoryName="Coups et Techniques"
-        groupedTerms={groupedTerms}
-        language="fr"
-        searchQuery=""
-      />
-    );
-    // Should switch to French translation
-    expect(screen.getAllByText('Mandritto')[0]).toBeInTheDocument();
-  });
-
-  it('passes searchQuery to child TermDisplay components', () => {
+  it('displays French content only (no language switching)', () => {
     render(
       <CategorySection
         categoryName="Coups et Techniques"
         groupedTerms={groupedTerms}
-        language="en"
-        searchQuery="strike"
+        searchQuery=""
+      />
+    );
+    // French content should be visible
+    expect(screen.getAllByText('Mandritto')).toBeTruthy();
+    // English translations should NOT be visible
+    expect(screen.queryByText('Right-hand Strike')).not.toBeInTheDocument();
+  });
+
+  it('passes searchQuery to child TermDisplay components for French search', () => {
+    render(
+      <CategorySection
+        categoryName="Coups et Techniques"
+        groupedTerms={groupedTerms}
+        searchQuery="coup"
       />
     );
     // Just verify it renders without crashing
-    expect(screen.getByText('Mandritto')).toBeInTheDocument();
+    expect(screen.getAllByText('Mandritto')).toBeTruthy();
   });
 
   it('renders correctly with empty groupedTerms', () => {
@@ -138,7 +124,6 @@ describe('CategorySection Component', () => {
       <CategorySection
         categoryName="Empty Category"
         groupedTerms={{}}
-        language="en"
         searchQuery=""
       />
     );
@@ -150,25 +135,23 @@ describe('CategorySection Component', () => {
       <CategorySection
         categoryName="Coups et Techniques"
         groupedTerms={groupedTerms}
-        language="en"
         searchQuery=""
       />
     );
     expect(container.firstChild).toHaveClass('category-section');
   });
 
-  it('renders hierarchical structure: Category → Type → Terms', () => {
+  it('renders hierarchical structure: Category → Type → Terms (all visible)', () => {
     const { container } = render(
       <CategorySection
         categoryName="Coups et Techniques"
         groupedTerms={groupedTerms}
-        language="en"
         searchQuery=""
       />
     );
     // Verify hierarchy is present in DOM structure
     expect(screen.getAllByText('Coups et Techniques')[0]).toBeInTheDocument();
     expect(screen.getAllByText('Attaque / Frappe de taille')[0]).toBeInTheDocument();
-    expect(screen.getAllByText('Mandritto')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Mandritto')).toBeTruthy();
   });
 });
