@@ -158,13 +158,13 @@
 **Goal**: Verify all P1 user stories work together end-to-end  
 **Independent Test**: User can load glossary, browse all terms, search, switch languages, view complete term information
 
-- [ ] T080 [P] Write integration test: User loads glossary → all terms visible in `src/__tests__/glossary-browse-integration.test.tsx`
-- [ ] T081 [P] Write integration test: User searches term name → highlighting works in `src/__tests__/glossary-search-integration.test.tsx`
-- [ ] T082 [P] Write integration test: User searches category → all terms in category highlighted in `src/__tests__/glossary-search-integration.test.tsx`
-- [ ] T083 [P] Write integration test: User searches definition content → matching terms highlighted in `src/__tests__/glossary-search-integration.test.tsx`
-- [ ] T084 [REMOVED] Language switching test NOT APPLICABLE (French-only display, no language selector)
-- [ ] T085 [P] Write integration test: User clears search → all highlighting removed, glossary remains visible in `src/__tests__/glossary-search-integration.test.tsx`
-- [ ] T086 All integration tests pass
+- [X] T080 [P] Write integration test: User loads glossary → all terms visible in `src/__tests__/glossary-browse-integration.test.tsx`
+- [X] T081 [P] Write integration test: User searches term name → highlighting works in `src/__tests__/glossary-search-integration.test.tsx`
+- [X] T082 [P] Write integration test: User searches category → all terms in category highlighted in `src/__tests__/glossary-search-integration.test.tsx`
+- [X] T083 [P] Write integration test: User searches definition content → matching terms highlighted in `src/__tests__/glossary-search-integration.test.tsx`
+- [X] T084 [REMOVED] Language switching test NOT APPLICABLE (French-only display, no language selector)
+- [X] T085 [P] Write integration test: User clears search → all highlighting removed, glossary remains visible in `src/__tests__/glossary-search-integration.test.tsx`
+- [X] T086 All integration tests pass
 
 ---
 
