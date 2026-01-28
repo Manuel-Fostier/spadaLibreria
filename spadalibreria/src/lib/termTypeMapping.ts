@@ -8,7 +8,12 @@ export type AnnotationType = 'weapons' | 'weapon_type' | 'guards' | 'techniques'
  * Maps a glossary term type to an annotation category
  * Returns 'techniques' as default for unmapped types
  */
-export function mapTermTypeToAnnotation(termType: string): AnnotationType {
+export function mapTermTypeToAnnotation(termType: string | undefined): AnnotationType {
+  // Default to 'techniques' if termType is not provided
+  if (!termType) {
+    return 'techniques';
+  }
+  
   const type = termType.toLowerCase();
   
   // Weapons mapping
