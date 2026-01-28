@@ -13,17 +13,15 @@ The Spada Libreria platform contains a comprehensive glossary of fencing termino
 
 ### User Story 1 - Browse Complete Glossary (Priority: P1)
 
-A user wants to explore all fencing terminology available in the system to understand the vocabulary before or during their study of treatises. They visit the glossary page and all terms are immediately visible, organized hierarchically by category and type.
+A user wants to explore all fencing terminology available in the system to understand the vocabulary before or during their study of treatises. They visit the glossary page and all terms are immediately visible, organized hierarchically by category and type, with French definitions and translations.
 
 **Why this priority**: Essential for introducing new users to the terminology and supporting independent learning. The glossary is a core asset of the platform.
 
-**Independent Test**: Can be fully tested by navigating to the glossary page and verifying that all glossary terms are displayed with their definitions in the user's selected language, organized by Category → Type → Term, delivering complete vocabulary reference capability.
+**Independent Test**: Can be fully tested by navigating to the glossary page and verifying that all glossary terms are displayed with their French definitions, organized by Category → Type → Term, delivering complete vocabulary reference capability.
 
 **Acceptance Scenarios**:
 
-1. **Given** a user is on the glossary page, **When** they load the page, **Then** all glossary terms are displayed immediately in hierarchical organization (Category → Type → Term) with their full definitions visible in the selected language
-2. **Given** a user views the glossary, **When** they switch between Italian, French, and English, **Then** the definitions and translations update to the selected language
-3. **Given** a user views a term in the glossary, **When** the term has multiple translations (e.g., English has multiple translator versions), **Then** all available translations are shown
+1. **Given** a user is on the glossary page, **When** they load the page, **Then** all glossary terms are displayed immediately in hierarchical organization (Category → Type → Term) with their full French definitions and translations visible
 
 ---
 
@@ -45,18 +43,17 @@ A user wants to quickly find specific terminology by using a search function tha
 
 ---
 
-### User Story 3 - View Detailed Term Information (Priority: P2)
+### User Story 3 - View Complete Glossary Entry (Priority: P1)
 
-A user wants to understand a term deeply, seeing its Italian name, category, complete definitions, translations, and how it relates to fencing practice.
+A user wants to see all available information about a glossary term in one place - Italian name, category, and French definition/translation.
 
-**Why this priority**: Enhances learning experience but secondary to basic browsing and search. Supports deeper engagement once users find a term of interest.
+**Why this priority**: Core to browsing functionality - understanding a term completely requires quick access to the French translation without additional interaction.
 
-**Independent Test**: Can be fully tested by clicking on any glossary term and verifying that a detail view displays all available information about that term, delivering comprehensive term reference capability.
+**Independent Test**: Can be fully tested by viewing any glossary term and verifying that all essential information (Italian term name, category/type, French definition and translation) is displayed in a single unified view.
 
 **Acceptance Scenarios**:
 
-1. **Given** a user clicks on a glossary term, **When** a detail view opens, **Then** it displays the Italian term, category, definitions in all languages, and translations
-2. **Given** a term has etymological or contextual notes, **When** viewing the term details, **Then** these notes are displayed if available
+1. **Given** a user views a glossary term, **When** the page displays the term, **Then** the Italian term name, category/type, and French definition/translation are all visible at once
 
 ---
 
@@ -92,10 +89,10 @@ A user is reading a treatise and encounters glossary-linked terms. They want to 
 ### Functional Requirements
 
 - **FR-001**: System MUST load and display all glossary terms from `data/glossary.yaml` on the glossary page
-- **FR-002**: System MUST support language selection (Italian, French, English) and display definitions in the selected language
+- **FR-002**: System MUST display definitions and translations in French only
 - **FR-003**: System MUST provide a search function that filters glossary terms by term name, category/type, and definition content in real-time across all supported languages
 - **FR-004**: System MUST NOT include category filtering controls - all terms are always displayed at once
-- **FR-005**: System MUST display glossary terms organized hierarchically: Category (e.g., "Coups et Techniques") → Type (e.g., "Attaque / Frappe de taille") → Term with full definitions and translations in all supported languages, always visible (no collapsing)
+- **FR-005**: System MUST display glossary terms organized hierarchically: Category (e.g., "Coups et Techniques") → Type (e.g., "Attaque / Frappe de taille") → Term with French definition and translation in a single unified view, always visible
 - **FR-006**: System MUST implement a browser-like search function that highlights all matching terms inline without filtering/hiding non-matching terms
 - **FR-007**: System MUST provide a dedicated route/URL for the glossary page (e.g., `/glossary`)
 - **FR-008**: System MUST handle missing or incomplete glossary data gracefully without crashing
@@ -106,9 +103,9 @@ A user is reading a treatise and encounters glossary-linked terms. They want to 
 ### Key Entities
 
 - **Glossary Term**: Represents a single fencing term with Italian name, category, French definition, English definition, French translation, and English translation(s)
-  - Key attributes: `term`, `category` (parent grouping), `type` (subcategory), `definition` (multilingual), `translation` (multilingual)
+  - Key attributes: `term`, `category` (parent grouping), `type` (subcategory), `definition` (it, fr, en), `translation` (it, fr, en)
   - Relationships: None (standalone data)
-  - **Data Model Note**: Current `data/glossary.yaml` uses YAML comments (e.g., `# Les Coups et Techniques`) to mark categories, not structured fields. See Technical Dependencies section.
+  - **Data Model Note**: Current `data/glossary.yaml` YAML structure remains unchanged with existing language fields. No refactoring of language fields is required. The display will show all languages simultaneously in a single view.
 
 ## Technical Dependencies & Blockers
 
@@ -159,7 +156,7 @@ mandritto:
 - **SC-001**: Users can locate any glossary term within 5 seconds using search highlighting
 - **SC-002**: 100% of glossary entries from `data/glossary.yaml` are accessible and displayable on the glossary page with category and type information
 - **SC-003**: Glossary page loads and displays content in under 2 seconds on standard broadband connections
-- **SC-004**: Users can switch between languages (Italian, French, English) and see immediate updates to definitions
+- **SC-004**: All glossary terms display French definitions and translations correctly
 - **SC-005**: All three supported languages have complete definitions for 95%+ of glossary terms
 - **SC-006**: Glossary page achieves responsive design with usable interface on mobile devices (320px+ width)
 - **SC-007**: Search functionality returns results for partial term matches (e.g., typing "man" finds "Mandritto")
@@ -175,6 +172,13 @@ mandritto:
 - Q: What about initial expansion state? → A: Not applicable - all content always expanded and visible
 - Q: How should category display work in the UI? → A: As visual section headers/dividers, not interactive controls
 - **Data Model Issue Identified**: Categories currently exist only as YAML comments in `data/glossary.yaml`, not as structured fields. Resolution required before implementation - recommend adding explicit `category` field to all terms.
+
+### Session 2025-01-28
+
+- Q: Should the glossary support language selection with a language switcher? → A: **No** - Language selection is Out of Scope. Only French is displayed.
+- Q: Should Italian and English be displayed in the glossary? → A: **No** - Italian and English language content is out of scope. Only French definitions and translations are shown.
+- Q: Should the YAML data model be refactored? → A: **No** - The current `data/glossary.yaml` structure with existing `definition` (it, fr, en) and `translation` (it, fr, en) fields is maintained as-is. Only French fields are rendered on the glossary page.
+- Q: Should individual terms be expandable/collapsible? → A: **No** - All content is always visible in French. No expand/collapse functionality.
 
 ## Assumptions
 
@@ -197,6 +201,9 @@ This feature follows a four-phase rollout approach:
 
 ## Out of Scope
 
+- **Italian and English displays** - Only French definitions and translations are shown on the glossary page. Italian and English language content is out of scope for this release.
+- **Language selection/switching UI** - No language selector is implemented. French is the sole display language.
+- **Language data model refactoring** - Current `data/glossary.yaml` structure with `definition` (it, fr, en) and `translation` (it, fr, en) fields is maintained as-is. Only French fields are displayed; other language fields remain in the data but are not rendered.
 - **Glossary data refactoring** (category field addition) - Handled as separate top-priority pre-implementation task
 - Creating an admin interface to edit glossary terms
 - Implementing term usage statistics or popularity metrics
