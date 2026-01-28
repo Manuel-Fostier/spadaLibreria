@@ -4,8 +4,9 @@
  * Tests state management for the glossary page including:
  * - Initial data loading
  * - Search filtering
- * - Language switching
  * - Error handling
+ * 
+ * Note: Language switching tests removed (French-only mode - no language switching)
  */
 
 import React from 'react';
@@ -94,12 +95,11 @@ describe('GlossaryContext', () => {
   });
 
   describe('initialization', () => {
-    it('should initialize with default state and load terms', async () => {
+    it('should initialize with default state and load terms (French-only)', async () => {
       const { result } = renderHook(() => useGlossary(), { wrapper });
 
       // Initial loading state
       expect(result.current.searchQuery).toBe('');
-      expect(result.current.selectedLanguage).toBe('fr');
       expect(result.current.error).toBeNull();
 
       // Wait for terms to load
@@ -203,62 +203,6 @@ describe('GlossaryContext', () => {
         mockTerms,
         'test',
         'fr'
-      );
-    });
-  });
-
-  describe('language switching', () => {
-    it('should update selected language', async () => {
-      const { result } = renderHook(() => useGlossary(), { wrapper });
-
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      act(() => {
-        result.current.setSelectedLanguage('en');
-      });
-
-      expect(result.current.selectedLanguage).toBe('en');
-    });
-
-    it('should maintain search state when switching language', async () => {
-      const { result } = renderHook(() => useGlossary(), { wrapper });
-
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      act(() => {
-        result.current.setSearchQuery('mandritto');
-      });
-
-      expect(result.current.searchQuery).toBe('mandritto');
-
-      act(() => {
-        result.current.setSelectedLanguage('en');
-      });
-
-      expect(result.current.searchQuery).toBe('mandritto');
-      expect(result.current.selectedLanguage).toBe('en');
-    });
-
-    it('should update search with new language context', async () => {
-      const { result } = renderHook(() => useGlossary(), { wrapper });
-
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      act(() => {
-        result.current.setSearchQuery('test');
-        result.current.setSelectedLanguage('it');
-      });
-
-      expect(glossaryLoader.searchGlossaryTerms).toHaveBeenCalledWith(
-        mockTerms,
-        'test',
-        'it'
       );
     });
   });
