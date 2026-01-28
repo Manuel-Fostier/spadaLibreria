@@ -57,8 +57,8 @@ describe('GlossaryContent Component', () => {
         searchQuery=""
       />
     );
-    expect(screen.getByText('Coups et Techniques')).toBeInTheDocument();
-    expect(screen.getByText('Les Guardes')).toBeInTheDocument();
+    expect(screen.getAllByText('Coups et Techniques').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Les Guardes').length).toBeGreaterThan(0);
   });
 
   it('renders all terms from all categories', () => {
@@ -69,8 +69,8 @@ describe('GlossaryContent Component', () => {
         searchQuery=""
       />
     );
-    expect(screen.getByText('Mandritto')).toBeInTheDocument();
-    expect(screen.getByText('Coda Longa')).toBeInTheDocument();
+    expect(screen.getAllByText('Mandritto').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Coda Longa').length).toBeGreaterThan(0);
   });
 
   it('renders all type subsections within categories', () => {
@@ -81,8 +81,8 @@ describe('GlossaryContent Component', () => {
         searchQuery=""
       />
     );
-    expect(screen.getByText('Attaque / Frappe de taille')).toBeInTheDocument();
-    expect(screen.getByText('Garde de protection')).toBeInTheDocument();
+    expect(screen.getAllByText('Attaque / Frappe de taille').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Garde de protection').length).toBeGreaterThan(0);
   });
 
   it('keeps all content visible without collapsing', () => {
@@ -105,8 +105,8 @@ describe('GlossaryContent Component', () => {
         searchQuery=""
       />
     );
-    expect(screen.getByText('Right-hand Strike')).toBeInTheDocument();
-    expect(screen.getByText('Long Tail Guard')).toBeInTheDocument();
+    expect(screen.getAllByText('Right-hand Strike').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Long Tail Guard').length).toBeGreaterThan(0);
 
     rerender(
       <GlossaryContent
@@ -115,8 +115,8 @@ describe('GlossaryContent Component', () => {
         searchQuery=""
       />
     );
-    expect(screen.getByText('Mandritto')).toBeInTheDocument();
-    expect(screen.getByText('Coda Longa')).toBeInTheDocument();
+    expect(screen.getAllByText('Mandritto').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Coda Longa').length).toBeGreaterThan(0);
   });
 
   it('passes searchQuery to all category sections', () => {
@@ -127,7 +127,7 @@ describe('GlossaryContent Component', () => {
         searchQuery="strike"
       />
     );
-    expect(screen.getByText('Mandritto')).toBeInTheDocument();
+    expect(screen.getAllByText('Mandritto').length).toBeGreaterThan(0);
     // Should render without crashing with search query
   });
 

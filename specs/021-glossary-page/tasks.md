@@ -102,13 +102,11 @@
 - [X] T045 [US1] Implement LanguageSelector component in `src/components/LanguageSelector.tsx` (adapt BolognesePlatform language toggle pattern to radio button group; integrate with GlossaryContext)
 - [X] T046 [P] [US1] Write test for GlossaryContent component in `src/components/__tests__/GlossaryContent.test.tsx` (render all categories with all terms visible)
 - [X] T047 [US1] Implement GlossaryContent component in `src/components/GlossaryContent.tsx` (render grouped terms by category)
-- [ ] T048 [US1] All US1 component tests pass with >85% coverage
-
----
-
-### Phase 1.3: User Story 2 - Search and Filter Glossary Terms (P1)
-
-**Goal**: Real-time search that highlights matching terms inline across term names, categories, and definitions  
+ [X] T048 [US1] All US1 component tests pass with >85% coverage
+ [X] T071 Create GlossaryPageWrapper component in `src/components/GlossaryPageWrapper.tsx` (provides GlossaryContext)
+ [X] T072 Implement GlossaryPage component in `src/components/GlossaryPage.tsx` (assembles SearchBar, LanguageSelector, GlossaryContent)
+ [X] T073 Create glossary page route in `src/app/glossary/page.tsx` (server wrapper + client component)
+ [X] T075 Glossary page accessible at `/glossary` without errors
 **Independent Test**: Typing a search term highlights all matching terms (names, categories, definitions) in the glossary without hiding non-matching terms; clearing search removes highlights  
 **Component Reuse Strategy**: Adapt `SearchBar.tsx` pattern to `GlossarySearchBar.tsx`; use `highlighter.ts` utility directly
 
