@@ -60,7 +60,7 @@ describe('Glossary Page Route Integration (T074)', () => {
     expect(screen.getByText('GlossaryPage Component')).toBeInTheDocument();
   });
 
-  it('exports proper metadata for SEO', () => {
+  it('exports proper metadata for SEO (French-only)', () => {
     // Import the metadata export
     const metadata = require('../page').metadata;
 
@@ -68,9 +68,9 @@ describe('Glossary Page Route Integration (T074)', () => {
     expect(metadata.title).toBeDefined();
     expect(metadata.description).toBeDefined();
     
-    // Verify metadata contains relevant keywords
-    expect(metadata.title.toLowerCase()).toContain('glossary');
-    expect(metadata.description.toLowerCase()).toContain('bolognese');
+    // Verify metadata is in French (French-only glossary mode)
+    expect(metadata.title.toLowerCase()).toContain('glossaire');
+    expect(metadata.description.toLowerCase()).toContain('bolognaise');
   });
 
   it('has proper component structure for Next.js App Router', () => {
