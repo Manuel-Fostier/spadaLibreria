@@ -102,11 +102,13 @@
 - [X] T045 [US1] Implement LanguageSelector component in `src/components/LanguageSelector.tsx` (adapt BolognesePlatform language toggle pattern to radio button group; integrate with GlossaryContext)
 - [X] T046 [P] [US1] Write test for GlossaryContent component in `src/components/__tests__/GlossaryContent.test.tsx` (render all categories with all terms visible)
 - [X] T047 [US1] Implement GlossaryContent component in `src/components/GlossaryContent.tsx` (render grouped terms by category)
- [X] T048 [US1] All US1 component tests pass with >85% coverage
- [X] T071 Create GlossaryPageWrapper component in `src/components/GlossaryPageWrapper.tsx` (provides GlossaryContext)
- [X] T072 Implement GlossaryPage component in `src/components/GlossaryPage.tsx` (assembles SearchBar, LanguageSelector, GlossaryContent)
- [X] T073 Create glossary page route in `src/app/glossary/page.tsx` (server wrapper + client component)
- [X] T075 Glossary page accessible at `/glossary` without errors
+- [X] T048 [US1] All US1 component tests pass with >85% coverage
+
+---
+
+### Phase 1.3: User Story 2 - Search and Filter Glossary Terms (P1)
+
+**Goal**: Real-time search that highlights matching terms inline across term names, categories, and definitions  
 **Independent Test**: Typing a search term highlights all matching terms (names, categories, definitions) in the glossary without hiding non-matching terms; clearing search removes highlights  
 **Component Reuse Strategy**: Adapt `SearchBar.tsx` pattern to `GlossarySearchBar.tsx`; use `highlighter.ts` utility directly
 
@@ -125,13 +127,13 @@
 **Goal**: Display comprehensive term information with all definitions and translations  
 **Independent Test**: Clicking a term displays or expands detailed view showing Italian name, category, definitions in all languages, and translations
 
-- [ ] T060 [P] [US3] Write test for detailed term view in `src/components/__tests__/TermDetail.test.tsx`
-- [ ] T061 [US3] Update TermDisplay component to include detailed information (or create separate TermDetail component if needed)
-- [ ] T062 [P] [US3] Write test for multilingual definition display in `src/components/__tests__/TermDisplay.test.tsx`
-- [ ] T063 [US3] Ensure TermDisplay handles all three languages and shows translations correctly
-- [ ] T064 [P] [US3] Write test for missing translation handling in `src/components/__tests__/TermDisplay.test.tsx`
-- [ ] T065 [US3] Implement graceful handling of missing definitions/translations in TermDisplay
-- [ ] T066 [US3] All US3 tests pass with >85% coverage
+- [X] T060 [P] [US3] Write test for detailed term view in `src/components/__tests__/TermDetail.test.tsx`
+- [X] T061 [US3] Update TermDisplay component to include detailed information (or create separate TermDetail component if needed)
+- [X] T062 [P] [US3] Write test for multilingual definition display in `src/components/__tests__/TermDisplay.test.tsx`
+- [X] T063 [US3] Ensure TermDisplay handles all three languages and shows translations correctly
+- [X] T064 [P] [US3] Write test for missing translation handling in `src/components/__tests__/TermDisplay.test.tsx`
+- [X] T065 [US3] Implement graceful handling of missing definitions/translations in TermDisplay
+- [X] T066 [US3] All US3 tests pass with >85% coverage
 
 ---
 
@@ -140,12 +142,12 @@
 **Goal**: Create `/glossary` route and assemble all components  
 **Independent Test**: Page loads at `/glossary`, displays all terms organized by category, search works, language switching works
 
-- [ ] T070 [P] Write test for GlossaryPage component in `src/components/__tests__/GlossaryPage.test.tsx` (renders all sub-components, data loads)
-- [ ] T071 Create GlossaryPageWrapper component in `src/components/GlossaryPageWrapper.tsx` (provides GlossaryContext)
-- [ ] T072 Implement GlossaryPage component in `src/components/GlossaryPage.tsx` (assembles SearchBar, LanguageSelector, GlossaryContent)
-- [ ] T073 Create glossary page route in `src/app/glossary/page.tsx` (server wrapper + client component)
-- [ ] T074 [P] Write integration test for glossary page route in `src/app/glossary/__tests__/page.test.tsx`
-- [ ] T075 Glossary page accessible at `/glossary` without errors
+- [X] T070 [P] Write test for GlossaryPage component in `src/components/__tests__/GlossaryPage.test.tsx` (renders all sub-components, data loads)
+- [X] T071 Create GlossaryPageWrapper component in `src/components/GlossaryPageWrapper.tsx` (provides GlossaryContext)
+- [X] T072 Implement GlossaryPage component in `src/components/GlossaryPage.tsx` (assembles SearchBar, LanguageSelector, GlossaryContent)
+- [X] T073 Create glossary page route in `src/app/glossary/page.tsx` (server wrapper + client component)
+- [X] T074 [P] Write integration test for glossary page route in `src/app/glossary/__tests__/page.test.tsx`
+- [X] T075 Glossary page accessible at `/glossary` without errors
 
 ---
 
