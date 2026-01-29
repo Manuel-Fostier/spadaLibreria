@@ -48,21 +48,7 @@ describe('TermDisplay Component', () => {
     expect(screen.queryByText(/A sword strike/)).not.toBeInTheDocument();
   });
 
-  it('renders French translation only (not Italian or English)', () => {
-    render(
-      <TermDisplay
-        term={mockTerm}
-        searchQuery=""
-        highlightMatches={false}
-      />
-    );
-    // French translation should be visible (appears twice: as term name and translation)
-    expect(screen.getAllByText('Mandritto').length).toBeGreaterThan(0);
-    // English translation should NOT be visible
-    expect(screen.queryByText('Right-hand Strike')).not.toBeInTheDocument();
-  });
-
-  it('displays all information in unified single view (no interaction needed)', () => {
+  it('displays French content in unified single view (no interaction needed)', () => {
     render(
       <TermDisplay
         term={mockTerm}
@@ -73,11 +59,9 @@ describe('TermDisplay Component', () => {
     // All French content should be visible at once
     expect(screen.getAllByText('Mandritto').length).toBeGreaterThan(0);
     expect(screen.getByText(/Un coup d'épée/)).toBeVisible();
-    expect(screen.getByText('Coups et Techniques')).toBeVisible();
-    expect(screen.getByText('Attaque / Frappe de taille')).toBeVisible();
   });
 
-  it('renders term category and type with French content', () => {
+  it('does not render category or type labels', () => {
     render(
       <TermDisplay
         term={mockTerm}
@@ -85,8 +69,8 @@ describe('TermDisplay Component', () => {
         highlightMatches={false}
       />
     );
-    expect(screen.getByText('Coups et Techniques')).toBeInTheDocument();
-    expect(screen.getByText('Attaque / Frappe de taille')).toBeInTheDocument();
+    expect(screen.queryByText('Coups et Techniques')).not.toBeInTheDocument();
+    expect(screen.queryByText('Attaque / Frappe de taille')).not.toBeInTheDocument();
   });
 
   it('highlights search matches in French content when highlightMatches is true', () => {

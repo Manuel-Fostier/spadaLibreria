@@ -224,15 +224,15 @@
 
 ### UI Components Refactoring
 
-- [ ] T126 [P] Extract shared `<StickyHeader>` component from `BolognesePlatform` into `src/components/StickyHeader.tsx` and reuse in glossary
-- [ ] T127 [P] Extract shared `<LogoTitle>` component (SPADA LIBRERIA + platform v1.0) into `src/components/LogoTitle.tsx` and reuse in BolognesePlatform + GlossaryPage
-- [ ] T128 [P] Update GlossaryPage.tsx top bar layout: use `<LogoTitle />` (left) + GLOSSAIRE title (center) + Back button (right)
-- [ ] T129 [P] Implement sticky header state tracking to update Category/Type as user scrolls (reuse BolognesePlatform logic)
-- [ ] T130 Update TermDisplay component to match UI_DESIGN.md styling: Italian name, French definition, French translation, no English
-- [ ] T131 [P] Add BolognesePlatform prose-styling classes to all text content (line-height, letter-spacing, color hierarchy)
-- [ ] T132 [P] Remove background/border from all term entries; verify no hover effects
-- [ ] T133 Implement subtle 80%-width dividers between term entries using Tailwind border utilities
-- [ ] T134 [P] Write integration test for UI layout: top bar, search bar, sticky header, content area in `src/__tests__/glossary-ui-layout.test.tsx`
+- [X] T126 [P] Extract shared `<StickyHeader>` component from `BolognesePlatform` into `src/components/StickyHeader.tsx` and reuse in glossary
+- [X] T127 [P] Extract shared `<LogoTitle>` component (SPADA LIBRERIA + platform v1.0) into `src/components/LogoTitle.tsx` and reuse in BolognesePlatform + GlossaryPage
+- [X] T128 [P] Update GlossaryPage.tsx top bar layout: use `<LogoTitle />` (left) + GLOSSAIRE title (center) + Back button (right)
+- [X] T129 [P] Implement sticky header state tracking to update Category/Type as user scrolls (reuse BolognesePlatform logic)
+- [X] T130 Update TermDisplay component to match UI_DESIGN.md styling: Italian name, French definition only, no English, no translation line
+- [X] T131 [P] Add BolognesePlatform prose-styling classes to all text content (line-height, letter-spacing, color hierarchy)
+- [X] T132 [P] Remove background/border from all term entries; verify no hover effects
+- [X] T133 Implement subtle 80%-width dividers between term entries using Tailwind border utilities
+- [X] T134 [P] Write integration test for UI layout: top bar, search bar, sticky header, content area in `src/__tests__/glossary-ui-layout.test.tsx`
 - [ ] T135 Verify responsive design on mobile (320px), tablet (768px), desktop (1920px) using existing test framework
 - [ ] T136 Phase 1.10 UI refinement complete and verified
 
@@ -256,12 +256,12 @@
 
 **Goal**: Support direct navigation to specific terms via URL hash (e.g., `/glossary#mandritto`)
 
-- [ ] T130 [P] Write test for hash parsing and auto-scroll in `src/components/__tests__/GlossaryHashNavigation.test.tsx`
-- [ ] T131 Implement hash fragment parsing in GlossaryPage component
-- [ ] T132 Implement auto-scroll to target term on page load with hash
-- [ ] T133 Update browser history when term selected from treatise link
-- [ ] T134 [P] Write integration test for hash navigation from treatise
-- [ ] T135 Phase 3 implementation complete and tested
+- [ ] T140 [P] Write test for hash parsing and auto-scroll in `src/components/__tests__/GlossaryHashNavigation.test.tsx`
+- [ ] T141 Implement hash fragment parsing in GlossaryPage component
+- [ ] T142 Implement auto-scroll to target term on page load with hash
+- [ ] T143 Update browser history when term selected from treatise link
+- [ ] T144 [P] Write integration test for hash navigation from treatise
+- [ ] T145 Phase 3 implementation complete and tested
 
 ---
 
@@ -270,17 +270,17 @@
 **Goal**: Allow users to edit glossary content (definitions, translations, term types) inline  
 **User Story**: Edit glossary content via AnnotationPanel-like interface
 
-- [ ] T140 [P] Write test for edit button in `src/components/__tests__/TermEditButton.test.tsx`
-- [ ] T141 [P] Write test for glossary edit form in `src/components/__tests__/TermEditForm.test.tsx`
-- [ ] T142 Implement TermEditButton component (button next to each term)
-- [ ] T143 Implement TermEditForm component (reuse AnnotationPanel pattern for UI consistency)
-- [ ] T144 [P] Write test for API endpoint to save glossary edits in `src/app/api/glossary/__tests__/edit.test.ts`
-- [ ] T145 Create API endpoint in `src/app/api/glossary/edit.ts` to persist changes to `data/glossary.yaml`
-- [ ] T146 [P] Write test for validation before save (definitions/translations cannot be empty)
-- [ ] T147 Implement validation logic in edit form and API endpoint
-- [ ] T148 [P] Write test for undo functionality or error handling if save fails
-- [ ] T149 Implement error handling and user feedback for failed edits
-- [ ] T150 Phase 4 implementation complete and tested
+- [ ] T150 [P] Write test for edit button in `src/components/__tests__/TermEditButton.test.tsx`
+- [ ] T151 [P] Write test for glossary edit form in `src/components/__tests__/TermEditForm.test.tsx`
+- [ ] T152 Implement TermEditButton component (button next to each term)
+- [ ] T153 Implement TermEditForm component (reuse AnnotationPanel pattern for UI consistency)
+- [ ] T154 [P] Write test for API endpoint to save glossary edits in `src/app/api/glossary/__tests__/edit.test.ts`
+- [ ] T155 Create API endpoint in `src/app/api/glossary/edit.ts` to persist changes to `data/glossary.yaml`
+- [ ] T156 [P] Write test for validation before save (definitions/translations cannot be empty)
+- [ ] T157 Implement validation logic in edit form and API endpoint
+- [ ] T158 [P] Write test for undo functionality or error handling if save fails
+- [ ] T159 Implement error handling and user feedback for failed edits
+- [ ] T160 Phase 4 implementation complete and tested
 
 ---
 
@@ -288,16 +288,16 @@
 
 ## Summary
 
-**Total Tasks**: 160 across 5 phases
+**Total Tasks**: 143 across 6 phases
 
 | Phase | Tasks | Status |
 |-------|-------|--------|
 | Phase 0 | T001-T012 (12 tasks) | BLOCKING - Refactoring glossary.yaml |
 | Phase 1 | T020-T125 (106 tasks) | Ready after Phase 0 |
 | Phase 1.10 | T126-T136 (11 tasks) | UI Design refinement |
-| Phase 2 | T140-T145 (6 tasks) | After Phase 1.10 complete |
-| Phase 3 | T150-T155 (6 tasks) | After Phase 2 complete |
-| Phase 4 | T160-T170 (11 tasks) | After Phase 3 complete |
+| Phase 2 | T120-T125 (6 tasks) | After Phase 1.10 complete |
+| Phase 3 | T140-T145 (6 tasks) | After Phase 2 complete |
+| Phase 4 | T150-T160 (11 tasks) | After Phase 3 complete |
 
 **MVP Scope**: Phase 0 + Phase 1 + Phase 1.10 (all P1 user stories with UI refinement)  
 **Testing Approach**: TDD - Tests written before implementation for all tasks  
@@ -335,18 +335,18 @@ Phase 1.10: UI Design Refinement (T126-T136) [NEW - Session 2025-01-29]
     └─ Verify UI/responsive/layout (T134-T136)
     ↓ (PHASE 1 + 1.10 COMPLETE)
     ↓
-Phase 2: Treatise integration (T140-T145)
+Phase 2: Treatise integration (T120-T125)
     ↓
-Phase 3: URL hash fragments (T150-T155)
+Phase 3: URL hash fragments (T140-T145)
     ↓
-Phase 4: Content editing (T160-T170)
+Phase 4: Content editing (T150-T160)
 ```
 
 ---
 
 ## Task Summary
 
-**Phase 1 Task Count**: 107 tasks total (including Phase 1.10 UI refinement)
+**Phase 1 Task Count**: 108 tasks total (including Phase 1.10 UI refinement)
 - Phase 1.0: 7 tasks [✅ COMPLETED]
 - Phase 1.1: 4 tasks [✅ COMPLETED]
 - Phase 1.2: 9 tasks (US1 - Browse)
@@ -359,7 +359,7 @@ Phase 4: Content editing (T160-T170)
 - Phase 1.9: 7 tasks (Final Validation)
 - **Phase 1.10: 11 tasks** (UI Design Refinement - NEW)
 
-**Progress**: 11/106 tasks complete (~10%)
+**Progress**: 20/108 tasks complete (~19%)
 
 **Component Reuse**: 
 - 4 existing components/utilities analyzed for reuse

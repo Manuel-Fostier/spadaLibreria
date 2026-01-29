@@ -18,6 +18,8 @@ import TagFilter, { FilterState, initialFilterState } from './TagFilter';
 import StatisticsModal from './StatisticsModal';
 import { LocalStorage } from '@/lib/localStorage';
 import { useStickyHeaderTracking } from '@/hooks/useStickyHeaderTracking';
+import LogoTitle from './LogoTitle';
+import StickyHeader from './StickyHeader';
 
 interface BolognesePlatformProps {
   glossaryData: { [key: string]: GlossaryEntry };
@@ -307,6 +309,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
     }
   }, [filteredContent, annotationSection]);
 
+<<<<<<< HEAD
   // Initialize top section for sticky header
   useEffect(() => {
     if (!topSectionId && filteredContent.length > 0) {
@@ -324,9 +327,6 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
     },
     contentDependency: filteredContent
   });
-
-
-
 
         
   // Reset to top when the content changes (new search or filter)
@@ -364,11 +364,10 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
       {/* SIDEBAR NAVIGATION */}
       <aside className="w-full md:w-72 bg-white border-r border-gray-100 flex-shrink-0 flex flex-col h-screen sticky top-0 z-20">
         <div className="p-8 pb-4">
-          <h1 className="text-xl font-bold text-black tracking-tight flex items-center gap-2">
-            <div className="w-2 h-6 bg-indigo-600"></div>            
-            SPADA LIBRERIA
-          </h1>
-          <p className="text-xs text-gray-400 mt-2 font-medium pl-4">Platform v1.0</p>
+          <LogoTitle 
+            titleClassName="text-xl font-bold text-black tracking-tight flex items-center gap-2"
+            subtitleClassName="text-xs text-gray-400 mt-2 font-medium pl-4"
+          />
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-8">
@@ -461,11 +460,16 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
           const topSection = filteredContent.find(s => s.id === topSectionId);
           if (!topSection) return null;
           return (
-            <div className="sticky top-20 z-10 bg-white border-b border-gray-200 px-8 py-3 shadow-sm">
-              <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-                {topSection.metadata.master} - {topSection.metadata.work} - Livre {topSection.metadata.book} ({topSection.metadata.year})
-              </span>
-            </div>
+            <StickyHeader
+              topOffsetClassName="top-20"
+              className="shadow-sm"
+              lines={[
+                {
+                  content: `${topSection.metadata.master} - ${topSection.metadata.work} - Livre ${topSection.metadata.book} (${topSection.metadata.year})`,
+                  className: 'text-xs font-bold text-gray-500 uppercase tracking-widest',
+                },
+              ]}
+            />
           );
         })()}
 

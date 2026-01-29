@@ -26,7 +26,7 @@ export default function GlossaryContent({
   searchQuery,
 }: GlossaryContentProps) {
   return (
-    <main className="glossary-content py-8 px-4 max-w-4xl mx-auto">
+    <div className="glossary-content space-y-8 prose prose-neutral max-w-none">
       {Object.keys(groupedTerms).length === 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-500 text-lg">
@@ -43,6 +43,6 @@ export default function GlossaryContent({
           />
         ))
       )}
-    </main>
+    </div>
   );
 }

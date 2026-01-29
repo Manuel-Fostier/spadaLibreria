@@ -68,7 +68,6 @@ const TermDisplay = React.memo(function TermDisplay({
   // Always use French definitions and translations (French-only mode)
   const language = 'fr';
   const definition = term.definition[language] || '';
-  const translation = term.translation[language] || '';
 
   // Apply highlighting if search is active
   const highlightedTerm = shouldHighlight
@@ -77,48 +76,21 @@ const TermDisplay = React.memo(function TermDisplay({
   const highlightedDefinition = shouldHighlight
     ? renderHighlightedText(definition, searchQuery)
     : definition;
-  const highlightedTranslation = shouldHighlight
-    ? renderHighlightedText(translation, searchQuery)
-    : translation;
-  const highlightedCategory = shouldHighlight
-    ? renderHighlightedText(term.category, searchQuery)
-    : term.category;
-  const highlightedType = shouldHighlight
-    ? renderHighlightedText(term.type, searchQuery)
-    : term.type;
 
   return (
-    <div className="term-display border-l-4 border-blue-300 bg-blue-50 p-3 sm:p-4 mb-2 sm:mb-3 rounded hover:bg-blue-100 transition-colors">
-      {/* Term Header - Always Visible */}
-      <div className="mb-2 sm:mb-3">
-        <h4 className="text-base sm:text-lg font-bold text-gray-900">
-          {highlightedTerm}
-        </h4>
-        <p className="text-xs sm:text-sm text-gray-600">
-          <span className="font-semibold">{highlightedCategory}</span>
-          {' › '}
-          <span>{highlightedType}</span>
+    <div className="term-display space-y-3">
+      <h4 className="text-base sm:text-lg font-semibold italic text-gray-900">
+        {highlightedTerm}
+      </h4>
+
+      {definition ? (
+        <p className="text-sm sm:text-base text-gray-700 leading-relaxed whitespace-pre-line text-justify">
+          {highlightedDefinition}
         </p>
-      </div>
-
-      {/* French Definition - Always Visible */}
-      <div className="mb-2 sm:mb-3">
-        {definition ? (
-          <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
-            {highlightedDefinition}
-          </p>
-        ) : (
-          <p className="text-xs sm:text-sm text-gray-400 italic">
-            No definition available
-          </p>
-        )}
-      </div>
-
-      {/* French Translation - Always Visible */}
-      {translation && (
-        <div className="bg-white bg-opacity-50 p-2 rounded text-xs sm:text-sm text-gray-600 italic">
-          {highlightedTranslation}
-        </div>
+      ) : (
+        <p className="text-xs sm:text-sm text-gray-400 italic">
+          No definition available
+        </p>
       )}
     </div>
   );

@@ -16,31 +16,26 @@ export default function CategorySection({
   searchQuery,
 }: CategorySectionProps) {
   return (
-    <section className="category-section mb-6 sm:mb-8">
-      {/* Category Header */}
-      <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6 pb-2 border-b-2 border-blue-500">
-        {categoryName}
-      </h2>
-
-      {/* Type Subsections */}
+    <section className="category-section space-y-8">
       {Object.entries(groupedTerms).map(([type, terms]) => (
-        <div key={type} className="type-subsection mb-4 sm:mb-6">
-          {/* Type Header */}
-          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 ml-1 sm:ml-2 text-blue-700">
-            {type}
-          </h3>
-
-          {/* Terms - French only, all visible */}
-          <div className="terms-container space-y-2 ml-2 sm:ml-4">
-            {terms.map((term) => (
+        <div
+          key={type}
+          className="type-subsection space-y-6"
+          data-glossary-category={categoryName}
+          data-glossary-type={type}
+        >
+          {terms.map((term, index) => (
+            <div key={term.id} className="space-y-4">
               <TermDisplay
-                key={term.id}
                 term={term}
                 searchQuery={searchQuery}
                 highlightMatches={searchQuery.length > 0}
               />
-            ))}
-          </div>
+              {index < terms.length - 1 && (
+                <div className="border-t border-gray-200 w-4/5 mx-auto" />
+              )}
+            </div>
+          ))}
         </div>
       ))}
     </section>

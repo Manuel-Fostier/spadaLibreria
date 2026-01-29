@@ -1,9 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useGlossary } from '@/contexts/GlossaryContext';
 import GlossarySearchBar from './GlossarySearchBar';
 import GlossaryContent from './GlossaryContent';
+import LogoTitle from './LogoTitle';
+import StickyHeader from './StickyHeader';
 
 /**
  * GlossaryPage - Main glossary page component (French-only mode)
@@ -19,15 +22,91 @@ import GlossaryContent from './GlossaryContent';
  */
 export default function GlossaryPage() {
   const { groupedTerms, searchQuery, isLoading, error } = useGlossary();
+  const router = useRouter();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [currentHeader, setCurrentHeader] = useState<{ category: string; type: string } | null>(null);
+
+  const initialHeader = useMemo(() => {
+    const categoryEntries = Object.entries(groupedTerms);
+    if (categoryEntries.length === 0) return null;
+    const [firstCategory, firstTypeGroup] = categoryEntries[0];
+    const typeEntries = Object.entries(firstTypeGroup);
+    if (typeEntries.length === 0) return null;
+    const [firstType] = typeEntries[0];
+    return { category: firstCategory, type: firstType };
+  }, [groupedTerms]);
+
+  useEffect(() => {
+    if (!currentHeader && initialHeader) {
+      setCurrentHeader(initialHeader);
+    }
+  }, [currentHeader, initialHeader]);
+
+  useEffect(() => {
+    const root = scrollContainerRef.current;
+    if (!root) return;
+
+    let ticking = false;
+
+    const updateTopSectionFromScroll = () => {
+      const elements = Array.from(
+        root.querySelectorAll('[data-glossary-type]')
+      ) as HTMLElement[];
+
+      if (elements.length === 0) {
+        ticking = false;
+        return;
+      }
+
+      const rootTop = root.getBoundingClientRect().top;
+      let closest: { element: HTMLElement; distance: number } | null = null;
+
+      elements.forEach((element) => {
+        const rect = element.getBoundingClientRect();
+        if (rect.bottom < rootTop) return;
+
+        const distance = Math.abs(rect.top - rootTop);
+        if (!closest || distance < closest.distance) {
+          closest = { element, distance };
+        }
+      });
+
+      if (closest) {
+        const nextCategory = closest.element.getAttribute('data-glossary-category');
+        const nextType = closest.element.getAttribute('data-glossary-type');
+        if (nextCategory && nextType) {
+          setCurrentHeader((prev) =>
+            prev?.category === nextCategory && prev?.type === nextType
+              ? prev
+              : { category: nextCategory, type: nextType }
+          );
+        }
+      }
+
+      ticking = false;
+    };
+
+    const handleScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateTopSectionFromScroll);
+      }
+    };
+
+    updateTopSectionFromScroll();
+    root.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      root.removeEventListener('scroll', handleScroll);
+    };
+  }, [groupedTerms]);
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-            <h2 className="text-xl font-bold text-red-800 mb-2">Error Loading Glossary</h2>
-            <p className="text-red-600">{error}</p>
-          </div>
+      <div className="min-h-screen bg-white flex items-center justify-center px-4">
+        <div className="max-w-2xl text-center">
+          <h2 className="text-xl font-bold text-red-800 mb-2">Error Loading Glossary</h2>
+          <p className="text-red-600">{error}</p>
         </div>
       </div>
     );
@@ -35,37 +114,59 @@ export default function GlossaryPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white border border-gray-200 rounded-lg p-6 text-center">
-            <p className="text-gray-600">Loading glossary...</p>
-          </div>
-        </div>
+      <div className="min-h-screen bg-white flex items-center justify-center px-4">
+        <p className="text-gray-600">Loading glossary...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="max-w-4xl mx-auto py-4 px-3 sm:py-6 sm:px-4 md:py-8">
-        {/* Page Header */}
-        <header className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-            Glossary / Glossaire / Glossario
-          </h1>
-          <p className="text-sm sm:text-base text-gray-600">
-            Comprehensive glossary of Bolognese fencing terminology
-          </p>
-        </header>
+    <div className="flex-1 flex flex-col h-screen bg-white">
+      {/* Top Bar */}
+      <header className="h-20 bg-white flex items-center px-8 justify-start gap-8 border-b border-gray-100">
+        <LogoTitle />
+        <div className="flex-1 text-center">
+          <h2 className="text-lg font-semibold text-gray-900">GLOSSAIRE</h2>
+        </div>
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="text-sm text-gray-600 hover:text-gray-900"
+          >
+            ← Back
+          </button>
+        </div>
+      </header>
 
-        {/* Search Bar */}
+      {/* Search Bar */}
+      <div className="px-8 py-3 bg-white border-b border-gray-100">
         <GlossarySearchBar />
+      </div>
 
-        {/* Glossary Content - French-only display, all visible */}
-        <GlossaryContent
-          groupedTerms={groupedTerms}
-          searchQuery={searchQuery}
-        />
+      {/* Scrollable Content Area */}
+      <div className="flex-1 overflow-y-auto bg-white" ref={scrollContainerRef}>
+        {currentHeader && (
+          <StickyHeader
+            lines={[
+              {
+                content: currentHeader.category,
+                className: 'text-base font-bold uppercase tracking-wider text-gray-900',
+              },
+              {
+                content: currentHeader.type,
+                className: 'text-sm text-gray-600',
+              },
+            ]}
+          />
+        )}
+
+        <div className="max-w-full mx-auto p-8 lg:p-12 space-y-8">
+          <GlossaryContent
+            groupedTerms={groupedTerms}
+            searchQuery={searchQuery}
+          />
+        </div>
       </div>
     </div>
   );
