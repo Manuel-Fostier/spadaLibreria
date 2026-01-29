@@ -218,12 +218,12 @@
 **Goal**: Connect glossary page to treatise content  
 **User Story**: US4 - Access Glossary from Treatise
 
-- [ ] T120 [P] Write test for treatise-to-glossary navigation links in `src/components/__tests__/GlossaryLink.test.tsx`
-- [ ] T121 [P] Implement GlossaryLink component in `src/components/GlossaryLink.tsx` (clickable term link that navigates to `/glossary`)
-- [ ] T122 Integrate GlossaryLink into TextParser component to link glossary terms in treatises
-- [ ] T123 [P] Write integration test for treatise-to-glossary workflow
-- [ ] T124 Verify browser back button returns to treatise
-- [ ] T125 Phase 2 implementation complete and tested
+- [X] T120 [P] Write test for treatise-to-glossary navigation links in `src/components/__tests__/GlossaryLink.test.tsx`
+- [X] T121 [P] Implement GlossaryLink component in `src/components/GlossaryLink.tsx` (clickable term link that navigates to `/glossary`)
+- [X] T122 Integrate GlossaryLink into TextParser component to link glossary terms in treatises
+- [X] T123 [P] Write integration test for treatise-to-glossary workflow
+- [X] T124 Verify browser back button returns to treatise
+- [X] T125 Phase 2 implementation complete and tested
 
 ---
 

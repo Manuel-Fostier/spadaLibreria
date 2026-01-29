@@ -4,7 +4,7 @@ import Image from 'next/image';
 import React from 'react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import Term from './Term';
+import GlossaryLink from './GlossaryLink';
 import { GlossaryEntry } from '@/lib/dataLoader';
 import { SearchQuery } from '@/types/search';
 import { findMatches } from '@/lib/highlighter';
@@ -60,9 +60,9 @@ function processTextWithGlossary(text: string, glossaryData: { [key: string]: Gl
       const glossaryEntry = glossaryData[key];
       const displayLabel = glossaryEntry ? glossaryEntry.term : key;
       return (
-        <Term key={index} termKey={key} glossaryData={glossaryData}>
+        <GlossaryLink key={index} termKey={key} glossaryData={glossaryData}>
           {renderHighlightedText(displayLabel, highlightQuery)}
-        </Term>
+        </GlossaryLink>
       );
     }
     return <span key={index}>{renderHighlightedText(part, highlightQuery)}</span>;
