@@ -56,8 +56,11 @@ function renderHighlightedText(text: string, query: string): React.ReactNode {
  * No language switching is available.
  * 
  * Search highlighting is supported for finding matches across all text.
+ * 
+ * Performance: Memoized to prevent unnecessary re-renders when parent updates
+ * but term, searchQuery, and highlightMatches props remain unchanged.
  */
-export default function TermDisplay({
+const TermDisplay = React.memo(function TermDisplay({
   term,
   searchQuery,
   highlightMatches: shouldHighlight,
@@ -85,13 +88,13 @@ export default function TermDisplay({
     : term.type;
 
   return (
-    <div className="term-display border-l-4 border-blue-300 bg-blue-50 p-4 mb-3 rounded hover:bg-blue-100 transition-colors">
+    <div className="term-display border-l-4 border-blue-300 bg-blue-50 p-3 sm:p-4 mb-2 sm:mb-3 rounded hover:bg-blue-100 transition-colors">
       {/* Term Header - Always Visible */}
-      <div className="mb-3">
-        <h4 className="text-lg font-bold text-gray-900">
+      <div className="mb-2 sm:mb-3">
+        <h4 className="text-base sm:text-lg font-bold text-gray-900">
           {highlightedTerm}
         </h4>
-        <p className="text-sm text-gray-600">
+        <p className="text-xs sm:text-sm text-gray-600">
           <span className="font-semibold">{highlightedCategory}</span>
           {' › '}
           <span>{highlightedType}</span>
@@ -99,13 +102,13 @@ export default function TermDisplay({
       </div>
 
       {/* French Definition - Always Visible */}
-      <div className="mb-3">
+      <div className="mb-2 sm:mb-3">
         {definition ? (
-          <p className="text-sm text-gray-700 leading-relaxed">
+          <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
             {highlightedDefinition}
           </p>
         ) : (
-          <p className="text-sm text-gray-400 italic">
+          <p className="text-xs sm:text-sm text-gray-400 italic">
             No definition available
           </p>
         )}
@@ -113,10 +116,12 @@ export default function TermDisplay({
 
       {/* French Translation - Always Visible */}
       {translation && (
-        <div className="bg-white bg-opacity-50 p-2 rounded text-sm text-gray-600 italic">
+        <div className="bg-white bg-opacity-50 p-2 rounded text-xs sm:text-sm text-gray-600 italic">
           {highlightedTranslation}
         </div>
       )}
     </div>
   );
-}
+});
+
+export default TermDisplay;
