@@ -67,6 +67,7 @@ npm run build    # Compile l'application pour la production
 npm run start    # Lance l'application en mode production
 npm run lint     # Vérifie la qualité du code
 npm run test     # Lance les tests unitaires
+npm test -- glossary --coverage
 ```
 
 ## Fonctionnalités
