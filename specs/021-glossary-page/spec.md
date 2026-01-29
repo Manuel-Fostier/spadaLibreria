@@ -180,6 +180,36 @@ mandritto:
 - Q: Should the YAML data model be refactored? → A: **No** - The current `data/glossary.yaml` structure with existing `definition` (it, fr, en) and `translation` (it, fr, en) fields is maintained as-is. Only French fields are rendered on the glossary page.
 - Q: Should individual terms be expandable/collapsible? → A: **No** - All content is always visible in French. No expand/collapse functionality.
 
+### Session 2025-01-29 (UI Design Clarification)
+
+**Design System Requirements** (for Phase 1.x UI refinement):
+
+1. **Text Display Style**: 
+   - Reuse BolognesePlatform typography: no background, no border, no highlight on mouse over
+   - Clean, minimal prose-like reading experience (similar to treatise text display)
+
+2. **Sticky Header** (2-line height):
+   - **Line 1**: Category name (e.g., "Les Guardes", "Coups et Techniques")
+   - **Line 2**: Type name (e.g., "Garde haute", "Attaque / Frappe de taille")
+   - Remains fixed at top when scrolling through terms in that section
+
+3. **Term Display Format**:
+   - **Don't repeat** category and type below the term heading (shown only in sticky header)
+   - **Don't display** English translation next to term name
+   - Display: `Term Name` (Italian) → French definition only
+   - Minimal styling, prose-focused
+
+4. **Page Title**:
+   - "SPADA LIBRERIA, platform v1.0" displayed at top of page
+   - Matches BolognesePlatform header style
+
+5. **Component Reuse Strategy**:
+   - Reuse existing typography classes/patterns from BolognesePlatform
+   - Reuse GlossarySearchBar component (already minimal styling)
+   - Create shared `<StickyHeader>` component (reusable for future phases)
+   - Create shared `<PageTitle>` component (reusable if platform needs it elsewhere)
+   - Leverage existing `<TextParser>` component structure for French definition rendering
+
 ## Assumptions
 
 1. **Glossary Data Structure**: The glossary YAML structure will remain consistent with its current format (term, type, definition, translation)
