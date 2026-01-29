@@ -313,15 +313,17 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
     }
   }, [filteredContent, topSectionId]);
 
-  // Track section at top of viewport for sticky header
+  // Track section at top of viewport for sticky header and annotation highlighting
+  // Both topSectionId and annotationSection now track the same visible section
   useEffect(() => {
     const root = scrollContainerRef.current;
     if (!root) return;
 
+    // Height of the fixed header (80px) + sticky section header (~30px with padding)
     const stickyOffset = 110;
     let ticking = false;
 
-    const updateTopSectionFromScroll = () => {
+    const updateCurrentSectionFromScroll = () => {
       ticking = false;
       const sections = Array.from(root.querySelectorAll('[data-section-id]'));
       if (sections.length === 0) {
@@ -329,95 +331,54 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
       }
 
       const rootTop = root.getBoundingClientRect().top;
-      let candidateId: string | null = null;
-      let fallbackId: string | null = null;
+      let selectedId: string | null = null;
 
+      // Find the first section whose bottom edge is below the sticky offset
+      // This is the section currently visible at the top of the content area
       for (const section of sections) {
         const rect = section.getBoundingClientRect();
         const relativeTop = rect.top - rootTop;
+        const relativeBottom = relativeTop + rect.height;
         const currentId = section.getAttribute('data-section-id');
         if (!currentId) continue;
 
-        if (relativeTop <= stickyOffset) {
-          candidateId = currentId;
-        } else {
-          fallbackId = currentId;
+        // If the section's bottom is below the sticky offset, it's the current visible section
+        if (relativeBottom > stickyOffset) {
+          selectedId = currentId;
           break;
         }
       }
 
-      const nextId = candidateId ?? fallbackId ?? sections[0].getAttribute('data-section-id');
-      if (nextId) {
-        setTopSectionId(prev => (prev === nextId ? prev : nextId));
+      // If no section found (all scrolled past), use the last one
+      if (!selectedId) {
+        const lastSection = sections[sections.length - 1];
+        selectedId = lastSection.getAttribute('data-section-id');
+      }
+
+      // If still no section, use the first one as fallback
+      if (!selectedId && sections.length > 0) {
+        selectedId = sections[0].getAttribute('data-section-id');
+      }
+
+      if (selectedId) {
+        setTopSectionId(prev => (prev === selectedId ? prev : selectedId));
+        setAnnotationSection(prev => (prev === selectedId ? prev : selectedId));
       }
     };
 
     const handleScroll = () => {
       if (!ticking) {
         ticking = true;
-        requestAnimationFrame(updateTopSectionFromScroll);
+        requestAnimationFrame(updateCurrentSectionFromScroll);
       }
     };
 
-    updateTopSectionFromScroll();
+    updateCurrentSectionFromScroll();
     root.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
       root.removeEventListener('scroll', handleScroll);
     };
-  }, [filteredContent, visibleCount]);
-
-  // FR-012b / SC-012: Smart scrolling behavior
-  // Auto-updates annotation section based on scroll position
-  // The panel will always track the visible section, even when open
-  useEffect(() => {
-    // Always allow scroll-based updates for better UX
-    // The AnnotationPanel will handle unsaved changes internally
-
-    const root = scrollContainerRef.current;
-    if (!root) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        // Find the entry closest to the center of the viewport
-        const center = root.clientHeight / 2;
-        let closestEntry: IntersectionObserverEntry | null = null;
-        let minDistance = Infinity;
-
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const rect = entry.boundingClientRect;
-            const rootTop = root.getBoundingClientRect().top;
-            const relativeTop = rect.top - rootTop;
-            const entryCenter = relativeTop + rect.height / 2;
-            const distance = Math.abs(center - entryCenter);
-            
-            if (distance < minDistance) {
-              minDistance = distance;
-              closestEntry = entry;
-            }
-          }
-        });
-
-        if (closestEntry) {
-          const sectionId = (closestEntry as IntersectionObserverEntry).target.getAttribute('data-section-id');
-          if (sectionId) {
-            setAnnotationSection(sectionId);
-          }
-        }
-      },
-      { 
-        root,
-        threshold: [0, 0.25, 0.5, 0.75, 1],
-        rootMargin: '0px' // Measurements already relative to container
-      }
-    );
-
-    // Observe all section elements
-    const sections = root.querySelectorAll('[data-section-id]');
-    sections.forEach(section => observer.observe(section));
-
-    return () => observer.disconnect();
   }, [filteredContent, visibleCount]);
 
 
