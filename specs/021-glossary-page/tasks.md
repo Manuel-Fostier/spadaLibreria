@@ -17,6 +17,8 @@
 |-----------|---|---|
 | **SearchBar.tsx** | Adapt pattern to GlossarySearchBar | T050, T052 |
 | **BolognesePlatform.tsx** (language toggles) | Adapt toggle pattern to radio group in LanguageSelector | T044, T045 |
+| **BolognesePlatform.tsx** (sticky header) | Reuse sticky header structure for glossary Category/Type | T126, T128 |
+| **BolognesePlatform.tsx** (logo/title block) | Extract shared Logo component for reuse | T127 |
 | **highlighter.ts** | Use directly for search highlighting | T051, T053, T054 |
 | **Term.tsx** | Reference display patterns only (not direct reuse) | T040, T042 |
 
@@ -213,6 +215,29 @@
 
 ---
 
+## PHASE 1.10: UI Design Refinement (Session 2025-01-29 Clarification)
+
+**Goal**: Implement UI design clarifications from Session 2025-01-29  
+**Reference**: `specs/021-glossary-page/UI_DESIGN.md`  
+**Independent Test**: Glossary page matches BolognesePlatform layout; sticky header updates correctly; term display shows only French content; no background/border/hover effects  
+**Component Strategy**: Reuse GlossarySearchBar; create StickyHeader component; leverage BolognesePlatform text styling
+
+### UI Components Refactoring
+
+- [ ] T126 [P] Extract shared `<StickyHeader>` component from `BolognesePlatform` into `src/components/StickyHeader.tsx` and reuse in glossary
+- [ ] T127 [P] Extract shared `<LogoTitle>` component (SPADA LIBRERIA + platform v1.0) into `src/components/LogoTitle.tsx` and reuse in BolognesePlatform + GlossaryPage
+- [ ] T128 [P] Update GlossaryPage.tsx top bar layout: use `<LogoTitle />` (left) + GLOSSAIRE title (center) + Back button (right)
+- [ ] T129 [P] Implement sticky header state tracking to update Category/Type as user scrolls (reuse BolognesePlatform logic)
+- [ ] T130 Update TermDisplay component to match UI_DESIGN.md styling: Italian name, French definition, French translation, no English
+- [ ] T131 [P] Add BolognesePlatform prose-styling classes to all text content (line-height, letter-spacing, color hierarchy)
+- [ ] T132 [P] Remove background/border from all term entries; verify no hover effects
+- [ ] T133 Implement subtle 80%-width dividers between term entries using Tailwind border utilities
+- [ ] T134 [P] Write integration test for UI layout: top bar, search bar, sticky header, content area in `src/__tests__/glossary-ui-layout.test.tsx`
+- [ ] T135 Verify responsive design on mobile (320px), tablet (768px), desktop (1920px) using existing test framework
+- [ ] T136 Phase 1.10 UI refinement complete and verified
+
+---
+
 ## PHASE 2: Treatise Integration (P2)
 
 **Goal**: Connect glossary page to treatise content  
@@ -259,19 +284,22 @@
 
 ---
 
+---
+
 ## Summary
 
-**Total Tasks**: 150 across 4 phases
+**Total Tasks**: 160 across 5 phases
 
 | Phase | Tasks | Status |
 |-------|-------|--------|
 | Phase 0 | T001-T012 (12 tasks) | BLOCKING - Refactoring glossary.yaml |
-| Phase 1 | T020-T116 (97 tasks) | Ready after Phase 0 |
-| Phase 2 | T120-T125 (6 tasks) | After Phase 1 complete |
-| Phase 3 | T130-T135 (6 tasks) | After Phase 2 complete |
-| Phase 4 | T140-T150 (11 tasks) | After Phase 3 complete |
+| Phase 1 | T020-T125 (106 tasks) | Ready after Phase 0 |
+| Phase 1.10 | T126-T136 (11 tasks) | UI Design refinement |
+| Phase 2 | T140-T145 (6 tasks) | After Phase 1.10 complete |
+| Phase 3 | T150-T155 (6 tasks) | After Phase 2 complete |
+| Phase 4 | T160-T170 (11 tasks) | After Phase 3 complete |
 
-**MVP Scope**: Phase 0 + Phase 1 (all P1 user stories)  
+**MVP Scope**: Phase 0 + Phase 1 + Phase 1.10 (all P1 user stories with UI refinement)  
 **Testing Approach**: TDD - Tests written before implementation for all tasks  
 **Code Coverage Target**: 80%+ for Phase 1
 
@@ -292,32 +320,33 @@ Phase 1.1: State management context (T030-T033) [COMPLETED ✅]
 ├─→ Phase 1.3: US2 - Search (T050-T056)
 │   ├─ Reuse: SearchBar.tsx pattern (GlossarySearchBar), highlighter.ts utility
 │   └─ Updates: TermDisplay search highlighting
-└─→ Phase 1.4: US3 - Detail View (T060-T066)
-    └─ Updates: TermDisplay multilingual support
+├─→ Phase 1.4: US3 - Detail View (T060-T066)
+│   └─ Updates: TermDisplay multilingual support
+├─→ Phase 1.5: Page route & integration (T070-T075)
+├─→ Phase 1.6: Integration tests (T080-T086)
+├─→ Phase 1.7: Responsive design (T090-T096)
+├─→ Phase 1.8: Performance (T100-T106)
+└─→ Phase 1.9: Final validation (T110-T116)
     ↓
-Phase 1.5: Page route & integration (T070-T075)
+Phase 1.10: UI Design Refinement (T126-T136) [NEW - Session 2025-01-29]
+    ├─ Extract StickyHeader + LogoTitle components (T126-T127)
+    ├─ Refactor top bar layout (T128-T129)
+    ├─ Update TermDisplay styling (T130-T133)
+    └─ Verify UI/responsive/layout (T134-T136)
+    ↓ (PHASE 1 + 1.10 COMPLETE)
     ↓
-Phase 1.6: Integration tests (T080-T086)
+Phase 2: Treatise integration (T140-T145)
     ↓
-Phase 1.7: Responsive design (T090-T096)
+Phase 3: URL hash fragments (T150-T155)
     ↓
-Phase 1.8: Performance (T100-T106)
-    ↓
-Phase 1.9: Final validation (T110-T116)
-    ↓ (PHASE 1 COMPLETE)
-    ↓
-Phase 2: Treatise integration (T120-T125)
-    ↓
-Phase 3: URL hash fragments (T130-T135)
-    ↓
-Phase 4: Content editing (T140-T150)
+Phase 4: Content editing (T160-T170)
 ```
 
 ---
 
 ## Task Summary
 
-**Phase 1 Task Count**: 97 tasks total
+**Phase 1 Task Count**: 107 tasks total (including Phase 1.10 UI refinement)
 - Phase 1.0: 7 tasks [✅ COMPLETED]
 - Phase 1.1: 4 tasks [✅ COMPLETED]
 - Phase 1.2: 9 tasks (US1 - Browse)
@@ -328,14 +357,17 @@ Phase 4: Content editing (T140-T150)
 - Phase 1.7: 7 tasks (Responsive Design)
 - Phase 1.8: 7 tasks (Performance)
 - Phase 1.9: 7 tasks (Final Validation)
+- **Phase 1.10: 11 tasks** (UI Design Refinement - NEW)
 
-**Progress**: 11/97 tasks complete (11%)
+**Progress**: 11/106 tasks complete (~10%)
 
 **Component Reuse**: 
 - 4 existing components/utilities analyzed for reuse
 - 3 to be adapted/reused with modifications (SearchBar, Language toggles, highlighter.ts)
 - 1 to be referenced for patterns (Term.tsx)
 - 6 new components to create (TermDisplay, CategorySection, LanguageSelector, GlossaryContent, GlossarySearchBar, GlossaryPage)
+- **NEW**: StickyHeader component (reusable for future phases)
+- **NEW**: LogoTitle component (shared between BolognesePlatform and GlossaryPage)
 
 ````
 

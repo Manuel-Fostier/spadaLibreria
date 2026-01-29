@@ -39,10 +39,12 @@ Add a dedicated glossary page that allows users to browse, search, and explore t
 specs/021-glossary-page/
 ├── spec.md                      # Feature specification (LOCKED - French-only display)
 ├── plan.md                      # This file (implementation plan)
+├── UI_DESIGN.md                 # UI specification (Session 2025-01-29 clarification)
 ├── research.md                  # Phase 0: Research & clarifications (10 items resolved)
 ├── data-model.md                # Phase 1: Entity design & validation rules
 ├── quickstart.md                # Phase 1: Implementation roadmap with TDD approach
 ├── PHASE_1_COMPLETE.md          # Design completion report & constitution check
+├── SPEC_COMPLIANCE_CHECK.md     # UI_DESIGN.md compliance verification
 ├── contracts/
 │   └── glossary-api.md          # API contracts (GET /api/content/glossary)
 └── tasks.md                     # Phase 2 output: Task breakdown (T001-T121+)
@@ -120,6 +122,23 @@ data/
 - **Decision**: Use GlossaryContext instead of Redux/Zustand
 - **Rationale**: Matches existing SearchContext pattern, scope doesn't require global state
 - **Impact**: Simpler, fewer dependencies, maintainable
+
+### 6. UI Design: BolognesePlatform-Aligned Layout (Session 2025-01-29 Clarification)
+- **Decision**: Glossary page matches BolognesePlatform visual hierarchy and spacing
+- **Layout Components**:
+  - Top Bar: SPADA LIBRERIA (left) + GLOSSAIRE (center) + Back button (right)
+  - Search Bar: Full width below header
+  - Sticky Header: Category (line 1) + Type (line 2), updates as user scrolls through content
+  - Content Area: Prose-style display with no background/border/hover-highlight
+- **Term Display**:
+  - Show: Italian term name + French definition/translation
+  - Don't show: English translation, category/type (in sticky header only), Italian definition
+  - Styling: Minimal, matches BolognesePlatform typography and prose classes
+  - Dividers: Subtle 80%-width line between entries
+- **Component Reuse**: 
+  - Reuse GlossarySearchBar (existing minimal styling)
+  - Create StickyHeader component (reusable for future phases)
+  - Leverage BolognesePlatform text styling patterns
 
 ## Component Reuse Strategy
 
