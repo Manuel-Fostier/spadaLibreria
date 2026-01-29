@@ -319,7 +319,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
     const root = scrollContainerRef.current;
     if (!root) return;
 
-    // Height of the fixed header (80px) + sticky section header (~30px with padding)
+    // Height of the fixed header (80px) + sticky section header (30px with padding and border)
     const stickyOffset = 110;
     let ticking = false;
 
@@ -342,22 +342,18 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
         const currentId = section.getAttribute('data-section-id');
         if (!currentId) continue;
 
-        // If the section's bottom is below the sticky offset, it's the current visible section
-        if (relativeBottom > stickyOffset) {
+        // If the section's top is at or below the sticky offset, or if its bottom is below,
+        // it's the current visible section
+        if (relativeTop <= stickyOffset && relativeBottom > stickyOffset) {
           selectedId = currentId;
           break;
         }
       }
 
       // If no section found (all scrolled past), use the last one
-      if (!selectedId) {
+      if (!selectedId && sections.length > 0) {
         const lastSection = sections[sections.length - 1];
         selectedId = lastSection.getAttribute('data-section-id');
-      }
-
-      // If still no section, use the first one as fallback
-      if (!selectedId && sections.length > 0) {
-        selectedId = sections[0].getAttribute('data-section-id');
       }
 
       if (selectedId) {
@@ -379,7 +375,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
     return () => {
       root.removeEventListener('scroll', handleScroll);
     };
-  }, [filteredContent, visibleCount]);
+  }, [filteredContent]);
 
 
 
