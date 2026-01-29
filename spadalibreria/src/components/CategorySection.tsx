@@ -16,22 +16,22 @@ export default function CategorySection({
   searchQuery,
 }: CategorySectionProps) {
   return (
-    <section className="category-section mb-8">
+    <section className="category-section mb-6 sm:mb-8">
       {/* Category Header */}
-      <h2 className="text-2xl font-bold text-gray-900 mb-6 pb-2 border-b-2 border-blue-500">
+      <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6 pb-2 border-b-2 border-blue-500">
         {categoryName}
       </h2>
 
       {/* Type Subsections */}
       {Object.entries(groupedTerms).map(([type, terms]) => (
-        <div key={type} className="type-subsection mb-6">
+        <div key={type} className="type-subsection mb-4 sm:mb-6">
           {/* Type Header */}
-          <h3 className="text-lg font-semibold text-gray-800 mb-4 ml-2 text-blue-700">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 ml-1 sm:ml-2 text-blue-700">
             {type}
           </h3>
 
           {/* Terms - French only, all visible */}
-          <div className="terms-container space-y-2 ml-4">
+          <div className="terms-container space-y-2 ml-2 sm:ml-4">
             {terms.map((term) => (
               <TermDisplay
                 key={term.id}
