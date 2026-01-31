@@ -17,6 +17,7 @@ import { useSearch } from '@/contexts/SearchContext';
 import TagFilter, { FilterState, initialFilterState } from './TagFilter';
 import StatisticsModal from './StatisticsModal';
 import { LocalStorage } from '@/lib/localStorage';
+import { useStickyHeaderTracking } from '@/hooks/useStickyHeaderTracking';
 
 interface BolognesePlatformProps {
   glossaryData: { [key: string]: GlossaryEntry };
@@ -315,67 +316,14 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
 
   // Track section at top of viewport for sticky header and annotation highlighting
   // Both topSectionId and annotationSection now track the same visible section
-  useEffect(() => {
-    const root = scrollContainerRef.current;
-    if (!root) return;
-
-    // Height of the fixed header (80px) + sticky section header (30px with padding and border)
-    const stickyOffset = 110;
-    let ticking = false;
-
-    const updateCurrentSectionFromScroll = () => {
-      ticking = false;
-      const sections = Array.from(root.querySelectorAll('[data-section-id]'));
-      if (sections.length === 0) {
-        return;
-      }
-
-      const rootTop = root.getBoundingClientRect().top;
-      let selectedId: string | null = null;
-
-      // Find the first section whose bottom edge is below the sticky offset
-      // This is the section currently visible at the top of the content area
-      for (const section of sections) {
-        const rect = section.getBoundingClientRect();
-        const relativeTop = rect.top - rootTop;
-        const relativeBottom = relativeTop + rect.height;
-        const currentId = section.getAttribute('data-section-id');
-        if (!currentId) continue;
-
-        // If the section's top is at or below the sticky offset, or if its bottom is below,
-        // it's the current visible section
-        if (relativeTop <= stickyOffset && relativeBottom > stickyOffset) {
-          selectedId = currentId;
-          break;
-        }
-      }
-
-      // If no section found (all scrolled past), use the last one
-      if (!selectedId && sections.length > 0) {
-        const lastSection = sections[sections.length - 1];
-        selectedId = lastSection.getAttribute('data-section-id');
-      }
-
-      if (selectedId) {
-        setTopSectionId(prev => (prev === selectedId ? prev : selectedId));
-        setAnnotationSection(prev => (prev === selectedId ? prev : selectedId));
-      }
-    };
-
-    const handleScroll = () => {
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(updateCurrentSectionFromScroll);
-      }
-    };
-
-    updateCurrentSectionFromScroll();
-    root.addEventListener('scroll', handleScroll, { passive: true });
-
-    return () => {
-      root.removeEventListener('scroll', handleScroll);
-    };
-  }, [filteredContent]);
+  useStickyHeaderTracking(scrollContainerRef, {
+    stickyOffset: 110, // Height of the fixed header (80px) + sticky section header (30px with padding and border)
+    onSectionChange: (sectionId) => {
+      setTopSectionId(sectionId);
+      setAnnotationSection(sectionId);
+    },
+    contentDependency: filteredContent
+  });
 
 
 
