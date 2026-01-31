@@ -25,7 +25,11 @@ export default function CategorySection({
           data-glossary-type={type}
         >
           {terms.map((term, index) => (
-            <div key={term.id} className="space-y-4">
+            <div 
+              key={term.id} 
+              className="space-y-4"
+              data-term-id={term.id}
+            >
               <TermDisplay
                 term={term}
                 searchQuery={searchQuery}

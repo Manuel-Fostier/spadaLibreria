@@ -18,6 +18,9 @@ import StickyHeader from './StickyHeader';
  * No LanguageSelector is included as this is a French-only glossary.
  * All content is displayed in a unified, always-visible view (no expand/collapse).
  * 
+ * Phase 3: Supports URL hash fragments (e.g., `/glossary#mandritto`) for direct navigation
+ * to specific terms with auto-scroll on page load.
+ * 
  * This component must be wrapped with GlossaryPageWrapper to provide GlossaryContext.
  */
 export default function GlossaryPage() {
@@ -25,6 +28,7 @@ export default function GlossaryPage() {
   const router = useRouter();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [currentHeader, setCurrentHeader] = useState<{ category: string; type: string } | null>(null);
+  const [targetTermId, setTargetTermId] = useState<string | null>(null);
 
   const initialHeader = useMemo(() => {
     const categoryEntries = Object.entries(groupedTerms);
@@ -41,6 +45,55 @@ export default function GlossaryPage() {
       setCurrentHeader(initialHeader);
     }
   }, [currentHeader, initialHeader]);
+
+  // T141: Parse URL hash on page load and when hash changes
+  useEffect(() => {
+    const parseAndScrollToHash = () => {
+      if (typeof window === 'undefined') return;
+      
+      const hash = window.location.hash.slice(1); // Remove leading #
+      if (hash) {
+        setTargetTermId(hash);
+      }
+    };
+
+    // Parse hash on initial load
+    parseAndScrollToHash();
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', parseAndScrollToHash);
+    return () => {
+      window.removeEventListener('hashchange', parseAndScrollToHash);
+    };
+  }, []);
+
+  // T142: Auto-scroll to target term when hash changes or terms load
+  useEffect(() => {
+    if (!targetTermId || !scrollContainerRef.current) return;
+
+    // Use setTimeout to ensure DOM is ready after render
+    const scrollTimer = setTimeout(() => {
+      const targetElement = scrollContainerRef.current?.querySelector(
+        `[data-term-id="${targetTermId}"]`
+      ) as HTMLElement;
+
+      if (targetElement) {
+        // Calculate scroll position with offset for sticky header
+        const stickyHeaderHeight = 60; // Approximate sticky header height
+        const elementTop = targetElement.offsetTop - stickyHeaderHeight;
+        
+        scrollContainerRef.current?.scrollTo({
+          top: elementTop,
+          behavior: 'smooth',
+        });
+
+        // Clear target after scrolling
+        setTargetTermId(null);
+      }
+    }, 100); // Small delay to ensure DOM is fully rendered
+
+    return () => clearTimeout(scrollTimer);
+  }, [targetTermId, groupedTerms]);
 
   useEffect(() => {
     const root = scrollContainerRef.current;

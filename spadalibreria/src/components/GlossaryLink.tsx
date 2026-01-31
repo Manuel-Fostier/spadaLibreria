@@ -15,11 +15,13 @@ interface GlossaryLinkProps {
  * GlossaryLink - Clickable glossary term link for treatise text
  * 
  * Wraps the existing Term tooltip behavior with a link to /glossary.
- * Phase 2: Basic navigation only (no hash fragment / auto-scroll yet).
+ * Phase 2: Basic navigation (T121)
+ * Phase 3: Supports URL hash fragments (T143) for direct navigation to specific terms
+ *          with auto-scroll on arrival. Uses termKey as URL hash identifier.
  */
 export default function GlossaryLink({ termKey, glossaryData, children }: GlossaryLinkProps) {
   return (
-    <Link href="/glossary" className="inline-flex">
+    <Link href={`/glossary#${termKey}`} className="inline-flex">
       <Term termKey={termKey} glossaryData={glossaryData}>
         {children}
       </Term>

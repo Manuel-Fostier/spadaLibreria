@@ -256,12 +256,12 @@
 
 **Goal**: Support direct navigation to specific terms via URL hash (e.g., `/glossary#mandritto`)
 
-- [ ] T140 [P] Write test for hash parsing and auto-scroll in `src/components/__tests__/GlossaryHashNavigation.test.tsx`
-- [ ] T141 Implement hash fragment parsing in GlossaryPage component
-- [ ] T142 Implement auto-scroll to target term on page load with hash
-- [ ] T143 Update browser history when term selected from treatise link
-- [ ] T144 [P] Write integration test for hash navigation from treatise
-- [ ] T145 Phase 3 implementation complete and tested
+- [X] T140 [P] Write test for hash parsing and auto-scroll in `src/components/__tests__/GlossaryHashNavigation.test.tsx`
+- [X] T141 Implement hash fragment parsing in GlossaryPage component
+- [X] T142 Implement auto-scroll to target term on page load with hash
+- [X] T143 Update browser history when term selected from treatise link
+- [X] T144 [P] Write integration test for hash navigation from treatise
+- [X] T145 Phase 3 implementation complete and tested
 
 ---
 
@@ -284,11 +284,22 @@
 
 ---
 
+## PHASE 5: Cleanup Unused Code & Files
+
+**Goal**: Remove dead code, unused components, and obsolete docs/files to keep the codebase lean
+**Independent Test**: App builds and existing tests pass after cleanup
+
+- [ ] T161 [P] Review unused file inventory in analysed/unused-files-analysis.md and confirm removal candidates
+- [ ] T162 [P] Remove confirmed unused components/tests from spadalibreria/src/ and spadalibreria/src/__tests__/ (update imports accordingly)
+- [ ] T163 [P] Remove unused mocks and fixtures in spadalibreria/src/__mocks__/ and spadalibreria/src/data/__mocks__/
+- [ ] T164 [P] Delete obsolete docs/notes in specs/021-glossary-page/ and analysed/ (if no longer referenced)
+- [ ] T165 Verify build/test still pass after cleanup and update analysed/unused-files-analysis.md with results
+
 ---
 
 ## Summary
 
-**Total Tasks**: 143 across 6 phases
+**Total Tasks**: 148 across 7 phases
 
 | Phase | Tasks | Status |
 |-------|-------|--------|
@@ -298,6 +309,7 @@
 | Phase 2 | T120-T125 (6 tasks) | After Phase 1.10 complete |
 | Phase 3 | T140-T145 (6 tasks) | After Phase 2 complete |
 | Phase 4 | T150-T160 (11 tasks) | After Phase 3 complete |
+| Phase 5 | T161-T165 (5 tasks) | After Phase 4 complete |
 
 **MVP Scope**: Phase 0 + Phase 1 + Phase 1.10 (all P1 user stories with UI refinement)  
 **Testing Approach**: TDD - Tests written before implementation for all tasks  
@@ -340,6 +352,8 @@ Phase 2: Treatise integration (T120-T125)
 Phase 3: URL hash fragments (T140-T145)
     ↓
 Phase 4: Content editing (T150-T160)
+    ↓
+Phase 5: Cleanup unused code/files (T161-T165)
 ```
 
 ---
@@ -358,6 +372,7 @@ Phase 4: Content editing (T150-T160)
 - Phase 1.8: 7 tasks (Performance)
 - Phase 1.9: 7 tasks (Final Validation)
 - **Phase 1.10: 11 tasks** (UI Design Refinement - NEW)
+- **Phase 5: 5 tasks** (Cleanup unused code/files)
 
 **Progress**: 20/108 tasks complete (~19%)
 
@@ -393,6 +408,9 @@ Phase 4: Content editing (T150-T160)
 
 **Phase 1.7 Parallelization** (Responsive design):
 - T091-T094: Tailwind classes can be added to all components in parallel
+
+**Phase 5 Parallelization** (Cleanup):
+- T161-T164: Audit/remove tasks can run in parallel (different folders)
 
 **Recommended Execution Strategy**:
 1. **Sequential**: Phase 0 → Phase 1.0 → Phase 1.1 (blockers)
