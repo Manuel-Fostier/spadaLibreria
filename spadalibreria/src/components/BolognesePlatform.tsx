@@ -17,6 +17,7 @@ import { useSearch } from '@/contexts/SearchContext';
 import TagFilter, { FilterState, initialFilterState } from './TagFilter';
 import StatisticsModal from './StatisticsModal';
 import { LocalStorage } from '@/lib/localStorage';
+import { useStickyHeaderTracking } from '@/hooks/useStickyHeaderTracking';
 
 interface BolognesePlatformProps {
   glossaryData: { [key: string]: GlossaryEntry };
@@ -313,112 +314,16 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
     }
   }, [filteredContent, topSectionId]);
 
-  // Track section at top of viewport for sticky header
-  useEffect(() => {
-    const root = scrollContainerRef.current;
-    if (!root) return;
-
-    const stickyOffset = 110;
-    let ticking = false;
-
-    const updateTopSectionFromScroll = () => {
-      ticking = false;
-      const sections = Array.from(root.querySelectorAll('[data-section-id]'));
-      if (sections.length === 0) {
-        return;
-      }
-
-      const rootTop = root.getBoundingClientRect().top;
-      let candidateId: string | null = null;
-      let fallbackId: string | null = null;
-
-      for (const section of sections) {
-        const rect = section.getBoundingClientRect();
-        const relativeTop = rect.top - rootTop;
-        const currentId = section.getAttribute('data-section-id');
-        if (!currentId) continue;
-
-        if (relativeTop <= stickyOffset) {
-          candidateId = currentId;
-        } else {
-          fallbackId = currentId;
-          break;
-        }
-      }
-
-      const nextId = candidateId ?? fallbackId ?? sections[0].getAttribute('data-section-id');
-      if (nextId) {
-        setTopSectionId(prev => (prev === nextId ? prev : nextId));
-      }
-    };
-
-    const handleScroll = () => {
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(updateTopSectionFromScroll);
-      }
-    };
-
-    updateTopSectionFromScroll();
-    root.addEventListener('scroll', handleScroll, { passive: true });
-
-    return () => {
-      root.removeEventListener('scroll', handleScroll);
-    };
-  }, [filteredContent, visibleCount]);
-
-  // FR-012b / SC-012: Smart scrolling behavior
-  // Auto-updates annotation section based on scroll position
-  // The panel will always track the visible section, even when open
-  useEffect(() => {
-    // Always allow scroll-based updates for better UX
-    // The AnnotationPanel will handle unsaved changes internally
-
-    const root = scrollContainerRef.current;
-    if (!root) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        // Find the entry closest to the center of the viewport
-        const center = root.clientHeight / 2;
-        let closestEntry: IntersectionObserverEntry | null = null;
-        let minDistance = Infinity;
-
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const rect = entry.boundingClientRect;
-            const rootTop = root.getBoundingClientRect().top;
-            const relativeTop = rect.top - rootTop;
-            const entryCenter = relativeTop + rect.height / 2;
-            const distance = Math.abs(center - entryCenter);
-            
-            if (distance < minDistance) {
-              minDistance = distance;
-              closestEntry = entry;
-            }
-          }
-        });
-
-        if (closestEntry) {
-          const sectionId = (closestEntry as IntersectionObserverEntry).target.getAttribute('data-section-id');
-          if (sectionId) {
-            setAnnotationSection(sectionId);
-          }
-        }
-      },
-      { 
-        root,
-        threshold: [0, 0.25, 0.5, 0.75, 1],
-        rootMargin: '0px' // Measurements already relative to container
-      }
-    );
-
-    // Observe all section elements
-    const sections = root.querySelectorAll('[data-section-id]');
-    sections.forEach(section => observer.observe(section));
-
-    return () => observer.disconnect();
-  }, [filteredContent, visibleCount]);
+  // Track section at top of viewport for sticky header and annotation highlighting
+  // Both topSectionId and annotationSection now track the same visible section
+  useStickyHeaderTracking(scrollContainerRef, {
+    stickyOffset: 110, // Height of the fixed header (80px) + sticky section header (30px with padding and border)
+    onSectionChange: (sectionId) => {
+      setTopSectionId(sectionId);
+      setAnnotationSection(sectionId);
+    },
+    contentDependency: filteredContent
+  });
 
 
 
