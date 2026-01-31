@@ -35,13 +35,13 @@ describe('GlossaryPage - Hash Navigation (Simplified)', () => {
 
   it('elements have scroll-mt class for sticky header offset', () => {
     const { container } = render(
-      <div id="mandritto" className="scroll-mt-24">
+      <div id="mandritto" className="scroll-mt-[84px]">
         Mandritto content
       </div>
     );
 
     const element = container.querySelector('#mandritto');
-    expect(element).toHaveClass('scroll-mt-24');
+    expect(element).toHaveClass('scroll-mt-[84px]');
   });
 
   it('hash changes trigger hashchange event', () => {

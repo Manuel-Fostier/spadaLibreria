@@ -24,6 +24,10 @@ import { useStickyHeaderTracking } from '@/hooks/useStickyHeaderTracking';
  * 
  * This component must be wrapped with GlossaryPageWrapper to provide GlossaryContext.
  */
+const STICKY_HEADER_HEIGHT = 60;
+const BASE_SCROLL_MARGIN = 24;
+const TOTAL_SCROLL_OFFSET = STICKY_HEADER_HEIGHT + BASE_SCROLL_MARGIN;
+
 export default function GlossaryPage() {
   const { groupedTerms, searchQuery, isLoading, error } = useGlossary();
   const router = useRouter();
@@ -60,7 +64,7 @@ export default function GlossaryPage() {
             // Get the target element's position relative to the scroll container
             const containerTop = scrollContainerRef.current.getBoundingClientRect().top;
             const elementTop = targetElement.getBoundingClientRect().top;
-            const scrollOffset = elementTop - containerTop - 24; // 24px offset for scroll-mt-24
+            const scrollOffset = elementTop - containerTop - TOTAL_SCROLL_OFFSET;
             
             scrollContainerRef.current.scrollBy({
               top: scrollOffset,

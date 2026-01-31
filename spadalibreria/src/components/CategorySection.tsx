@@ -28,7 +28,7 @@ export default function CategorySection({
             <div 
               key={term.id}
               id={term.id}
-              className="space-y-4 scroll-mt-24"
+              className="space-y-4 scroll-mt-[84px]"
             >
               <TermDisplay
                 term={term}
