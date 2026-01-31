@@ -309,7 +309,6 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
     }
   }, [filteredContent, annotationSection]);
 
-<<<<<<< HEAD
   // Initialize top section for sticky header
   useEffect(() => {
     if (!topSectionId && filteredContent.length > 0) {

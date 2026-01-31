@@ -7,6 +7,7 @@ import GlossarySearchBar from './GlossarySearchBar';
 import GlossaryContent from './GlossaryContent';
 import LogoTitle from './LogoTitle';
 import StickyHeader from './StickyHeader';
+import { useStickyHeaderTracking } from '@/hooks/useStickyHeaderTracking';
 
 /**
  * GlossaryPage - Main glossary page component (French-only mode)
@@ -19,7 +20,7 @@ import StickyHeader from './StickyHeader';
  * All content is displayed in a unified, always-visible view (no expand/collapse).
  * 
  * Phase 3: Supports URL hash fragments (e.g., `/glossary#mandritto`) for direct navigation
- * to specific terms with auto-scroll on page load.
+ * to specific terms. Uses native browser hash navigation for simplicity.
  * 
  * This component must be wrapped with GlossaryPageWrapper to provide GlossaryContext.
  */
@@ -28,7 +29,6 @@ export default function GlossaryPage() {
   const router = useRouter();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [currentHeader, setCurrentHeader] = useState<{ category: string; type: string } | null>(null);
-  const [targetTermId, setTargetTermId] = useState<string | null>(null);
 
   const initialHeader = useMemo(() => {
     const categoryEntries = Object.entries(groupedTerms);
@@ -46,113 +46,61 @@ export default function GlossaryPage() {
     }
   }, [currentHeader, initialHeader]);
 
-  // T141: Parse URL hash on page load and when hash changes
+  // Handle hash navigation for scrolling to specific terms
   useEffect(() => {
-    const parseAndScrollToHash = () => {
+    const scrollToHash = () => {
       if (typeof window === 'undefined') return;
       
       const hash = window.location.hash.slice(1); // Remove leading #
-      if (hash) {
-        setTargetTermId(hash);
+      if (hash && scrollContainerRef.current) {
+        // Use requestAnimationFrame to ensure DOM is ready
+        requestAnimationFrame(() => {
+          const targetElement = document.getElementById(hash);
+          if (targetElement && scrollContainerRef.current) {
+            // Get the target element's position relative to the scroll container
+            const containerTop = scrollContainerRef.current.getBoundingClientRect().top;
+            const elementTop = targetElement.getBoundingClientRect().top;
+            const scrollOffset = elementTop - containerTop - 24; // 24px offset for scroll-mt-24
+            
+            scrollContainerRef.current.scrollBy({
+              top: scrollOffset,
+              behavior: 'instant'
+            });
+          }
+        });
       }
     };
 
-    // Parse hash on initial load
-    parseAndScrollToHash();
+    // Scroll on initial load
+    scrollToHash();
 
     // Listen for hash changes
-    window.addEventListener('hashchange', parseAndScrollToHash);
+    window.addEventListener('hashchange', scrollToHash);
     return () => {
-      window.removeEventListener('hashchange', parseAndScrollToHash);
+      window.removeEventListener('hashchange', scrollToHash);
     };
-  }, []);
+  }, [groupedTerms]); // Re-run when terms load
 
-  // T142: Auto-scroll to target term when hash changes or terms load
-  useEffect(() => {
-    if (!targetTermId || !scrollContainerRef.current) return;
-
-    // Use setTimeout to ensure DOM is ready after render
-    const scrollTimer = setTimeout(() => {
-      const targetElement = scrollContainerRef.current?.querySelector(
-        `[data-term-id="${targetTermId}"]`
-      ) as HTMLElement;
-
-      if (targetElement) {
-        // Calculate scroll position with offset for sticky header
-        const stickyHeaderHeight = 60; // Approximate sticky header height
-        const elementTop = targetElement.offsetTop - stickyHeaderHeight;
-        
-        scrollContainerRef.current?.scrollTo({
-          top: elementTop,
-          behavior: 'smooth',
-        });
-
-        // Clear target after scrolling
-        setTargetTermId(null);
-      }
-    }, 100); // Small delay to ensure DOM is fully rendered
-
-    return () => clearTimeout(scrollTimer);
-  }, [targetTermId, groupedTerms]);
-
-  useEffect(() => {
-    const root = scrollContainerRef.current;
-    if (!root) return;
-
-    let ticking = false;
-
-    const updateTopSectionFromScroll = () => {
-      const elements = Array.from(
-        root.querySelectorAll('[data-glossary-type]')
-      ) as HTMLElement[];
-
-      if (elements.length === 0) {
-        ticking = false;
-        return;
-      }
-
-      const rootTop = root.getBoundingClientRect().top;
-      let closest: { element: HTMLElement; distance: number } | null = null;
-
-      elements.forEach((element) => {
-        const rect = element.getBoundingClientRect();
-        if (rect.bottom < rootTop) return;
-
-        const distance = Math.abs(rect.top - rootTop);
-        if (!closest || distance < closest.distance) {
-          closest = { element, distance };
-        }
-      });
-
-      if (closest) {
-        const nextCategory = closest.element.getAttribute('data-glossary-category');
-        const nextType = closest.element.getAttribute('data-glossary-type');
-        if (nextCategory && nextType) {
-          setCurrentHeader((prev) =>
-            prev?.category === nextCategory && prev?.type === nextType
-              ? prev
-              : { category: nextCategory, type: nextType }
-          );
+  // Track section at top of viewport for sticky header
+  useStickyHeaderTracking(scrollContainerRef, {
+    stickyOffset: 60, // Approximate sticky header height
+    onSectionChange: (sectionId) => {
+      if (sectionId) {
+        // Parse data-glossary-category and data-glossary-type from the section element
+        const element = scrollContainerRef.current?.querySelector(
+          `[data-glossary-type="${sectionId}"]`
+        ) as HTMLElement;
+        if (element) {
+          const category = element.getAttribute('data-glossary-category');
+          const type = element.getAttribute('data-glossary-type');
+          if (category && type) {
+            setCurrentHeader({ category, type });
+          }
         }
       }
-
-      ticking = false;
-    };
-
-    const handleScroll = () => {
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(updateTopSectionFromScroll);
-      }
-    };
-
-    updateTopSectionFromScroll();
-    root.addEventListener('scroll', handleScroll, { passive: true });
-
-    return () => {
-      root.removeEventListener('scroll', handleScroll);
-    };
-  }, [groupedTerms]);
+    },
+    contentDependency: groupedTerms
+  });
 
   if (error) {
     return (

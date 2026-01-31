@@ -3,20 +3,14 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import GlossaryLink from '../GlossaryLink';
 import { GlossaryEntry } from '@/lib/dataLoader';
+import { AnnotationDisplayProvider } from '@/contexts/AnnotationDisplayContext';
 
 jest.mock('next/link', () => ({
   __esModule: true,
-  default: ({ href, children, ...props }: { href: string; children: React.ReactNode }) => (
-    <a href={href} {...props}>
+  default: ({ href, children, className, ...props }: { href: string; children: React.ReactNode; className?: string }) => (
+    <a href={href} className={className} {...props}>
       {children}
     </a>
-  ),
-}));
-
-jest.mock('../Term', () => ({
-  __esModule: true,
-  default: ({ children }: { children: React.ReactNode }) => (
-    <span data-testid="term-wrapper">{children}</span>
   ),
 }));
 
@@ -34,16 +28,21 @@ const glossaryData: { [key: string]: GlossaryEntry } = {
 };
 
 describe('GlossaryLink', () => {
-  it('renders a link to /glossary with term content', () => {
+  it('renders a colored link to /glossary with term hash fragment (Phase 3 - No tooltip)', () => {
     render(
-      <GlossaryLink termKey="mandritto" glossaryData={glossaryData}>
-        Mandritto
-      </GlossaryLink>
+      <AnnotationDisplayProvider>
+        <GlossaryLink termKey="mandritto" glossaryData={glossaryData}>
+          Mandritto
+        </GlossaryLink>
+      </AnnotationDisplayProvider>
     );
 
     const link = screen.getByRole('link', { name: /mandritto/i });
     expect(link).toBeInTheDocument();
-    expect(link).toHaveAttribute('href', '/glossary');
-    expect(screen.getByTestId('term-wrapper')).toBeInTheDocument();
+    // Phase 3: Links now include hash fragment for direct term navigation
+    expect(link).toHaveAttribute('href', '/glossary#mandritto');
+    // No tooltip - styled link with underline and annotation color
+    expect(link).toHaveClass('underline', 'decoration-dotted', 'underline-offset-2');
+    expect(link.getAttribute('style')).toMatch(/color:\s*[^;]+/);
   });
 });

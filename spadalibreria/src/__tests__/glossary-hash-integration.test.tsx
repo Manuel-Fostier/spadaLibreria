@@ -3,22 +3,15 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import GlossaryLink from '../GlossaryLink';
+import GlossaryLink from '@/components/GlossaryLink';
 import { AnnotationDisplayProvider } from '@/contexts/AnnotationDisplayContext';
 
 jest.mock('next/link', () => ({
   __esModule: true,
-  default: ({ href, children, ...props }: { href: string; children: React.ReactNode }) => (
-    <a href={href} data-testid="glossary-link" {...props}>
+  default: ({ href, children, className, ...props }: { href: string; children: React.ReactNode; className?: string }) => (
+    <a href={href} className={className} data-testid="glossary-link" {...props}>
       {children}
     </a>
-  ),
-}));
-
-jest.mock('@/components/Term', () => ({
-  __esModule: true,
-  default: ({ children, termKey }: { children: React.ReactNode; termKey: string }) => (
-    <span data-term-key={termKey}>{children}</span>
   ),
 }));
 
@@ -35,7 +28,7 @@ const glossaryData = {
   },
 };
 
-describe('GlossaryHashNavigation - Treatise Integration (T144, Phase 3)', () => {
+describe('GlossaryHashNavigation - Treatise Integration (T144, Phase 3 - Simplified)', () => {
   it('T144: renders glossary link with term hash fragment', () => {
     render(
       <AnnotationDisplayProvider>
@@ -136,7 +129,7 @@ describe('GlossaryHashNavigation - Treatise Integration (T144, Phase 3)', () => 
     expect(link).toHaveAttribute('href', '/glossary#coda_lunga');
   });
 
-  it('T144: maintains tooltip functionality while adding hash navigation', () => {
+  it('T144: no tooltip behavior - simple link without Term wrapper', () => {
     render(
       <AnnotationDisplayProvider>
         <GlossaryLink termKey="mandritto" glossaryData={glossaryData}>
@@ -145,12 +138,17 @@ describe('GlossaryHashNavigation - Treatise Integration (T144, Phase 3)', () => 
       </AnnotationDisplayProvider>
     );
 
-    // Verify both link and Term wrapper are present
+    // Verify link exists but no tooltip wrapper
     const link = screen.getByTestId('glossary-link');
-    const termWrapper = screen.getByRole('generic', { hidden: true });
-    
     expect(link).toBeInTheDocument();
-    expect(termWrapper).toHaveAttribute('data-term-key', 'mandritto');
+    expect(link).toHaveTextContent('Mandritto');
+    
+    // Should have link styling and color from annotation
+    expect(link).toHaveClass('underline', 'decoration-dotted', 'underline-offset-2');
+    expect(link.getAttribute('style')).toMatch(/color:\s*[^;]+/);
+    
+    // Should NOT have Term wrapper with data-term-key
+    expect(screen.queryByTestId('term-wrapper')).not.toBeInTheDocument();
   });
 
   it('T144: browser back button works after hash navigation', () => {

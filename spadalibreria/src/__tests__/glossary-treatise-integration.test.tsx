@@ -62,7 +62,8 @@ describe('Treatise to Glossary Integration (Phase 2)', () => {
 
     const link = screen.getByRole('link', { name: /mandritto/i });
     expect(link).toBeInTheDocument();
-    expect(link).toHaveAttribute('href', '/glossary');
+    // Phase 3: Links now include hash fragment for direct term navigation
+    expect(link).toHaveAttribute('href', '/glossary#mandritto');
   });
 
   it('T124: browser back returns to treatise after navigating to glossary', async () => {

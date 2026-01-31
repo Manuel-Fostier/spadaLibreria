@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect, useMemo, useRef, useState, createPortal } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { GlossaryEntry } from '@/lib/dataLoader';
 import { useAnnotationDisplay } from '@/contexts/AnnotationDisplayContext';
 import { mapTermTypeToAnnotation } from '@/lib/termTypeMapping';

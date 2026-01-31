@@ -2,7 +2,7 @@
 
 **Date**: January 31, 2026  
 **Phase**: Phase 3 - Advanced Integration - URL Hash Fragments  
-**Status**: ✅ COMPLETE
+**Status**: ✅ COMPLETE (with bug fix applied)
 
 ## Overview
 
@@ -12,6 +12,58 @@ Phase 3 implements support for direct navigation to specific glossary terms via 
 2. Navigate to `/glossary#termkey`
 3. Auto-scroll to the target term on page load
 4. Use browser back button to return to the treatise
+
+## Critical Bug Fix (January 31, 2026)
+
+**Issue**: Runtime error when clicking term links: `createPortal is not a function`
+
+**Root Cause**: [Term.tsx](../../../spadalibreria/src/components/Term.tsx#L3) incorrectly imported `createPortal` from `'react'` instead of `'react-dom'`
+
+**Fix Applied**:
+```diff
+- import React, { useEffect, useMemo, useRef, useState, createPortal } from 'react';
++ import React, { useEffect, useMemo, useRef, useState } from 'react';
++ import { createPortal } from 'react-dom';
+```
+
+**Tests Updated**:
+- Fixed import path in [glossary-hash-integration.test.tsx](../../../spadalibreria/src/__tests__/glossary-hash-integration.test.tsx)
+- Updated expectations in [glossary-treatise-integration.test.tsx](../../../spadalibreria/src/__tests__/glossary-treatise-integration.test.tsx) to reflect Phase 3 hash behavior
+- Updated [GlossaryLink.test.tsx](../../../spadalibreria/src/components/__tests__/GlossaryLink.test.tsx) expectations
+
+**Verification**: All Phase 3 tests now pass ✅
+
+## Scroll Behavior Simplification (January 31, 2026 - User Feedback)
+
+**User Request**: Simplify the auto-scroll behavior - replace complex smooth scrolling logic with simpler native browser behavior.
+
+**Solution Implemented**: Replaced custom JavaScript scroll logic with native browser hash navigation.
+
+**Changes Made**:
+1. **Removed** complex auto-scroll state and effects from `GlossaryPage.tsx`
+2. **Changed** `data-term-id` to standard `id` attribute in `CategorySection.tsx`
+3. **Added** `scroll-mt-24` Tailwind class for proper scroll offset with sticky header
+4. **Result**: Browser now handles scrolling automatically using native hash navigation
+
+**Benefits**:
+- ✅ Simpler code (removed ~40 lines of complex logic)
+- ✅ Native browser behavior (instant, no JavaScript delays)
+- ✅ Better performance (no state updates or setTimeout calls)
+- ✅ More reliable (works even with JavaScript disabled)
+- ✅ Proper scroll offset for sticky header using CSS `scroll-margin-top`
+
+**Technical Details**:
+```tsx
+// Before: Complex scroll logic with state, effects, and calculations
+const [targetTermId, setTargetTermId] = useState<string | null>(null);
+useEffect(() => { /* hash parsing */ }, []);
+useEffect(() => { /* auto-scroll with calculations */ }, [targetTermId, groupedTerms]);
+
+// After: Native browser hash navigation
+<div id={term.id} className="scroll-mt-24">
+  {/* Browser automatically scrolls to #termId */}
+</div>
+```
 
 ## Tasks Completed
 

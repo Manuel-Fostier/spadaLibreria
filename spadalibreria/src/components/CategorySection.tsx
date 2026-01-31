@@ -26,9 +26,9 @@ export default function CategorySection({
         >
           {terms.map((term, index) => (
             <div 
-              key={term.id} 
-              className="space-y-4"
-              data-term-id={term.id}
+              key={term.id}
+              id={term.id}
+              className="space-y-4 scroll-mt-24"
             >
               <TermDisplay
                 term={term}
