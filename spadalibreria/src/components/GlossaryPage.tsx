@@ -24,7 +24,7 @@ import { useStickyHeaderTracking } from '@/hooks/useStickyHeaderTracking';
  * 
  * This component must be wrapped with GlossaryPageWrapper to provide GlossaryContext.
  */
-const STICKY_HEADER_HEIGHT = 60;
+const STICKY_HEADER_HEIGHT = 60; // Approximate sticky header height
 const BASE_SCROLL_MARGIN = 24;
 const TOTAL_SCROLL_OFFSET = STICKY_HEADER_HEIGHT + BASE_SCROLL_MARGIN;
 
@@ -87,7 +87,7 @@ export default function GlossaryPage() {
 
   // Track section at top of viewport for sticky header
   useStickyHeaderTracking(scrollContainerRef, {
-    stickyOffset: 60, // Approximate sticky header height
+    stickyOffset: STICKY_HEADER_HEIGHT,
     onSectionChange: (sectionId) => {
       if (sectionId) {
         // Parse data-glossary-category and data-glossary-type from the section element
