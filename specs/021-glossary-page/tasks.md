@@ -267,20 +267,114 @@
 
 ## PHASE 4: Content Editing Interface
 
-**Goal**: Allow users to edit glossary content (definitions, translations, term types) inline  
-**User Story**: Edit glossary content via AnnotationPanel-like interface
+**Goal**: Allow users to edit and create glossary content and treatise sections  
+**Reference**: See [PHASE_4_ANALYSIS.md](PHASE_4_ANALYSIS.md) and [PHASE_4_PLAN.md](PHASE_4_PLAN.md) for detailed implementation strategy and component architecture
 
-- [ ] T150 [P] Write test for edit button in `src/components/__tests__/TermEditButton.test.tsx`
-- [ ] T151 [P] Write test for glossary edit form in `src/components/__tests__/TermEditForm.test.tsx`
-- [ ] T152 Implement TermEditButton component (button next to each term)
-- [ ] T153 Implement TermEditForm component (reuse AnnotationPanel pattern for UI consistency)
-- [ ] T154 [P] Write test for API endpoint to save glossary edits in `src/app/api/glossary/__tests__/edit.test.ts`
-- [ ] T155 Create API endpoint in `src/app/api/glossary/edit.ts` to persist changes to `data/glossary.yaml`
-- [ ] T156 [P] Write test for validation before save (definitions/translations cannot be empty)
-- [ ] T157 Implement validation logic in edit form and API endpoint
-- [ ] T158 [P] Write test for undo functionality or error handling if save fails
-- [ ] T159 Implement error handling and user feedback for failed edits
-- [ ] T160 Phase 4 implementation complete and tested
+### Phase 4a: Edit Existing Glossary Terms (Inline Editing)
+
+**Goal**: Add per-term "Edit" button to modify `category`, `type`, `term`, and `definition_fr` fields with Markdown support  
+**User Story**: Users can click Edit button next to any term, edit fields using TextEditor (with Markdown support), save changes persisted to `data/glossary.yaml`  
+**Implementation Strategy**: Reuse `TextEditor.tsx` component pattern from BolognesePlatform; use `MarkdownRenderer.tsx` for definition preview; single edit button per term (left of term heading)
+
+#### Backend: API Endpoint
+
+- [ ] T150 [P] Write test for API endpoint to save glossary term edits in `src/app/api/glossary/__tests__/term.test.ts`
+- [ ] T151 Create POST endpoint `/api/glossary/term` in `src/app/api/glossary/term/route.ts` to update term fields (`category`, `type`, `term`, `definition_fr`) in `data/glossary.yaml`
+- [ ] T152 [P] Add validation logic: verify termKey exists, field is valid, value is non-empty
+- [ ] T153 Add error handling and graceful failure responses
+
+#### Frontend: Components
+
+- [ ] T154 [P] Write test for GlossaryTermEditor component in `src/components/__tests__/GlossaryTermEditor.test.tsx` (edit state, save/cancel, API integration)
+- [ ] T155 Implement GlossaryTermEditor component in `src/components/GlossaryTermEditor.tsx` (reuse TextEditor pattern, supports 4 editable fields, calls `/api/glossary/term` endpoint)
+- [ ] T156 [P] Update TermDisplay component to include edit button and conditional rendering (show edit button when not editing, show GlossaryTermEditor when editing)
+- [ ] T157 Update GlossaryContent component to pass `isEditable` prop to TermDisplay (enables edit mode when glossary is in edit mode)
+- [ ] T158 Update GlossaryPage component to add global edit mode toggle button in header
+
+#### Markdown Support
+
+- [ ] T159 [P] Add MarkdownRenderer import to TermDisplay and render term definitions with Markdown support (reuse existing component from `src/components/MarkdownRenderer.tsx`)
+- [ ] T160 Update TextEditor to support multiline Markdown input for definition field
+- [ ] T161 [P] Write test for Markdown rendering in glossary definitions in `src/components/__tests__/TermDisplay.test.tsx`
+
+#### Testing & Validation
+
+- [ ] T162 [P] Write integration test: Edit term field → save → page reload shows updated value
+- [ ] T163 [P] Write integration test: Edit multiple fields in sequence → all saved correctly
+- [ ] T164 Test undo/redo functionality in TextEditor (Ctrl+Z, Ctrl+Y)
+- [ ] T165 Test error cases: invalid termKey, API failure, network timeout
+- [ ] T166 Phase 4a implementation complete and tested
+
+---
+
+### Phase 4b: Create New Glossary Terms (Issue #55)
+
+**Goal**: Add "Ajouter Element" button to create new glossary entries via form  
+**User Story**: Users can click "Ajouter Element" button, fill form with (category, type, term, definition_fr, optional translation), submit creates new term in `data/glossary.yaml`  
+**Implementation Strategy**: Create NewTermForm component; reuse TextEditor pattern for definition field; add term key generation (slug sanitization)
+
+#### Backend: API Endpoint
+
+- [ ] T170 Create POST endpoint `/api/glossary/terms` in `src/app/api/glossary/terms/route.ts` to add new glossary terms to `data/glossary.yaml`
+- [ ] T171 [P] Add term key generation logic (slugify term name, handle accents, prevent duplicates)
+- [ ] T172 [P] Add validation: required fields (category, type, term, definition_fr), prevent duplicate term keys
+
+#### Frontend: Components
+
+- [ ] T173 [P] Write test for NewTermForm component in `src/components/__tests__/NewTermForm.test.tsx` (form fields, validation, submit)
+- [ ] T174 Implement NewTermForm component in `src/components/NewTermForm.tsx` (collects category/type/term/definition fields, calls `/api/glossary/terms` endpoint)
+- [ ] T175 Update GlossaryPage component to add "Ajouter Element" button and toggle form display
+- [ ] T176 [P] Add category autocomplete/suggestions in NewTermForm (extract from existing terms)
+
+#### Testing & Validation
+
+- [ ] T177 [P] Write integration test: Create new term → save → page reload shows new term in correct category
+- [ ] T178 [P] Write test: Duplicate term key prevention → error message shown
+- [ ] T179 Test form validation: required field validation, empty field errors
+- [ ] T180 Phase 4b implementation complete and tested
+
+---
+
+### Phase 4c: Add New Treatise Sections (Issue #54)
+
+**Goal**: Add "Nouvelle section" button to BolognesePlatform to create new treatise sections  
+**User Story**: Users can click "Nouvelle section" button, fill form with (master, work, book, year, title, content_fr, optional content_it/notes), submit appends new section to correct YAML file  
+**Implementation Strategy**: Create NewSectionForm component in BolognesePlatform; reuse TextEditor pattern; determine target YAML file based on master/work/book metadata
+
+#### Backend: API Endpoint
+
+- [ ] T185 Create POST endpoint `/api/content/section` in `src/app/api/content/section/route.ts` to append new treatise section to correct YAML file
+- [ ] T186 [P] Add logic to select target YAML file based on `master`, `work`, `book` metadata matching
+- [ ] T187 [P] Add section ID generation and validation
+- [ ] T188 Add error handling: file not found, invalid metadata, write failures
+
+#### Frontend: Components (BolognesePlatform)
+
+- [ ] T189 [P] Write test for NewSectionForm component in `src/components/__tests__/NewSectionForm.test.tsx` (form fields, metadata selection)
+- [ ] T190 Implement NewSectionForm component in `src/components/NewSectionForm.tsx` (collects master/work/book/year/title/content fields, calls `/api/content/section` endpoint)
+- [ ] T191 Update BolognesePlatform component to add "Nouvelle section" button in header
+- [ ] T192 Add master/work/book selectors (dropdowns populated from existing treatise data)
+
+#### Testing & Validation
+
+- [ ] T193 [P] Write integration test: Create new section → save → page reload shows new section in correct treatise YAML file
+- [ ] T194 [P] Write test: Section metadata validation (all required fields present)
+- [ ] T195 Test file selection logic: verify correct YAML file chosen based on master/work/book
+- [ ] T196 Phase 4c implementation complete and tested
+
+---
+
+### Phase 4 Summary
+
+**Total Phase 4 Tasks**: 47 tasks (Phase 4a: 16 + Phase 4b: 10 + Phase 4c: 12 + integration: 9)
+
+| Sub-Phase | Goal | Status |
+|-----------|------|--------|
+| 4a | Edit existing terms with Markdown support | Not Started |
+| 4b | Create new glossary terms (Issue #55) | Not Started |
+| 4c | Add new treatise sections (Issue #54) | Not Started |
+
+**Implementation Sequence**: Phase 4a → Phase 4b → Phase 4c (shared backend infrastructure allows parallel development after 4a API is complete)
 
 ---
 
