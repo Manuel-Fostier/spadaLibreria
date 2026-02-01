@@ -176,7 +176,71 @@ try {
 
 ---
 
-## New Components Needed for Phase 4
+## Markdown Support for Term Definitions
+
+### Overview
+Term definitions in glossary entries support **Markdown syntax** to allow rich formatting of complex fencing concepts (bold, italic, lists, links, etc.).
+
+### Implementation Approach
+
+**Reuse `MarkdownRenderer` Component**: 
+- **Path**: `src/components/MarkdownRenderer.tsx`
+- **Already Used In**: BolognesePlatform for rendering treatise content and notes
+- **Example Usage** (from BolognesePlatform line ~580-590):
+  ```tsx
+  <MarkdownRenderer 
+    text={section.content.it} 
+    glossaryData={glossaryData} 
+    highlightQuery={lastQuery}
+  />
+  ```
+
+### MarkdownRenderer Capabilities
+1. **Markdown Parsing**: Supports standard Markdown (headings, bold, italic, lists, links)
+2. **Glossary Term Linking**: Processes `{term_key}` syntax and creates interactive glossary links
+3. **Search Highlighting**: Integrates with search system to highlight matches inline
+4. **Image Support**: Handles image embedding with proper sizing
+5. **GFM Extensions**: Uses `remark-gfm` for GitHub Flavored Markdown support
+
+### Editor Pattern
+
+**Use `TextEditor` Component** (existing from BolognesePlatform):
+- **Path**: `src/components/TextEditor.tsx`
+- **Features**: 
+  - Multiline textarea for Markdown input
+  - Undo/Redo support (Ctrl+Z, Ctrl+Y)
+  - Save/Cancel buttons
+  - Auto-sizing
+  - Keyboard shortcuts
+- **Reference**: Similar to notes editing in BolognesePlatform (lines 716-727)
+
+### Example Workflow
+
+**Editing a Term Definition**:
+```tsx
+// 1. User clicks Edit button on term
+// 2. TextEditor opens with current definition markdown
+
+// 3. User edits markdown:
+// Before: "A strike executed to the right side of the body"
+// After: "A **strike** executed to the *right side* of the body:\n- Fast\n- Powerful"
+
+// 4. User clicks Save
+// 5. MarkdownRenderer displays the formatted result:
+//    "A strike executed to the right side of the body:
+//     • Fast
+//     • Powerful"
+
+// 6. On glossary page, term definition renders with Markdown formatting applied
+```
+
+### Benefits
+- **Consistency**: Same rendering engine across glossary and treatise content
+- **Reusability**: Leverages existing, tested components
+- **Features**: Inherits all MarkdownRenderer features (search highlighting, glossary linking, etc.)
+- **Maintainability**: Changes to MarkdownRenderer automatically benefit glossary definitions
+
+---
 
 ### 1. **GlossaryTermEditor Component** (NEW)
 - **Purpose**: Wraps multiple TextEditor instances or creates form for single term
