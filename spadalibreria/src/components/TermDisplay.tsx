@@ -78,7 +78,7 @@ const TermDisplay = React.memo(function TermDisplay({
     : definition;
 
   return (
-    <div className="term-display space-y-3">
+    <div className="term-display prose prose-neutral space-y-3">
       <h4 className="text-base sm:text-lg font-semibold italic text-gray-900">
         {highlightedTerm}
       </h4>

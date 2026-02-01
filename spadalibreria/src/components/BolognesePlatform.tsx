@@ -318,14 +318,15 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
 
   // Track section at top of viewport for sticky header and annotation highlighting
   // Both topSectionId and annotationSection now track the same visible section
-  useStickyHeaderTracking(scrollContainerRef, {
-    stickyOffset: 110, // Height of the fixed header (80px) + sticky section header (30px with padding and border)
-    onSectionChange: (sectionId) => {
+  useStickyHeaderTracking(
+    scrollContainerRef,
+    110, // Height of the fixed header (80px) + sticky section header (30px with padding and border)
+    (sectionId) => {
       setTopSectionId(sectionId);
       setAnnotationSection(sectionId);
     },
-    contentDependency: filteredContent
-  });
+    filteredContent
+  );
 
         
   // Reset to top when the content changes (new search or filter)

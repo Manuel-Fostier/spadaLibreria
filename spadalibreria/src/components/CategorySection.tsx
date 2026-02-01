@@ -16,13 +16,14 @@ export default function CategorySection({
   searchQuery,
 }: CategorySectionProps) {
   return (
-    <section className="category-section space-y-8">
+    <section className="category-section prose prose-neutral space-y-8">
       {Object.entries(groupedTerms).map(([type, terms]) => (
         <div
           key={type}
           className="type-subsection space-y-6"
           data-glossary-category={categoryName}
           data-glossary-type={type}
+          data-section-id={type}
         >
           {terms.map((term, index) => (
             <div 

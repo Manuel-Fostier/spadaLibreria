@@ -1,4 +1,5 @@
-'use client';
+
+  'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -7,6 +8,7 @@ import GlossarySearchBar from './GlossarySearchBar';
 import GlossaryContent from './GlossaryContent';
 import LogoTitle from './LogoTitle';
 import StickyHeader from './StickyHeader';
+import { GLOSSARY_CATEGORY_STYLE, GLOSSARY_TYPE_STYLE, GLOSSARY_LEFT_PADDING } from './GlossaryContent';
 import { useStickyHeaderTracking } from '@/hooks/useStickyHeaderTracking';
 
 /**
@@ -24,9 +26,10 @@ import { useStickyHeaderTracking } from '@/hooks/useStickyHeaderTracking';
  * 
  * This component must be wrapped with GlossaryPageWrapper to provide GlossaryContext.
  */
-const STICKY_HEADER_HEIGHT = 60; // Approximate sticky header height
-const BASE_SCROLL_MARGIN = 24;
-const TOTAL_SCROLL_OFFSET = STICKY_HEADER_HEIGHT + BASE_SCROLL_MARGIN;
+const HEADER_HEIGHT = 80; // Approximate header height
+const SEARCH_BAR_HEIGHT = 71; // Approximate search bar height
+const STICKY_HEADER_HEIGHT = 85; // Approximate sticky header height
+const TOTAL_SCROLL_OFFSET = HEADER_HEIGHT + SEARCH_BAR_HEIGHT + STICKY_HEADER_HEIGHT;
 
 export default function GlossaryPage() {
   const { groupedTerms, searchQuery, isLoading, error } = useGlossary();
@@ -34,16 +37,15 @@ export default function GlossaryPage() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [currentHeader, setCurrentHeader] = useState<{ category: string; type: string } | null>(null);
 
-  const initialHeader = useMemo(() => {
-    const categoryEntries = Object.entries(groupedTerms);
-    if (categoryEntries.length === 0) return null;
-    const [firstCategory, firstTypeGroup] = categoryEntries[0];
-    const typeEntries = Object.entries(firstTypeGroup);
-    if (typeEntries.length === 0) return null;
-    const [firstType] = typeEntries[0];
-    return { category: firstCategory, type: firstType };
-  }, [groupedTerms]);
+  const initialHeader = {
+    category: "Catégorie par défaut",
+    type: "Type par défaut"
+  };
 
+  /**
+   * Initialise ou réinitialise currentHeader
+   * Est appelé lorsque currentHeader ou initialHeader change ou lors de l'initialisation.
+   */
   useEffect(() => {
     if (!currentHeader && initialHeader) {
       setCurrentHeader(initialHeader);
@@ -86,27 +88,31 @@ export default function GlossaryPage() {
   }, [groupedTerms]); // Re-run when terms load
 
   // Track section at top of viewport for sticky header
-  useStickyHeaderTracking(scrollContainerRef, {
-    stickyOffset: STICKY_HEADER_HEIGHT,
-    onSectionChange: (sectionId) => {
+  useStickyHeaderTracking(
+    scrollContainerRef,
+    TOTAL_SCROLL_OFFSET,
+    (sectionId) => {
       if (sectionId) {
         // Parse data-glossary-category and data-glossary-type from the section element
         const element = scrollContainerRef.current?.querySelector(
-          `[data-glossary-type="${sectionId}"]`
+          `[data-section-id="${sectionId}"]`
         ) as HTMLElement;
         if (element) {
           const category = element.getAttribute('data-glossary-category');
-          const type = element.getAttribute('data-glossary-type');
-          if (category && type) {
+          let type = element.getAttribute('data-glossary-type');
+          // Si type est null ou vide, on met type à ''
+          if (!type) type = '';
+          if (category) {
             setCurrentHeader({ category, type });
           }
         }
+      } else {
+        setCurrentHeader(initialHeader);
       }
     },
-    contentDependency: groupedTerms
-  });
-
-  if (error) {
+    groupedTerms
+  );
+  if (error) {  
     return (
       <div className="min-h-screen bg-white flex items-center justify-center px-4">
         <div className="max-w-2xl text-center">
@@ -156,17 +162,21 @@ export default function GlossaryPage() {
             lines={[
               {
                 content: currentHeader.category,
-                className: 'text-base font-bold uppercase tracking-wider text-gray-900',
+                className: GLOSSARY_CATEGORY_STYLE, // h2 style
               },
-              {
-                content: currentHeader.type,
-                className: 'text-sm text-gray-600',
-              },
+              ...(
+                currentHeader.type && currentHeader.type.trim() !== ''
+                  ? [{
+                      content: currentHeader.type,
+                      className: GLOSSARY_TYPE_STYLE, // h3 style
+                    }]
+                  : []
+              )
             ]}
           />
         )}
 
-        <div className="max-w-full mx-auto p-8 lg:p-12 space-y-8">
+        <div className={`max-w-full mx-auto pb-8 lg:pb-12 ${GLOSSARY_LEFT_PADDING} space-y-8`}>
           <GlossaryContent
             groupedTerms={groupedTerms}
             searchQuery={searchQuery}

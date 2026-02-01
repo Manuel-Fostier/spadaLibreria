@@ -1,23 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-export interface StickyHeaderTrackingOptions {
-  /**
-   * Height of the sticky header offset (e.g., fixed header + sticky section header).
-   * Default: 110px (80px fixed header + 30px sticky section header)
-   */
-  stickyOffset?: number;
-  
-  /**
-   * Callback when the current visible section changes
-   */
-  onSectionChange?: (sectionId: string | null) => void;
-  
-  /**
-   * Dependency that triggers re-initialization of the tracking
-   * (e.g., when content changes)
-   */
-  contentDependency?: any;
-}
+
 
 /**
  * Custom hook for tracking which section is currently at the top of the viewport
@@ -26,31 +9,32 @@ export interface StickyHeaderTrackingOptions {
  * This hook is designed to be used with elements that have `data-section-id` attributes.
  * 
  * @param scrollContainerRef - Ref to the scrollable container element
- * @param options - Configuration options
- * 
+ * @param stickyOffset - Height of the sticky header offset (e.g., fixed header + sticky section header)
+ * @param onSectionChange - Callback when the current visible section changes
+ * @param contentDependency - Dependency that triggers re-initialization of the tracking (e.g., when content changes)
+ *
  * @example
  * ```tsx
  * const scrollContainerRef = useRef<HTMLDivElement>(null);
- * 
- * useStickyHeaderTracking(scrollContainerRef, {
- *   stickyOffset: 110,
- *   onSectionChange: (sectionId) => {
+ *
+ * useStickyHeaderTracking(
+ *   scrollContainerRef,
+ *   110,
+ *   (sectionId) => {
  *     setTopSectionId(sectionId);
  *     setAnnotationSection(sectionId);
  *   },
- *   contentDependency: filteredContent
- * });
+ *   filteredContent
+ * );
  * ```
  */
+
 export function useStickyHeaderTracking(
   scrollContainerRef: React.RefObject<HTMLElement | null>,
-  options: StickyHeaderTrackingOptions = {}
+  stickyOffset: number,
+  onSectionChange: (sectionId: string | null) => void,
+  contentDependency: any
 ) {
-  const {
-    stickyOffset = 110,
-    onSectionChange,
-    contentDependency
-  } = options;
 
   const tickingRef = useRef(false);
 
@@ -60,6 +44,7 @@ export function useStickyHeaderTracking(
 
     const updateCurrentSectionFromScroll = () => {
       tickingRef.current = false;
+
       const sections = Array.from(root.querySelectorAll('[data-section-id]'));
       if (sections.length === 0) {
         return;
@@ -68,35 +53,32 @@ export function useStickyHeaderTracking(
       const rootTop = root.getBoundingClientRect().top;
       let selectedId: string | null = null;
 
-      // Find the first section whose bottom edge is below the sticky offset
-      // This is the section currently visible at the top of the content area
       for (const section of sections) {
         const rect = section.getBoundingClientRect();
         const relativeTop = rect.top - rootTop;
         const relativeBottom = relativeTop + rect.height;
         const currentId = section.getAttribute('data-section-id');
         if (!currentId) continue;
-
-        // If the section's top is at or below the sticky offset, or if its bottom is below,
-        // it's the current visible section
         if (relativeTop <= stickyOffset && relativeBottom > stickyOffset) {
           selectedId = currentId;
           break;
         }
       }
 
-      // If no section found (all scrolled past), use the last one
-      if (!selectedId && sections.length > 0) {
-        const lastSection = sections[sections.length - 1];
-        selectedId = lastSection.getAttribute('data-section-id');
-      }
-
-      if (selectedId && onSectionChange) {
+      if (selectedId) {
+        // eslint-disable-next-line no-console
+        console.log('[useStickyHeaderTracking DEBUG] onSectionChange called with:', selectedId);
         onSectionChange(selectedId);
       }
+      // Si aucune section n'est visible, ne change rien (pas de fallback)
     };
 
     const handleScroll = () => {
+      // DEBUG: log scrollContainer and scrollTop at each scroll
+      if (root) {
+        // eslint-disable-next-line no-console
+        console.log('[useStickyHeaderTracking DEBUG] scrollContainer:', root.tagName, 'scrollTop:', root.scrollTop);
+      }
       if (!tickingRef.current) {
         tickingRef.current = true;
         requestAnimationFrame(updateCurrentSectionFromScroll);

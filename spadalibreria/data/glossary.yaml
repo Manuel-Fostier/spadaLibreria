@@ -88,6 +88,7 @@ guardia_di_testa:
 guardia_di_faccia:
   term: Guardia di Faccia
   category: Les Guardes
+  type: Garde haute
   definition:
     fr: |
       Anonimo : Se placer en guardia di faccia sera similaire à la guardia di lioncorno, en ce sens que l'un ou l'autre des pieds peut mener. Mais le bras doit être maintenu étendu vers l'ennemi, et plus bas, à la hauteur des épaules comme nous décrivons la guardia di testa ; et de manière à ce que la main vienne diriger la pointe qui la conduit directement vers le visage de l'ennemi, et la main sera couverte par la main du bouclier. 
@@ -101,6 +102,7 @@ guardia_di_faccia:
 guardia_intrare:
   term: Guardia d'Intrare
   category: Les Guardes
+  type: Garde haute
   definition:
     fr: |
       Anonimo : Pour vous placer dans la guardia di entrare, étendez le bras de façon à ce que la pointe de votre épée menace son visage. Malgré cela, vos mains, tout en le menaçant, ne dépasseront pas beaucoup votre propre visage. Et pour que vous puissiez être fort dans cette garde, votre pied droit doit être en avant et avec le pied mais légèrement sur le sol.
@@ -115,6 +117,7 @@ guardia_intrare:
 guardia_alicorno:
   term: Guardia di Alicorno
   category: Les Guardes
+  type: Garde haute
   definition:
     fr: |
       Anonimo : Pour se placer dans ce qu'on appelle la guardia di lioncorno, on fait pointer l'épée vers le bas comme la corne de l'animal, on lève le bras armé de façon à ce que la pointe soit dirigée vers le visage de l'ennemi et on pousse de même le bouclier en avant. Quant aux pieds, on peut placer le pied droit ou le pied gauche un peu en avant. 
@@ -127,6 +130,7 @@ guardia_alicorno:
 becca_cesa:
   term: Becca Cesa
   category: Les Guardes
+  type: Garde haute
   definition:
     fr: |
       Cette garde apparait uniquement chez Marozzo. Les autres maitres bolonais l'appellent Guardia di Alicorno.
@@ -138,6 +142,7 @@ becca_cesa:
 becca_possa:
   term: Becca Possa
   category: Les Guardes
+  type: Garde haute
   definition:
     fr: |
       Cette garde apparait uniquement chez Marozzo. Les autres maitres bolonais l'appellent Guardia di Alicorno.
@@ -149,6 +154,7 @@ becca_possa:
 guardia_alta:
   term: Guardia Alta
   category: Les Guardes
+  type: Garde haute
   definition:
     fr: |
       Anonimo : On fait la guardia alta en levant le bras de l'épée en l'air, de façon à ce que l'épée soit complètement en arrière, et en étendant également le bras du bouclier, en le poussant vers le visage de l'ennemi. En ce qui concerne les pieds, le pied gauche ou le pied droit peut mener. Ou bien nous pouvons placer le pied droit à quatre doigts devant le gauche, et si nous nous installons de cette manière, nous garderons également le talon du pied droit un peu décollé du sol, et en nous plaçant de cette façon, nous garderons les deux jambes droites, sans la moindre flexion. 
@@ -165,6 +171,7 @@ guardia_alta:
 coda_longa_stretta:
   term: Coda Longa e Stretta
   category: Les Guardes
+  type: Garde basse
   definition:
     fr: |
       Dall’Agocchie: The coda lunga is when one holds the sword to the outside of the right side. This is divided into two alternate guards called the coda lunga stretta and the coda lunga alta. The coda lunga stretta is that which is made with the right foot forward and the coda lunga alta with the left foot [forward], always keeping the sword to the outside of the right side and the arm well extended, outside the vicinity of the knee and with the point looking to the enemy.
@@ -181,6 +188,7 @@ coda_longa_stretta:
 coda_longa_alta:
   term: Coda Longa e Alta
   category: Les Guardes
+  type: Garde basse
   definition:
     fr: |
       Dall’Agocchie: The coda lunga is when one holds the sword to the outside of the right side. This is divided into two alternate guards called the coda lunga stretta and the coda lunga alta. The coda lunga stretta is that which is made with the right foot forward and the coda lunga alta with the left foot [forward], always keeping the sword to the outside of the right side and the arm well extended, outside the vicinity of the knee and with the point looking to the enemy.
@@ -196,6 +204,7 @@ coda_longa_alta:
 coda_longa_larga:
   term: Coda Longa e Larga
   category: Les Guardes
+  type: Garde basse
   definition:
     fr: |
       Marozzo : “Note that in this guard you can be both agente and patiente, for it is possible to throw the falso, and riverso and to cut tramazone with both right or false edge, or tramazone roverso, or falso filo tondo, or roverso sgualembrato, by turning the sword to its proper place. Also you can throw an imbrocata from the right or left, with or without feints, and all the roversi that belong to them, &c…”
@@ -207,6 +216,7 @@ coda_longa_larga:
 coda_longa_distesa:
   term: Coda Longa e Distesa
   category: Les Guardes
+  type: Garde basse
   definition:
     fr: |
       Marozzo: “Being on this guard you will cause him to be agente, especially with dritti falsi, or with the point, with roversi, and such other attacks, as can be derived from the said guard. Thou must also teach him the parries thereto, since the art of striking is but little in comparison with a knowledge of the parries, which a fine and more useful thing.”
@@ -221,6 +231,7 @@ coda_longa_distesa:
 porta_di_ferro_stretta:
   term: Porta di Ferro Stretta
   category: Les Guardes
+  type: Garde basse
   definition:
     fr: |
       Manciolino : La sixième garde se nomme porta di ferro stretta. Dans celle-ci, la personne doit s’arranger de travers de sorte que l’épaule droite (comme il est dit ci-dessus) regarde l’ennemi. Les deux bras doivent s’amener également à l’encontre de l’ennemi de sorte que le bras d’épée soit étendu droitement vers le bas pour la défense du genou droit et de telle façon que le poing d’épée soit prés et au milieu de ce genou. Et le bras de bocle doit lui être étendu droitement aussi vers l’ennemi, ni en haut, ni en bas, afin de garder la tête.       
@@ -235,6 +246,7 @@ porta_di_ferro_stretta:
 porta_di_ferro_larga:
   term: Porta di Ferro Larga
   category: Les Guardes
+  type: Garde basse
   definition:
     fr: |
       Manciolino : La septième garde est nommée porta di ferro larga et celle-ci a pour origine la précédente (porta di ferro stretta), parce que ni les pieds, ni la personne ne bougent de la position précédente. Seule la main d’épée se déplace du genou et fait tomber la pointe au sol vers l’intérieur du genou droit. Et de par cela, elle est dite large parce que l’épée s’éloigne de ce genou droit pour donner une meilleure ouverture sur la personne que la précédente.
@@ -246,6 +258,7 @@ porta_di_ferro_larga:
 porta_di_ferro_alta:
   term: Porta di Ferro Alta
   category: Les Guardes
+  type: Garde basse
   definition:
     fr: |
       Dall'Agocchie:  Étant dans la porta di ferro larga si vous levez un peu le poing de l'épée, cela fait la porta di ferro alta (car elle est plus haute que les deux autres).
@@ -257,6 +270,7 @@ porta_di_ferro_alta:
 cinghiara_porta_di_ferro:
   term: Cinghiara Porta di Ferro
   category: Les Guardes
+  type: Garde basse
   definition:
     fr: |
       Dall’Agocchie: “But the cinghiale porta di ferro is made when the left foot is forward and crossing, that is towards his left side and the sword hand is close by the inside of the left knee and the right shoulder looks towards the enemy. This asks for a comparison of the Cinghiale or as it is called the Porco Selvatico. This is when in the assault he goes in a traverse with the teeth to attack and this is a low guard.” 
@@ -268,6 +282,7 @@ cinghiara_porta_di_ferro:
 guardia_di_sopra_braccio:
   term: Guardia di Sopra Braccio
   category: Les Guardes
+  type: Garde basse
   definition:
     fr: |
       La quatrième est dite garde de dessus le bras parce que la main empoignant l’épée vient à la façon d’une croix reposer au milieu du bras gauche, en tenant la pointe vers l’arrière. Et en conséquence, le bras de bocle sera bien tendu vers l’ennemi.
@@ -279,6 +294,7 @@ guardia_di_sopra_braccio:
 guardia_di_sotto_braccio:
   term: Guardia di Sotto Braccio
   category: Les Guardes
+  type: Garde basse
   definition:
     fr: |
       La cinquième est dite garde de sous le bras parce que la main d’épée doit rester sous le bras de bocle, c’est-à-dire sous l’aisselle, en tenant l’épée avec la pointe qui regarde derrière et avec le bras de bocle bien tendu vers l’ennemi.
@@ -294,6 +310,7 @@ guardia_di_sotto_braccio:
 tondo:
   term: Tondo
   category: Coups et Techniques Additionnels
+  type: Frappe de taille
   definition:
     fr: |
       Coup horizontal. Le mandritto tondo va de droite à gauche, le roverso tondo va de gauche à droite.
@@ -306,6 +323,7 @@ tondo:
 sgualembro:
   term: sgualembrato
   category: Coups et Techniques Additionnels
+  type: Frappe de taille
   definition:
     fr: |
       Coup diagonal descendant, typiquement de l'épaule vers la hanche opposée. Le mandritto sgualembro vient de la droite, le roverso sgualembro de la gauche.
@@ -318,6 +336,7 @@ sgualembro:
 montante:
   term: Montante
   category: Coups et Techniques Additionnels
+  type: Frappe de taille
   definition:
     fr: |
       Coup vertical ascendant, délivré du bas vers le haut. Utilisé pour contrôler le tempo et l'espace.
@@ -330,6 +349,7 @@ montante:
 falso:
   term: Falso
   category: Coups et Techniques Additionnels
+  type: Frappe du faux tranchant
   definition:
     fr: |
       Tout coup exécuté avec le faux fil de l'épée (le fil orienté vers l'escrimeur), typiquement des coups ascendants.
@@ -342,6 +362,7 @@ falso:
 falso_dritto:
   term: Falso Dritto
   category: Coups et Techniques Additionnels
+  type: Frappe du faux tranchant
   definition:
     fr: |
       Coup ascendant avec le faux fil, exécuté du côté droit. Utilisé défensivement, notamment pour parer puis riposter.
@@ -354,6 +375,7 @@ falso_dritto:
 falso_manco:
   term: Falso Manco
   category: Coups et Techniques Additionnels
+  type: Frappe du faux tranchant
   definition:
     fr: |
       Coup ascendant avec le faux fil, exécuté du côté gauche. Fréquemment utilisé pour les actions défensives.
@@ -366,6 +388,7 @@ falso_manco:
 imbroccata:
   term: Imbroccata
   category: Coups et Techniques Additionnels
+  type: Estoc
   definition:
     fr: |
       Estocade descendante portée du haut vers le bas, souvent après une parade défensive.
@@ -378,6 +401,7 @@ imbroccata:
 punta:
   term: Punta
   category: Coups et Techniques Additionnels
+  type: Estoc
   definition:
     fr: |
       La pointe; désigne toute attaque d'estoc avec la pointe de l'épée.
@@ -390,6 +414,7 @@ punta:
 punta_riversa:
   term: Punta Riversa
   category: Coups et Techniques Additionnels
+  type: Estoc
   definition:
     fr: |
       Estocade portée du côté gauche, la paume vers le haut.
@@ -402,6 +427,7 @@ punta_riversa:
 ridoppio:
   term: Ridoppio
   category: Coups et Techniques Additionnels
+  type: Frappe de taille  
   definition:
     fr: |
       Coup ascendant avec le vrai fil, similaire au montante mais peut suivre un coup initial pour créer une attaque redoublée.
@@ -414,6 +440,7 @@ ridoppio:
 tramazzone:
   term: Tramazzone
   category: Coups et Techniques Additionnels
+  type: Frappe de taille
   definition:
     fr: |
       Coup circulaire exécuté par rotation du poignet, souvent dans un mouvement continu et enveloppant.
