@@ -227,7 +227,10 @@ This feature follows a four-phase rollout approach:
 - **Phase 1 (MVP - This Release)**: Standalone glossary page with browsing, search, filtering, and categorization. User Stories 1-3. This delivers complete independent glossary functionality.
 - **Phase 2 (Release +1)**: Integration with treatise pages. Add clickable glossary term links in treatises that navigate to the glossary page (User Story 4, simplified). No auto-scroll or URL parameters yet.
 - **Phase 3 (Release +2)**: Advanced integration. Support URL hash fragments (e.g., `/glossary#falso_dritto`) to auto-scroll to specific terms when navigating from treatises.
-- **Phase 4 (Release +3)**: Glossary content editing interface. Add an "Edit" button next to each term that opens an editing interface (using pattern similar to AnnotationPanel in BolognesePlatform) allowing users to modify definitions, translations, and term types in `data/glossary.yaml`.
+- **Phase 4 (Release +3)**: Glossary content editing interface. 
+   - **Phase 4a**: Add a single "Edit" button on the left of each term that opens an editing form (similar to the TextEditor pattern used for English translations in BolognesePlatform). The form allows users to modify glossary term fields in `data/glossary.yaml` (`category`, `type`, `term`, `definition` in French). No per-field edit buttons are shown next to category, type, or definition. Edited values are persisted to the YAML file via API endpoint.
+  - **Phase 4b** (Issue #55): Add an "Ajouter Element" button to the glossary page that opens a form to add a new glossary entry. Form collects: `category`, `type`, `term`, `definition` (French), and optionally `translation` (French) and definitions/translations in other languages. New entry is added to `data/glossary.yaml` via API endpoint.
+   - **Phase 4c** (Issue #54): Add a "Nouvelle section" button to BolognesePlatform that opens a form to create a new treatise section and append it to the correct YAML file based on `master`, `work`, and `book`.
 
 ## Out of Scope
 
