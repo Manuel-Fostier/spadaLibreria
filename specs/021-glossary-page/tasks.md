@@ -383,11 +383,11 @@
 **Goal**: Remove dead code, unused components, and obsolete docs/files to keep the codebase lean
 **Independent Test**: App builds and existing tests pass after cleanup
 
-- [ ] T161 [P] Review unused file inventory in analysed/unused-files-analysis.md and confirm removal candidates
-- [ ] T162 [P] Remove confirmed unused components/tests from spadalibreria/src/ and spadalibreria/src/__tests__/ (update imports accordingly)
-- [ ] T163 [P] Remove unused mocks and fixtures in spadalibreria/src/__mocks__/ and spadalibreria/src/data/__mocks__/
-- [ ] T164 [P] Delete obsolete docs/notes in specs/021-glossary-page/ and analysed/ (if no longer referenced)
-- [ ] T165 Verify build/test still pass after cleanup and update analysed/unused-files-analysis.md with results
+- [X] T161 [P] Review unused file inventory in analysed/unused-files-analysis.md and confirm removal candidates
+- [X] T162 [P] Remove confirmed unused components/tests from spadalibreria/src/ and spadalibreria/src/__tests__/ (update imports accordingly)
+- [X] T163 [P] Remove unused mocks and fixtures in spadalibreria/src/__mocks__/ and spadalibreria/src/data/__mocks__/
+- [X] T164 [P] Delete obsolete docs/notes in specs/021-glossary-page/ and analysed/ (if no longer referenced)
+- [ ] T165 Verify build/test still pass after cleanup and update analysed/unused-files-analysis.md with results (blocked: Jest ESM error in react-markdown)
 
 ---
 

@@ -202,32 +202,32 @@ export default function GlossaryPage() {
       {/* Scrollable Content Area */}
       <div className=" mx-auto w-full flex-1 overflow-y-auto bg-white" ref={scrollContainerRef}>
         {currentHeader && (
-          <StickyHeader
-            lines={[
-              {
-                content: currentHeader.category,
-                className: GLOSSARY_CATEGORY_STYLE, // h2 style
-              },
-              ...(
-                currentHeader.type && currentHeader.type.trim() !== ''
-                  ? [{
-                      content: currentHeader.type,
-                      className: GLOSSARY_TYPE_STYLE, // h3 style
-                    }]
-                  : []
-              )
-            ]}
-          />
+              <StickyHeader
+                lines={[
+                  {
+                    content: currentHeader.category,
+                    className: GLOSSARY_CATEGORY_STYLE, // h2 style
+                  },
+                  ...(
+                    currentHeader.type && currentHeader.type.trim() !== ''
+                      ? [{
+                          content: currentHeader.type,
+                          className: GLOSSARY_TYPE_STYLE, // h3 style
+                        }]
+                      : []
+                  )
+                ]}
+              />
         )}
 
         <div className={`mx-auto w-full pb-8 lg:pb-12 ${GLOSSARY_LEFT_PADDING} space-y-8`}>
-          <GlossaryContent
-            groupedTerms={groupedTerms}
-            searchQuery={searchQuery}
-            isEditable={isEditMode}
-          />
+            <GlossaryContent
+              groupedTerms={groupedTerms}
+              searchQuery={searchQuery}
+              isEditable={isEditMode}
+            />
+          </div>
         </div>
-      </div>
 
       {/* New Term Form Modal */}
       {showNewTermForm && (
