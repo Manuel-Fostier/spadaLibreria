@@ -194,13 +194,13 @@ export default function GlossaryPage() {
 
       {/* Search Bar */}
       <div className="px-8 py-3 bg-white border-b border-gray-100">
-        <div className="max-w-prose-lg mx-auto w-full">
+        <div className="mx-auto w-full">
           <GlossarySearchBar />
         </div>
       </div>
 
       {/* Scrollable Content Area */}
-      <div className="max-w-prose-lg mx-auto w-full flex-1 overflow-y-auto bg-white" ref={scrollContainerRef}>
+      <div className=" mx-auto w-full flex-1 overflow-y-auto bg-white" ref={scrollContainerRef}>
         {currentHeader && (
           <StickyHeader
             lines={[
@@ -220,7 +220,7 @@ export default function GlossaryPage() {
           />
         )}
 
-        <div className={`max-w-prose-lg mx-auto w-full pb-8 lg:pb-12 ${GLOSSARY_LEFT_PADDING} space-y-8`}>
+        <div className={`mx-auto w-full pb-8 lg:pb-12 ${GLOSSARY_LEFT_PADDING} space-y-8`}>
           <GlossaryContent
             groupedTerms={groupedTerms}
             searchQuery={searchQuery}
