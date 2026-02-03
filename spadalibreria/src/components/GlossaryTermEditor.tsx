@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Edit2, Save, X } from 'lucide-react';
+import { Edit2, X } from 'lucide-react';
 import TextEditor from './TextEditor';
 import type { GlossaryTerm } from '@/types/glossary';
 
@@ -29,15 +29,16 @@ export default function GlossaryTermEditor({
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSave = async () => {
+  const handleSave = async (dataOverride?: typeof formData) => {
     setIsSaving(true);
     setError(null);
 
+    const dataToSave = dataOverride ?? formData;
     const fields: Array<{ field: 'category' | 'type' | 'term' | 'definition_fr'; value: string }> = [
-      { field: 'category', value: formData.category },
-      { field: 'type', value: formData.type },
-      { field: 'term', value: formData.term },
-      { field: 'definition_fr', value: formData.definition_fr },
+      { field: 'category', value: dataToSave.category },
+      { field: 'type', value: dataToSave.type },
+      { field: 'term', value: dataToSave.term },
+      { field: 'definition_fr', value: dataToSave.definition_fr },
     ];
 
     try {
@@ -63,6 +64,12 @@ export default function GlossaryTermEditor({
       setError(err instanceof Error ? err.message : 'Failed to save changes');
       setIsSaving(false);
     }
+  };
+
+  const handleDefinitionSave = async (value: string) => {
+    const updatedData = { ...formData, definition_fr: value };
+    setFormData(updatedData);
+    await handleSave(updatedData);
   };
 
   if (!isEditing) {
@@ -150,32 +157,11 @@ export default function GlossaryTermEditor({
         </label>
         <TextEditor
           initialValue={formData.definition_fr}
-          onSave={async (value) => {
-            setFormData({ ...formData, definition_fr: value });
-          }}
-          onCancel={() => {}}
+          onSave={handleDefinitionSave}
+          onCancel={onEditCancel}
           placeholder="Définition en français (Markdown supporté)"
           className="min-h-[150px]"
         />
-      </div>
-
-      {/* Save/Cancel Buttons */}
-      <div className="flex gap-2 pt-4">
-        <button
-          onClick={handleSave}
-          disabled={isSaving}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          <Save size={16} />
-          {isSaving ? 'Enregistrement...' : 'Enregistrer'}
-        </button>
-        <button
-          onClick={onEditCancel}
-          disabled={isSaving}
-          className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          Annuler
-        </button>
       </div>
     </div>
   );

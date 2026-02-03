@@ -148,7 +148,7 @@ describe('GlossaryTermEditor Component', () => {
     await user.clear(termInput);
     await user.type(termInput, 'Modified Mandritto');
 
-    const saveButton = screen.getByRole('button', { name: /save|enregistrer/i });
+    const saveButton = screen.getByRole('button', { name: /sauvegarder/i });
     await user.click(saveButton);
 
     await waitFor(() => {
@@ -198,7 +198,7 @@ describe('GlossaryTermEditor Component', () => {
     await user.clear(definitionInput);
     await user.type(definitionInput, 'New Definition');
 
-    const saveButton = screen.getByRole('button', { name: /save|enregistrer/i });
+    const saveButton = screen.getByRole('button', { name: /sauvegarder/i });
     await user.click(saveButton);
 
     await waitFor(() => {
@@ -224,7 +224,7 @@ describe('GlossaryTermEditor Component', () => {
       />
     );
 
-    const saveButtons = screen.getAllByRole('button', { name: /enregistrer|sauvegarder/i });
+    const saveButtons = screen.getAllByRole('button', { name: /sauvegarder/i });
     await user.click(saveButtons[0]);
 
     // Component should remain in same state without reloading when error occurs
@@ -248,8 +248,11 @@ describe('GlossaryTermEditor Component', () => {
 
     // Find the cancel button in the bottom section (not the X button in header)
     const cancelButtons = screen.getAllByRole('button', { name: /annuler/i });
-    // Click the last one (bottom cancel button, not the X in header)
-    await user.click(cancelButtons[cancelButtons.length - 1]);
+    const textCancelButton = cancelButtons.find((button) => button.textContent?.includes('Annuler'));
+    expect(textCancelButton).toBeDefined();
+    if (textCancelButton) {
+      await user.click(textCancelButton);
+    }
 
     expect(mockOnCancel).toHaveBeenCalled();
   });
@@ -270,18 +273,14 @@ describe('GlossaryTermEditor Component', () => {
       />
     );
 
-    const saveButtons = screen.getAllByRole('button', { name: /enregistrer|enregistrement/i });
-    const saveButton = saveButtons[saveButtons.length - 1]; // Get the bottom save button
-    const originalText = saveButton.textContent;
+    const saveButton = screen.getByRole('button', { name: /sauvegarder/i });
 
     await user.click(saveButton);
 
     // Button text should change to show loading state
     await waitFor(() => {
-      const updatedButtons = screen.getAllByRole('button', { name: /enregistrement/i });
-      expect(updatedButtons.length).toBeGreaterThan(0);
+      expect(screen.getByRole('button', { name: /sauvegarde/i })).toBeInTheDocument();
     }, { timeout: 500 }).catch(() => {
-      // Component behavior may vary - just ensure it doesn't crash
       expect(saveButton).toBeInTheDocument();
     });
   });
@@ -300,7 +299,7 @@ describe('GlossaryTermEditor Component', () => {
       />
     );
 
-    const saveButtons = screen.getAllByRole('button', { name: /enregistrer|sauvegarder/i });
+    const saveButtons = screen.getAllByRole('button', { name: /sauvegarder/i });
     await user.click(saveButtons[0]);
 
     // Component should handle network errors gracefully without crashing
