@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { ChevronDown, Settings, BarChart3, Edit2 } from 'lucide-react';
+import { ChevronDown, Settings, BarChart3, Edit2, Plus } from 'lucide-react';
 import MarkdownRenderer from './MarkdownRenderer';
 import TextEditor from './TextEditor';
 import AnnotationPanel from './AnnotationPanel';
@@ -16,6 +16,7 @@ import SearchBar from './SearchBar';
 import { useSearch } from '@/contexts/SearchContext';
 import TagFilter, { FilterState, initialFilterState } from './TagFilter';
 import StatisticsModal from './StatisticsModal';
+import NewSectionForm from './NewSectionForm';
 import { LocalStorage } from '@/lib/localStorage';
 import { useStickyHeaderTracking } from '@/hooks/useStickyHeaderTracking';
 import LogoTitle from './LogoTitle';
@@ -99,6 +100,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   
   const [showDisplaySettings, setShowDisplaySettings] = useState(false);
   const [showStatistics, setShowStatistics] = useState(false);
+  const [showNewSectionForm, setShowNewSectionForm] = useState(false);
   const { displayConfig } = useAnnotationDisplay();
   const { results, lastQuery } = useSearch();
   const [filters, setFilters] = useState<FilterState>(initialFilterState);
@@ -403,6 +405,15 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
         <header className="relative h-20 bg-white flex items-center px-8 justify-end border-b border-gray-100 z-10">
           {/* Boutons pour afficher/masquer les colonnes */}
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowNewSectionForm(true)}
+              className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors bg-green-600 text-white hover:bg-green-700 flex items-center gap-1"
+              title="Créer une nouvelle section de traité"
+            >
+              <Plus size={14} />
+              Nouvelle section
+            </button>
+            
             <button
               onClick={() => setShowItalian(!showItalian)}
               className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
@@ -762,6 +773,14 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
       {/* Modale de statistiques */}
       {showStatistics && (
         <StatisticsModal onClose={() => setShowStatistics(false)} />
+      )}
+
+      {/* Formulaire de nouvelle section */}
+      {showNewSectionForm && (
+        <NewSectionForm
+          treatiseData={treatiseData}
+          onClose={() => setShowNewSectionForm(false)}
+        />
       )}
     </div>
   );

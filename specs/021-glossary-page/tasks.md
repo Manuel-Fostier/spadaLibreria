@@ -315,16 +315,16 @@
 
 #### Backend: API Endpoint
 
-- [ ] T170 Create POST endpoint `/api/glossary/terms` in `src/app/api/glossary/terms/route.ts` to add new glossary terms to `data/glossary.yaml`
-- [ ] T171 [P] Add term key generation logic (slugify term name, handle accents, prevent duplicates)
-- [ ] T172 [P] Add validation: required fields (category, type, term, definition_fr), prevent duplicate term keys
+- [X] T170 Create POST endpoint `/api/glossary/terms` in `src/app/api/glossary/terms/route.ts` to add new glossary terms to `data/glossary.yaml`
+- [X] T171 [P] Add term key generation logic (slugify term name, handle accents, prevent duplicates)
+- [X] T172 [P] Add validation: required fields (category, type, term, definition_fr), prevent duplicate term keys
 
 #### Frontend: Components
 
 - [ ] T173 [P] Write test for NewTermForm component in `src/components/__tests__/NewTermForm.test.tsx` (form fields, validation, submit)
-- [ ] T174 Implement NewTermForm component in `src/components/NewTermForm.tsx` (collects category/type/term/definition fields, calls `/api/glossary/terms` endpoint)
-- [ ] T175 Update GlossaryPage component to add "Ajouter Element" button and toggle form display
-- [ ] T176 [P] Add category autocomplete/suggestions in NewTermForm (extract from existing terms)
+- [X] T174 Implement NewTermForm component in `src/components/NewTermForm.tsx` (collects category/type/term/definition fields, calls `/api/glossary/terms` endpoint)
+- [X] T175 Update GlossaryPage component to add "Ajouter Element" button and toggle form display
+- [X] T176 [P] Add category autocomplete/suggestions in NewTermForm (extract from existing terms)
 
 #### Testing & Validation
 
@@ -343,17 +343,17 @@
 
 #### Backend: API Endpoint
 
-- [ ] T185 Create POST endpoint `/api/content/section` in `src/app/api/content/section/route.ts` to append new treatise section to correct YAML file
-- [ ] T186 [P] Add logic to select target YAML file based on `master`, `work`, `book` metadata matching
-- [ ] T187 [P] Add section ID generation and validation
-- [ ] T188 Add error handling: file not found, invalid metadata, write failures
+- [X] T185 Create POST endpoint `/api/content/section` in `src/app/api/content/section/route.ts` to append new treatise section to correct YAML file
+- [X] T186 [P] Add logic to select target YAML file based on `master`, `work`, `book` metadata matching
+- [X] T187 [P] Add section ID generation and validation
+- [X] T188 Add error handling: file not found, invalid metadata, write failures
 
 #### Frontend: Components (BolognesePlatform)
 
 - [ ] T189 [P] Write test for NewSectionForm component in `src/components/__tests__/NewSectionForm.test.tsx` (form fields, metadata selection)
-- [ ] T190 Implement NewSectionForm component in `src/components/NewSectionForm.tsx` (collects master/work/book/year/title/content fields, calls `/api/content/section` endpoint)
-- [ ] T191 Update BolognesePlatform component to add "Nouvelle section" button in header
-- [ ] T192 Add master/work/book selectors (dropdowns populated from existing treatise data)
+- [X] T190 Implement NewSectionForm component in `src/components/NewSectionForm.tsx` (collects master/work/book/year/title/content fields, calls `/api/content/section` endpoint)
+- [X] T191 Update BolognesePlatform component to add "Nouvelle section" button in header
+- [X] T192 Add master/work/book selectors (dropdowns populated from existing treatise data)
 
 #### Testing & Validation
 
