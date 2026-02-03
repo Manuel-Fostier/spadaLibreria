@@ -19,6 +19,7 @@ interface FormData {
   title: string;
   content_fr: string;
   content_it: string;
+  content_en: string;
   content_notes: string;
 }
 
@@ -32,6 +33,7 @@ export default function NewSectionForm({ treatiseData, onClose }: NewSectionForm
     title: '',
     content_fr: '',
     content_it: '',
+    content_en: '',
     content_notes: ''
   });
 
@@ -142,6 +144,7 @@ export default function NewSectionForm({ treatiseData, onClose }: NewSectionForm
         content: {
           fr: formData.content_fr.trim(),
           ...(formData.content_it.trim() && { it: formData.content_it.trim() }),
+          ...(formData.content_en.trim() && { en: formData.content_en.trim() }),
           ...(formData.content_notes.trim() && { notes: formData.content_notes.trim() })
         }
       };
@@ -240,19 +243,20 @@ export default function NewSectionForm({ treatiseData, onClose }: NewSectionForm
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Livre <span className="text-red-500">*</span>
               </label>
-              <select
+              <input
+                type="text"
+                list="books-list"
                 value={formData.book}
                 onChange={e => handleInputChange('book', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Ex: 2"
                 disabled={isSubmitting || !formData.work}
-              >
-                <option value="">Sélectionner un livre</option>
+              />
+              <datalist id="books-list">
                 {books.map(book => (
-                  <option key={book} value={book}>
-                    Livre {book}
-                  </option>
+                  <option key={book} value={book} />
                 ))}
-              </select>
+              </datalist>
             </div>
 
             {/* Chapter (Optional) */}
@@ -314,6 +318,9 @@ export default function NewSectionForm({ treatiseData, onClose }: NewSectionForm
               onSave={async (value) => handleInputChange('content_fr', value)}
               onCancel={() => {}}
               placeholder="Entrez le contenu en français (Markdown supporté)..."
+              hideControls={true}
+              onChange={(value) => handleInputChange('content_fr', value)}
+              autoFocus={false}
             />
           </div>
 
@@ -327,6 +334,25 @@ export default function NewSectionForm({ treatiseData, onClose }: NewSectionForm
               onSave={async (value) => handleInputChange('content_it', value)}
               onCancel={() => {}}
               placeholder="Entrez le contenu en italien..."
+              hideControls={true}
+              onChange={(value) => handleInputChange('content_it', value)}
+              autoFocus={false}
+            />
+          </div>
+
+          {/* Content EN (Optional) */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Contenu en anglais (optionnel)
+            </label>
+            <TextEditor
+              initialValue={formData.content_en}
+              onSave={async (value) => handleInputChange('content_en', value)}
+              onCancel={() => {}}
+              placeholder="Entrez le contenu en anglais..."
+              hideControls={true}
+              onChange={(value) => handleInputChange('content_en', value)}
+              autoFocus={false}
             />
           </div>
 
@@ -340,6 +366,9 @@ export default function NewSectionForm({ treatiseData, onClose }: NewSectionForm
               onSave={async (value) => handleInputChange('content_notes', value)}
               onCancel={() => {}}
               placeholder="Ajoutez des notes (Markdown supporté)..."
+              hideControls={true}
+              onChange={(value) => handleInputChange('content_notes', value)}
+              autoFocus={false}
             />
           </div>
         </div>

@@ -13,6 +13,7 @@ interface NewSectionRequest {
   content: {
     fr: string;
     it?: string;
+    en?: string;
     en_versions?: Array<{
       translator: string;
       text: string;
@@ -42,25 +43,24 @@ interface TreatiseSection {
   };
 }
 
-/**
- * Generate a unique section ID from metadata
- */
-function generateSectionId(master: string, work: string, book: number, chapter?: number): string {
-  // Normalize master name (lowercase, remove accents, replace spaces with underscores)
-  const masterNorm = master
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // Remove accents
-    .replace(/[^a-z0-9]+/g, '_')
-    .replace(/^_+|_+$/g, ''); // Trim underscores
-  
-  // Normalize work name
-  const workNorm = work
+function normalizeName(value: string): string {
+  return value
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9]+/g, '_')
     .replace(/^_+|_+$/g, '');
+}
+
+/**
+ * Generate a unique section ID from metadata
+ */
+function generateSectionId(master: string, work: string, book: number, chapter?: number): string {
+  // Normalize master name (lowercase, remove accents, replace spaces with underscores)
+  const masterNorm = normalizeName(master);
+  
+  // Normalize work name
+  const workNorm = normalizeName(work);
   
   // Build ID: master_work_l{book}_c{chapter}
   let id = `${masterNorm}_${workNorm}_l${book}`;
@@ -84,19 +84,9 @@ function findTreatiseFile(master: string, work: string, book: number): string | 
   const files = fs.readdirSync(treatisesDir).filter(f => f.endsWith('.yaml'));
   
   // Try exact filename match first (common pattern: master_work_livre{book}.yaml)
-  const masterNorm = master
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '_')
-    .replace(/^_+|_+$/g, '');
+  const masterNorm = normalizeName(master);
   
-  const workNorm = work
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '_')
-    .replace(/^_+|_+$/g, '');
+  const workNorm = normalizeName(work);
   
   const expectedFilename = `${masterNorm}_${workNorm}_livre${book}.yaml`;
   
@@ -176,28 +166,32 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Find the correct YAML file
-    const filePath = findTreatiseFile(body.master, body.work, body.book);
-    
-    if (!filePath) {
-      return NextResponse.json(
-        { 
-          error: 'No matching treatise file found',
-          details: `No file found for master="${body.master}", work="${body.work}", book=${body.book}`
-        },
-        { status: 404 }
-      );
+    const treatisesDir = path.join(process.cwd(), 'data', 'treatises');
+    if (!fs.existsSync(treatisesDir)) {
+      fs.mkdirSync(treatisesDir, { recursive: true });
     }
-    
-    // Read existing sections
-    const fileContent = fs.readFileSync(filePath, 'utf-8');
-    const sections = yaml.load(fileContent) as TreatiseSection[];
-    
-    if (!Array.isArray(sections)) {
-      return NextResponse.json(
-        { error: 'Invalid treatise file format' },
-        { status: 500 }
-      );
+
+    // Find the correct YAML file or create a new one
+    const existingFilePath = findTreatiseFile(body.master, body.work, body.book);
+    const masterNorm = normalizeName(body.master);
+    const workNorm = normalizeName(body.work);
+    const fallbackFilePath = path.join(
+      treatisesDir,
+      `${masterNorm}_${workNorm}_livre${body.book}.yaml`
+    );
+    const filePath = existingFilePath || fallbackFilePath;
+
+    let sections: TreatiseSection[] = [];
+    if (fs.existsSync(filePath)) {
+      const fileContent = fs.readFileSync(filePath, 'utf-8');
+      const loaded = yaml.load(fileContent);
+      if (!Array.isArray(loaded)) {
+        return NextResponse.json(
+          { error: 'Invalid treatise file format' },
+          { status: 500 }
+        );
+      }
+      sections = loaded as TreatiseSection[];
     }
     
     // Generate section ID
@@ -229,6 +223,9 @@ export async function POST(request: NextRequest) {
       content: {
         fr: body.content.fr,
         ...(body.content.it && { it: body.content.it }),
+        ...(!body.content.en_versions && body.content.en
+          ? { en_versions: [{ translator: 'Inconnu', text: body.content.en }] }
+          : {}),
         ...(body.content.en_versions && { en_versions: body.content.en_versions }),
         ...(body.content.notes && { notes: body.content.notes })
       }
