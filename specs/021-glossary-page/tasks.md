@@ -321,17 +321,17 @@
 
 #### Frontend: Components
 
-- [ ] T173 [P] Write test for NewTermForm component in `src/components/__tests__/NewTermForm.test.tsx` (form fields, validation, submit)
+- [X] T173 [P] Write test for NewTermForm component in `src/components/__tests__/NewTermForm.test.tsx` (form fields, validation, submit)
 - [X] T174 Implement NewTermForm component in `src/components/NewTermForm.tsx` (collects category/type/term/definition fields, calls `/api/glossary/terms` endpoint)
 - [X] T175 Update GlossaryPage component to add "Ajouter Element" button and toggle form display
 - [X] T176 [P] Add category autocomplete/suggestions in NewTermForm (extract from existing terms)
 
 #### Testing & Validation
 
-- [ ] T177 [P] Write integration test: Create new term → save → page reload shows new term in correct category
-- [ ] T178 [P] Write test: Duplicate term key prevention → error message shown
-- [ ] T179 Test form validation: required field validation, empty field errors
-- [ ] T180 Phase 4b implementation complete and tested
+- [X] T177 [P] Write integration test: Create new term → save → page reload shows new term in correct category
+- [X] T178 [P] Write test: Duplicate term key prevention → error message shown
+- [X] T179 Test form validation: required field validation, empty field errors
+- [X] T180 Phase 4b implementation complete and tested
 
 ---
 
@@ -350,17 +350,17 @@
 
 #### Frontend: Components (BolognesePlatform)
 
-- [ ] T189 [P] Write test for NewSectionForm component in `src/components/__tests__/NewSectionForm.test.tsx` (form fields, metadata selection)
+- [X] T189 [P] Write test for NewSectionForm component in `src/components/__tests__/NewSectionForm.test.tsx` (form fields, metadata selection)
 - [X] T190 Implement NewSectionForm component in `src/components/NewSectionForm.tsx` (collects master/work/book/year/title/content fields, calls `/api/content/section` endpoint)
 - [X] T191 Update BolognesePlatform component to add "Nouvelle section" button in header
 - [X] T192 Add master/work/book selectors (dropdowns populated from existing treatise data)
 
 #### Testing & Validation
 
-- [ ] T193 [P] Write integration test: Create new section → save → page reload shows new section in correct treatise YAML file
-- [ ] T194 [P] Write test: Section metadata validation (all required fields present)
-- [ ] T195 Test file selection logic: verify correct YAML file chosen based on master/work/book
-- [ ] T196 Phase 4c implementation complete and tested
+- [X] T193 [P] Write integration test: Create new section → save → page reload shows new section in correct treatise YAML file
+- [X] T194 [P] Write test: Section metadata validation (all required fields present)
+- [X] T195 Test file selection logic: verify correct YAML file chosen based on master/work/book
+- [X] T196 Phase 4c implementation complete and tested
 
 ---
 
