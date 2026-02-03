@@ -109,9 +109,12 @@ const TermDisplay = React.memo(function TermDisplay({
 
   return (
     <div className="term-display prose prose-neutral space-y-3">
-      {/* Edit button (only shown when editable and not editing) */}
-      {isEditable && !isEditing && (
-        <div className="flex justify-end mb-2">
+      {/* Term name with edit button on same line */}
+      <div className="flex items-center justify-between gap-3">
+        <h4 className="text-base sm:text-lg font-semibold italic text-gray-900 flex-1">
+          {highlightedTerm}
+        </h4>
+        {isEditable && !isEditing && (
           <GlossaryTermEditor
             termKey={termKey}
             term={term}
@@ -119,12 +122,8 @@ const TermDisplay = React.memo(function TermDisplay({
             onEditStart={() => setIsEditing(true)}
             onEditCancel={() => setIsEditing(false)}
           />
-        </div>
-      )}
-
-      <h4 className="text-base sm:text-lg font-semibold italic text-gray-900">
-        {highlightedTerm}
-      </h4>
+        )}
+      </div>
 
       {definition ? (
         <div className="text-sm sm:text-base text-gray-700 leading-relaxed text-justify">
