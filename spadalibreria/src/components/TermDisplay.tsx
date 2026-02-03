@@ -108,7 +108,7 @@ const TermDisplay = React.memo(function TermDisplay({
     : null;
 
   return (
-    <div className="term-display prose prose-neutral space-y-3">
+    <div>
       {/* Term name with edit button on same line */}
       <div className="flex items-center justify-between gap-3">
         <h4 className="text-base sm:text-lg font-semibold italic text-gray-900 flex-1">
@@ -126,13 +126,11 @@ const TermDisplay = React.memo(function TermDisplay({
       </div>
 
       {definition ? (
-        <div className="text-sm sm:text-base text-gray-700 leading-relaxed text-justify">
-          <MarkdownRenderer
-            text={definition}
-            glossaryData={{}} // Empty glossary as definitions don't need term links
-            highlightQuery={searchQueryObj}
-          />
-        </div>
+        <MarkdownRenderer
+          text={definition}
+          glossaryData={{}} // Empty glossary as definitions don't need term links
+          highlightQuery={searchQueryObj}
+        />
       ) : (
         <p className="text-xs sm:text-sm text-gray-400 italic">
           No definition available

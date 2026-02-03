@@ -31,7 +31,7 @@ export default function GlossaryContent({
   }
 
   return (
-    <div className={`glossary-content prose prose-neutral max-w-none`}>
+    <div className={`glossary-content`}>
       {Object.entries(groupedTerms).map(([category, typeTerms], catIdx) => (
         <div key={category} className="mb-12">
           <h2 className={`${GLOSSARY_CATEGORY_STYLE} mb-4`}>{category}</h2>
