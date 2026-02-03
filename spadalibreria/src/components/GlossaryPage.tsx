@@ -3,12 +3,13 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Edit2, X } from 'lucide-react';
+import { Edit2, X, Plus } from 'lucide-react';
 import { useGlossary } from '@/contexts/GlossaryContext';
 import GlossarySearchBar from './GlossarySearchBar';
 import GlossaryContent from './GlossaryContent';
 import LogoTitle from './LogoTitle';
 import StickyHeader from './StickyHeader';
+import NewTermForm from './NewTermForm';
 import { GLOSSARY_CATEGORY_STYLE, GLOSSARY_TYPE_STYLE, GLOSSARY_LEFT_PADDING } from './GlossaryContent';
 import { useStickyHeaderTracking } from '@/hooks/useStickyHeaderTracking';
 
@@ -38,6 +39,14 @@ export default function GlossaryPage() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [currentHeader, setCurrentHeader] = useState<{ category: string; type: string } | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [showNewTermForm, setShowNewTermForm] = useState(false);
+
+  // Extract unique categories for autocomplete in NewTermForm
+  const categories = useMemo(() => {
+    return Array.from(new Set(
+      Object.keys(groupedTerms)
+    )).sort();
+  }, [groupedTerms]);
 
   const initialHeader = {
     category: "Catégorie par défaut",
@@ -144,6 +153,15 @@ export default function GlossaryPage() {
         <div className="flex items-center gap-4">
           <button
             type="button"
+            onClick={() => setShowNewTermForm(true)}
+            className="flex items-center gap-2 px-3 py-2 text-sm rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors"
+            title="Ajouter un nouveau terme"
+          >
+            <Plus size={16} />
+            <span>Ajouter Element</span>
+          </button>
+          <button
+            type="button"
             onClick={() => setIsEditMode(!isEditMode)}
             className={`flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors ${
               isEditMode
@@ -208,6 +226,14 @@ export default function GlossaryPage() {
           />
         </div>
       </div>
+
+      {/* New Term Form Modal */}
+      {showNewTermForm && (
+        <NewTermForm
+          onClose={() => setShowNewTermForm(false)}
+          categories={categories}
+        />
+      )}
     </div>
   );
 }
