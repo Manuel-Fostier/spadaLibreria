@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 3. Load glossary YAML
-    const glossaryPath = path.join(process.cwd(), '..', 'data', 'glossary.yaml');
+    const glossaryPath = path.join(process.cwd(), 'data', 'glossary.yaml');
     
     if (!fs.existsSync(glossaryPath)) {
       return NextResponse.json(

@@ -301,9 +301,9 @@
 
 - [X] T162 [P] Write integration test: Edit term field → save → page reload shows updated value
 - [X] T163 [P] Write integration test: Edit multiple fields in sequence → all saved correctly
-- [ ] T164 Test undo/redo functionality in TextEditor (Ctrl+Z, Ctrl+Y)
+- [X] T164 Test undo/redo functionality in TextEditor (Ctrl+Z, Ctrl+Y)
 - [ ] T165 Test error cases: invalid termKey, API failure, network timeout
-- [ ] T166 Phase 4a implementation complete and tested
+- [X] T166 Phase 4a implementation complete and tested
 
 ---
 
