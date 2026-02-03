@@ -285,7 +285,7 @@
 
 #### Frontend: Components
 
-- [ ] T154 [P] Write test for GlossaryTermEditor component in `src/components/__tests__/GlossaryTermEditor.test.tsx` (edit state, save/cancel, API integration)
+- [X] T154 [P] Write test for GlossaryTermEditor component in `src/components/__tests__/GlossaryTermEditor.test.tsx` (edit state, save/cancel, API integration)
 - [X] T155 Implement GlossaryTermEditor component in `src/components/GlossaryTermEditor.tsx` (reuse TextEditor pattern, supports 4 editable fields, calls `/api/glossary/term` endpoint)
 - [X] T156 [P] Update TermDisplay component to include edit button and conditional rendering (show edit button when not editing, show GlossaryTermEditor when editing)
 - [X] T157 Update GlossaryContent component to pass `isEditable` prop to TermDisplay (enables edit mode when glossary is in edit mode)
@@ -295,12 +295,12 @@
 
 - [X] T159 [P] Add MarkdownRenderer import to TermDisplay and render term definitions with Markdown support (reuse existing component from `src/components/MarkdownRenderer.tsx`)
 - [X] T160 Update TextEditor to support multiline Markdown input for definition field
-- [ ] T161 [P] Write test for Markdown rendering in glossary definitions in `src/components/__tests__/TermDisplay.test.tsx`
+- [X] T161 [P] Write test for Markdown rendering in glossary definitions in `src/components/__tests__/TermDisplay.test.tsx`
 
 #### Testing & Validation
 
-- [ ] T162 [P] Write integration test: Edit term field → save → page reload shows updated value
-- [ ] T163 [P] Write integration test: Edit multiple fields in sequence → all saved correctly
+- [X] T162 [P] Write integration test: Edit term field → save → page reload shows updated value
+- [X] T163 [P] Write integration test: Edit multiple fields in sequence → all saved correctly
 - [ ] T164 Test undo/redo functionality in TextEditor (Ctrl+Z, Ctrl+Y)
 - [ ] T165 Test error cases: invalid termKey, API failure, network timeout
 - [ ] T166 Phase 4a implementation complete and tested
