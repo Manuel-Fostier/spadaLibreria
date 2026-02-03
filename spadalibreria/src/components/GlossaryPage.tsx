@@ -3,6 +3,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Edit2, X } from 'lucide-react';
 import { useGlossary } from '@/contexts/GlossaryContext';
 import GlossarySearchBar from './GlossarySearchBar';
 import GlossaryContent from './GlossaryContent';
@@ -36,6 +37,7 @@ export default function GlossaryPage() {
   const router = useRouter();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [currentHeader, setCurrentHeader] = useState<{ category: string; type: string } | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const initialHeader = {
     category: "Catégorie par défaut",
@@ -142,6 +144,28 @@ export default function GlossaryPage() {
         <div className="flex items-center gap-4">
           <button
             type="button"
+            onClick={() => setIsEditMode(!isEditMode)}
+            className={`flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors ${
+              isEditMode
+                ? 'bg-blue-600 text-white hover:bg-blue-700'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+            }`}
+            title={isEditMode ? 'Quitter le mode édition' : 'Activer le mode édition'}
+          >
+            {isEditMode ? (
+              <>
+                <X size={16} />
+                <span>Terminer</span>
+              </>
+            ) : (
+              <>
+                <Edit2 size={16} />
+                <span>Éditer</span>
+              </>
+            )}
+          </button>
+          <button
+            type="button"
             onClick={() => router.back()}
             className="text-sm text-gray-600 hover:text-gray-900"
           >
@@ -180,6 +204,7 @@ export default function GlossaryPage() {
           <GlossaryContent
             groupedTerms={groupedTerms}
             searchQuery={searchQuery}
+            isEditable={isEditMode}
           />
         </div>
       </div>

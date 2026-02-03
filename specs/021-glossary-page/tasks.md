@@ -278,23 +278,23 @@
 
 #### Backend: API Endpoint
 
-- [ ] T150 [P] Write test for API endpoint to save glossary term edits in `src/app/api/glossary/__tests__/term.test.ts`
-- [ ] T151 Create POST endpoint `/api/glossary/term` in `src/app/api/glossary/term/route.ts` to update term fields (`category`, `type`, `term`, `definition_fr`) in `data/glossary.yaml`
-- [ ] T152 [P] Add validation logic: verify termKey exists, field is valid, value is non-empty
-- [ ] T153 Add error handling and graceful failure responses
+- [X] T150 [P] Write test for API endpoint to save glossary term edits in `src/app/api/glossary/__tests__/term.test.ts`
+- [X] T151 Create POST endpoint `/api/glossary/term` in `src/app/api/glossary/term/route.ts` to update term fields (`category`, `type`, `term`, `definition_fr`) in `data/glossary.yaml`
+- [X] T152 [P] Add validation logic: verify termKey exists, field is valid, value is non-empty
+- [X] T153 Add error handling and graceful failure responses
 
 #### Frontend: Components
 
 - [ ] T154 [P] Write test for GlossaryTermEditor component in `src/components/__tests__/GlossaryTermEditor.test.tsx` (edit state, save/cancel, API integration)
-- [ ] T155 Implement GlossaryTermEditor component in `src/components/GlossaryTermEditor.tsx` (reuse TextEditor pattern, supports 4 editable fields, calls `/api/glossary/term` endpoint)
-- [ ] T156 [P] Update TermDisplay component to include edit button and conditional rendering (show edit button when not editing, show GlossaryTermEditor when editing)
-- [ ] T157 Update GlossaryContent component to pass `isEditable` prop to TermDisplay (enables edit mode when glossary is in edit mode)
-- [ ] T158 Update GlossaryPage component to add global edit mode toggle button in header
+- [X] T155 Implement GlossaryTermEditor component in `src/components/GlossaryTermEditor.tsx` (reuse TextEditor pattern, supports 4 editable fields, calls `/api/glossary/term` endpoint)
+- [X] T156 [P] Update TermDisplay component to include edit button and conditional rendering (show edit button when not editing, show GlossaryTermEditor when editing)
+- [X] T157 Update GlossaryContent component to pass `isEditable` prop to TermDisplay (enables edit mode when glossary is in edit mode)
+- [X] T158 Update GlossaryPage component to add global edit mode toggle button in header
 
 #### Markdown Support
 
-- [ ] T159 [P] Add MarkdownRenderer import to TermDisplay and render term definitions with Markdown support (reuse existing component from `src/components/MarkdownRenderer.tsx`)
-- [ ] T160 Update TextEditor to support multiline Markdown input for definition field
+- [X] T159 [P] Add MarkdownRenderer import to TermDisplay and render term definitions with Markdown support (reuse existing component from `src/components/MarkdownRenderer.tsx`)
+- [X] T160 Update TextEditor to support multiline Markdown input for definition field
 - [ ] T161 [P] Write test for Markdown rendering in glossary definitions in `src/components/__tests__/TermDisplay.test.tsx`
 
 #### Testing & Validation

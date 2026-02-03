@@ -33,6 +33,7 @@ export default function CategorySection({
             >
               <TermDisplay
                 term={term}
+                termKey={term.id}
                 searchQuery={searchQuery}
                 highlightMatches={searchQuery.length > 0}
               />

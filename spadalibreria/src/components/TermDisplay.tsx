@@ -1,14 +1,18 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { GlossaryTerm } from '@/types/glossary';
 import { findMatches } from '@/lib/highlighter';
 import { SearchOptions } from '@/types/search';
+import GlossaryTermEditor from './GlossaryTermEditor';
+import MarkdownRenderer from './MarkdownRenderer';
 
 interface TermDisplayProps {
   term: GlossaryTerm;
+  termKey: string;
   searchQuery: string;
   highlightMatches: boolean;
+  isEditable?: boolean;
 }
 
 const highlightOptions: SearchOptions = {
@@ -62,31 +66,74 @@ function renderHighlightedText(text: string, query: string): React.ReactNode {
  */
 const TermDisplay = React.memo(function TermDisplay({
   term,
+  termKey,
   searchQuery,
   highlightMatches: shouldHighlight,
+  isEditable = false,
 }: TermDisplayProps) {
+  const [isEditing, setIsEditing] = useState(false);
+
+  // If editable and editing, show the editor
+  if (isEditable && isEditing) {
+    return (
+      <GlossaryTermEditor
+        termKey={termKey}
+        term={term}
+        isEditing={isEditing}
+        onEditStart={() => setIsEditing(true)}
+        onEditCancel={() => setIsEditing(false)}
+      />
+    );
+  }
+
   // Always use French definitions and translations (French-only mode)
   const language = 'fr';
   const definition = term.definition[language] || '';
 
-  // Apply highlighting if search is active
+  // Apply highlighting if search is active (only for term name, not definition)
+  // Markdown renderer will handle its own highlighting
   const highlightedTerm = shouldHighlight
     ? renderHighlightedText(term.term, searchQuery)
     : term.term;
-  const highlightedDefinition = shouldHighlight
-    ? renderHighlightedText(definition, searchQuery)
-    : definition;
+
+  // Create search query object for MarkdownRenderer
+  const searchQueryObj = shouldHighlight && searchQuery
+    ? {
+        queryText: searchQuery,
+        timestamp: new Date(),
+        options: highlightOptions,
+        variants: [],
+        languageMappings: { it: [], fr: [], en: [] }
+      }
+    : null;
 
   return (
     <div className="term-display prose prose-neutral space-y-3">
+      {/* Edit button (only shown when editable and not editing) */}
+      {isEditable && !isEditing && (
+        <div className="flex justify-end mb-2">
+          <GlossaryTermEditor
+            termKey={termKey}
+            term={term}
+            isEditing={false}
+            onEditStart={() => setIsEditing(true)}
+            onEditCancel={() => setIsEditing(false)}
+          />
+        </div>
+      )}
+
       <h4 className="text-base sm:text-lg font-semibold italic text-gray-900">
         {highlightedTerm}
       </h4>
 
       {definition ? (
-        <p className="text-sm sm:text-base text-gray-700 leading-relaxed whitespace-pre-line text-justify">
-          {highlightedDefinition}
-        </p>
+        <div className="text-sm sm:text-base text-gray-700 leading-relaxed text-justify">
+          <MarkdownRenderer
+            text={definition}
+            glossaryData={{}} // Empty glossary as definitions don't need term links
+            highlightQuery={searchQueryObj}
+          />
+        </div>
       ) : (
         <p className="text-xs sm:text-sm text-gray-400 italic">
           No definition available

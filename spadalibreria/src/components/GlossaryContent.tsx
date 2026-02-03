@@ -2,33 +2,23 @@
 
 import React from 'react';
 import TermDisplay from './TermDisplay';
+import { GroupedGlossary } from '@/types/glossary';
 
 // Style and layout constants for glossary (exported for reuse)
 export const GLOSSARY_CATEGORY_STYLE = 'text-2xl font-bold text-gray-900';
 export const GLOSSARY_TYPE_STYLE = 'text-xl font-semibold text-gray-800';
 export const GLOSSARY_LEFT_PADDING = 'px-8 lg:px-12';
 
-interface GroupedTerms {
-  [category: string]: {
-    [type: string]: Array<{
-      id: string;
-      term: string;
-      category: string;
-      type: string;
-      definition: { it: string; fr: string; en: string };
-      translation: { it: string; fr: string; en: string };
-    }>;
-  };
-}
-
 interface GlossaryContentProps {
-  groupedTerms: GroupedTerms;
+  groupedTerms: GroupedGlossary;
   searchQuery: string;
+  isEditable?: boolean;
 }
 
 export default function GlossaryContent({
   groupedTerms,
   searchQuery,
+  isEditable = false,
 }: GlossaryContentProps) {
   if (Object.keys(groupedTerms).length === 0) {
     return (
@@ -62,8 +52,10 @@ export default function GlossaryContent({
                     {/* <h4 className="text-lg font-semibold text-gray-700 mb-1">{term.term}</h4> */}
                     <TermDisplay
                       term={term}
+                      termKey={term.id}
                       searchQuery={searchQuery}
                       highlightMatches={searchQuery.length > 0}
+                      isEditable={isEditable}
                     />
                   </div>
                 );
