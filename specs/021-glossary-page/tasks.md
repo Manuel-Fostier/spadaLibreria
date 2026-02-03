@@ -391,9 +391,28 @@
 
 ---
 
+## PHASE 6: ClassName Review & Cleanup
+
+**Goal**: Review all className usage to remove duplicates/overrides and align container styling per page
+**Independent Test**: No duplicated/overriding className on containers; visual layout unchanged across glossary and treatise pages
+
+### Phase 6a: Glossary Page
+
+- [ ] T200 [P] Audit container className usage in src/app/glossary/page.tsx and src/components/GlossaryPage.tsx for duplicates/overrides
+- [ ] T201 [P] Audit className usage in src/components/GlossaryContent.tsx, src/components/CategorySection.tsx, and src/components/TermDisplay.tsx for duplicates/overrides
+- [ ] T202 Consolidate/remove duplicate or overridden className values in glossary page components and verify layout consistency
+
+### Phase 6b: Treatise Page (BolognesePlatform)
+
+- [ ] T203 [P] Audit container className usage in src/components/BolognesePlatform.tsx and src/components/StickyHeader.tsx for duplicates/overrides
+- [ ] T204 [P] Audit className usage in src/components/TextParser.tsx and src/components/Term.tsx for duplicates/overrides
+- [ ] T205 Consolidate/remove duplicate or overridden className values in treatise page components and verify layout consistency
+
+---
+
 ## Summary
 
-**Total Tasks**: 148 across 7 phases
+**Total Tasks**: 154 across 8 phases
 
 | Phase | Tasks | Status |
 |-------|-------|--------|
@@ -404,6 +423,7 @@
 | Phase 3 | T140-T145 (6 tasks) | After Phase 2 complete |
 | Phase 4 | T150-T160 (11 tasks) | After Phase 3 complete |
 | Phase 5 | T161-T165 (5 tasks) | After Phase 4 complete |
+| Phase 6 | T200-T205 (6 tasks) | After Phase 5 complete |
 
 **MVP Scope**: Phase 0 + Phase 1 + Phase 1.10 (all P1 user stories with UI refinement)  
 **Testing Approach**: TDD - Tests written before implementation for all tasks  
@@ -448,6 +468,8 @@ Phase 3: URL hash fragments (T140-T145)
 Phase 4: Content editing (T150-T160)
     ↓
 Phase 5: Cleanup unused code/files (T161-T165)
+    ↓
+Phase 6: ClassName review & cleanup (T200-T205)
 ```
 
 ---
@@ -467,6 +489,7 @@ Phase 5: Cleanup unused code/files (T161-T165)
 - Phase 1.9: 7 tasks (Final Validation)
 - **Phase 1.10: 11 tasks** (UI Design Refinement - NEW)
 - **Phase 5: 5 tasks** (Cleanup unused code/files)
+- **Phase 6: 6 tasks** (ClassName review & cleanup)
 
 **Progress**: 20/108 tasks complete (~19%)
 
@@ -506,8 +529,12 @@ Phase 5: Cleanup unused code/files (T161-T165)
 **Phase 5 Parallelization** (Cleanup):
 - T161-T164: Audit/remove tasks can run in parallel (different folders)
 
+**Phase 6 Parallelization** (ClassName review):
+- T200-T204: Audit tasks can run in parallel (different pages/components)
+
 **Recommended Execution Strategy**:
 1. **Sequential**: Phase 0 → Phase 1.0 → Phase 1.1 (blockers)
 2. **Parallel**: Phase 1.2, 1.3, 1.4 can execute in parallel after Phase 1.1
 3. **Sequential**: Phase 1.5, 1.6, 1.7, 1.8, 1.9 (dependent on earlier phases)
 4. **Sequential**: Phase 2 → 3 → 4 (each depends on previous)
+5. **Sequential**: Phase 5 → 6 (cleanup, then className review)
