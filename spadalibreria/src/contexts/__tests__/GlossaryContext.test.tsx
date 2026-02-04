@@ -15,9 +15,6 @@ import { GlossaryProvider, useGlossary } from '../GlossaryContext';
 import * as glossaryLoader from '@/lib/glossaryLoader';
 import { GlossaryTerm } from '@/types/glossary';
 
-// Mock the glossary loader module
-jest.mock('@/lib/glossaryLoader');
-
 const mockTerms: GlossaryTerm[] = [
   {
     id: 'mandritto',
@@ -72,27 +69,12 @@ describe('GlossaryContext', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    // Properly mock the functions
-    (glossaryLoader as any).loadGlossaryTerms = jest.fn(() => mockTerms);
-    (glossaryLoader as any).searchGlossaryTerms = jest.fn(
-      (terms: GlossaryTerm[], query: string) => {
-        if (!query) return terms;
-        return terms.filter(t => 
-          t.term.toLowerCase().includes(query.toLowerCase())
-        );
-      }
-    );
-    (glossaryLoader as any).groupGlossaryByCategory = jest.fn(
-      (terms: GlossaryTerm[]) => {
-        const grouped: any = {};
-        terms.forEach((term: GlossaryTerm) => {
-          if (!grouped[term.category]) grouped[term.category] = {};
-          if (!grouped[term.category][term.type]) grouped[term.category][term.type] = [];
-          grouped[term.category][term.type].push(term);
-        });
-        return grouped;
-      }
-    );
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => mockTerms,
+    }) as any;
+    jest.spyOn(glossaryLoader, 'searchGlossaryTerms');
+    jest.spyOn(glossaryLoader, 'groupGlossaryByCategory');
   });
 
   describe('initialization', () => {
@@ -119,13 +101,14 @@ describe('GlossaryContext', () => {
       });
 
       expect(result.current.terms).toEqual(mockTerms);
-      expect(glossaryLoader.loadGlossaryTerms).toHaveBeenCalled();
+      expect(global.fetch).toHaveBeenCalledWith('/api/content/glossary');
     });
 
     it('should handle loading errors', async () => {
-      const error = new Error('Failed to load glossary');
-      (glossaryLoader.loadGlossaryTerms as jest.Mock).mockImplementation(() => {
-        throw error;
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        statusText: 'Server Error',
+        json: async () => ({}),
       });
 
       const { result } = renderHook(() => useGlossary(), { wrapper });
@@ -134,7 +117,7 @@ describe('GlossaryContext', () => {
         expect(result.current.isLoading).toBe(false);
       });
 
-      expect(result.current.error).toBe('Failed to load glossary');
+      expect(result.current.error).toBe('Failed to fetch glossary: Server Error');
       expect(result.current.terms).toEqual([]);
     });
   });
@@ -257,9 +240,10 @@ describe('GlossaryContext', () => {
 
   describe('error handling', () => {
     it('should set error state when loading fails', async () => {
-      const error = new Error('Failed to load');
-      (glossaryLoader.loadGlossaryTerms as jest.Mock).mockImplementation(() => {
-        throw error;
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        statusText: 'Server Error',
+        json: async () => ({}),
       });
 
       const { result } = renderHook(() => useGlossary(), { wrapper });
@@ -268,7 +252,7 @@ describe('GlossaryContext', () => {
         expect(result.current.isLoading).toBe(false);
       });
 
-      expect(result.current.error).toBe('Failed to load');
+      expect(result.current.error).toBe('Failed to fetch glossary: Server Error');
       expect(result.current.terms).toEqual([]);
     });
   });

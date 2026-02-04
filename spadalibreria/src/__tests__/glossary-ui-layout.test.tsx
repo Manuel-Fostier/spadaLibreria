@@ -65,8 +65,8 @@ describe('Glossary UI layout (Phase 1.10)', () => {
 
     expect(screen.getByTestId('glossary-search-bar')).toBeInTheDocument();
     expect(screen.getByTestId('glossary-content')).toBeInTheDocument();
-    expect(screen.getByText('Coups et Techniques')).toBeInTheDocument();
-    expect(screen.getByText('Attaque / Frappe de taille')).toBeInTheDocument();
+    expect(screen.getByText('Catégorie par défaut')).toBeInTheDocument();
+    expect(screen.getByText('Type par défaut')).toBeInTheDocument();
     expect(container.querySelector('.overflow-y-auto')).toBeInTheDocument();
   });
 });

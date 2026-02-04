@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { loadGlossary } from '@/lib/dataLoader';
+import { loadGlossary } from '@/lib/dataLoaderServer';
 import { GlossaryData } from '@/types/data';
 import { GlossaryTerm } from '@/types/glossary';
 

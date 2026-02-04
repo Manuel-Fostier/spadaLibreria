@@ -1,5 +1,6 @@
 import BolognesePlatform from '@/components/BolognesePlatform';
-import { loadGlossary, loadAllTreatises, Annotation } from '@/lib/dataLoader';
+import { loadGlossary, loadAllTreatises } from '@/lib/dataLoaderServer';
+import type { Annotation } from '@/lib/dataLoader';
 import { AnnotationProvider } from '@/contexts/AnnotationContext';
 import { AnnotationDisplayProvider } from '@/contexts/AnnotationDisplayContext';
 import { SearchProvider } from '@/contexts/SearchContext';

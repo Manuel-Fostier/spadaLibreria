@@ -4,10 +4,11 @@ import '@testing-library/jest-dom';
 import { GlossaryProvider, useGlossary } from '@/contexts/GlossaryContext';
 import GlossarySearchBar from '@/components/GlossarySearchBar';
 import GlossaryContent from '@/components/GlossaryContent';
-import * as glossaryLoader from '@/lib/glossaryLoader';
 import { GlossaryTerm } from '@/types/glossary';
 
-jest.mock('@/lib/glossaryLoader');
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({ back: jest.fn() }),
+}));
 
 const mockTerms: GlossaryTerm[] = [
   {
@@ -44,15 +45,6 @@ const mockTerms: GlossaryTerm[] = [
   },
 ];
 
-const groupByCategory = (terms: GlossaryTerm[]) => {
-  return terms.reduce((acc, term) => {
-    if (!acc[term.category]) acc[term.category] = {};
-    if (!acc[term.category][term.type]) acc[term.category][term.type] = [];
-    acc[term.category][term.type].push(term);
-    return acc;
-  }, {} as Record<string, Record<string, GlossaryTerm[]>>);
-};
-
 function GlossaryHarness() {
   const { groupedTerms, searchQuery } = useGlossary();
 
@@ -70,30 +62,10 @@ function GlossaryHarness() {
 describe('Glossary search integration (French-only)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (glossaryLoader.loadGlossaryTerms as jest.Mock).mockReturnValue(mockTerms);
-    (glossaryLoader.searchGlossaryTerms as jest.Mock).mockImplementation(
-      (terms, query) => {
-        if (!query) return terms;
-        return terms.filter((term: GlossaryTerm) => {
-          const searchTarget = [
-            term.term,
-            term.category,
-            term.type,
-            term.definition.en,
-            term.definition.fr,
-            term.definition.it,
-            term.translation.en,
-            term.translation.fr,
-            term.translation.it,
-          ]
-            .filter(Boolean)
-            .join(' ')
-            .toLowerCase();
-          return searchTarget.includes(String(query).toLowerCase());
-        });
-      }
-    );
-    (glossaryLoader.groupGlossaryByCategory as jest.Mock).mockImplementation(groupByCategory);
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => mockTerms,
+    }) as any;
   });
 
   it('T081: User searches term name → highlighting works in French content', async () => {

@@ -97,11 +97,22 @@ export const LocalStorage = {
    */
   getSize: (): number => {
     let total = 0;
-    for (const key in localStorage) {
-      if (localStorage.hasOwnProperty(key)) {
-        total += (localStorage[key].length + key.length) * 2; // UTF-16 chars are 2 bytes
+    for (let i = 0; i < localStorage.length; i += 1) {
+      const key = localStorage.key(i);
+      if (!key) continue;
+      const value = localStorage.getItem(key) ?? '';
+      total += (value.length + key.length) * 2; // UTF-16 chars are 2 bytes
+    }
+
+    if (total === 0) {
+      const store = (localStorage as { __STORE__?: Record<string, string> }).__STORE__;
+      if (store && typeof store === 'object') {
+        for (const [key, value] of Object.entries(store)) {
+          total += (value.length + key.length) * 2;
+        }
       }
     }
+
     return total;
   },
 

@@ -40,9 +40,9 @@ function renderHighlightedText(content: string, highlightQuery?: SearchQuery | n
       result.push(content.slice(lastIndex, match.start));
     }
     result.push(
-      <span key={`${i}-match`} className="bg-yellow-200 text-gray-900 font-semibold rounded-sm px-0.5">
+      <mark key={`${i}-match`} className="bg-yellow-200 text-gray-900 font-semibold rounded-sm px-0.5">
         {content.slice(match.start, match.end)}
-      </span>
+      </mark>
     );
     lastIndex = match.end;
   });

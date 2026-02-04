@@ -4,7 +4,7 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import GlossaryPage from '../GlossaryPage';
-import { GlossaryPageWrapper } from '../GlossaryPageWrapper';
+import GlossaryPageWrapper from '../GlossaryPageWrapper';
 
 // Mock next/navigation
 jest.mock('next/navigation', () => ({
@@ -15,50 +15,41 @@ jest.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 
-// Mock glossary data loader
-jest.mock('@/lib/glossaryLoader', () => ({
-  loadGlossaryTerms: jest.fn(() =>
-    Promise.resolve({
-      mandritto: {
-        id: 'mandritto',
-        term: 'Mandritto',
-        category: 'Coups et Techniques',
-        type: 'Attaque / Frappe de taille',
-        definition: { it: '...', fr: 'Coup porté de la droite vers la gauche.' },
-        translation: { it: '...', fr: 'Coup droit' },
-      },
-      falso_dritto: {
-        id: 'falso_dritto',
-        term: 'Falso Dritto',
-        category: 'Coups et Techniques',
-        type: 'Attaque / Frappe de taille',
-        definition: { it: '...', fr: 'Coup inversé de la droite.' },
-        translation: { it: '...', fr: 'Faux coup droit' },
-      },
-      coda_lunga: {
-        id: 'coda_lunga',
-        term: 'Coda Lunga',
-        category: 'Les Guardes',
-        type: 'Garde basse',
-        definition: { it: '...', fr: 'Garde longue en bas.' },
-        translation: { it: '...', fr: 'Queue longue' },
-      },
-    })
-  ),
-  groupGlossaryByCategory: jest.fn((terms) => ({
-    'Coups et Techniques': {
-      'Attaque / Frappe de taille': [terms.mandritto, terms.falso_dritto],
-    },
-    'Les Guardes': {
-      'Garde basse': [terms.coda_lunga],
-    },
-  })),
-}));
+const mockTerms = [
+  {
+    id: 'mandritto',
+    term: 'Mandritto',
+    category: 'Coups et Techniques',
+    type: 'Attaque / Frappe de taille',
+    definition: { it: '...', fr: 'Coup porté de la droite vers la gauche.' },
+    translation: { it: '...', fr: 'Coup droit' },
+  },
+  {
+    id: 'falso_dritto',
+    term: 'Falso Dritto',
+    category: 'Coups et Techniques',
+    type: 'Attaque / Frappe de taille',
+    definition: { it: '...', fr: 'Coup inversé de la droite.' },
+    translation: { it: '...', fr: 'Faux coup droit' },
+  },
+  {
+    id: 'coda_lunga',
+    term: 'Coda Lunga',
+    category: 'Les Guardes',
+    type: 'Garde basse',
+    definition: { it: '...', fr: 'Garde longue en bas.' },
+    translation: { it: '...', fr: 'Queue longue' },
+  },
+];
 
 describe('GlossaryHashNavigation (Phase 3)', () => {
   beforeEach(() => {
     // Set up initial hash value for tests
     window.location.hash = '';
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => mockTerms,
+    }) as any;
   });
 
   it('T140: parses URL hash and scrolls to target term on page load', async () => {

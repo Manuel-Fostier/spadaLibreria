@@ -24,7 +24,6 @@ describe('T193/T194/T195: New Section Creation Workflow', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     global.fetch = jest.fn();
-    window.location.reload = jest.fn();
   });
 
   describe('T193: Add new section workflow', () => {

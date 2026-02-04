@@ -93,18 +93,18 @@ describe('LocalStorage', () => {
     });
 
     it('throws QuotaExceededError when storage full', () => {
-      jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      const setItemSpy = jest.spyOn(localStorage, 'setItem').mockImplementation(() => {
         throw new DOMException('QuotaExceededError', 'QuotaExceededError');
       });
 
       expect(() => LocalStorage.setItem('test', 'data')).toThrow();
-      
-      jest.restoreAllMocks();
+
+      setItemSpy.mockRestore();
     });
 
     it('logs error when quota exceeded', () => {
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
-      jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      const setItemSpy = jest.spyOn(localStorage, 'setItem').mockImplementation(() => {
         throw new DOMException('QuotaExceededError', 'QuotaExceededError');
       });
 
@@ -116,7 +116,8 @@ describe('LocalStorage', () => {
 
       expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('quota'));
       
-      jest.restoreAllMocks();
+      setItemSpy.mockRestore();
+      consoleSpy.mockRestore();
     });
   });
 

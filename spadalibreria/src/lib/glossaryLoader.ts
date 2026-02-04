@@ -3,22 +3,23 @@
  * 
  * Client-side functions for organizing and searching glossary data.
  * Data loading is handled by the /api/content/glossary API endpoint.
+ * 
+ * NOTE: This is a client-side utility. Do not import server-side modules here.
  */
 
 import { GlossaryTerm, GroupedGlossary } from '@/types/glossary';
-import { loadGlossary } from './dataLoader';
+import type { GlossaryData } from '@/types/data';
 
 /**
- * Load all glossary terms from the YAML data source
+ * Convert glossary data object to array of terms
  * 
  * Transforms glossary entries from key-value format to array format
  * for easier manipulation and display.
  * 
+ * @param glossaryData Object with glossary entries (key = term ID)
  * @returns Array of glossary terms with IDs
  */
-export function loadGlossaryTerms(): GlossaryTerm[] {
-  const glossaryData = loadGlossary();
-  
+export function convertGlossaryDataToTerms(glossaryData: GlossaryData): GlossaryTerm[] {
   return Object.entries(glossaryData).map(([key, entry]: [string, any]) => ({
     id: key,
     ...entry,

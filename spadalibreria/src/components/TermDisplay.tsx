@@ -9,7 +9,7 @@ import MarkdownRenderer from './MarkdownRenderer';
 
 interface TermDisplayProps {
   term: GlossaryTerm;
-  termKey: string;
+  termKey?: string;
   searchQuery: string;
   highlightMatches: boolean;
   isEditable?: boolean;
@@ -72,12 +72,13 @@ const TermDisplay = React.memo(function TermDisplay({
   isEditable = false,
 }: TermDisplayProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const resolvedTermKey = termKey ?? term.id;
 
   // If editable and editing, show the editor
   if (isEditable && isEditing) {
     return (
       <GlossaryTermEditor
-        termKey={termKey}
+        termKey={resolvedTermKey}
         term={term}
         isEditing={isEditing}
         onEditStart={() => setIsEditing(true)}
@@ -108,7 +109,7 @@ const TermDisplay = React.memo(function TermDisplay({
     : null;
 
   return (
-    <div>
+    <div className="term-display">
       {/* Term name with edit button on same line */}
       <div className="flex items-center justify-between gap-3">
         <h4 className="text-base sm:text-lg font-semibold italic text-gray-900 flex-1">
@@ -116,7 +117,7 @@ const TermDisplay = React.memo(function TermDisplay({
         </h4>
         {isEditable && !isEditing && (
           <GlossaryTermEditor
-            termKey={termKey}
+            termKey={resolvedTermKey}
             term={term}
             isEditing={false}
             onEditStart={() => setIsEditing(true)}

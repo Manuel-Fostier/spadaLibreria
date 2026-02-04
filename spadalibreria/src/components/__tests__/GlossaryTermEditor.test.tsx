@@ -28,9 +28,6 @@ describe('GlossaryTermEditor Component', () => {
 
   beforeEach(() => {
     (global.fetch as jest.Mock).mockClear();
-    // Mock window.location.reload
-    delete (window as any).location;
-    window.location = { reload: jest.fn() } as any;
   });
 
   it('renders edit buttons and input fields when in editing state', () => {

@@ -1,13 +1,10 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { GlossaryProvider, useGlossary } from '@/contexts/GlossaryContext';
 import GlossaryPage from '@/components/GlossaryPage';
 import GlossaryPageWrapper from '@/components/GlossaryPageWrapper';
-import * as glossaryLoader from '@/lib/glossaryLoader';
 import { GlossaryTerm } from '@/types/glossary';
 
-jest.mock('@/lib/glossaryLoader');
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ back: jest.fn() }),
 }));
@@ -63,38 +60,13 @@ const mockTerms: GlossaryTerm[] = [
   },
 ];
 
-const groupByCategory = (terms: GlossaryTerm[]) => {
-  return terms.reduce((acc, term) => {
-    if (!acc[term.category]) acc[term.category] = {};
-    if (!acc[term.category][term.type]) acc[term.category][term.type] = [];
-    acc[term.category][term.type].push(term);
-    return acc;
-  }, {} as Record<string, Record<string, GlossaryTerm[]>>);
-};
-
 describe('Glossary browse integration (T080 - French-only unified view)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (glossaryLoader.loadGlossaryTerms as jest.Mock).mockReturnValue(mockTerms);
-    (glossaryLoader.searchGlossaryTerms as jest.Mock).mockImplementation(
-      (terms, query) => {
-        if (!query) return terms;
-        return terms.filter((term: GlossaryTerm) => {
-          const searchTarget = [
-            term.term,
-            term.category,
-            term.type,
-            term.definition.fr,
-            term.translation.fr,
-          ]
-            .filter(Boolean)
-            .join(' ')
-            .toLowerCase();
-          return searchTarget.includes(String(query).toLowerCase());
-        });
-      }
-    );
-    (glossaryLoader.groupGlossaryByCategory as jest.Mock).mockImplementation(groupByCategory);
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => mockTerms,
+    }) as any;
   });
 
   it('user loads glossary → all terms visible in French-only unified view', async () => {

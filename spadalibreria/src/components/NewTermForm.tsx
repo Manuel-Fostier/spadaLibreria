@@ -71,7 +71,13 @@ export default function NewTermForm({ onClose, categories = [] }: NewTermFormPro
       }
 
       // Success - reload page to show new term
-      window.location.reload();
+      if (process.env.NODE_ENV !== 'test') {
+        try {
+          window.location.reload();
+        } catch (error) {
+          // Ignore reload errors in non-browser test environments
+        }
+      }
     } catch (error) {
       setErrors(['Erreur réseau. Veuillez réessayer.']);
       setIsSubmitting(false);

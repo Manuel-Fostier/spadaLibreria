@@ -43,7 +43,8 @@ describe('Glossary Create Term Integration Tests', () => {
       await user.type(screen.getByLabelText(/catégorie/i), 'Coups et Techniques');
       await user.type(screen.getByLabelText(/type/i), 'Frappe');
       await user.type(screen.getByLabelText(/terme/i), 'Punta');
-      await user.type(screen.getByPlaceholderText(/cliquez pour éditer/i), 'Une frappe');
+      await user.click(screen.getByPlaceholderText(/cliquez pour éditer/i));
+      await user.click(screen.getByTestId('editor-save'));
 
       await user.click(screen.getByRole('button', { name: /créer le terme/i }));
 
@@ -73,7 +74,8 @@ describe('Glossary Create Term Integration Tests', () => {
       await user.type(screen.getByLabelText(/catégorie/i), 'Coups et Techniques');
       await user.type(screen.getByLabelText(/type/i), 'Frappe de taille');
       await user.type(screen.getByLabelText(/terme/i), 'Mandritto');
-      await user.type(screen.getByPlaceholderText(/cliquez pour éditer/i), 'A high-to-low strike');
+      await user.click(screen.getByPlaceholderText(/cliquez pour éditer/i));
+      await user.click(screen.getByTestId('editor-save'));
 
       await user.click(screen.getByRole('button', { name: /créer le terme/i }));
 
@@ -105,7 +107,8 @@ describe('Glossary Create Term Integration Tests', () => {
       await user.type(screen.getByLabelText(/catégorie/i), 'Coups et Techniques');
       await user.type(screen.getByLabelText(/type/i), 'Frappe');
       await user.type(screen.getByLabelText(/terme/i), 'Mandritto');
-      await user.type(screen.getByPlaceholderText(/cliquez pour éditer/i), 'Definition');
+      await user.click(screen.getByPlaceholderText(/cliquez pour éditer/i));
+      await user.click(screen.getByTestId('editor-save'));
 
       await user.click(screen.getByRole('button', { name: /créer le terme/i }));
 
@@ -132,7 +135,8 @@ describe('Glossary Create Term Integration Tests', () => {
       await user.type(screen.getByLabelText(/catégorie/i), 'Coups et Techniques');
       await user.type(screen.getByLabelText(/type/i), 'Frappe');
       await user.type(screen.getByLabelText(/terme/i), 'Mandritto');
-      await user.type(screen.getByPlaceholderText(/cliquez pour éditer/i), 'Definition');
+      await user.click(screen.getByPlaceholderText(/cliquez pour éditer/i));
+      await user.click(screen.getByTestId('editor-save'));
 
       await user.click(screen.getByRole('button', { name: /créer le terme/i }));
 
@@ -177,7 +181,8 @@ describe('Glossary Create Term Integration Tests', () => {
 
       await user.type(screen.getByLabelText(/type/i), 'Frappe');
       await user.type(screen.getByLabelText(/terme/i), 'Punta');
-      await user.type(screen.getByPlaceholderText(/cliquez pour éditer/i), 'Definition');
+      await user.click(screen.getByPlaceholderText(/cliquez pour éditer/i));
+      await user.click(screen.getByTestId('editor-save'));
 
       await user.click(screen.getByRole('button', { name: /créer le terme/i }));
 
@@ -196,7 +201,8 @@ describe('Glossary Create Term Integration Tests', () => {
 
       await user.type(screen.getByLabelText(/catégorie/i), 'Coups et Techniques');
       await user.type(screen.getByLabelText(/terme/i), 'Punta');
-      await user.type(screen.getByPlaceholderText(/cliquez pour éditer/i), 'Definition');
+      await user.click(screen.getByPlaceholderText(/cliquez pour éditer/i));
+      await user.click(screen.getByTestId('editor-save'));
 
       await user.click(screen.getByRole('button', { name: /créer le terme/i }));
 
@@ -215,7 +221,8 @@ describe('Glossary Create Term Integration Tests', () => {
 
       await user.type(screen.getByLabelText(/catégorie/i), 'Coups et Techniques');
       await user.type(screen.getByLabelText(/type/i), 'Frappe');
-      await user.type(screen.getByPlaceholderText(/cliquez pour éditer/i), 'Definition');
+      await user.click(screen.getByPlaceholderText(/cliquez pour éditer/i));
+      await user.click(screen.getByTestId('editor-save'));
 
       await user.click(screen.getByRole('button', { name: /créer le terme/i }));
 

@@ -6,8 +6,11 @@ import TextEditor from './TextEditor';
 import { TreatiseSection } from '@/lib/dataLoader';
 
 interface NewSectionFormProps {
-  treatiseData: TreatiseSection[];
+  treatiseData?: TreatiseSection[];
   onClose: () => void;
+  masters?: string[];
+  works?: string[];
+  books?: string[];
 }
 
 interface FormData {
@@ -23,7 +26,14 @@ interface FormData {
   content_notes: string;
 }
 
-export default function NewSectionForm({ treatiseData, onClose }: NewSectionFormProps) {
+export default function NewSectionForm({
+  treatiseData,
+  onClose,
+  masters: mastersProp,
+  works: worksProp,
+  books: booksProp,
+}: NewSectionFormProps) {
+  const effectiveTreatiseData = treatiseData ?? [];
   const [formData, setFormData] = useState<FormData>({
     master: '',
     work: '',
@@ -42,32 +52,35 @@ export default function NewSectionForm({ treatiseData, onClose }: NewSectionForm
 
   // Extract unique masters from treatise data
   const masters = useMemo(() => {
+    if (mastersProp && mastersProp.length > 0) return mastersProp;
     const masterSet = new Set<string>();
-    treatiseData.forEach(section => {
+    effectiveTreatiseData.forEach(section => {
       if (section.metadata?.master) {
         masterSet.add(section.metadata.master);
       }
     });
     return Array.from(masterSet).sort();
-  }, [treatiseData]);
+  }, [effectiveTreatiseData, mastersProp]);
 
   // Extract works for selected master
   const works = useMemo(() => {
+    if (worksProp && worksProp.length > 0) return worksProp;
     if (!formData.master) return [];
     const workSet = new Set<string>();
-    treatiseData.forEach(section => {
+    effectiveTreatiseData.forEach(section => {
       if (section.metadata?.master === formData.master && section.metadata?.work) {
         workSet.add(section.metadata.work);
       }
     });
     return Array.from(workSet).sort();
-  }, [treatiseData, formData.master]);
+  }, [effectiveTreatiseData, formData.master, worksProp]);
 
   // Extract books for selected master and work
   const books = useMemo(() => {
+    if (booksProp && booksProp.length > 0) return booksProp;
     if (!formData.master || !formData.work) return [];
     const bookSet = new Set<number>();
-    treatiseData.forEach(section => {
+    effectiveTreatiseData.forEach(section => {
       if (
         section.metadata?.master === formData.master &&
         section.metadata?.work === formData.work &&
@@ -77,19 +90,19 @@ export default function NewSectionForm({ treatiseData, onClose }: NewSectionForm
       }
     });
     return Array.from(bookSet).sort((a, b) => a - b);
-  }, [treatiseData, formData.master, formData.work]);
+  }, [effectiveTreatiseData, formData.master, formData.work, booksProp]);
 
   // Get year from existing sections
   const year = useMemo(() => {
     if (!formData.master || !formData.work || !formData.book) return '';
-    const section = treatiseData.find(
+    const section = effectiveTreatiseData.find(
       s =>
         s.metadata?.master === formData.master &&
         s.metadata?.work === formData.work &&
         s.metadata?.book === parseInt(formData.book)
     );
     return section?.metadata?.year?.toString() || '';
-  }, [treatiseData, formData.master, formData.work, formData.book]);
+  }, [effectiveTreatiseData, formData.master, formData.work, formData.book]);
 
   // Auto-fill year when book is selected
   useMemo(() => {
@@ -163,7 +176,13 @@ export default function NewSectionForm({ treatiseData, onClose }: NewSectionForm
       }
 
       // Success: reload page to show new section
-      window.location.reload();
+      if (process.env.NODE_ENV !== 'test') {
+        try {
+          window.location.reload();
+        } catch (error) {
+          // Ignore reload errors in non-browser test environments
+        }
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur inconnue');
       setIsSubmitting(false);

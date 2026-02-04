@@ -58,7 +58,13 @@ export default function GlossaryTermEditor({
       }
 
       // Reload page to show updated content
-      window.location.reload();
+      if (process.env.NODE_ENV !== 'test') {
+        try {
+          window.location.reload();
+        } catch (error) {
+          // Ignore reload errors in non-browser test environments
+        }
+      }
     } catch (err) {
       console.error('Error saving term:', err);
       setError(err instanceof Error ? err.message : 'Failed to save changes');

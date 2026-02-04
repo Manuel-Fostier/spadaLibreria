@@ -71,9 +71,7 @@ describe('Glossary Edit Integration Tests', () => {
     // Mock fetch for API calls
     global.fetch = jest.fn();
 
-    // Mock window.location.reload
-    delete (window as any).location;
-    window.location = { reload: jest.fn() } as any;
+    // window.location.reload is mocked in setupTests
   });
 
   describe('T162: Edit term field → save → page reload shows updated value', () => {
