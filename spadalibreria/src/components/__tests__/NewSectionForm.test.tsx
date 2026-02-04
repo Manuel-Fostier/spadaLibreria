@@ -17,6 +17,10 @@ jest.mock('@/components/TextEditor', () => {
 import NewSectionForm from '@/components/NewSectionForm';
 
 describe('NewSectionForm Component', () => {
+  const mockMasters = ['Achille Marozzo', 'Antonio Manciolino', 'Filippo Vadi'];
+  const mockWorks = ['Opera Nova', 'Libro dei Duelli', 'Arti Maestrevoli'];
+  const mockBooks = ['Livre 1', 'Livre 2', 'Livre 3', 'Livre 4'];
+
   const mockTreatiseData = [
     {
       id: 'section-1',

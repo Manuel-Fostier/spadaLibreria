@@ -217,10 +217,11 @@ export default function NewSectionForm({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Master */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="master-input" className="block text-sm font-medium text-gray-700 mb-1">
                 Maître <span className="text-red-500">*</span>
               </label>
               <input
+                id="master-input"
                 type="text"
                 list="masters-list"
                 value={formData.master}
@@ -238,10 +239,11 @@ export default function NewSectionForm({
 
             {/* Work */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="work-input" className="block text-sm font-medium text-gray-700 mb-1">
                 Œuvre <span className="text-red-500">*</span>
               </label>
               <input
+                id="work-input"
                 type="text"
                 list="works-list"
                 value={formData.work}
@@ -259,10 +261,11 @@ export default function NewSectionForm({
 
             {/* Book */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="book-input" className="block text-sm font-medium text-gray-700 mb-1">
                 Livre <span className="text-red-500">*</span>
               </label>
               <input
+                id="book-input"
                 type="text"
                 list="books-list"
                 value={formData.book}

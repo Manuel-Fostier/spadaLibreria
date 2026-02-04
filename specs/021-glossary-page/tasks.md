@@ -389,6 +389,32 @@
 - [X] T164 [P] Delete obsolete docs/notes in specs/021-glossary-page/ and analysed/ (if no longer referenced)
 - [X] T165 Verify build/test still pass after cleanup and update analysed/unused-files-analysis.md with results (blocked: Jest ESM error in react-markdown)
 
+### Phase 5.1: Test Suite Stabilization - datalist Input Testing
+
+**Goal**: Fix remaining 3 failing test suites that use incompatible `selectOptions()` API on datalist inputs  
+**Issue**: Tests use `user.selectOptions()` which only works with `<select>` elements, but components use `<input type="text" list="datalist-id">` for better UX with autocomplete  
+**Solution**: Refactor tests to use `user.type()` and `user.clear()` instead of `selectOptions()`  
+**Note**: DO NOT change components to use `<select>` as this would degrade UX
+
+#### glossary-create-section-integration.test.tsx
+
+- [ ] T166 [P] Analyse glossary-create-section-integration.test.tsx: Identify all `selectOptions()` calls and map failing assertions in `src/__tests__/glossary-create-section-integration.test.tsx` (11 tests, ~20 failing)
+- [ ] T167 [P] Fix glossary-create-section-integration.test.tsx: Replace all `selectOptions()` calls with `user.type()` + `user.clear()` pattern
+
+#### NewSectionForm.test.tsx
+
+- [ ] T168 [P] Analyse NewSectionForm.test.tsx: Identify all `selectOptions()` calls and map failing assertions in `src/components/__tests__/NewSectionForm.test.tsx` (34 tests, ~31 failing)
+- [ ] T169 [P] Fix NewSectionForm.test.tsx: Replace all `selectOptions()` calls with `user.type()` + `user.clear()` pattern
+
+#### NewTermForm.test.tsx
+
+- [ ] T181 [P] Analyse NewTermForm.test.tsx: Identify root cause of test failures in `src/components/__tests__/NewTermForm.test.tsx` (category autocomplete field - confirm if selectOptions() or different issue)
+- [ ] T182 [P] Fix NewTermForm.test.tsx: Apply appropriate fix (replace selectOptions() if applicable, or address different issue)
+
+#### Verification
+
+- [ ] T183 Verify all test suites pass: Run full test suite and confirm 38+ test suites passing
+
 ---
 
 ## PHASE 6: ClassName Review & Cleanup
@@ -412,7 +438,7 @@
 
 ## Summary
 
-**Total Tasks**: 154 across 8 phases
+**Total Tasks**: 161 across 8 phases
 
 | Phase | Tasks | Status |
 |-------|-------|--------|
@@ -423,6 +449,7 @@
 | Phase 3 | T140-T145 (6 tasks) | After Phase 2 complete |
 | Phase 4 | T150-T160 (11 tasks) | After Phase 3 complete |
 | Phase 5 | T161-T165 (5 tasks) | After Phase 4 complete |
+| Phase 5.1 | T166-T183 (6 tasks) | Test suite stabilization - datalist input testing |
 | Phase 6 | T200-T205 (6 tasks) | After Phase 5 complete |
 
 **MVP Scope**: Phase 0 + Phase 1 + Phase 1.10 (all P1 user stories with UI refinement)  

@@ -1,5 +1,33 @@
 import { LocalStorage } from '../localStorage';
 
+// Manual mock localStorage for size calculation tests
+const createMockLocalStorage = () => {
+  const store: Record<string, string> = {};
+  return {
+    getItem(key: string): string | null {
+      return store[key] ?? null;
+    },
+    setItem(key: string, value: string): void {
+      store[key] = value;
+    },
+    removeItem(key: string): void {
+      delete store[key];
+    },
+    clear(): void {
+      for (const key in store) {
+        delete store[key];
+      }
+    },
+    get length(): number {
+      return Object.keys(store).length;
+    },
+    key(index: number): string | null {
+      const keys = Object.keys(store);
+      return keys[index] ?? null;
+    }
+  };
+};
+
 describe('LocalStorage', () => {
   beforeEach(() => {
     localStorage.clear();
@@ -149,17 +177,51 @@ describe('LocalStorage', () => {
     });
 
     it('calculates size in bytes', () => {
-      LocalStorage.setItem('test', 'a');
-      const size = LocalStorage.getSize();
-      expect(size).toBeGreaterThan(0);
+      // Use manual mock localStorage for size calculation tests
+      // to avoid jest-localstorage-mock issues
+      const mockLS = createMockLocalStorage();
+      const originalLocalStorage = global.localStorage;
+      Object.defineProperty(global, 'localStorage', { 
+        value: mockLS, 
+        writable: true, 
+        configurable: true 
+      });
+      
+      try {
+        LocalStorage.setItem('test', 'a');
+        const size = LocalStorage.getSize();
+        expect(size).toBeGreaterThan(0);
+      } finally {
+        Object.defineProperty(global, 'localStorage', { 
+          value: originalLocalStorage, 
+          writable: true, 
+          configurable: true 
+        });
+      }
     });
 
     it('accounts for multiple keys', () => {
-      LocalStorage.setItem('key1', 'value1');
-      const size1 = LocalStorage.getSize();
-      LocalStorage.setItem('key2', 'value2');
-      const size2 = LocalStorage.getSize();
-      expect(size2).toBeGreaterThan(size1);
+      const mockLS = createMockLocalStorage();
+      const originalLocalStorage = global.localStorage;
+      Object.defineProperty(global, 'localStorage', { 
+        value: mockLS, 
+        writable: true, 
+        configurable: true 
+      });
+      
+      try {
+        LocalStorage.setItem('key1', 'value1');
+        const size1 = LocalStorage.getSize();
+        LocalStorage.setItem('key2', 'value2');
+        const size2 = LocalStorage.getSize();
+        expect(size2).toBeGreaterThan(size1);
+      } finally {
+        Object.defineProperty(global, 'localStorage', { 
+          value: originalLocalStorage, 
+          writable: true, 
+          configurable: true 
+        });
+      }
     });
   });
 
@@ -182,12 +244,28 @@ describe('LocalStorage', () => {
 
   describe('size accuracy and warnings', () => {
     it('calculates deterministic size based on serialized value', () => {
-      const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(1234567890);
-      LocalStorage.setItem('sizeKey', 'abc');
-      const expectedSerialized = JSON.stringify({ value: 'abc', timestamp: 1234567890 });
-      const expectedSize = (expectedSerialized.length + 'sizeKey'.length) * 2;
-      expect(LocalStorage.getSize()).toBe(expectedSize);
-      nowSpy.mockRestore();
+      const mockLS = createMockLocalStorage();
+      const originalLocalStorage = global.localStorage;
+      Object.defineProperty(global, 'localStorage', { 
+        value: mockLS, 
+        writable: true, 
+        configurable: true 
+      });
+      
+      try {
+        const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(1234567890);
+        LocalStorage.setItem('sizeKey', 'abc');
+        const expectedSerialized = JSON.stringify({ value: 'abc', timestamp: 1234567890 });
+        const expectedSize = (expectedSerialized.length + 'sizeKey'.length) * 2;
+        expect(LocalStorage.getSize()).toBe(expectedSize);
+        nowSpy.mockRestore();
+      } finally {
+        Object.defineProperty(global, 'localStorage', { 
+          value: originalLocalStorage, 
+          writable: true, 
+          configurable: true 
+        });
+      }
     });
 
     it('returns warning when projected size exceeds threshold but below cap', () => {
