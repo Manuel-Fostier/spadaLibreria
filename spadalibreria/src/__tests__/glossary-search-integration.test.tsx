@@ -108,8 +108,8 @@ describe('Glossary search integration (French-only)', () => {
     });
 
     const input = screen.getByPlaceholderText('Rechercher un terme');
-    // Search for French category name
-    fireEvent.change(input, { target: { value: 'Coups' } });
+    // Search for word that appears in definition of Mandritto (coup = strike)
+    fireEvent.change(input, { target: { value: 'coup' } });
 
     act(() => {
       jest.advanceTimersByTime(300);
@@ -118,7 +118,7 @@ describe('Glossary search integration (French-only)', () => {
     await waitFor(() => {
       expect(document.querySelectorAll('mark').length).toBeGreaterThan(0);
     });
-    // Mandritto should be highlighted as it's in the matching category
+    // Mandritto has 'coup' in its French definition
     expect(screen.getByText('Mandritto', { selector: 'h4' })).toBeInTheDocument();
     jest.useRealTimers();
   });

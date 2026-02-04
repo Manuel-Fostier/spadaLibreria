@@ -7,70 +7,69 @@
 
 import { loadGlossaryTerms, groupGlossaryByCategory } from '../glossaryLoader';
 import { GlossaryTerm, GroupedGlossary } from '@/types/glossary';
+import type { GlossaryData } from '@/types/data';
 
-// Mock the glossary YAML data
-jest.mock('../dataLoader', () => ({
-  loadGlossary: jest.fn(() => ({
-    mandritto: {
-      term: 'Mandritto',
-      category: 'Coups et Techniques',
-      type: 'Attaque / Frappe de taille',
-      definition: {
-        it: 'Colpo portato da destra a sinistra.',
-        fr: 'Coup porté de la droite vers la gauche.',
-        en: 'A cut delivered from right to left.'
-      },
-      translation: {
-        it: 'Mandritto',
-        fr: 'Coup droit',
-        en: 'Forehand cut'
-      }
+// Mock glossary data
+const mockGlossaryData: GlossaryData = {
+  mandritto: {
+    term: 'Mandritto',
+    category: 'Coups et Techniques',
+    type: 'Attaque / Frappe de taille',
+    definition: {
+      it: 'Colpo portato da destra a sinistra.',
+      fr: 'Coup porté de la droite vers la gauche.',
+      en: 'A cut delivered from right to left.'
     },
-    fendente: {
-      term: 'Fendente',
-      category: 'Coups et Techniques',
-      type: 'Attaque / Frappe de taille',
-      definition: {
-        fr: 'Coup vertical descendant.',
-        en: 'Vertical descending cut.'
-      },
-      translation: {
-        fr: 'Coup fendant',
-        en: 'Cleaving cut'
-      }
-    },
-    guardia_di_testa: {
-      term: 'Guardia di Testa',
-      category: 'Les Guardes',
-      type: 'Garde Haute',
-      definition: {
-        fr: 'Garde haute avec épée au-dessus de la tête.',
-        en: 'High guard with sword above the head.'
-      },
-      translation: {
-        fr: 'Garde de la Tête',
-        en: 'Head Guard'
-      }
-    },
-    coda_longa_stretta: {
-      term: 'Coda Longa e Stretta',
-      category: 'Les Guardes',
-      type: 'Garde',
-      definition: {
-        fr: 'Garde basse avec épée vers l\'arrière.',
-        en: 'Low guard with sword to the rear.'
-      },
-      translation: {
-        fr: 'Queue Longue et Étroite',
-        en: 'Long and Narrow Tail'
-      }
+    translation: {
+      it: 'Mandritto',
+      fr: 'Coup droit',
+      en: 'Forehand cut'
     }
-  }))
-}));
+  },
+  fendente: {
+    term: 'Fendente',
+    category: 'Coups et Techniques',
+    type: 'Attaque / Frappe de taille',
+    definition: {
+      fr: 'Coup vertical descendant.',
+      en: 'Vertical descending cut.'
+    },
+    translation: {
+      fr: 'Coup fendant',
+      en: 'Cleaving cut'
+    }
+  },
+  guardia_di_testa: {
+    term: 'Guardia di Testa',
+    category: 'Les Guardes',
+    type: 'Garde Haute',
+    definition: {
+      fr: 'Garde haute avec épée au-dessus de la tête.',
+      en: 'High guard with sword above the head.'
+    },
+    translation: {
+      fr: 'Garde de la Tête',
+      en: 'Head Guard'
+    }
+  },
+  coda_longa_stretta: {
+    term: 'Coda Longa e Stretta',
+    category: 'Les Guardes',
+    type: 'Garde',
+    definition: {
+      fr: 'Garde basse avec épée vers l\'arrière.',
+      en: 'Low guard with sword to the rear.'
+    },
+    translation: {
+      fr: 'Queue Longue et Étroite',
+      en: 'Long and Narrow Tail'
+    }
+  }
+};
 
 describe('loadGlossaryTerms', () => {
-  it('should load all glossary terms from YAML', () => {
-    const terms = loadGlossaryTerms();
+  it('should convert glossary data object to array of terms', () => {
+    const terms = loadGlossaryTerms(mockGlossaryData);
     
     expect(terms).toHaveLength(4);
     expect(terms.every(term => term.id)).toBe(true);
@@ -79,7 +78,7 @@ describe('loadGlossaryTerms', () => {
   });
 
   it('should include id (term key) for each term', () => {
-    const terms = loadGlossaryTerms();
+    const terms = loadGlossaryTerms(mockGlossaryData);
     const ids = terms.map(t => t.id);
     
     expect(ids).toContain('mandritto');
@@ -89,7 +88,7 @@ describe('loadGlossaryTerms', () => {
   });
 
   it('should preserve all required fields from GlossaryEntry', () => {
-    const terms = loadGlossaryTerms();
+    const terms = loadGlossaryTerms(mockGlossaryData);
     const mandritto = terms.find(t => t.id === 'mandritto');
     
     expect(mandritto).toBeDefined();
@@ -103,7 +102,7 @@ describe('loadGlossaryTerms', () => {
   });
 
   it('should handle optional Italian fields', () => {
-    const terms = loadGlossaryTerms();
+    const terms = loadGlossaryTerms(mockGlossaryData);
     const withItalian = terms.find(t => t.definition?.it);
     const withoutItalian = terms.find(t => !t.definition?.it);
     
@@ -117,10 +116,8 @@ describe('loadGlossaryTerms', () => {
   });
 
   it('should return empty array if glossary is empty', () => {
-    const mockLoad = require('../dataLoader').loadGlossary;
-    mockLoad.mockReturnValueOnce({});
-    
-    const terms = loadGlossaryTerms();
+    const emptyData: GlossaryData = {};
+    const terms = loadGlossaryTerms(emptyData);
     expect(terms).toEqual([]);
   });
 });
@@ -129,7 +126,7 @@ describe('groupGlossaryByCategory', () => {
   let sampleTerms: GlossaryTerm[];
 
   beforeEach(() => {
-    sampleTerms = loadGlossaryTerms();
+    sampleTerms = loadGlossaryTerms(mockGlossaryData);
   });
 
   it('should group terms by category', () => {

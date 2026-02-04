@@ -19,7 +19,7 @@ import type { GlossaryData } from '@/types/data';
  * @param glossaryData Object with glossary entries (key = term ID)
  * @returns Array of glossary terms with IDs
  */
-export function convertGlossaryDataToTerms(glossaryData: GlossaryData): GlossaryTerm[] {
+export function loadGlossaryTerms(glossaryData: GlossaryData): GlossaryTerm[] {
   return Object.entries(glossaryData).map(([key, entry]: [string, any]) => ({
     id: key,
     ...entry,
