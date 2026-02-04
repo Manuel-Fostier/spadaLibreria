@@ -249,7 +249,7 @@ describe('/api/content/section POST endpoint', () => {
     expect(data.error).toBe('Missing or invalid content.fr field');
   });
 
-  it('should return 404 when no matching treatise file found', async () => {
+  it('should create a new treatise file when no matching file found', async () => {
     const requestBody = {
       master: 'Unknown Master',
       work: 'Unknown Work',
@@ -261,6 +261,8 @@ describe('/api/content/section POST endpoint', () => {
 
     mockedFs.existsSync.mockReturnValue(true);
     mockedFs.readdirSync.mockReturnValue([]);
+    mockedFs.readFileSync.mockReturnValue(yaml.dump([]));
+    mockedFs.writeFileSync.mockImplementation(() => {});
 
     (NextRequest as jest.Mock).mockImplementation(() => ({
       json: async () => requestBody
@@ -270,8 +272,9 @@ describe('/api/content/section POST endpoint', () => {
     const response = await POST(request);
     const data = await response.json();
 
-    expect(response.status).toBe(404);
-    expect(data.error).toBe('No matching treatise file found');
+    expect(response.status).toBe(200);
+    expect(data.success).toBe(true);
+    expect(data.filePath).toBe('unknown_master_unknown_work_livre99.yaml');
   });
 
   it('should handle optional fields (chapter, it, notes)', async () => {

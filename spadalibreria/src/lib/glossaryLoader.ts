@@ -6,6 +6,24 @@
  */
 
 import { GlossaryTerm, GroupedGlossary } from '@/types/glossary';
+import { loadGlossary } from './dataLoader';
+
+/**
+ * Load all glossary terms from the YAML data source
+ * 
+ * Transforms glossary entries from key-value format to array format
+ * for easier manipulation and display.
+ * 
+ * @returns Array of glossary terms with IDs
+ */
+export function loadGlossaryTerms(): GlossaryTerm[] {
+  const glossaryData = loadGlossary();
+  
+  return Object.entries(glossaryData).map(([key, entry]: [string, any]) => ({
+    id: key,
+    ...entry,
+  }));
+}
 
 /**
  * Group glossary terms by category and type for hierarchical display

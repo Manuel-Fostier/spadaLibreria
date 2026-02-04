@@ -7,4 +7,14 @@ module.exports = {
     },
   setupFilesAfterEnv: ['@testing-library/jest-dom'],
   testPathIgnorePatterns: ['/node_modules/', '/.next/', '/__mocks__/'],
+  transformIgnorePatterns: [
+    '/node_modules/(?!(react-markdown|remark-gfm|micromark|decode-named-character-references|character-entities|unist-|unified|ccount|escape-string-regexp|markdown-table)/)',
+  ],
+  globals: {
+    'ts-jest': {
+      tsconfig: {
+        jsx: 'react-jsx',
+      },
+    },
+  },
 };

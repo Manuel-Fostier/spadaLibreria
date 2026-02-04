@@ -15,7 +15,7 @@ import { GlossaryProvider, useGlossary } from '../GlossaryContext';
 import * as glossaryLoader from '@/lib/glossaryLoader';
 import { GlossaryTerm } from '@/types/glossary';
 
-// Mock the glossary loader
+// Mock the glossary loader module
 jest.mock('@/lib/glossaryLoader');
 
 const mockTerms: GlossaryTerm[] = [
@@ -72,17 +72,18 @@ describe('GlossaryContext', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (glossaryLoader.loadGlossaryTerms as jest.Mock).mockReturnValue(mockTerms);
-    (glossaryLoader.searchGlossaryTerms as jest.Mock).mockImplementation(
-      (terms, query) => {
+    // Properly mock the functions
+    (glossaryLoader as any).loadGlossaryTerms = jest.fn(() => mockTerms);
+    (glossaryLoader as any).searchGlossaryTerms = jest.fn(
+      (terms: GlossaryTerm[], query: string) => {
         if (!query) return terms;
         return terms.filter(t => 
           t.term.toLowerCase().includes(query.toLowerCase())
         );
       }
     );
-    (glossaryLoader.groupGlossaryByCategory as jest.Mock).mockImplementation(
-      (terms) => {
+    (glossaryLoader as any).groupGlossaryByCategory = jest.fn(
+      (terms: GlossaryTerm[]) => {
         const grouped: any = {};
         terms.forEach((term: GlossaryTerm) => {
           if (!grouped[term.category]) grouped[term.category] = {};
