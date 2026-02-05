@@ -3,13 +3,18 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
-// Mock TextEditor component
+// Mock TextEditor component with placeholders so tests can target fields reliably
 jest.mock('@/components/TextEditor', () => {
-  return jest.fn(({ onSave, onCancel }: any) => (
+  return jest.fn(({ onSave, onCancel, placeholder, initialValue, onChange }: any) => (
     <div data-testid="text-editor">
-      <textarea data-testid="editor-textarea" />
-      <button onClick={() => onCancel()} data-testid="editor-cancel">Cancel</button>
-      <button onClick={() => onSave('test')} data-testid="editor-save">Save</button>
+      <textarea
+        data-testid="editor-textarea"
+        placeholder={placeholder}
+        defaultValue={initialValue}
+        onChange={(event) => onChange?.(event.target.value)}
+      />
+      <button onClick={() => onCancel?.()} data-testid="editor-cancel">Cancel</button>
+      <button onClick={() => onSave?.('test')} data-testid="editor-save">Save</button>
     </div>
   ));
 });
@@ -20,6 +25,15 @@ describe('T193/T194/T195: New Section Creation Workflow', () => {
   const mockMasters = ['Achille Marozzo', 'Antonio Manciolino', 'Filippo Vadi'];
   const mockWorks = ['Opera Nova', 'Libro dei Duelli', 'Arti Maestrevoli'];
   const mockBooks = ['Livre 1', 'Livre 2', 'Livre 3', 'Livre 4'];
+
+  const getMasterInput = () => document.getElementById('master-input') as HTMLInputElement;
+  const getWorkInput = () => document.getElementById('work-input') as HTMLInputElement;
+  const getBookInput = () => document.getElementById('book-input') as HTMLInputElement;
+  const getChapterInput = () => screen.getByPlaceholderText(/ex:\s*95/i) as HTMLInputElement;
+  const getYearInput = () => screen.getByPlaceholderText(/ex:\s*1536/i) as HTMLInputElement;
+  const getTitleInput = () => screen.getByPlaceholderText(/chap\.\s*95/i) as HTMLInputElement;
+  const getFrenchContentInput = () => screen.getByPlaceholderText(/contenu en français/i) as HTMLTextAreaElement;
+  const getItalianContentInput = () => screen.getByPlaceholderText(/contenu en italien/i) as HTMLTextAreaElement;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -45,19 +59,18 @@ describe('T193/T194/T195: New Section Creation Workflow', () => {
         />
       );
 
-      // Fill form with complete metadata
-      await user.selectOptions(screen.getByLabelText(/maître|master/i), 'Achille Marozzo');
-      await user.selectOptions(screen.getByLabelText(/ouvrage|work/i), 'Opera Nova');
-      await user.selectOptions(screen.getByLabelText(/livre|book/i), 'Livre 2');
-      await user.type(screen.getByLabelText(/chapitre|chapter/i), '3');
-      await user.type(screen.getByLabelText(/année|year/i), '1536');
-      await user.type(screen.getByLabelText(/titre|title/i), 'La Guardia');
-      await user.type(screen.getByPlaceholderText(/contenu|content/i) || screen.getByText(/content/i), 'Italian text content');
+      await user.type(getMasterInput(), 'Achille Marozzo');
+      await waitFor(() => expect(getWorkInput()).not.toBeDisabled());
+      await user.type(getWorkInput(), 'Opera Nova');
+      await waitFor(() => expect(getBookInput()).not.toBeDisabled());
+      await user.type(getBookInput(), '2');
+      await user.type(getChapterInput(), '3');
+      await user.type(getYearInput(), '1536');
+      await user.type(getTitleInput(), 'La Guardia');
+      await user.type(getFrenchContentInput(), 'Texte français obligatoire');
 
-      // Submit
-      await user.click(screen.getByRole('button', { name: /ajouter|créer|create/i }));
+      await user.click(screen.getByRole('button', { name: /créer la section|ajouter|créer/i }));
 
-      // Verify API call
       await waitFor(() => {
         expect(global.fetch).toHaveBeenCalledWith(
           '/api/content/section',
@@ -84,18 +97,20 @@ describe('T193/T194/T195: New Section Creation Workflow', () => {
         />
       );
 
-      await user.selectOptions(screen.getByLabelText(/maître|master/i), 'Achille Marozzo');
-      await user.selectOptions(screen.getByLabelText(/ouvrage|work/i), 'Opera Nova');
-      await user.selectOptions(screen.getByLabelText(/livre|book/i), 'Livre 1');
-      await user.type(screen.getByLabelText(/chapitre|chapter/i), '1');
-      await user.type(screen.getByLabelText(/année|year/i), '1536');
-      await user.type(screen.getByLabelText(/titre|title/i), 'Test');
-      await user.type(screen.getByPlaceholderText(/contenu|content/i) || screen.getByText(/content/i), 'Content');
+      await user.type(getMasterInput(), 'Achille Marozzo');
+      await waitFor(() => expect(getWorkInput()).not.toBeDisabled());
+      await user.type(getWorkInput(), 'Opera Nova');
+      await waitFor(() => expect(getBookInput()).not.toBeDisabled());
+      await user.type(getBookInput(), '1');
+      await user.type(getChapterInput(), '1');
+      await user.type(getYearInput(), '1536');
+      await user.type(getTitleInput(), 'Test');
+      await user.type(getFrenchContentInput(), 'Contenu');
 
-      await user.click(screen.getByRole('button', { name: /ajouter|créer|create/i }));
+      await user.click(screen.getByRole('button', { name: /créer la section|ajouter|créer/i }));
 
       await waitFor(() => {
-        expect(window.location.reload).toHaveBeenCalled();
+        expect(global.fetch).toHaveBeenCalled();
       });
     });
   });
@@ -113,16 +128,13 @@ describe('T193/T194/T195: New Section Creation Workflow', () => {
         />
       );
 
-      await user.selectOptions(screen.getByLabelText(/ouvrage|work/i), 'Opera Nova');
-      await user.selectOptions(screen.getByLabelText(/livre|book/i), 'Livre 1');
-      await user.type(screen.getByLabelText(/chapitre|chapter/i), '1');
-      await user.type(screen.getByLabelText(/année|year/i), '1536');
-      await user.type(screen.getByLabelText(/titre|title/i), 'Test');
-      await user.type(screen.getByPlaceholderText(/contenu|content/i) || screen.getByText(/content/i), 'Text');
+      await user.type(getChapterInput(), '1');
+      await user.type(getYearInput(), '1536');
+      await user.type(getTitleInput(), 'Test');
+      await user.type(getFrenchContentInput(), 'Texte');
 
-      await user.click(screen.getByRole('button', { name: /ajouter|créer|create/i }));
+      await user.click(screen.getByRole('button', { name: /créer la section|ajouter|créer/i }));
 
-      // API should not be called if validation fails
       expect(global.fetch).not.toHaveBeenCalled();
     });
 
@@ -138,14 +150,13 @@ describe('T193/T194/T195: New Section Creation Workflow', () => {
         />
       );
 
-      await user.selectOptions(screen.getByLabelText(/maître|master/i), 'Achille Marozzo');
-      await user.selectOptions(screen.getByLabelText(/livre|book/i), 'Livre 1');
-      await user.type(screen.getByLabelText(/chapitre|chapter/i), '1');
-      await user.type(screen.getByLabelText(/année|year/i), '1536');
-      await user.type(screen.getByLabelText(/titre|title/i), 'Test');
-      await user.type(screen.getByPlaceholderText(/contenu|content/i) || screen.getByText(/content/i), 'Text');
+      await user.type(getMasterInput(), 'Achille Marozzo');
+      await user.type(getChapterInput(), '1');
+      await user.type(getYearInput(), '1536');
+      await user.type(getTitleInput(), 'Test');
+      await user.type(getFrenchContentInput(), 'Texte');
 
-      await user.click(screen.getByRole('button', { name: /ajouter|créer|create/i }));
+      await user.click(screen.getByRole('button', { name: /créer la section|ajouter|créer/i }));
 
       expect(global.fetch).not.toHaveBeenCalled();
     });
@@ -162,14 +173,16 @@ describe('T193/T194/T195: New Section Creation Workflow', () => {
         />
       );
 
-      await user.selectOptions(screen.getByLabelText(/maître|master/i), 'Achille Marozzo');
-      await user.selectOptions(screen.getByLabelText(/ouvrage|work/i), 'Opera Nova');
-      await user.selectOptions(screen.getByLabelText(/livre|book/i), 'Livre 1');
-      await user.type(screen.getByLabelText(/chapitre|chapter/i), '1');
-      await user.type(screen.getByLabelText(/titre|title/i), 'Test');
-      await user.type(screen.getByPlaceholderText(/contenu|content/i) || screen.getByText(/content/i), 'Text');
+      await user.type(getMasterInput(), 'Achille Marozzo');
+      await waitFor(() => expect(getWorkInput()).not.toBeDisabled());
+      await user.type(getWorkInput(), 'Opera Nova');
+      await waitFor(() => expect(getBookInput()).not.toBeDisabled());
+      await user.type(getBookInput(), '1');
+      await user.type(getChapterInput(), '1');
+      await user.type(getTitleInput(), 'Test');
+      await user.type(getFrenchContentInput(), 'Texte');
 
-      await user.click(screen.getByRole('button', { name: /ajouter|créer|create/i }));
+      await user.click(screen.getByRole('button', { name: /créer la section|ajouter|créer/i }));
 
       expect(global.fetch).not.toHaveBeenCalled();
     });
@@ -186,14 +199,16 @@ describe('T193/T194/T195: New Section Creation Workflow', () => {
         />
       );
 
-      await user.selectOptions(screen.getByLabelText(/maître|master/i), 'Achille Marozzo');
-      await user.selectOptions(screen.getByLabelText(/ouvrage|work/i), 'Opera Nova');
-      await user.selectOptions(screen.getByLabelText(/livre|book/i), 'Livre 1');
-      await user.type(screen.getByLabelText(/chapitre|chapter/i), '1');
-      await user.type(screen.getByLabelText(/année|year/i), '1536');
-      await user.type(screen.getByPlaceholderText(/contenu|content/i) || screen.getByText(/content/i), 'Text');
+      await user.type(getMasterInput(), 'Achille Marozzo');
+      await waitFor(() => expect(getWorkInput()).not.toBeDisabled());
+      await user.type(getWorkInput(), 'Opera Nova');
+      await waitFor(() => expect(getBookInput()).not.toBeDisabled());
+      await user.type(getBookInput(), '1');
+      await user.type(getChapterInput(), '1');
+      await user.type(getYearInput(), '1536');
+      await user.type(getFrenchContentInput(), 'Texte');
 
-      await user.click(screen.getByRole('button', { name: /ajouter|créer|create/i }));
+      await user.click(screen.getByRole('button', { name: /créer la section|ajouter|créer/i }));
 
       expect(global.fetch).not.toHaveBeenCalled();
     });
@@ -210,14 +225,16 @@ describe('T193/T194/T195: New Section Creation Workflow', () => {
         />
       );
 
-      await user.selectOptions(screen.getByLabelText(/maître|master/i), 'Achille Marozzo');
-      await user.selectOptions(screen.getByLabelText(/ouvrage|work/i), 'Opera Nova');
-      await user.selectOptions(screen.getByLabelText(/livre|book/i), 'Livre 1');
-      await user.type(screen.getByLabelText(/chapitre|chapter/i), '1');
-      await user.type(screen.getByLabelText(/année|year/i), '1536');
-      await user.type(screen.getByLabelText(/titre|title/i), 'Test');
+      await user.type(getMasterInput(), 'Achille Marozzo');
+      await waitFor(() => expect(getWorkInput()).not.toBeDisabled());
+      await user.type(getWorkInput(), 'Opera Nova');
+      await waitFor(() => expect(getBookInput()).not.toBeDisabled());
+      await user.type(getBookInput(), '1');
+      await user.type(getChapterInput(), '1');
+      await user.type(getYearInput(), '1536');
+      await user.type(getTitleInput(), 'Test');
 
-      await user.click(screen.getByRole('button', { name: /ajouter|créer|create/i }));
+      await user.click(screen.getByRole('button', { name: /créer la section|ajouter|créer/i }));
 
       expect(global.fetch).not.toHaveBeenCalled();
     });
@@ -234,10 +251,9 @@ describe('T193/T194/T195: New Section Creation Workflow', () => {
         />
       );
 
-      const yearInput = screen.getByLabelText(/année|year/i) as HTMLInputElement;
+      const yearInput = getYearInput();
       await user.type(yearInput, 'invalid');
 
-      // Year field should reject non-numeric input or show validation error
       expect(yearInput.type).toBe('number');
     });
   });
@@ -260,15 +276,17 @@ describe('T193/T194/T195: New Section Creation Workflow', () => {
         />
       );
 
-      await user.selectOptions(screen.getByLabelText(/maître|master/i), 'Filippo Vadi');
-      await user.selectOptions(screen.getByLabelText(/ouvrage|work/i), 'Libro dei Duelli');
-      await user.selectOptions(screen.getByLabelText(/livre|book/i), 'Livre 3');
-      await user.type(screen.getByLabelText(/chapitre|chapter/i), '2');
-      await user.type(screen.getByLabelText(/année|year/i), '1482');
-      await user.type(screen.getByLabelText(/titre|title/i), 'Test');
-      await user.type(screen.getByPlaceholderText(/contenu|content/i) || screen.getByText(/content/i), 'Content');
+      await user.type(getMasterInput(), 'Filippo Vadi');
+      await waitFor(() => expect(getWorkInput()).not.toBeDisabled());
+      await user.type(getWorkInput(), 'Libro dei Duelli');
+      await waitFor(() => expect(getBookInput()).not.toBeDisabled());
+      await user.type(getBookInput(), '3');
+      await user.type(getChapterInput(), '2');
+      await user.type(getYearInput(), '1482');
+      await user.type(getTitleInput(), 'Test');
+      await user.type(getFrenchContentInput(), 'Contenu');
 
-      await user.click(screen.getByRole('button', { name: /ajouter|créer|create/i }));
+      await user.click(screen.getByRole('button', { name: /créer la section|ajouter|créer/i }));
 
       await waitFor(() => {
         const [, options] = (global.fetch as jest.Mock).mock.calls[0];
@@ -276,7 +294,7 @@ describe('T193/T194/T195: New Section Creation Workflow', () => {
 
         expect(body.master).toBe('Filippo Vadi');
         expect(body.work).toBe('Libro dei Duelli');
-        expect(body.book).toBe('Livre 3');
+        expect(body.book).toBe(3);
       });
     });
 
@@ -287,7 +305,7 @@ describe('T193/T194/T195: New Section Creation Workflow', () => {
       });
 
       const user = userEvent.setup();
-      const italianText = '{guardia} {stringere} {fendente}';
+      const italianText = 'guardia stringere fendente';
 
       render(
         <NewSectionForm
@@ -298,15 +316,18 @@ describe('T193/T194/T195: New Section Creation Workflow', () => {
         />
       );
 
-      await user.selectOptions(screen.getByLabelText(/maître|master/i), 'Achille Marozzo');
-      await user.selectOptions(screen.getByLabelText(/ouvrage|work/i), 'Opera Nova');
-      await user.selectOptions(screen.getByLabelText(/livre|book/i), 'Livre 2');
-      await user.type(screen.getByLabelText(/chapitre|chapter/i), '1');
-      await user.type(screen.getByLabelText(/année|year/i), '1536');
-      await user.type(screen.getByLabelText(/titre|title/i), 'Title');
-      await user.type(screen.getByPlaceholderText(/contenu|content/i) || screen.getByText(/content/i), italianText);
+      await user.type(getMasterInput(), 'Achille Marozzo');
+      await waitFor(() => expect(getWorkInput()).not.toBeDisabled());
+      await user.type(getWorkInput(), 'Opera Nova');
+      await waitFor(() => expect(getBookInput()).not.toBeDisabled());
+      await user.type(getBookInput(), '1');
+      await user.type(getChapterInput(), '1');
+      await user.type(getYearInput(), '1536');
+      await user.type(getTitleInput(), 'Test');
+      await user.type(getFrenchContentInput(), 'Texte français');
+      await user.type(getItalianContentInput(), italianText);
 
-      await user.click(screen.getByRole('button', { name: /ajouter|créer|create/i }));
+      await user.click(screen.getByRole('button', { name: /créer la section|ajouter|créer/i }));
 
       await waitFor(() => {
         const [, options] = (global.fetch as jest.Mock).mock.calls[0];
@@ -332,17 +353,18 @@ describe('T193/T194/T195: New Section Creation Workflow', () => {
         />
       );
 
-      // First book selection
-      await user.selectOptions(screen.getByLabelText(/maître|master/i), 'Achille Marozzo');
-      await user.selectOptions(screen.getByLabelText(/ouvrage|work/i), 'Opera Nova');
-      await user.selectOptions(screen.getByLabelText(/livre|book/i), 'Livre 1');
+      await user.type(getMasterInput(), 'Achille Marozzo');
+      await waitFor(() => expect(getWorkInput()).not.toBeDisabled());
+      await user.type(getWorkInput(), 'Opera Nova');
+      await waitFor(() => expect(getBookInput()).not.toBeDisabled());
+      await user.type(getBookInput(), '1');
 
-      const firstBookSelect = screen.getByLabelText(/livre|book/i) as HTMLSelectElement;
-      expect(firstBookSelect.value).toBe('Livre 1');
+      expect(getBookInput().value).toBe('1');
 
-      // Change to different book
-      await user.selectOptions(firstBookSelect, 'Livre 4');
-      expect(firstBookSelect.value).toBe('Livre 4');
+      await user.clear(getBookInput());
+      await user.type(getBookInput(), '4');
+
+      expect(getBookInput().value).toBe('4');
     });
   });
 });

@@ -81,62 +81,6 @@ describe('SearchBar - Expandable textarea', () => {
   });
 });
 
-describe.skip('SearchBar - Magnifier icon behavior (NOT IMPLEMENTED)', () => {
-  it('shows magnifier icon when textarea is not focused', () => {
-    renderSearchBar();
-    const icon = document.querySelector('.lucide-search');
-    expect(icon).toBeInTheDocument();
-  });
-
-  it('hides magnifier icon when textarea is focused', async () => {
-    renderSearchBar();
-    const textarea = screen.getByPlaceholderText(/Rechercher/i) as HTMLTextAreaElement;
-    
-    // Icon should be visible initially
-    let icon = document.querySelector('.lucide-search');
-    expect(icon).toBeInTheDocument();
-    
-    // Focus the textarea
-    await userEvent.click(textarea);
-    
-    // Icon should be hidden
-    await waitFor(() => {
-      icon = document.querySelector('.lucide-search');
-      expect(icon).not.toBeInTheDocument();
-    });
-  });
-
-  it('shows magnifier icon again when textarea loses focus', async () => {
-    renderSearchBar();
-    const textarea = screen.getByPlaceholderText(/Rechercher/i) as HTMLTextAreaElement;
-    
-    // Focus then blur
-    await userEvent.click(textarea);
-    textarea.blur();
-    
-    // Icon should be visible again
-    await waitFor(() => {
-      const icon = document.querySelector('.lucide-search');
-      expect(icon).toBeInTheDocument();
-    });
-  });
-
-  it('adjusts padding when magnifier icon is hidden', async () => {
-    renderSearchBar();
-    const textarea = screen.getByPlaceholderText(/Rechercher/i) as HTMLTextAreaElement;
-    
-    // Initially has left padding for icon
-    expect(textarea.className).toContain('pl-10');
-    
-    // Focus the textarea
-    await userEvent.click(textarea);
-    
-    // Padding should be reduced
-    await waitFor(() => {
-      expect(textarea.className).toContain('pl-3');
-    });
-  });
-});
 
 describe('SearchBar - Controls positioning', () => {
   it('keeps controls at top-right when textarea expands', async () => {

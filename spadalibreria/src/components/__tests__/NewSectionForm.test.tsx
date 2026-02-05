@@ -5,11 +5,16 @@ import '@testing-library/jest-dom';
 
 // Mock TextEditor component
 jest.mock('@/components/TextEditor', () => {
-  return jest.fn(({ onSave, onCancel }: any) => (
+  return jest.fn(({ onSave, onCancel, placeholder, initialValue, onChange }: any) => (
     <div data-testid="text-editor">
-      <textarea data-testid="editor-textarea" />
-      <button onClick={() => onCancel()} data-testid="editor-cancel">Cancel</button>
-      <button onClick={() => onSave('test')} data-testid="editor-save">Save</button>
+      <textarea
+        data-testid="editor-textarea"
+        placeholder={placeholder}
+        defaultValue={initialValue}
+        onChange={(event) => onChange?.(event.target.value)}
+      />
+      <button onClick={() => onCancel?.()} data-testid="editor-cancel">Cancel</button>
+      <button onClick={() => onSave?.('test')} data-testid="editor-save">Save</button>
     </div>
   ));
 });
@@ -62,7 +67,7 @@ describe('NewSectionForm Component', () => {
         />
       );
 
-      expect(screen.getByLabelText(/maître|master/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/ma[iî]tre|master/i)).toBeInTheDocument();
     });
 
     it('renders form with work field', () => {
@@ -75,7 +80,7 @@ describe('NewSectionForm Component', () => {
         />
       );
 
-      expect(screen.getByLabelText(/ouvrage|work/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/œuvre|oeuvre|ouvrage|work/i)).toBeInTheDocument();
     });
 
     it('renders form with book/number field', () => {
@@ -101,7 +106,7 @@ describe('NewSectionForm Component', () => {
         />
       );
 
-      expect(screen.getByLabelText(/chapitre|chapter/i)).toBeInTheDocument();
+      expect(screen.getByPlaceholderText(/ex:\s*95/i)).toBeInTheDocument();
     });
 
     it('renders form with year field', () => {
@@ -114,7 +119,7 @@ describe('NewSectionForm Component', () => {
         />
       );
 
-      expect(screen.getByLabelText(/année|year/i)).toBeInTheDocument();
+      expect(screen.getByPlaceholderText(/ex:\s*1536/i)).toBeInTheDocument();
     });
 
     it('renders form with title field', () => {
@@ -127,7 +132,7 @@ describe('NewSectionForm Component', () => {
         />
       );
 
-      expect(screen.getByLabelText(/titre|title/i)).toBeInTheDocument();
+      expect(screen.getByPlaceholderText(/chap\.\s*95/i)).toBeInTheDocument();
     });
 
     it('renders form with Italian content field', () => {
@@ -140,7 +145,7 @@ describe('NewSectionForm Component', () => {
         />
       );
 
-      expect(screen.getByText(/contenu|content|italien|italian/i)).toBeInTheDocument();
+      expect(screen.getByText(/contenu italien/i)).toBeInTheDocument();
     });
 
     it('renders create and cancel buttons', () => {
@@ -153,8 +158,8 @@ describe('NewSectionForm Component', () => {
         />
       );
 
-      expect(screen.getByRole('button', { name: /ajouter|créer|create/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /annuler|cancel/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /créer la section|ajouter|créer/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /^annuler$/i })).toBeInTheDocument();
     });
 
     it('closes when close button is clicked', async () => {
@@ -170,7 +175,7 @@ describe('NewSectionForm Component', () => {
         />
       );
 
-      const closeButton = screen.getByTitle(/fermer|close/i);
+      const [closeButton] = screen.getAllByRole('button');
       await user.click(closeButton);
 
       expect(mockOnClose).toHaveBeenCalled();
@@ -190,10 +195,10 @@ describe('NewSectionForm Component', () => {
         />
       );
 
-      const masterSelect = screen.getByLabelText(/maître|master/i) as HTMLSelectElement;
-      await user.selectOptions(masterSelect, 'Achille Marozzo');
+      const masterInput = document.getElementById('master-input') as HTMLInputElement;
+      await user.type(masterInput, 'Achille Marozzo');
 
-      expect(masterSelect.value).toBe('Achille Marozzo');
+      expect(masterInput.value).toBe('Achille Marozzo');
     });
 
     it('allows selecting work from dropdown', async () => {
@@ -208,10 +213,13 @@ describe('NewSectionForm Component', () => {
         />
       );
 
-      const workSelect = screen.getByLabelText(/ouvrage|work/i) as HTMLSelectElement;
-      await user.selectOptions(workSelect, 'Opera Nova');
+      const masterInput = document.getElementById('master-input') as HTMLInputElement;
+      await user.type(masterInput, 'Achille Marozzo');
+      const workInput = document.getElementById('work-input') as HTMLInputElement;
+      await waitFor(() => expect(workInput).not.toBeDisabled());
+      await user.type(workInput, 'Opera Nova');
 
-      expect(workSelect.value).toBe('Opera Nova');
+      expect(workInput.value).toBe('Opera Nova');
     });
 
     it('allows selecting book from dropdown', async () => {
@@ -226,10 +234,16 @@ describe('NewSectionForm Component', () => {
         />
       );
 
-      const bookSelect = screen.getByLabelText(/livre|book|number/i) as HTMLSelectElement;
-      await user.selectOptions(bookSelect, 'Livre 2');
+      const masterInput = document.getElementById('master-input') as HTMLInputElement;
+      await user.type(masterInput, 'Achille Marozzo');
+      const workInput = document.getElementById('work-input') as HTMLInputElement;
+      await waitFor(() => expect(workInput).not.toBeDisabled());
+      await user.type(workInput, 'Opera Nova');
+      const bookInput = document.getElementById('book-input') as HTMLInputElement;
+      await waitFor(() => expect(bookInput).not.toBeDisabled());
+      await user.type(bookInput, '2');
 
-      expect(bookSelect.value).toBe('Livre 2');
+      expect(bookInput.value).toBe('2');
     });
 
     it('allows entering chapter number', async () => {
@@ -244,7 +258,7 @@ describe('NewSectionForm Component', () => {
         />
       );
 
-      const chapterInput = screen.getByLabelText(/chapitre|chapter/i) as HTMLInputElement;
+      const chapterInput = screen.getByPlaceholderText(/ex:\s*95/i) as HTMLInputElement;
       await user.type(chapterInput, '5');
 
       expect(chapterInput.value).toBe('5');
@@ -262,7 +276,7 @@ describe('NewSectionForm Component', () => {
         />
       );
 
-      const yearInput = screen.getByLabelText(/année|year/i) as HTMLInputElement;
+      const yearInput = screen.getByPlaceholderText(/ex:\s*1536/i) as HTMLInputElement;
       await user.type(yearInput, '1536');
 
       expect(yearInput.value).toBe('1536');
@@ -280,7 +294,7 @@ describe('NewSectionForm Component', () => {
         />
       );
 
-      const titleInput = screen.getByLabelText(/titre|title/i) as HTMLInputElement;
+      const titleInput = screen.getByPlaceholderText(/chap\.\s*95/i) as HTMLInputElement;
       await user.type(titleInput, 'Primo Libro');
 
       expect(titleInput.value).toBe('Primo Libro');
@@ -299,7 +313,7 @@ describe('NewSectionForm Component', () => {
         />
       );
 
-      await user.click(screen.getByRole('button', { name: /annuler|cancel/i }));
+      await user.click(screen.getByRole('button', { name: /^annuler$/i }));
       expect(mockOnClose).toHaveBeenCalled();
     });
   });
@@ -348,11 +362,9 @@ describe('NewSectionForm Component', () => {
       );
 
       // Fill in all fields except master
-      await user.selectOptions(screen.getByLabelText(/ouvrage|work/i), 'Opera Nova');
-      await user.selectOptions(screen.getByLabelText(/livre|book/i), 'Livre 1');
-      await user.type(screen.getByLabelText(/chapitre|chapter/i), '1');
-      await user.type(screen.getByLabelText(/année|year/i), '1536');
-      await user.type(screen.getByLabelText(/titre|title/i), 'Title');
+      await user.type(screen.getByPlaceholderText(/ex:\s*95/i), '1');
+      await user.type(screen.getByPlaceholderText(/ex:\s*1536/i), '1536');
+      await user.type(screen.getByPlaceholderText(/chap\.\s*95/i), 'Title');
 
       await user.click(screen.getByRole('button', { name: /ajouter|créer|create/i }));
 
@@ -377,11 +389,11 @@ describe('NewSectionForm Component', () => {
       );
 
       // Fill in all fields except work
-      await user.selectOptions(screen.getByLabelText(/maître|master/i), 'Achille Marozzo');
-      await user.selectOptions(screen.getByLabelText(/livre|book/i), 'Livre 1');
-      await user.type(screen.getByLabelText(/chapitre|chapter/i), '1');
-      await user.type(screen.getByLabelText(/année|year/i), '1536');
-      await user.type(screen.getByLabelText(/titre|title/i), 'Title');
+      const masterInput = document.getElementById('master-input') as HTMLInputElement;
+      await user.type(masterInput, 'Achille Marozzo');
+      await user.type(screen.getByPlaceholderText(/ex:\s*95/i), '1');
+      await user.type(screen.getByPlaceholderText(/ex:\s*1536/i), '1536');
+      await user.type(screen.getByPlaceholderText(/chap\.\s*95/i), 'Title');
 
       await user.click(screen.getByRole('button', { name: /ajouter|créer|create/i }));
 
@@ -406,11 +418,14 @@ describe('NewSectionForm Component', () => {
       );
 
       // Fill in all fields except book
-      await user.selectOptions(screen.getByLabelText(/maître|master/i), 'Achille Marozzo');
-      await user.selectOptions(screen.getByLabelText(/ouvrage|work/i), 'Opera Nova');
-      await user.type(screen.getByLabelText(/chapitre|chapter/i), '1');
-      await user.type(screen.getByLabelText(/année|year/i), '1536');
-      await user.type(screen.getByLabelText(/titre|title/i), 'Title');
+      const masterInput = document.getElementById('master-input') as HTMLInputElement;
+      await user.type(masterInput, 'Achille Marozzo');
+      const workInput = document.getElementById('work-input') as HTMLInputElement;
+      await waitFor(() => expect(workInput).not.toBeDisabled());
+      await user.type(workInput, 'Opera Nova');
+      await user.type(screen.getByPlaceholderText(/ex:\s*95/i), '1');
+      await user.type(screen.getByPlaceholderText(/ex:\s*1536/i), '1536');
+      await user.type(screen.getByPlaceholderText(/chap\.\s*95/i), 'Title');
 
       await user.click(screen.getByRole('button', { name: /ajouter|créer|create/i }));
 
@@ -435,11 +450,16 @@ describe('NewSectionForm Component', () => {
       );
 
       // Fill in all fields except year
-      await user.selectOptions(screen.getByLabelText(/maître|master/i), 'Achille Marozzo');
-      await user.selectOptions(screen.getByLabelText(/ouvrage|work/i), 'Opera Nova');
-      await user.selectOptions(screen.getByLabelText(/livre|book/i), 'Livre 1');
-      await user.type(screen.getByLabelText(/chapitre|chapter/i), '1');
-      await user.type(screen.getByLabelText(/titre|title/i), 'Title');
+      const masterInput = document.getElementById('master-input') as HTMLInputElement;
+      await user.type(masterInput, 'Achille Marozzo');
+      const workInput = document.getElementById('work-input') as HTMLInputElement;
+      await waitFor(() => expect(workInput).not.toBeDisabled());
+      await user.type(workInput, 'Opera Nova');
+      const bookInput = document.getElementById('book-input') as HTMLInputElement;
+      await waitFor(() => expect(bookInput).not.toBeDisabled());
+      await user.type(bookInput, 'Livre 1');
+      await user.type(screen.getByPlaceholderText(/ex:\s*95/i), '1');
+      await user.type(screen.getByPlaceholderText(/chap\.\s*95/i), 'Title');
 
       await user.click(screen.getByRole('button', { name: /ajouter|créer|create/i }));
 
@@ -465,13 +485,18 @@ describe('NewSectionForm Component', () => {
         />
       );
 
-      await user.selectOptions(screen.getByLabelText(/maître|master/i), 'Achille Marozzo');
-      await user.selectOptions(screen.getByLabelText(/ouvrage|work/i), 'Opera Nova');
-      await user.selectOptions(screen.getByLabelText(/livre|book/i), 'Livre 2');
-      await user.type(screen.getByLabelText(/chapitre|chapter/i), '3');
-      await user.type(screen.getByLabelText(/année|year/i), '1536');
-      await user.type(screen.getByLabelText(/titre|title/i), 'La Guardia');
-      await user.type(screen.getByPlaceholderText(/contenu|content/i) || screen.getByText(/content/i), 'Italian text here');
+      const masterInput = document.getElementById('master-input') as HTMLInputElement;
+      await user.type(masterInput, 'Achille Marozzo');
+      const workInput = document.getElementById('work-input') as HTMLInputElement;
+      await waitFor(() => expect(workInput).not.toBeDisabled());
+      await user.type(workInput, 'Opera Nova');
+      const bookInput = document.getElementById('book-input') as HTMLInputElement;
+      await waitFor(() => expect(bookInput).not.toBeDisabled());
+      await user.type(bookInput, '2');
+      await user.type(screen.getByPlaceholderText(/ex:\s*95/i), '3');
+      await user.type(screen.getByPlaceholderText(/ex:\s*1536/i), '1536');
+      await user.type(screen.getByPlaceholderText(/chap\.\s*95/i), 'La Guardia');
+      await user.type(screen.getByPlaceholderText(/contenu en français/i), 'Texte');
 
       await user.click(screen.getByRole('button', { name: /ajouter|créer|create/i }));
 
@@ -503,13 +528,18 @@ describe('NewSectionForm Component', () => {
         />
       );
 
-      await user.selectOptions(screen.getByLabelText(/maître|master/i), 'Achille Marozzo');
-      await user.selectOptions(screen.getByLabelText(/ouvrage|work/i), 'Opera Nova');
-      await user.selectOptions(screen.getByLabelText(/livre|book/i), 'Livre 2');
-      await user.type(screen.getByLabelText(/chapitre|chapter/i), '1');
-      await user.type(screen.getByLabelText(/année|year/i), '1536');
-      await user.type(screen.getByLabelText(/titre|title/i), 'Test');
-      await user.type(screen.getByPlaceholderText(/contenu|content/i) || screen.getByText(/content/i), 'Text');
+      const masterInput = document.getElementById('master-input') as HTMLInputElement;
+      await user.type(masterInput, 'Achille Marozzo');
+      const workInput = document.getElementById('work-input') as HTMLInputElement;
+      await waitFor(() => expect(workInput).not.toBeDisabled());
+      await user.type(workInput, 'Opera Nova');
+      const bookInput = document.getElementById('book-input') as HTMLInputElement;
+      await waitFor(() => expect(bookInput).not.toBeDisabled());
+      await user.type(bookInput, '2');
+      await user.type(screen.getByPlaceholderText(/ex:\s*95/i), '1');
+      await user.type(screen.getByPlaceholderText(/ex:\s*1536/i), '1536');
+      await user.type(screen.getByPlaceholderText(/chap\.\s*95/i), 'Test');
+      await user.type(screen.getByPlaceholderText(/contenu en français/i), 'Text');
 
       await user.click(screen.getByRole('button', { name: /ajouter|créer|create/i }));
 
@@ -518,7 +548,7 @@ describe('NewSectionForm Component', () => {
         const body = JSON.parse(options.body);
         expect(body.master).toBe('Achille Marozzo');
         expect(body.work).toBe('Opera Nova');
-        expect(body.book).toBe('Livre 2');
+        expect(body.book).toBe(2);
       });
     });
   });

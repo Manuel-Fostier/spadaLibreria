@@ -398,22 +398,22 @@
 
 #### glossary-create-section-integration.test.tsx
 
-- [ ] T166 [P] Analyse glossary-create-section-integration.test.tsx: Identify all `selectOptions()` calls and map failing assertions in `src/__tests__/glossary-create-section-integration.test.tsx` (11 tests, ~20 failing)
-- [ ] T167 [P] Fix glossary-create-section-integration.test.tsx: Replace all `selectOptions()` calls with `user.type()` + `user.clear()` pattern
+- [X] T166 [P] Analyse glossary-create-section-integration.test.tsx: Identify all `selectOptions()` calls and map failing assertions in `src/__tests__/glossary-create-section-integration.test.tsx` (11 tests, ~20 failing)
+- [X] T167 [P] Fix glossary-create-section-integration.test.tsx: Replace all `selectOptions()` calls with `user.type()` + `user.clear()` pattern
 
 #### NewSectionForm.test.tsx
 
-- [ ] T168 [P] Analyse NewSectionForm.test.tsx: Identify all `selectOptions()` calls and map failing assertions in `src/components/__tests__/NewSectionForm.test.tsx` (34 tests, ~31 failing)
-- [ ] T169 [P] Fix NewSectionForm.test.tsx: Replace all `selectOptions()` calls with `user.type()` + `user.clear()` pattern
+- [X] T168 [P] Analyse NewSectionForm.test.tsx: Identify all `selectOptions()` calls and map failing assertions in `src/components/__tests__/NewSectionForm.test.tsx` (34 tests, ~31 failing)
+- [X] T169 [P] Fix NewSectionForm.test.tsx: Replace all `selectOptions()` calls with `user.type()` + `user.clear()` pattern
 
 #### NewTermForm.test.tsx
 
-- [ ] T181 [P] Analyse NewTermForm.test.tsx: Identify root cause of test failures in `src/components/__tests__/NewTermForm.test.tsx` (category autocomplete field - confirm if selectOptions() or different issue)
-- [ ] T182 [P] Fix NewTermForm.test.tsx: Apply appropriate fix (replace selectOptions() if applicable, or address different issue)
+- [X] T181 [P] Analyse NewTermForm.test.tsx: Identify root cause of test failures in `src/components/__tests__/NewTermForm.test.tsx` (category autocomplete field - confirm if selectOptions() or different issue)
+- [X] T182 [P] Fix NewTermForm.test.tsx: Apply appropriate fix (replace selectOptions() if applicable, or address different issue)
 
 #### Verification
 
-- [ ] T183 Verify all test suites pass: Run full test suite and confirm 38+ test suites passing
+- [X] T183 Verify all test suites pass: Run full test suite and confirm 38+ test suites passing
 
 ---
 

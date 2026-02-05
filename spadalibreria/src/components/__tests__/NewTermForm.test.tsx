@@ -5,17 +5,24 @@ import '@testing-library/jest-dom';
 
 // Mock TextEditor component
 jest.mock('@/components/TextEditor', () => {
-  return jest.fn(({ initialValue, onSave, onCancel }: any) => (
-    <div data-testid="text-editor">
-      <textarea
-        value={initialValue}
-        onChange={(e) => onSave(e.target.value)}
-        data-testid="editor-textarea"
-      />
-      <button onClick={() => onCancel()} data-testid="editor-cancel">Cancel</button>
-      <button onClick={() => onSave(initialValue)} data-testid="editor-save">Save</button>
-    </div>
-  ));
+  const React = require('react');
+
+  return jest.fn(({ initialValue, onSave, onCancel, placeholder }: any) => {
+    const [value, setValue] = React.useState(initialValue ?? '');
+
+    return (
+      <div data-testid="text-editor">
+        <textarea
+          value={value}
+          placeholder={placeholder}
+          onChange={(event) => setValue(event.target.value)}
+          data-testid="editor-textarea"
+        />
+        <button onClick={() => onCancel?.()} data-testid="editor-cancel">Cancel</button>
+        <button onClick={() => onSave?.(value)} data-testid="editor-save">Save</button>
+      </div>
+    );
+  });
 });
 
 import NewTermForm from '@/components/NewTermForm';
@@ -94,7 +101,9 @@ describe('NewTermForm Component', () => {
       await user.type(screen.getByLabelText(/catégorie/i), 'Coups et Techniques');
       await user.type(screen.getByLabelText(/type/i), 'Frappe');
       await user.type(screen.getByLabelText(/terme/i), 'Punta');
-      await user.type(screen.getByPlaceholderText(/cliquez pour éditer/i), 'Une frappe');
+      await user.click(screen.getByPlaceholderText(/cliquez pour éditer/i));
+      await user.type(screen.getByPlaceholderText(/entrez la définition en français/i), 'Une frappe');
+      await user.click(screen.getByTestId('editor-save'));
 
       expect((screen.getByLabelText(/catégorie/i) as HTMLInputElement).value).toBe('Coups et Techniques');
       expect((screen.getByLabelText(/type/i) as HTMLInputElement).value).toBe('Frappe');
@@ -152,7 +161,9 @@ describe('NewTermForm Component', () => {
       await user.type(screen.getByLabelText(/catégorie/i), 'Coups et Techniques');
       await user.type(screen.getByLabelText(/type/i), 'Frappe');
       await user.type(screen.getByLabelText(/terme/i), 'Punta');
-      await user.type(screen.getByPlaceholderText(/cliquez pour éditer/i), 'Definition');
+      await user.click(screen.getByPlaceholderText(/cliquez pour éditer/i));
+      await user.type(screen.getByPlaceholderText(/entrez la définition en français/i), 'Definition');
+      await user.click(screen.getByTestId('editor-save'));
 
       await user.click(screen.getByRole('button', { name: /créer le terme/i }));
 
@@ -185,7 +196,9 @@ describe('NewTermForm Component', () => {
       await user.type(screen.getByLabelText(/catégorie/i), 'Coups et Techniques');
       await user.type(screen.getByLabelText(/type/i), 'Frappe de taille');
       await user.type(screen.getByLabelText(/terme/i), 'Mandritto');
-      await user.type(screen.getByPlaceholderText(/cliquez pour éditer/i), 'A sword strike from high to low');
+      await user.click(screen.getByPlaceholderText(/cliquez pour éditer/i));
+      await user.type(screen.getByPlaceholderText(/entrez la définition en français/i), 'A sword strike from high to low');
+      await user.click(screen.getByTestId('editor-save'));
 
       await user.click(screen.getByRole('button', { name: /créer le terme/i }));
 
@@ -221,7 +234,9 @@ describe('NewTermForm Component', () => {
       await user.type(screen.getByLabelText(/catégorie/i), 'Coups et Techniques');
       await user.type(screen.getByLabelText(/type/i), 'Frappe');
       await user.type(screen.getByLabelText(/terme/i), 'Mandritto');
-      await user.type(screen.getByPlaceholderText(/cliquez pour éditer/i), 'Definition');
+      await user.click(screen.getByPlaceholderText(/cliquez pour éditer/i));
+      await user.type(screen.getByPlaceholderText(/entrez la définition en français/i), 'Definition');
+      await user.click(screen.getByTestId('editor-save'));
 
       await user.click(screen.getByRole('button', { name: /créer le terme/i }));
 
@@ -250,7 +265,9 @@ describe('NewTermForm Component', () => {
       await user.type(screen.getByLabelText(/catégorie/i), 'Coups et Techniques');
       await user.type(screen.getByLabelText(/type/i), 'Frappe');
       await user.type(screen.getByLabelText(/terme/i), 'Mandritto');
-      await user.type(screen.getByPlaceholderText(/cliquez pour éditer/i), 'Definition');
+      await user.click(screen.getByPlaceholderText(/cliquez pour éditer/i));
+      await user.type(screen.getByPlaceholderText(/entrez la définition en français/i), 'Definition');
+      await user.click(screen.getByTestId('editor-save'));
 
       await user.click(screen.getByRole('button', { name: /créer le terme/i }));
 
