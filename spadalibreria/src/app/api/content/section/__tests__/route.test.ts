@@ -90,6 +90,74 @@ describe('/api/content/section POST endpoint', () => {
     expect(mockedFs.writeFileSync).toHaveBeenCalled();
   });
 
+  it('should format decimal chapters in section ids', async () => {
+    const requestBody = {
+      master: 'Achille Marozzo',
+      work: 'Opera Nova',
+      book: 3,
+      chapter: 161.3,
+      chapter_raw: '161.3',
+      year: 1536,
+      title: 'Test Chapter',
+      content: {
+        fr: 'Contenu test en français'
+      }
+    };
+
+    mockedFs.existsSync.mockReturnValue(true);
+    mockedFs.readdirSync.mockReturnValue(['achille_marozzo_opera_nova_livre3.yaml'] as any);
+    mockedFs.readFileSync.mockReturnValue(yaml.dump([]));
+    mockedFs.writeFileSync.mockImplementation(() => {});
+
+    (NextRequest as jest.Mock).mockImplementation(() => ({
+      json: async () => requestBody
+    }));
+
+    const request = new NextRequest('http://localhost/api/content/section', {
+      method: 'POST'
+    });
+
+    const response = await POST(request);
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data.sectionId).toBe('achille_marozzo_opera_nova_l3_c161_3');
+  });
+
+  it('should preserve trailing zeros in section ids', async () => {
+    const requestBody = {
+      master: 'Achille Marozzo',
+      work: 'Opera Nova',
+      book: 3,
+      chapter: 161.1,
+      chapter_raw: '161.10',
+      year: 1536,
+      title: 'Test Chapter',
+      content: {
+        fr: 'Contenu test en français'
+      }
+    };
+
+    mockedFs.existsSync.mockReturnValue(true);
+    mockedFs.readdirSync.mockReturnValue(['achille_marozzo_opera_nova_livre3.yaml'] as any);
+    mockedFs.readFileSync.mockReturnValue(yaml.dump([]));
+    mockedFs.writeFileSync.mockImplementation(() => {});
+
+    (NextRequest as jest.Mock).mockImplementation(() => ({
+      json: async () => requestBody
+    }));
+
+    const request = new NextRequest('http://localhost/api/content/section', {
+      method: 'POST'
+    });
+
+    const response = await POST(request);
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data.sectionId).toBe('achille_marozzo_opera_nova_l3_c161_10');
+  });
+
   it('should handle accents in master and work names', async () => {
     const requestBody = {
       master: 'Achille Marozzo',

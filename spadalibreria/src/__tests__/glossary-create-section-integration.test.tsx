@@ -336,6 +336,43 @@ describe('T193/T194/T195: New Section Creation Workflow', () => {
       });
     });
 
+    it('supports decimal chapter values in request body', async () => {
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        json: async () => ({ success: true }),
+      });
+
+      const user = userEvent.setup();
+
+      render(
+        <NewSectionForm
+          onClose={jest.fn()}
+          masters={mockMasters}
+          works={mockWorks}
+          books={mockBooks}
+        />
+      );
+
+      await user.type(getMasterInput(), 'Achille Marozzo');
+      await waitFor(() => expect(getWorkInput()).not.toBeDisabled());
+      await user.type(getWorkInput(), 'Opera Nova');
+      await waitFor(() => expect(getBookInput()).not.toBeDisabled());
+      await user.type(getBookInput(), '3');
+      await user.type(getChapterInput(), '161.3');
+      await user.type(getYearInput(), '1536');
+      await user.type(getTitleInput(), 'Test');
+      await user.type(getFrenchContentInput(), 'Texte');
+
+      await user.click(screen.getByRole('button', { name: /créer la section|ajouter|créer/i }));
+
+      await waitFor(() => {
+        const [, options] = (global.fetch as jest.Mock).mock.calls[0];
+        const body = JSON.parse(options.body);
+        expect(body.chapter).toBe(161.3);
+        expect(body.chapter_raw).toBe('161.3');
+      });
+    });
+
     it('allows selecting different book numbers for same work', async () => {
       (global.fetch as jest.Mock).mockResolvedValue({
         ok: true,

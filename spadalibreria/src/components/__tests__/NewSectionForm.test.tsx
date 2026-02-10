@@ -511,6 +511,87 @@ describe('NewSectionForm Component', () => {
       });
     });
 
+    it('sends decimal chapter values as numbers', async () => {
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        json: async () => ({ success: true }),
+      });
+
+      const user = userEvent.setup();
+
+      render(
+        <NewSectionForm
+          onClose={jest.fn()}
+          masters={mockMasters}
+          works={mockWorks}
+          books={mockBooks}
+        />
+      );
+
+      const masterInput = document.getElementById('master-input') as HTMLInputElement;
+      await user.type(masterInput, 'Achille Marozzo');
+      const workInput = document.getElementById('work-input') as HTMLInputElement;
+      await waitFor(() => expect(workInput).not.toBeDisabled());
+      await user.type(workInput, 'Opera Nova');
+      const bookInput = document.getElementById('book-input') as HTMLInputElement;
+      await waitFor(() => expect(bookInput).not.toBeDisabled());
+      await user.type(bookInput, '3');
+      await user.type(screen.getByPlaceholderText(/ex:\s*95/i), '161.3');
+      await user.type(screen.getByPlaceholderText(/ex:\s*1536/i), '1536');
+      await user.type(screen.getByPlaceholderText(/chap\.\s*95/i), 'Test');
+      await user.type(screen.getByPlaceholderText(/contenu en français/i), 'Texte');
+
+      await user.click(screen.getByRole('button', { name: /ajouter|créer|create/i }));
+
+      await waitFor(() => {
+        const [, options] = (global.fetch as jest.Mock).mock.calls[0];
+        const body = JSON.parse(options.body);
+        expect(body.chapter).toBe(161.3);
+        expect(body.chapter_raw).toBe('161.3');
+      });
+    });
+
+    it('preserves trailing zeros in chapter raw input', async () => {
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        json: async () => ({ success: true }),
+      });
+
+      const user = userEvent.setup();
+
+      render(
+        <NewSectionForm
+          onClose={jest.fn()}
+          masters={mockMasters}
+          works={mockWorks}
+          books={mockBooks}
+        />
+      );
+
+      const masterInput = document.getElementById('master-input') as HTMLInputElement;
+      await user.type(masterInput, 'Achille Marozzo');
+      const workInput = document.getElementById('work-input') as HTMLInputElement;
+      await waitFor(() => expect(workInput).not.toBeDisabled());
+      await user.type(workInput, 'Opera Nova');
+      const bookInput = document.getElementById('book-input') as HTMLInputElement;
+      await waitFor(() => expect(bookInput).not.toBeDisabled());
+      await user.type(bookInput, '3');
+      await user.type(screen.getByPlaceholderText(/ex:\s*95/i), '161.10');
+      await user.type(screen.getByPlaceholderText(/ex:\s*1536/i), '1536');
+      await user.type(screen.getByPlaceholderText(/chap\.\s*95/i), 'Test');
+      await user.type(screen.getByPlaceholderText(/contenu en français/i), 'Texte');
+
+      await user.click(screen.getByRole('button', { name: /ajouter|créer|create/i }));
+
+      await waitFor(() => {
+        const [, options] = (global.fetch as jest.Mock).mock.calls[0];
+        const body = JSON.parse(options.body);
+        // TODO: This is expected to fail until chapter preserves trailing zeros in numeric form.
+        expect(body.chapter).toBe(161.10);
+        expect(body.chapter_raw).toBe('161.10');
+      });
+    });
+
     it('includes master/work/book in correct YAML file path', async () => {
       (global.fetch as jest.Mock).mockResolvedValue({
         ok: true,

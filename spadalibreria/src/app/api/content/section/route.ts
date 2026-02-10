@@ -8,6 +8,7 @@ interface NewSectionRequest {
   work: string;
   book: number;
   chapter?: number;
+  chapter_raw?: string;
   year: number;
   title: string;
   content: {
@@ -55,7 +56,18 @@ function normalizeName(value: string): string {
 /**
  * Generate a unique section ID from metadata
  */
-function generateSectionId(master: string, work: string, book: number, chapter?: number): string {
+function formatChapterId(chapter: number | string): string {
+  const raw = typeof chapter === 'string' ? chapter.trim() : chapter.toString();
+  return raw.replace(/\./g, '_');
+}
+
+function generateSectionId(
+  master: string,
+  work: string,
+  book: number,
+  chapter?: number,
+  chapterRaw?: string
+): string {
   // Normalize master name (lowercase, remove accents, replace spaces with underscores)
   const masterNorm = normalizeName(master);
   
@@ -65,7 +77,8 @@ function generateSectionId(master: string, work: string, book: number, chapter?:
   // Build ID: master_work_l{book}_c{chapter}
   let id = `${masterNorm}_${workNorm}_l${book}`;
   if (chapter !== undefined) {
-    id += `_c${chapter}`;
+    const chapterIdSource = chapterRaw && chapterRaw.trim() ? chapterRaw : chapter;
+    id += `_c${formatChapterId(chapterIdSource)}`;
   }
   
   return id;
@@ -195,7 +208,13 @@ export async function POST(request: NextRequest) {
     }
     
     // Generate section ID
-    const sectionId = generateSectionId(body.master, body.work, body.book, body.chapter);
+    const sectionId = generateSectionId(
+      body.master,
+      body.work,
+      body.book,
+      body.chapter,
+      body.chapter_raw
+    );
     
     // Check for duplicate ID
     const existingSection = sections.find(s => s.id === sectionId);

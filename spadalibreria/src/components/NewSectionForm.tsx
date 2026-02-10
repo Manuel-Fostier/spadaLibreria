@@ -151,7 +151,10 @@ export default function NewSectionForm({
         master: formData.master.trim(),
         work: formData.work.trim(),
         book: parseInt(formData.book),
-        ...(formData.chapter.trim() && { chapter: parseInt(formData.chapter) }),
+        ...(formData.chapter.trim() && {
+          chapter: parseFloat(formData.chapter),
+          chapter_raw: formData.chapter.trim(),
+        }),
         year: parseInt(formData.year),
         title: formData.title.trim(),
         content: {
@@ -287,12 +290,12 @@ export default function NewSectionForm({
                 Chapitre (optionnel)
               </label>
               <input
-                type="number"
+                type="text"
+                inputMode="decimal"
                 value={formData.chapter}
                 onChange={e => handleInputChange('chapter', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Ex: 95"
-                min="1"
                 disabled={isSubmitting}
               />
             </div>
