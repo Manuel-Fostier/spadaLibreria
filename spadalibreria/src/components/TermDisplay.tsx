@@ -1,14 +1,18 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { GlossaryTerm } from '@/types/glossary';
 import { findMatches } from '@/lib/highlighter';
 import { SearchOptions } from '@/types/search';
+import GlossaryTermEditor from './GlossaryTermEditor';
+import MarkdownRenderer from './MarkdownRenderer';
 
 interface TermDisplayProps {
   term: GlossaryTerm;
+  termKey?: string;
   searchQuery: string;
   highlightMatches: boolean;
+  isEditable?: boolean;
 }
 
 const highlightOptions: SearchOptions = {
@@ -62,63 +66,76 @@ function renderHighlightedText(text: string, query: string): React.ReactNode {
  */
 const TermDisplay = React.memo(function TermDisplay({
   term,
+  termKey,
   searchQuery,
   highlightMatches: shouldHighlight,
+  isEditable = false,
 }: TermDisplayProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const resolvedTermKey = termKey ?? term.id;
+
+  // If editable and editing, show the editor
+  if (isEditable && isEditing) {
+    return (
+      <GlossaryTermEditor
+        termKey={resolvedTermKey}
+        term={term}
+        isEditing={isEditing}
+        onEditStart={() => setIsEditing(true)}
+        onEditCancel={() => setIsEditing(false)}
+      />
+    );
+  }
+
   // Always use French definitions and translations (French-only mode)
   const language = 'fr';
   const definition = term.definition[language] || '';
-  const translation = term.translation[language] || '';
 
-  // Apply highlighting if search is active
+  // Apply highlighting if search is active (only for term name, not definition)
+  // Markdown renderer will handle its own highlighting
   const highlightedTerm = shouldHighlight
     ? renderHighlightedText(term.term, searchQuery)
     : term.term;
-  const highlightedDefinition = shouldHighlight
-    ? renderHighlightedText(definition, searchQuery)
-    : definition;
-  const highlightedTranslation = shouldHighlight
-    ? renderHighlightedText(translation, searchQuery)
-    : translation;
-  const highlightedCategory = shouldHighlight
-    ? renderHighlightedText(term.category, searchQuery)
-    : term.category;
-  const highlightedType = shouldHighlight
-    ? renderHighlightedText(term.type, searchQuery)
-    : term.type;
+
+  // Create search query object for MarkdownRenderer
+  const searchQueryObj = shouldHighlight && searchQuery
+    ? {
+        queryText: searchQuery,
+        timestamp: new Date(),
+        options: highlightOptions,
+        variants: [],
+        languageMappings: { it: [], fr: [], en: [] }
+      }
+    : null;
 
   return (
-    <div className="term-display border-l-4 border-blue-300 bg-blue-50 p-3 sm:p-4 mb-2 sm:mb-3 rounded hover:bg-blue-100 transition-colors">
-      {/* Term Header - Always Visible */}
-      <div className="mb-2 sm:mb-3">
-        <h4 className="text-base sm:text-lg font-bold text-gray-900">
+    <div className="term-display">
+      {/* Term name with edit button on same line */}
+      <div className="flex items-center justify-between gap-3">
+        <h4 className="text-base sm:text-lg font-semibold italic text-gray-900 flex-1">
           {highlightedTerm}
         </h4>
-        <p className="text-xs sm:text-sm text-gray-600">
-          <span className="font-semibold">{highlightedCategory}</span>
-          {' › '}
-          <span>{highlightedType}</span>
-        </p>
-      </div>
-
-      {/* French Definition - Always Visible */}
-      <div className="mb-2 sm:mb-3">
-        {definition ? (
-          <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
-            {highlightedDefinition}
-          </p>
-        ) : (
-          <p className="text-xs sm:text-sm text-gray-400 italic">
-            No definition available
-          </p>
+        {isEditable && !isEditing && (
+          <GlossaryTermEditor
+            termKey={resolvedTermKey}
+            term={term}
+            isEditing={false}
+            onEditStart={() => setIsEditing(true)}
+            onEditCancel={() => setIsEditing(false)}
+          />
         )}
       </div>
 
-      {/* French Translation - Always Visible */}
-      {translation && (
-        <div className="bg-white bg-opacity-50 p-2 rounded text-xs sm:text-sm text-gray-600 italic">
-          {highlightedTranslation}
-        </div>
+      {definition ? (
+        <MarkdownRenderer
+          text={definition}
+          glossaryData={{}} // Empty glossary as definitions don't need term links
+          highlightQuery={searchQueryObj}
+        />
+      ) : (
+        <p className="text-xs sm:text-sm text-gray-400 italic">
+          No definition available
+        </p>
       )}
     </div>
   );

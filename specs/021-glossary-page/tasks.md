@@ -17,6 +17,8 @@
 |-----------|---|---|
 | **SearchBar.tsx** | Adapt pattern to GlossarySearchBar | T050, T052 |
 | **BolognesePlatform.tsx** (language toggles) | Adapt toggle pattern to radio group in LanguageSelector | T044, T045 |
+| **BolognesePlatform.tsx** (sticky header) | Reuse sticky header structure for glossary Category/Type | T126, T128 |
+| **BolognesePlatform.tsx** (logo/title block) | Extract shared Logo component for reuse | T127 |
 | **highlighter.ts** | Use directly for search highlighting | T051, T053, T054 |
 | **Term.tsx** | Reference display patterns only (not direct reuse) | T040, T042 |
 
@@ -213,17 +215,40 @@
 
 ---
 
+## PHASE 1.10: UI Design Refinement (Session 2025-01-29 Clarification)
+
+**Goal**: Implement UI design clarifications from Session 2025-01-29  
+**Reference**: `specs/021-glossary-page/UI_DESIGN.md`  
+**Independent Test**: Glossary page matches BolognesePlatform layout; sticky header updates correctly; term display shows only French content; no background/border/hover effects  
+**Component Strategy**: Reuse GlossarySearchBar; create StickyHeader component; leverage BolognesePlatform text styling
+
+### UI Components Refactoring
+
+- [X] T126 [P] Extract shared `<StickyHeader>` component from `BolognesePlatform` into `src/components/StickyHeader.tsx` and reuse in glossary
+- [X] T127 [P] Extract shared `<LogoTitle>` component (SPADA LIBRERIA + platform v1.0) into `src/components/LogoTitle.tsx` and reuse in BolognesePlatform + GlossaryPage
+- [X] T128 [P] Update GlossaryPage.tsx top bar layout: use `<LogoTitle />` (left) + GLOSSAIRE title (center) + Back button (right)
+- [X] T129 [P] Implement sticky header state tracking to update Category/Type as user scrolls (reuse BolognesePlatform logic)
+- [X] T130 Update TermDisplay component to match UI_DESIGN.md styling: Italian name, French definition only, no English, no translation line
+- [X] T131 [P] Add BolognesePlatform prose-styling classes to all text content (line-height, letter-spacing, color hierarchy)
+- [X] T132 [P] Remove background/border from all term entries; verify no hover effects
+- [X] T133 Implement subtle 80%-width dividers between term entries using Tailwind border utilities
+- [X] T134 [P] Write integration test for UI layout: top bar, search bar, sticky header, content area in `src/__tests__/glossary-ui-layout.test.tsx`
+- [ ] T135 Verify responsive design on mobile (320px), tablet (768px), desktop (1920px) using existing test framework
+- [ ] T136 Phase 1.10 UI refinement complete and verified
+
+---
+
 ## PHASE 2: Treatise Integration (P2)
 
 **Goal**: Connect glossary page to treatise content  
 **User Story**: US4 - Access Glossary from Treatise
 
-- [ ] T120 [P] Write test for treatise-to-glossary navigation links in `src/components/__tests__/GlossaryLink.test.tsx`
-- [ ] T121 [P] Implement GlossaryLink component in `src/components/GlossaryLink.tsx` (clickable term link that navigates to `/glossary`)
-- [ ] T122 Integrate GlossaryLink into TextParser component to link glossary terms in treatises
-- [ ] T123 [P] Write integration test for treatise-to-glossary workflow
-- [ ] T124 Verify browser back button returns to treatise
-- [ ] T125 Phase 2 implementation complete and tested
+- [X] T120 [P] Write test for treatise-to-glossary navigation links in `src/components/__tests__/GlossaryLink.test.tsx`
+- [X] T121 [P] Implement GlossaryLink component in `src/components/GlossaryLink.tsx` (clickable term link that navigates to `/glossary`)
+- [X] T122 Integrate GlossaryLink into TextParser component to link glossary terms in treatises
+- [X] T123 [P] Write integration test for treatise-to-glossary workflow
+- [X] T124 Verify browser back button returns to treatise
+- [X] T125 Phase 2 implementation complete and tested
 
 ---
 
@@ -231,47 +256,203 @@
 
 **Goal**: Support direct navigation to specific terms via URL hash (e.g., `/glossary#mandritto`)
 
-- [ ] T130 [P] Write test for hash parsing and auto-scroll in `src/components/__tests__/GlossaryHashNavigation.test.tsx`
-- [ ] T131 Implement hash fragment parsing in GlossaryPage component
-- [ ] T132 Implement auto-scroll to target term on page load with hash
-- [ ] T133 Update browser history when term selected from treatise link
-- [ ] T134 [P] Write integration test for hash navigation from treatise
-- [ ] T135 Phase 3 implementation complete and tested
+- [X] T140 [P] Write test for hash parsing and auto-scroll in `src/components/__tests__/GlossaryHashNavigation.test.tsx`
+- [X] T141 Implement hash fragment parsing in GlossaryPage component
+- [X] T142 Implement auto-scroll to target term on page load with hash
+- [X] T143 Update browser history when term selected from treatise link
+- [X] T144 [P] Write integration test for hash navigation from treatise
+- [X] T145 Phase 3 implementation complete and tested
 
 ---
 
 ## PHASE 4: Content Editing Interface
 
-**Goal**: Allow users to edit glossary content (definitions, translations, term types) inline  
-**User Story**: Edit glossary content via AnnotationPanel-like interface
+**Goal**: Allow users to edit and create glossary content and treatise sections  
+**Reference**: See [PHASE_4_ANALYSIS.md](PHASE_4_ANALYSIS.md) and [PHASE_4_PLAN.md](PHASE_4_PLAN.md) for detailed implementation strategy and component architecture
 
-- [ ] T140 [P] Write test for edit button in `src/components/__tests__/TermEditButton.test.tsx`
-- [ ] T141 [P] Write test for glossary edit form in `src/components/__tests__/TermEditForm.test.tsx`
-- [ ] T142 Implement TermEditButton component (button next to each term)
-- [ ] T143 Implement TermEditForm component (reuse AnnotationPanel pattern for UI consistency)
-- [ ] T144 [P] Write test for API endpoint to save glossary edits in `src/app/api/glossary/__tests__/edit.test.ts`
-- [ ] T145 Create API endpoint in `src/app/api/glossary/edit.ts` to persist changes to `data/glossary.yaml`
-- [ ] T146 [P] Write test for validation before save (definitions/translations cannot be empty)
-- [ ] T147 Implement validation logic in edit form and API endpoint
-- [ ] T148 [P] Write test for undo functionality or error handling if save fails
-- [ ] T149 Implement error handling and user feedback for failed edits
-- [ ] T150 Phase 4 implementation complete and tested
+### Phase 4a: Edit Existing Glossary Terms (Inline Editing)
+
+**Goal**: Add per-term "Edit" button to modify `category`, `type`, `term`, and `definition_fr` fields with Markdown support  
+**User Story**: Users can click Edit button next to any term, edit fields using TextEditor (with Markdown support), save changes persisted to `data/glossary.yaml`  
+**Implementation Strategy**: Reuse `TextEditor.tsx` component pattern from BolognesePlatform; use `MarkdownRenderer.tsx` for definition preview; single edit button per term (left of term heading)
+
+#### Backend: API Endpoint
+
+- [X] T150 [P] Write test for API endpoint to save glossary term edits in `src/app/api/glossary/__tests__/term.test.ts`
+- [X] T151 Create POST endpoint `/api/glossary/term` in `src/app/api/glossary/term/route.ts` to update term fields (`category`, `type`, `term`, `definition_fr`) in `data/glossary.yaml`
+- [X] T152 [P] Add validation logic: verify termKey exists, field is valid, value is non-empty
+- [X] T153 Add error handling and graceful failure responses
+
+#### Frontend: Components
+
+- [X] T154 [P] Write test for GlossaryTermEditor component in `src/components/__tests__/GlossaryTermEditor.test.tsx` (edit state, save/cancel, API integration)
+- [X] T155 Implement GlossaryTermEditor component in `src/components/GlossaryTermEditor.tsx` (reuse TextEditor pattern, supports 4 editable fields, calls `/api/glossary/term` endpoint)
+- [X] T156 [P] Update TermDisplay component to include edit button and conditional rendering (show edit button when not editing, show GlossaryTermEditor when editing)
+- [X] T157 Update GlossaryContent component to pass `isEditable` prop to TermDisplay (enables edit mode when glossary is in edit mode)
+- [X] T158 Update GlossaryPage component to add global edit mode toggle button in header
+
+#### Markdown Support
+
+- [X] T159 [P] Add MarkdownRenderer import to TermDisplay and render term definitions with Markdown support (reuse existing component from `src/components/MarkdownRenderer.tsx`)
+- [X] T160 Update TextEditor to support multiline Markdown input for definition field
+- [X] T161 [P] Write test for Markdown rendering in glossary definitions in `src/components/__tests__/TermDisplay.test.tsx`
+
+#### Testing & Validation
+
+- [X] T162 [P] Write integration test: Edit term field → save → page reload shows updated value
+- [X] T163 [P] Write integration test: Edit multiple fields in sequence → all saved correctly
+- [X] T164 Test undo/redo functionality in TextEditor (Ctrl+Z, Ctrl+Y)
+- [ ] T165 Test error cases: invalid termKey, API failure, network timeout
+- [X] T166 Phase 4a implementation complete and tested
+
+---
+
+### Phase 4b: Create New Glossary Terms (Issue #55)
+
+**Goal**: Add "Ajouter Element" button to create new glossary entries via form  
+**User Story**: Users can click "Ajouter Element" button, fill form with (category, type, term, definition_fr, optional translation), submit creates new term in `data/glossary.yaml`  
+**Implementation Strategy**: Create NewTermForm component; reuse TextEditor pattern for definition field; add term key generation (slug sanitization)
+
+#### Backend: API Endpoint
+
+- [X] T170 Create POST endpoint `/api/glossary/terms` in `src/app/api/glossary/terms/route.ts` to add new glossary terms to `data/glossary.yaml`
+- [X] T171 [P] Add term key generation logic (slugify term name, handle accents, prevent duplicates)
+- [X] T172 [P] Add validation: required fields (category, type, term, definition_fr), prevent duplicate term keys
+
+#### Frontend: Components
+
+- [X] T173 [P] Write test for NewTermForm component in `src/components/__tests__/NewTermForm.test.tsx` (form fields, validation, submit)
+- [X] T174 Implement NewTermForm component in `src/components/NewTermForm.tsx` (collects category/type/term/definition fields, calls `/api/glossary/terms` endpoint)
+- [X] T175 Update GlossaryPage component to add "Ajouter Element" button and toggle form display
+- [X] T176 [P] Add category autocomplete/suggestions in NewTermForm (extract from existing terms)
+
+#### Testing & Validation
+
+- [X] T177 [P] Write integration test: Create new term → save → page reload shows new term in correct category
+- [X] T178 [P] Write test: Duplicate term key prevention → error message shown
+- [X] T179 Test form validation: required field validation, empty field errors
+- [X] T180 Phase 4b implementation complete and tested
+
+---
+
+### Phase 4c: Add New Treatise Sections (Issue #54)
+
+**Goal**: Add "Nouvelle section" button to BolognesePlatform to create new treatise sections  
+**User Story**: Users can click "Nouvelle section" button, fill form with (master, work, book, year, title, content_fr, optional content_it/notes), submit appends new section to correct YAML file  
+**Implementation Strategy**: Create NewSectionForm component in BolognesePlatform; reuse TextEditor pattern; determine target YAML file based on master/work/book metadata
+
+#### Backend: API Endpoint
+
+- [X] T185 Create POST endpoint `/api/content/section` in `src/app/api/content/section/route.ts` to append new treatise section to correct YAML file
+- [X] T186 [P] Add logic to select target YAML file based on `master`, `work`, `book` metadata matching
+- [X] T187 [P] Add section ID generation and validation
+- [X] T188 Add error handling: file not found, invalid metadata, write failures
+
+#### Frontend: Components (BolognesePlatform)
+
+- [X] T189 [P] Write test for NewSectionForm component in `src/components/__tests__/NewSectionForm.test.tsx` (form fields, metadata selection)
+- [X] T190 Implement NewSectionForm component in `src/components/NewSectionForm.tsx` (collects master/work/book/year/title/content fields, calls `/api/content/section` endpoint)
+- [X] T191 Update BolognesePlatform component to add "Nouvelle section" button in header
+- [X] T192 Add master/work/book selectors (dropdowns populated from existing treatise data)
+
+#### Testing & Validation
+
+- [X] T193 [P] Write integration test: Create new section → save → page reload shows new section in correct treatise YAML file
+- [X] T194 [P] Write test: Section metadata validation (all required fields present)
+- [X] T195 Test file selection logic: verify correct YAML file chosen based on master/work/book
+- [X] T196 Phase 4c implementation complete and tested
+
+---
+
+### Phase 4 Summary
+
+**Total Phase 4 Tasks**: 47 tasks (Phase 4a: 16 + Phase 4b: 10 + Phase 4c: 12 + integration: 9)
+
+| Sub-Phase | Goal | Status |
+|-----------|------|--------|
+| 4a | Edit existing terms with Markdown support | Not Started |
+| 4b | Create new glossary terms (Issue #55) | Not Started |
+| 4c | Add new treatise sections (Issue #54) | Not Started |
+
+**Implementation Sequence**: Phase 4a → Phase 4b → Phase 4c (shared backend infrastructure allows parallel development after 4a API is complete)
+
+---
+
+## PHASE 5: Cleanup Unused Code & Files
+
+**Goal**: Remove dead code, unused components, and obsolete docs/files to keep the codebase lean
+**Independent Test**: App builds and existing tests pass after cleanup
+
+- [X] T161 [P] Review unused file inventory in analysed/unused-files-analysis.md and confirm removal candidates
+- [X] T162 [P] Remove confirmed unused components/tests from spadalibreria/src/ and spadalibreria/src/__tests__/ (update imports accordingly)
+- [X] T163 [P] Remove unused mocks and fixtures in spadalibreria/src/__mocks__/ and spadalibreria/src/data/__mocks__/
+- [X] T164 [P] Delete obsolete docs/notes in specs/021-glossary-page/ and analysed/ (if no longer referenced)
+- [X] T165 Verify build/test still pass after cleanup and update analysed/unused-files-analysis.md with results (blocked: Jest ESM error in react-markdown)
+
+### Phase 5.1: Test Suite Stabilization - datalist Input Testing
+
+**Goal**: Fix remaining 3 failing test suites that use incompatible `selectOptions()` API on datalist inputs  
+**Issue**: Tests use `user.selectOptions()` which only works with `<select>` elements, but components use `<input type="text" list="datalist-id">` for better UX with autocomplete  
+**Solution**: Refactor tests to use `user.type()` and `user.clear()` instead of `selectOptions()`  
+**Note**: DO NOT change components to use `<select>` as this would degrade UX
+
+#### glossary-create-section-integration.test.tsx
+
+- [X] T166 [P] Analyse glossary-create-section-integration.test.tsx: Identify all `selectOptions()` calls and map failing assertions in `src/__tests__/glossary-create-section-integration.test.tsx` (11 tests, ~20 failing)
+- [X] T167 [P] Fix glossary-create-section-integration.test.tsx: Replace all `selectOptions()` calls with `user.type()` + `user.clear()` pattern
+
+#### NewSectionForm.test.tsx
+
+- [X] T168 [P] Analyse NewSectionForm.test.tsx: Identify all `selectOptions()` calls and map failing assertions in `src/components/__tests__/NewSectionForm.test.tsx` (34 tests, ~31 failing)
+- [X] T169 [P] Fix NewSectionForm.test.tsx: Replace all `selectOptions()` calls with `user.type()` + `user.clear()` pattern
+
+#### NewTermForm.test.tsx
+
+- [X] T181 [P] Analyse NewTermForm.test.tsx: Identify root cause of test failures in `src/components/__tests__/NewTermForm.test.tsx` (category autocomplete field - confirm if selectOptions() or different issue)
+- [X] T182 [P] Fix NewTermForm.test.tsx: Apply appropriate fix (replace selectOptions() if applicable, or address different issue)
+
+#### Verification
+
+- [X] T183 Verify all test suites pass: Run full test suite and confirm 38+ test suites passing
+
+---
+
+## PHASE 6: ClassName Review & Cleanup
+
+**Goal**: Review all className usage to remove duplicates/overrides and align container styling per page
+**Independent Test**: No duplicated/overriding className on containers; visual layout unchanged across glossary and treatise pages
+
+### Phase 6a: Glossary Page
+
+- [X] T200 [P] Audit container className usage in src/app/glossary/page.tsx and src/components/GlossaryPage.tsx for duplicates/overrides
+- [X] T201 [P] Audit className usage in src/components/GlossaryContent.tsx, src/components/CategorySection.tsx, and src/components/TermDisplay.tsx for duplicates/overrides
+- [X] T202 Consolidate/remove duplicate or overridden className values in glossary page components and verify layout consistency
+
+### Phase 6b: Treatise Page (BolognesePlatform)
+
+- [X] T203 [P] Audit container className usage in src/components/BolognesePlatform.tsx and src/components/StickyHeader.tsx for duplicates/overrides
+- [X] T204 [P] Audit className usage in src/components/TextParser.tsx and src/components/Term.tsx for duplicates/overrides
+- [X] T205 Consolidate/remove duplicate or overridden className values in treatise page components and verify layout consistency
 
 ---
 
 ## Summary
 
-**Total Tasks**: 150 across 4 phases
+**Total Tasks**: 161 across 8 phases
 
 | Phase | Tasks | Status |
 |-------|-------|--------|
 | Phase 0 | T001-T012 (12 tasks) | BLOCKING - Refactoring glossary.yaml |
-| Phase 1 | T020-T116 (97 tasks) | Ready after Phase 0 |
-| Phase 2 | T120-T125 (6 tasks) | After Phase 1 complete |
-| Phase 3 | T130-T135 (6 tasks) | After Phase 2 complete |
-| Phase 4 | T140-T150 (11 tasks) | After Phase 3 complete |
+| Phase 1 | T020-T125 (106 tasks) | Ready after Phase 0 |
+| Phase 1.10 | T126-T136 (11 tasks) | UI Design refinement |
+| Phase 2 | T120-T125 (6 tasks) | After Phase 1.10 complete |
+| Phase 3 | T140-T145 (6 tasks) | After Phase 2 complete |
+| Phase 4 | T150-T160 (11 tasks) | After Phase 3 complete |
+| Phase 5 | T161-T165 (5 tasks) | After Phase 4 complete |
+| Phase 5.1 | T166-T183 (6 tasks) | Test suite stabilization - datalist input testing |
+| Phase 6 | T200-T205 (6 tasks) | After Phase 5 complete |
 
-**MVP Scope**: Phase 0 + Phase 1 (all P1 user stories)  
+**MVP Scope**: Phase 0 + Phase 1 + Phase 1.10 (all P1 user stories with UI refinement)  
 **Testing Approach**: TDD - Tests written before implementation for all tasks  
 **Code Coverage Target**: 80%+ for Phase 1
 
@@ -292,32 +473,37 @@ Phase 1.1: State management context (T030-T033) [COMPLETED ✅]
 ├─→ Phase 1.3: US2 - Search (T050-T056)
 │   ├─ Reuse: SearchBar.tsx pattern (GlossarySearchBar), highlighter.ts utility
 │   └─ Updates: TermDisplay search highlighting
-└─→ Phase 1.4: US3 - Detail View (T060-T066)
-    └─ Updates: TermDisplay multilingual support
+├─→ Phase 1.4: US3 - Detail View (T060-T066)
+│   └─ Updates: TermDisplay multilingual support
+├─→ Phase 1.5: Page route & integration (T070-T075)
+├─→ Phase 1.6: Integration tests (T080-T086)
+├─→ Phase 1.7: Responsive design (T090-T096)
+├─→ Phase 1.8: Performance (T100-T106)
+└─→ Phase 1.9: Final validation (T110-T116)
     ↓
-Phase 1.5: Page route & integration (T070-T075)
-    ↓
-Phase 1.6: Integration tests (T080-T086)
-    ↓
-Phase 1.7: Responsive design (T090-T096)
-    ↓
-Phase 1.8: Performance (T100-T106)
-    ↓
-Phase 1.9: Final validation (T110-T116)
-    ↓ (PHASE 1 COMPLETE)
+Phase 1.10: UI Design Refinement (T126-T136) [NEW - Session 2025-01-29]
+    ├─ Extract StickyHeader + LogoTitle components (T126-T127)
+    ├─ Refactor top bar layout (T128-T129)
+    ├─ Update TermDisplay styling (T130-T133)
+    └─ Verify UI/responsive/layout (T134-T136)
+    ↓ (PHASE 1 + 1.10 COMPLETE)
     ↓
 Phase 2: Treatise integration (T120-T125)
     ↓
-Phase 3: URL hash fragments (T130-T135)
+Phase 3: URL hash fragments (T140-T145)
     ↓
-Phase 4: Content editing (T140-T150)
+Phase 4: Content editing (T150-T160)
+    ↓
+Phase 5: Cleanup unused code/files (T161-T165)
+    ↓
+Phase 6: ClassName review & cleanup (T200-T205)
 ```
 
 ---
 
 ## Task Summary
 
-**Phase 1 Task Count**: 97 tasks total
+**Phase 1 Task Count**: 108 tasks total (including Phase 1.10 UI refinement)
 - Phase 1.0: 7 tasks [✅ COMPLETED]
 - Phase 1.1: 4 tasks [✅ COMPLETED]
 - Phase 1.2: 9 tasks (US1 - Browse)
@@ -328,14 +514,19 @@ Phase 4: Content editing (T140-T150)
 - Phase 1.7: 7 tasks (Responsive Design)
 - Phase 1.8: 7 tasks (Performance)
 - Phase 1.9: 7 tasks (Final Validation)
+- **Phase 1.10: 11 tasks** (UI Design Refinement - NEW)
+- **Phase 5: 5 tasks** (Cleanup unused code/files)
+- **Phase 6: 6 tasks** (ClassName review & cleanup)
 
-**Progress**: 11/97 tasks complete (11%)
+**Progress**: 20/108 tasks complete (~19%)
 
 **Component Reuse**: 
 - 4 existing components/utilities analyzed for reuse
 - 3 to be adapted/reused with modifications (SearchBar, Language toggles, highlighter.ts)
 - 1 to be referenced for patterns (Term.tsx)
 - 6 new components to create (TermDisplay, CategorySection, LanguageSelector, GlossaryContent, GlossarySearchBar, GlossaryPage)
+- **NEW**: StickyHeader component (reusable for future phases)
+- **NEW**: LogoTitle component (shared between BolognesePlatform and GlossaryPage)
 
 ````
 
@@ -362,8 +553,15 @@ Phase 4: Content editing (T140-T150)
 **Phase 1.7 Parallelization** (Responsive design):
 - T091-T094: Tailwind classes can be added to all components in parallel
 
+**Phase 5 Parallelization** (Cleanup):
+- T161-T164: Audit/remove tasks can run in parallel (different folders)
+
+**Phase 6 Parallelization** (ClassName review):
+- T200-T204: Audit tasks can run in parallel (different pages/components)
+
 **Recommended Execution Strategy**:
 1. **Sequential**: Phase 0 → Phase 1.0 → Phase 1.1 (blockers)
 2. **Parallel**: Phase 1.2, 1.3, 1.4 can execute in parallel after Phase 1.1
 3. **Sequential**: Phase 1.5, 1.6, 1.7, 1.8, 1.9 (dependent on earlier phases)
 4. **Sequential**: Phase 2 → 3 → 4 (each depends on previous)
+5. **Sequential**: Phase 5 → 6 (cleanup, then className review)

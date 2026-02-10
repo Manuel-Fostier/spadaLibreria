@@ -180,6 +180,36 @@ mandritto:
 - Q: Should the YAML data model be refactored? → A: **No** - The current `data/glossary.yaml` structure with existing `definition` (it, fr, en) and `translation` (it, fr, en) fields is maintained as-is. Only French fields are rendered on the glossary page.
 - Q: Should individual terms be expandable/collapsible? → A: **No** - All content is always visible in French. No expand/collapse functionality.
 
+### Session 2025-01-29 (UI Design Clarification)
+
+**Design System Requirements** (for Phase 1.x UI refinement):
+
+1. **Text Display Style**: 
+   - Reuse BolognesePlatform typography: no background, no border, no highlight on mouse over
+   - Clean, minimal prose-like reading experience (similar to treatise text display)
+
+2. **Sticky Header** (2-line height):
+   - **Line 1**: Category name (e.g., "Les Guardes", "Coups et Techniques")
+   - **Line 2**: Type name (e.g., "Garde haute", "Attaque / Frappe de taille")
+   - Remains fixed at top when scrolling through terms in that section
+
+3. **Term Display Format**:
+   - **Don't repeat** category and type below the term heading (shown only in sticky header)
+   - **Don't display** English translation next to term name
+   - Display: `Term Name` (Italian) → French definition only
+   - Minimal styling, prose-focused
+
+4. **Page Title**:
+   - "SPADA LIBRERIA, platform v1.0" displayed at top of page
+   - Matches BolognesePlatform header style
+
+5. **Component Reuse Strategy**:
+   - Reuse existing typography classes/patterns from BolognesePlatform
+   - Reuse GlossarySearchBar component (already minimal styling)
+   - Create shared `<StickyHeader>` component (reusable for future phases)
+   - Create shared `<PageTitle>` component (reusable if platform needs it elsewhere)
+   - Leverage existing `<TextParser>` component structure for French definition rendering
+
 ## Assumptions
 
 1. **Glossary Data Structure**: The glossary YAML structure will remain consistent with its current format (term, type, definition, translation)
@@ -197,7 +227,10 @@ This feature follows a four-phase rollout approach:
 - **Phase 1 (MVP - This Release)**: Standalone glossary page with browsing, search, filtering, and categorization. User Stories 1-3. This delivers complete independent glossary functionality.
 - **Phase 2 (Release +1)**: Integration with treatise pages. Add clickable glossary term links in treatises that navigate to the glossary page (User Story 4, simplified). No auto-scroll or URL parameters yet.
 - **Phase 3 (Release +2)**: Advanced integration. Support URL hash fragments (e.g., `/glossary#falso_dritto`) to auto-scroll to specific terms when navigating from treatises.
-- **Phase 4 (Release +3)**: Glossary content editing interface. Add an "Edit" button next to each term that opens an editing interface (using pattern similar to AnnotationPanel in BolognesePlatform) allowing users to modify definitions, translations, and term types in `data/glossary.yaml`.
+- **Phase 4 (Release +3)**: Glossary content editing interface. 
+   - **Phase 4a**: Add a single "Edit" button on the left of each term that opens an editing form to modify glossary term fields in `data/glossary.yaml` (`category`, `type`, `term`, `definition` in French). Term definitions support Markdown syntax for rich formatting. See [PHASE_4_ANALYSIS.md](PHASE_4_ANALYSIS.md#markdown-support-for-term-definitions) for implementation details.
+  - **Phase 4b** (Issue #55): Add an "Ajouter Element" button to the glossary page that opens a form to add a new glossary entry. Form collects: `category`, `type`, `term`, `definition` (French), and optionally `translation` (French) and definitions/translations in other languages. New entry is added to `data/glossary.yaml` via API endpoint.
+   - **Phase 4c** (Issue #54): Add a "Nouvelle section" button to BolognesePlatform that opens a form to create a new treatise section and append it to the correct YAML file based on `master`, `work`, and `book`.
 
 ## Out of Scope
 

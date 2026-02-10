@@ -1,0 +1,20 @@
+- id: manuel_ma_vie_l1
+  title: On fait quoi ce soir
+  metadata:
+    master: Manuel
+    work: Ma Vie
+    book: 1
+    year: 2026
+  content:
+    fr: La même chose que tous les soirs.
+- id: manuel_ma_vie_l1_c1
+  title: je sais pas
+  metadata:
+    master: Manuel
+    work: Ma Vie
+    book: 1
+    chapter: 1
+    year: 2026
+  content:
+    fr: Lorem ipsum
+    notes: Pouet

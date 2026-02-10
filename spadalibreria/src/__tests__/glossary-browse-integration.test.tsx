@@ -1,13 +1,13 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { GlossaryProvider, useGlossary } from '@/contexts/GlossaryContext';
 import GlossaryPage from '@/components/GlossaryPage';
 import GlossaryPageWrapper from '@/components/GlossaryPageWrapper';
-import * as glossaryLoader from '@/lib/glossaryLoader';
 import { GlossaryTerm } from '@/types/glossary';
 
-jest.mock('@/lib/glossaryLoader');
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({ back: jest.fn() }),
+}));
 
 const mockTerms: GlossaryTerm[] = [
   {
@@ -60,38 +60,13 @@ const mockTerms: GlossaryTerm[] = [
   },
 ];
 
-const groupByCategory = (terms: GlossaryTerm[]) => {
-  return terms.reduce((acc, term) => {
-    if (!acc[term.category]) acc[term.category] = {};
-    if (!acc[term.category][term.type]) acc[term.category][term.type] = [];
-    acc[term.category][term.type].push(term);
-    return acc;
-  }, {} as Record<string, Record<string, GlossaryTerm[]>>);
-};
-
 describe('Glossary browse integration (T080 - French-only unified view)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (glossaryLoader.loadGlossaryTerms as jest.Mock).mockReturnValue(mockTerms);
-    (glossaryLoader.searchGlossaryTerms as jest.Mock).mockImplementation(
-      (terms, query) => {
-        if (!query) return terms;
-        return terms.filter((term: GlossaryTerm) => {
-          const searchTarget = [
-            term.term,
-            term.category,
-            term.type,
-            term.definition.fr,
-            term.translation.fr,
-          ]
-            .filter(Boolean)
-            .join(' ')
-            .toLowerCase();
-          return searchTarget.includes(String(query).toLowerCase());
-        });
-      }
-    );
-    (glossaryLoader.groupGlossaryByCategory as jest.Mock).mockImplementation(groupByCategory);
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => mockTerms,
+    }) as any;
   });
 
   it('user loads glossary → all terms visible in French-only unified view', async () => {
@@ -106,14 +81,17 @@ describe('Glossary browse integration (T080 - French-only unified view)', () => 
       expect(screen.getByText('Mandritto', { selector: 'h4' })).toBeInTheDocument();
     });
 
-    // Verify all categories are visible
-    expect(screen.getAllByText('Coups et Techniques').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Les Guardes').length).toBeGreaterThan(0);
+    // Verify sticky header shows current category/type
+    expect(screen.getByText('Coups et Techniques')).toBeInTheDocument();
+    expect(screen.getByText('Attaque / Frappe de taille')).toBeInTheDocument();
 
-    // Verify all types are visible
-    expect(screen.getAllByText('Attaque / Frappe de taille').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Attaque / Frappe di punta').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Garde de protection').length).toBeGreaterThan(0);
+    // Verify data attributes exist for category/type tracking
+    expect(
+      document.querySelectorAll('[data-glossary-category="Coups et Techniques"]').length
+    ).toBeGreaterThan(0);
+    expect(
+      document.querySelectorAll('[data-glossary-type="Attaque / Frappe di punta"]').length
+    ).toBeGreaterThan(0);
 
     // Verify all terms are visible
     expect(screen.getAllByText('Mandritto').length).toBeGreaterThan(0);
@@ -145,12 +123,9 @@ describe('Glossary browse integration (T080 - French-only unified view)', () => 
     });
 
     // All categories, types, and terms should be visible at the same time
-    const allCategoryHeaders = screen.getAllByText(/Coups et Techniques|Les Guardes/);
-    expect(allCategoryHeaders.length).toBeGreaterThan(0);
-
     // Verify each term is visible along with its definition
     const mandritto = screen.getAllByText('Mandritto');
-    expect(mandritto.length).toBeGreaterThan(0); // term name + translation
+    expect(mandritto.length).toBeGreaterThan(0);
     expect(screen.getByText(/Un coup d'épée exécuté de droite à gauche/)).toBeVisible();
 
     const roveresco = screen.getAllByText('Roveresco');
@@ -177,17 +152,19 @@ describe('Glossary browse integration (T080 - French-only unified view)', () => 
       expect(screen.getByText('Mandritto', { selector: 'h4' })).toBeInTheDocument();
     });
 
-    // Verify hierarchy is visible
-    // Categories at top level
-    const categories = screen.getAllByRole('heading', { level: 2 });
-    const categoryNames = categories.map(h => h.textContent);
-    expect(categoryNames).toContain('Coups et Techniques');
-    expect(categoryNames).toContain('Les Guardes');
-
-    // Types visible under categories
-    expect(screen.getAllByText('Attaque / Frappe de taille').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Attaque / Frappe di punta').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Garde de protection').length).toBeGreaterThan(0);
+    // Verify hierarchy exists via data attributes
+    expect(
+      document.querySelectorAll('[data-glossary-category="Coups et Techniques"]').length
+    ).toBeGreaterThan(0);
+    expect(
+      document.querySelectorAll('[data-glossary-category="Les Guardes"]').length
+    ).toBeGreaterThan(0);
+    expect(
+      document.querySelectorAll('[data-glossary-type="Attaque / Frappe de taille"]').length
+    ).toBeGreaterThan(0);
+    expect(
+      document.querySelectorAll('[data-glossary-type="Garde de protection"]').length
+    ).toBeGreaterThan(0);
 
     // Terms visible under types
     expect(screen.getAllByText('Mandritto').length).toBeGreaterThan(0);
@@ -195,7 +172,7 @@ describe('Glossary browse integration (T080 - French-only unified view)', () => 
     expect(screen.getAllByText('Coda Longa').length).toBeGreaterThan(0);
   });
 
-  it('glossary displays complete term information: name, category, type, French definition, French translation', async () => {
+  it('glossary displays complete term information: name and French definition', async () => {
     render(
       <GlossaryPageWrapper>
         <GlossaryPage />
@@ -211,14 +188,10 @@ describe('Glossary browse integration (T080 - French-only unified view)', () => 
     const mandrittoName = screen.getAllByText('Mandritto');
     expect(mandrittoName.length).toBeGreaterThan(0);
 
-    // Verify category and type are present
-    expect(screen.getAllByText('Coups et Techniques').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Attaque / Frappe de taille').length).toBeGreaterThan(0);
-
     // Verify French definition
     expect(screen.getByText(/Un coup d'épée exécuté de droite à gauche/)).toBeInTheDocument();
 
-    // Verify French translation (appears as term name)
-    expect(mandrittoName.length).toBeGreaterThan(0);
+    // Verify English content is NOT visible
+    expect(screen.queryByText('Right-hand Strike')).not.toBeInTheDocument();
   });
 });

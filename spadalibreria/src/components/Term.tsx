@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { GlossaryEntry } from '@/lib/dataLoader';
 import { useAnnotationDisplay } from '@/contexts/AnnotationDisplayContext';
 import { mapTermTypeToAnnotation } from '@/lib/termTypeMapping';
@@ -23,6 +24,7 @@ export default function Term({ termKey, children, glossaryData }: TermProps) {
   const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState<'top' | 'bottom'>('top');
   const [tooltipAlignment, setTooltipAlignment] = useState<'left' | 'center' | 'right'>('center');
+  const [tooltipRect, setTooltipRect] = useState<DOMRect | null>(null);
   const spanRef = useRef<HTMLSpanElement>(null);
   const { getAnnotation } = useAnnotationDisplay();
   
@@ -40,6 +42,7 @@ export default function Term({ termKey, children, glossaryData }: TermProps) {
   const updateTooltipPosition = () => {
     if (!spanRef.current) return;
     const rect = spanRef.current.getBoundingClientRect();
+    setTooltipRect(rect);
     const spaceAbove = rect.top;
 
     const nextVertical = spaceAbove < 400 ? 'bottom' : 'top';
@@ -150,18 +153,6 @@ export default function Term({ termKey, children, glossaryData }: TermProps) {
     );
   }
 
-  const verticalClasses = tooltipPosition === 'top'
-    ? 'bottom-full mb-3'
-    : 'top-full mt-3';
-
-  // Classes d'alignement horizontal
-  const horizontalClasses = 
-    tooltipAlignment === 'left' 
-      ? 'left-0' 
-      : tooltipAlignment === 'right'
-      ? 'right-0'
-      : 'left-1/2 -translate-x-1/2';
-
   return (
     <span 
       ref={spanRef}
@@ -191,10 +182,22 @@ export default function Term({ termKey, children, glossaryData }: TermProps) {
         {children}
       </span>
       
-      {showTooltip && (
+      {showTooltip && tooltipRect && createPortal(
         <div 
-          className={`absolute z-50 ${verticalClasses} ${horizontalClasses} w-[800px] max-w-[calc(100vw-32px)] p-0 bg-white text-gray-800 text-sm border border-gray-200 shadow-xl rounded-lg overflow-hidden`}
-          style={tooltipAlignment === 'left' ? { transform: 'translateX(40px)' } : undefined}
+          className={`fixed z-50 w-[800px] max-w-[calc(100vw-32px)] p-0 bg-white text-gray-800 text-sm border border-gray-200 shadow-xl rounded-lg overflow-hidden`}
+          style={{
+            top: tooltipPosition === 'top' 
+              ? `${tooltipRect.top - 12}px` 
+              : `${tooltipRect.bottom + 12}px`,
+            left: tooltipAlignment === 'center'
+              ? `${tooltipRect.left + tooltipRect.width / 2}px`
+              : tooltipAlignment === 'left'
+              ? `${tooltipRect.left + 40}px`
+              : `${tooltipRect.right - 800 - 40}px`,
+            transform: tooltipAlignment === 'center' 
+              ? 'translateX(-50%)' 
+              : 'translateX(0)',
+          }}
         >
           <div className="bg-gray-50 p-3 border-b border-gray-100 flex justify-between items-center">
             <span className="font-bold text-gray-900 text-base">{data.term}</span>
@@ -209,10 +212,11 @@ export default function Term({ termKey, children, glossaryData }: TermProps) {
                 <span className="text-xs font-bold text-gray-400 uppercase">FR</span>
                 <span className="text-xs font-semibold text-gray-700 italic">&ldquo;{data.translation.fr}&rdquo;</span>
               </div>
-              <p className="text-gray-600 leading-relaxed whitespace-pre-line text-justify">{data.definition.fr}</p>
+              <div className="text-gray-600 leading-relaxed whitespace-pre-line text-justify">{data.definition.fr}</div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </span>
   );

@@ -4,6 +4,10 @@ import '@testing-library/jest-dom';
 import GlossaryPage from '../GlossaryPage';
 import * as GlossaryContext from '@/contexts/GlossaryContext';
 
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({ back: jest.fn() }),
+}));
+
 // Mock the GlossaryContext
 jest.mock('@/contexts/GlossaryContext', () => ({
   useGlossary: jest.fn(),
@@ -54,7 +58,9 @@ describe('GlossaryPage Component (T070)', () => {
     render(<GlossaryPage />);
 
     // Check that all main components are rendered
-    expect(screen.getByText(/Glossary.*Glossaire.*Glossario/i)).toBeInTheDocument();
+    expect(screen.getByText('SPADA LIBRERIA')).toBeInTheDocument();
+    expect(screen.getByText('platform v1.0')).toBeInTheDocument();
+    expect(screen.getByText('GLOSSAIRE')).toBeInTheDocument();
     // LanguageSelector should NOT be rendered (French-only display)
     expect(screen.queryByTestId('language-selector')).not.toBeInTheDocument();
     expect(screen.getByTestId('glossary-search-bar')).toBeInTheDocument();
@@ -142,9 +148,10 @@ describe('GlossaryPage Component (T070)', () => {
 
     render(<GlossaryPage />);
 
-    // Check for French glossary header
-    expect(screen.getByText(/Glossary.*Glossaire.*Glossario/i)).toBeInTheDocument();
-    expect(screen.getByText(/Comprehensive glossary.*Bolognese fencing/i)).toBeInTheDocument();
+    // Check for updated header layout
+    expect(screen.getByText('SPADA LIBRERIA')).toBeInTheDocument();
+    expect(screen.getByText('platform v1.0')).toBeInTheDocument();
+    expect(screen.getByText('GLOSSAIRE')).toBeInTheDocument();
   });
 
   it('applies correct layout and styling classes', () => {
@@ -161,7 +168,7 @@ describe('GlossaryPage Component (T070)', () => {
     const { container } = render(<GlossaryPage />);
 
     // Check for main layout classes
-    expect(container.querySelector('.min-h-screen')).toBeInTheDocument();
-    expect(container.querySelector('.bg-gradient-to-br')).toBeInTheDocument();
+    expect(container.querySelector('.h-screen')).toBeInTheDocument();
+    expect(container.querySelector('.bg-white')).toBeInTheDocument();
   });
 });

@@ -45,27 +45,23 @@ describe('CategorySection Component', () => {
     'Attaque / Frappe di punta': mockTerms.slice(1),
   };
 
-  it('renders category name', () => {
-    render(
+  it('renders category/type data attributes for sticky header tracking', () => {
+    const { container } = render(
       <CategorySection
         categoryName="Coups et Techniques"
         groupedTerms={groupedTerms}
         searchQuery=""
       />
     );
-    expect(screen.getAllByText('Coups et Techniques')[0]).toBeInTheDocument();
-  });
-
-  it('renders all type subsections', () => {
-    render(
-      <CategorySection
-        categoryName="Coups et Techniques"
-        groupedTerms={groupedTerms}
-        searchQuery=""
-      />
-    );
-    expect(screen.getAllByText('Attaque / Frappe de taille')[0]).toBeInTheDocument();
-    expect(screen.getAllByText('Attaque / Frappe di punta')[0]).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-glossary-category="Coups et Techniques"]')
+    ).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-glossary-type="Attaque / Frappe de taille"]')
+    ).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-glossary-type="Attaque / Frappe di punta"]')
+    ).toBeInTheDocument();
   });
 
   it('renders all terms within types (French-only)', () => {
@@ -127,7 +123,7 @@ describe('CategorySection Component', () => {
         searchQuery=""
       />
     );
-    expect(screen.getByText('Empty Category')).toBeInTheDocument();
+    expect(container.firstChild).toHaveClass('category-section');
   });
 
   it('applies correct styling classes', () => {
@@ -141,7 +137,7 @@ describe('CategorySection Component', () => {
     expect(container.firstChild).toHaveClass('category-section');
   });
 
-  it('renders hierarchical structure: Category → Type → Terms (all visible)', () => {
+  it('renders hierarchical structure: Type → Terms (all visible)', () => {
     const { container } = render(
       <CategorySection
         categoryName="Coups et Techniques"
@@ -150,8 +146,9 @@ describe('CategorySection Component', () => {
       />
     );
     // Verify hierarchy is present in DOM structure
-    expect(screen.getAllByText('Coups et Techniques')[0]).toBeInTheDocument();
-    expect(screen.getAllByText('Attaque / Frappe de taille')[0]).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-glossary-type="Attaque / Frappe de taille"]')
+    ).toBeInTheDocument();
     expect(screen.getAllByText('Mandritto')).toBeTruthy();
   });
 });

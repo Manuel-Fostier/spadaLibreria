@@ -11,6 +11,9 @@ interface TextEditorProps {
   className?: string;
   translator?: string; // Optional: translator name for English editing
   showTranslatorField?: boolean; // Whether to show translator input field
+  hideControls?: boolean; // Whether to hide save/cancel buttons and help text
+  onChange?: (value: string) => void; // Optional: callback for real-time changes
+  autoFocus?: boolean; // Whether to auto-focus the textarea (default: true)
 }
 
 interface HistoryState {
@@ -26,7 +29,10 @@ export default function TextEditor({
   placeholder,
   className = '',
   translator: initialTranslator = '',
-  showTranslatorField = false
+  showTranslatorField = false,
+  hideControls = false,
+  onChange,
+  autoFocus = true
 }: TextEditorProps) {
   const [value, setValue] = useState(initialValue);
   const [translator, setTranslator] = useState(initialTranslator);
@@ -41,10 +47,10 @@ export default function TextEditor({
 
   // Auto-focus when component mounts
   useEffect(() => {
-    if (textareaRef.current) {
+    if (autoFocus && textareaRef.current) {
       textareaRef.current.focus();
     }
-  }, []);
+  }, [autoFocus]);
 
   // Add to history (for undo/redo)
   const addToHistory = (newValue: string, start: number, end: number) => {
@@ -66,6 +72,11 @@ export default function TextEditor({
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
     setValue(newValue);
+    
+    // Call onChange callback if provided (for real-time updates in parent component)
+    if (onChange) {
+      onChange(newValue);
+    }
     
     // Add to history after a short delay to avoid too many history entries
     const start = e.target.selectionStart;
@@ -169,28 +180,32 @@ export default function TextEditor({
         style={{ whiteSpace: 'pre-wrap' }}
       />
       
-      <div className="flex gap-2 justify-end">
-        <button
-          onClick={onCancel}
-          disabled={isSaving}
-          className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-        >
-          <X size={16} />
-          Annuler
-        </button>
-        <button
-          onClick={handleSave}
-          disabled={isSaving}
-          className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-        >
-          <Save size={16} />
-          {isSaving ? 'Sauvegarde...' : 'Sauvegarder'}
-        </button>
-      </div>
-      
-      <div className="text-xs text-gray-500 italic">
-        Raccourcis: Ctrl+Z (annuler), Ctrl+Y (refaire), Ctrl+S (sauvegarder), Échap (annuler)
-      </div>
+      {!hideControls && (
+        <>
+          <div className="flex gap-2 justify-end">
+            <button
+              onClick={onCancel}
+              disabled={isSaving}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              <X size={16} />
+              Annuler
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              <Save size={16} />
+              {isSaving ? 'Sauvegarde...' : 'Sauvegarder'}
+            </button>
+          </div>
+          
+          <div className="text-xs text-gray-500 italic">
+            Raccourcis: Ctrl+Z (annuler), Ctrl+Y (refaire), Ctrl+S (sauvegarder), Échap (annuler)
+          </div>
+        </>
+      )}
     </div>
   );
 }

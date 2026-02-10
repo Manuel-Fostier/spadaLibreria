@@ -1,28 +1,28 @@
 /**
  * Glossary Loader Utility
  * 
- * Functions for loading and organizing glossary data for the glossary page.
- * Reuses existing dataLoader for YAML parsing.
+ * Client-side functions for organizing and searching glossary data.
+ * Data loading is handled by the /api/content/glossary API endpoint.
+ * 
+ * NOTE: This is a client-side utility. Do not import server-side modules here.
  */
 
-import { loadGlossary } from './dataLoader';
 import { GlossaryTerm, GroupedGlossary } from '@/types/glossary';
-import { GlossaryData } from '@/types/data';
+import type { GlossaryData } from '@/types/data';
 
 /**
- * Load all glossary terms with ID field added
+ * Convert glossary data object to array of terms
  * 
- * Converts the GlossaryData object structure to an array of GlossaryTerm objects
- * where each term includes its key as the 'id' field.
+ * Transforms glossary entries from key-value format to array format
+ * for easier manipulation and display.
  * 
+ * @param glossaryData Object with glossary entries (key = term ID)
  * @returns Array of glossary terms with IDs
  */
-export function loadGlossaryTerms(): GlossaryTerm[] {
-  const glossaryData: GlossaryData = loadGlossary();
-  
-  return Object.entries(glossaryData).map(([id, entry]) => ({
-    id,
-    ...entry
+export function loadGlossaryTerms(glossaryData: GlossaryData): GlossaryTerm[] {
+  return Object.entries(glossaryData).map(([key, entry]: [string, any]) => ({
+    id: key,
+    ...entry,
   }));
 }
 
@@ -96,40 +96,43 @@ export function searchGlossaryTerms(
   const normalizedQuery = query.toLowerCase().trim();
   
   return terms.filter(term => {
+    // Defensive checks for undefined properties
+    if (!term || typeof term !== 'object') return false;
+    
     // Search in term name
-    if (term.term.toLowerCase().includes(normalizedQuery)) {
+    if (term.term?.toLowerCase().includes(normalizedQuery)) {
       return true;
     }
     
     // Search in category
-    if (term.category.toLowerCase().includes(normalizedQuery)) {
+    if (term.category?.toLowerCase().includes(normalizedQuery)) {
       return true;
     }
     
     // Search in type
-    if (term.type.toLowerCase().includes(normalizedQuery)) {
+    if (term.type?.toLowerCase().includes(normalizedQuery)) {
       return true;
     }
     
     // Search in definitions
-    if (term.definition.it?.toLowerCase().includes(normalizedQuery)) {
+    if (term.definition?.it?.toLowerCase().includes(normalizedQuery)) {
       return true;
     }
-    if (term.definition.fr.toLowerCase().includes(normalizedQuery)) {
+    if (term.definition?.fr?.toLowerCase().includes(normalizedQuery)) {
       return true;
     }
-    if (term.definition.en.toLowerCase().includes(normalizedQuery)) {
+    if (term.definition?.en?.toLowerCase().includes(normalizedQuery)) {
       return true;
     }
     
     // Search in translations
-    if (term.translation.it?.toLowerCase().includes(normalizedQuery)) {
+    if (term.translation?.it?.toLowerCase().includes(normalizedQuery)) {
       return true;
     }
-    if (term.translation.fr.toLowerCase().includes(normalizedQuery)) {
+    if (term.translation?.fr?.toLowerCase().includes(normalizedQuery)) {
       return true;
     }
-    if (term.translation.en.toLowerCase().includes(normalizedQuery)) {
+    if (term.translation?.en?.toLowerCase().includes(normalizedQuery)) {
       return true;
     }
     

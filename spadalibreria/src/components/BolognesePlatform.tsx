@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { ChevronDown, Settings, BarChart3, Edit2 } from 'lucide-react';
+import { ChevronDown, Settings, BarChart3, Edit2, Plus } from 'lucide-react';
 import MarkdownRenderer from './MarkdownRenderer';
 import TextEditor from './TextEditor';
 import AnnotationPanel from './AnnotationPanel';
@@ -16,7 +16,11 @@ import SearchBar from './SearchBar';
 import { useSearch } from '@/contexts/SearchContext';
 import TagFilter, { FilterState, initialFilterState } from './TagFilter';
 import StatisticsModal from './StatisticsModal';
+import NewSectionForm from './NewSectionForm';
 import { LocalStorage } from '@/lib/localStorage';
+import { useStickyHeaderTracking } from '@/hooks/useStickyHeaderTracking';
+import LogoTitle from './LogoTitle';
+import StickyHeader from './StickyHeader';
 
 interface BolognesePlatformProps {
   glossaryData: { [key: string]: GlossaryEntry };
@@ -96,6 +100,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
   
   const [showDisplaySettings, setShowDisplaySettings] = useState(false);
   const [showStatistics, setShowStatistics] = useState(false);
+  const [showNewSectionForm, setShowNewSectionForm] = useState(false);
   const { displayConfig } = useAnnotationDisplay();
   const { results, lastQuery } = useSearch();
   const [filters, setFilters] = useState<FilterState>(initialFilterState);
@@ -313,115 +318,17 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
     }
   }, [filteredContent, topSectionId]);
 
-  // Track section at top of viewport for sticky header
-  useEffect(() => {
-    const root = scrollContainerRef.current;
-    if (!root) return;
-
-    const stickyOffset = 110;
-    let ticking = false;
-
-    const updateTopSectionFromScroll = () => {
-      ticking = false;
-      const sections = Array.from(root.querySelectorAll('[data-section-id]'));
-      if (sections.length === 0) {
-        return;
-      }
-
-      const rootTop = root.getBoundingClientRect().top;
-      let candidateId: string | null = null;
-      let fallbackId: string | null = null;
-
-      for (const section of sections) {
-        const rect = section.getBoundingClientRect();
-        const relativeTop = rect.top - rootTop;
-        const currentId = section.getAttribute('data-section-id');
-        if (!currentId) continue;
-
-        if (relativeTop <= stickyOffset) {
-          candidateId = currentId;
-        } else {
-          fallbackId = currentId;
-          break;
-        }
-      }
-
-      const nextId = candidateId ?? fallbackId ?? sections[0].getAttribute('data-section-id');
-      if (nextId) {
-        setTopSectionId(prev => (prev === nextId ? prev : nextId));
-      }
-    };
-
-    const handleScroll = () => {
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(updateTopSectionFromScroll);
-      }
-    };
-
-    updateTopSectionFromScroll();
-    root.addEventListener('scroll', handleScroll, { passive: true });
-
-    return () => {
-      root.removeEventListener('scroll', handleScroll);
-    };
-  }, [filteredContent, visibleCount]);
-
-  // FR-012b / SC-012: Smart scrolling behavior
-  // Auto-updates annotation section based on scroll position
-  // The panel will always track the visible section, even when open
-  useEffect(() => {
-    // Always allow scroll-based updates for better UX
-    // The AnnotationPanel will handle unsaved changes internally
-
-    const root = scrollContainerRef.current;
-    if (!root) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        // Find the entry closest to the center of the viewport
-        const center = root.clientHeight / 2;
-        let closestEntry: IntersectionObserverEntry | null = null;
-        let minDistance = Infinity;
-
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const rect = entry.boundingClientRect;
-            const rootTop = root.getBoundingClientRect().top;
-            const relativeTop = rect.top - rootTop;
-            const entryCenter = relativeTop + rect.height / 2;
-            const distance = Math.abs(center - entryCenter);
-            
-            if (distance < minDistance) {
-              minDistance = distance;
-              closestEntry = entry;
-            }
-          }
-        });
-
-        if (closestEntry) {
-          const sectionId = (closestEntry as IntersectionObserverEntry).target.getAttribute('data-section-id');
-          if (sectionId) {
-            setAnnotationSection(sectionId);
-          }
-        }
-      },
-      { 
-        root,
-        threshold: [0, 0.25, 0.5, 0.75, 1],
-        rootMargin: '0px' // Measurements already relative to container
-      }
-    );
-
-    // Observe all section elements
-    const sections = root.querySelectorAll('[data-section-id]');
-    sections.forEach(section => observer.observe(section));
-
-    return () => observer.disconnect();
-  }, [filteredContent, visibleCount]);
-
-
-
+  // Track section at top of viewport for sticky header and annotation highlighting
+  // Both topSectionId and annotationSection now track the same visible section
+  useStickyHeaderTracking(
+    scrollContainerRef,
+    110, // Height of the fixed header (80px) + sticky section header (30px with padding and border)
+    (sectionId) => {
+      setTopSectionId(sectionId);
+      setAnnotationSection(sectionId);
+    },
+    filteredContent
+  );
 
         
   // Reset to top when the content changes (new search or filter)
@@ -459,11 +366,10 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
       {/* SIDEBAR NAVIGATION */}
       <aside className="w-full md:w-72 bg-white border-r border-gray-100 flex-shrink-0 flex flex-col h-screen sticky top-0 z-20">
         <div className="p-8 pb-4">
-          <h1 className="text-xl font-bold text-black tracking-tight flex items-center gap-2">
-            <div className="w-2 h-6 bg-indigo-600"></div>            
-            SPADA LIBRERIA
-          </h1>
-          <p className="text-xs text-gray-400 mt-2 font-medium pl-4">Platform v1.0</p>
+          <LogoTitle 
+            titleClassName="text-xl font-bold text-black tracking-tight flex items-center gap-2"
+            subtitleClassName="text-xs text-gray-400 mt-2 font-medium pl-4"
+          />
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-8">
@@ -499,6 +405,15 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
         <header className="relative h-20 bg-white flex items-center px-8 justify-end border-b border-gray-100 z-10">
           {/* Boutons pour afficher/masquer les colonnes */}
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowNewSectionForm(true)}
+              className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors bg-green-600 text-white hover:bg-green-700 flex items-center gap-1"
+              title="Créer une nouvelle section de traité"
+            >
+              <Plus size={14} />
+              Nouvelle section
+            </button>
+            
             <button
               onClick={() => setShowItalian(!showItalian)}
               className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
@@ -556,16 +471,21 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
           const topSection = filteredContent.find(s => s.id === topSectionId);
           if (!topSection) return null;
           return (
-            <div className="sticky top-20 z-10 bg-white border-b border-gray-200 px-8 py-3 shadow-sm">
-              <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-                {topSection.metadata.master} - {topSection.metadata.work} - Livre {topSection.metadata.book} ({topSection.metadata.year})
-              </span>
-            </div>
+            <StickyHeader
+              topOffsetClassName="top-20"
+              className="shadow-sm"
+              lines={[
+                {
+                  content: `${topSection.metadata.master} - ${topSection.metadata.work} - Livre ${topSection.metadata.book} (${topSection.metadata.year})`,
+                  className: 'text-xs font-bold text-gray-500 uppercase tracking-widest',
+                },
+              ]}
+            />
           );
         })()}
 
         <div className="flex-1 overflow-y-auto bg-white" ref={scrollContainerRef}>
-          <div className="max-w-full mx-auto p-8 lg:p-12 space-y-12">
+          <div className="max-w-full p-8 lg:p-12 space-y-12">
             
             {filteredContent.length === 0 && results && (
               <div className="text-center py-12 text-gray-500">
@@ -853,6 +773,14 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
       {/* Modale de statistiques */}
       {showStatistics && (
         <StatisticsModal onClose={() => setShowStatistics(false)} />
+      )}
+
+      {/* Formulaire de nouvelle section */}
+      {showNewSectionForm && (
+        <NewSectionForm
+          treatiseData={treatiseData}
+          onClose={() => setShowNewSectionForm(false)}
+        />
       )}
     </div>
   );

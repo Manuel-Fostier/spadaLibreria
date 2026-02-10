@@ -12,7 +12,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
 import { GlossaryTerm, GroupedGlossary, GlossaryLanguage } from '@/types/glossary';
-import { loadGlossaryTerms, searchGlossaryTerms, groupGlossaryByCategory } from '@/lib/glossaryLoader';
+import { searchGlossaryTerms, groupGlossaryByCategory } from '@/lib/glossaryLoader';
 
 interface GlossaryContextType {
   // State
@@ -44,11 +44,15 @@ export function GlossaryProvider({ children }: GlossaryProviderProps) {
 
   // Load terms on mount
   useEffect(() => {
-    const loadTerms = () => {
+    const loadTerms = async () => {
       try {
         setIsLoading(true);
         setError(null);
-        const loadedTerms = loadGlossaryTerms();
+        const response = await fetch('/api/content/glossary');
+        if (!response.ok) {
+          throw new Error(`Failed to fetch glossary: ${response.statusText}`);
+        }
+        const loadedTerms: GlossaryTerm[] = await response.json();
         setTerms(loadedTerms);
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to load glossary';
