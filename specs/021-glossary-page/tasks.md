@@ -424,15 +424,15 @@
 
 ### Phase 6a: Glossary Page
 
-- [ ] T200 [P] Audit container className usage in src/app/glossary/page.tsx and src/components/GlossaryPage.tsx for duplicates/overrides
-- [ ] T201 [P] Audit className usage in src/components/GlossaryContent.tsx, src/components/CategorySection.tsx, and src/components/TermDisplay.tsx for duplicates/overrides
-- [ ] T202 Consolidate/remove duplicate or overridden className values in glossary page components and verify layout consistency
+- [X] T200 [P] Audit container className usage in src/app/glossary/page.tsx and src/components/GlossaryPage.tsx for duplicates/overrides
+- [X] T201 [P] Audit className usage in src/components/GlossaryContent.tsx, src/components/CategorySection.tsx, and src/components/TermDisplay.tsx for duplicates/overrides
+- [X] T202 Consolidate/remove duplicate or overridden className values in glossary page components and verify layout consistency
 
 ### Phase 6b: Treatise Page (BolognesePlatform)
 
-- [ ] T203 [P] Audit container className usage in src/components/BolognesePlatform.tsx and src/components/StickyHeader.tsx for duplicates/overrides
-- [ ] T204 [P] Audit className usage in src/components/TextParser.tsx and src/components/Term.tsx for duplicates/overrides
-- [ ] T205 Consolidate/remove duplicate or overridden className values in treatise page components and verify layout consistency
+- [X] T203 [P] Audit container className usage in src/components/BolognesePlatform.tsx and src/components/StickyHeader.tsx for duplicates/overrides
+- [X] T204 [P] Audit className usage in src/components/TextParser.tsx and src/components/Term.tsx for duplicates/overrides
+- [X] T205 Consolidate/remove duplicate or overridden className values in treatise page components and verify layout consistency
 
 ---
 

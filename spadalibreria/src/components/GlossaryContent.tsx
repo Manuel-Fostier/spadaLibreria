@@ -38,28 +38,24 @@ export default function GlossaryContent({
           {Object.entries(typeTerms).map(([type, terms], typeIdx) => (
             <div key={type} className="mb-8">
               <h3 className={`${GLOSSARY_TYPE_STYLE} mb-2`}>{type}</h3>
-              {terms.map((term) => {
-                // eslint-disable-next-line no-console
-                console.log('[GlossaryContent DEBUG] Render term:', term.id, 'category:', term.category, 'type:', term.type);
-                return (
-                  <div
-                    key={term.id}
-                    className="mb-6"
-                    data-section-id={term.id}
-                    data-glossary-category={term.category}
-                    data-glossary-type={term.type ?? ''}
-                  >
-                    {/* <h4 className="text-lg font-semibold text-gray-700 mb-1">{term.term}</h4> */}
-                    <TermDisplay
-                      term={term}
-                      termKey={term.id}
-                      searchQuery={searchQuery}
-                      highlightMatches={searchQuery.length > 0}
-                      isEditable={isEditable}
-                    />
-                  </div>
-                );
-              })}
+              {terms.map((term) => (
+                <div
+                  key={term.id}
+                  className="mb-6"
+                  data-section-id={term.id}
+                  data-glossary-category={term.category}
+                  data-glossary-type={term.type ?? ''}
+                >
+                  {/* <h4 className="text-lg font-semibold text-gray-700 mb-1">{term.term}</h4> */}
+                  <TermDisplay
+                    term={term}
+                    termKey={term.id}
+                    searchQuery={searchQuery}
+                    highlightMatches={searchQuery.length > 0}
+                    isEditable={isEditable}
+                  />
+                </div>
+              ))}
             </div>
           ))}
           {catIdx < Object.keys(groupedTerms).length - 1 && (

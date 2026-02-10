@@ -485,7 +485,7 @@ export default function BolognesePlatform({ glossaryData, treatiseData }: Bologn
         })()}
 
         <div className="flex-1 overflow-y-auto bg-white" ref={scrollContainerRef}>
-          <div className="max-w-full mx-auto p-8 lg:p-12 space-y-12">
+          <div className="max-w-full p-8 lg:p-12 space-y-12">
             
             {filteredContent.length === 0 && results && (
               <div className="text-center py-12 text-gray-500">
